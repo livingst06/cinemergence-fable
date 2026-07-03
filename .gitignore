@@ -36,6 +36,9 @@ yarn-error.log*
 # payload
 /media
 
+# client assets staging (upload via Payload admin)
+/_assets-client/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

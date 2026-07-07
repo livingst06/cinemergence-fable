@@ -147,3 +147,15 @@ curl -X POST "https://votre-domaine/api/seed/migrate-storage?force=1" \
 ```
 
 Voir `.cursor/skills/media-storage-architecture/SKILL.md` pour l'architecture complète.
+
+### Sécurité Supabase (RLS)
+
+Les tables Payload sont dans le schéma `public` et seraient exposées via l'API PostgREST (clé `anon`) sans protection. Payload se connecte en **postgres direct** (pooler) — pas via PostgREST.
+
+Après la première migration Payload, activer RLS :
+
+```bash
+pnpm supabase:rls
+```
+
+Ou coller `scripts/supabase-enable-rls.sql` dans **Supabase → SQL Editor**. Cela active RLS sur toutes les tables CMS et révoque l'accès `anon` / `authenticated`. Le site et l'admin Payload continuent de fonctionner (rôle `postgres`).

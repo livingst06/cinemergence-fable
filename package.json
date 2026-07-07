@@ -17,6 +17,7 @@
     "seed:intervenants": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-intervenants-local.ts",
     "seed:founder": "curl -s -X POST http://localhost:3000/api/seed/founder",
     "migrate:founder": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-founder-prod.ts",
+    "supabase:rls": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/apply-supabase-rls.ts",
     "sync:media": "tsx src/seed/sync-public-media.ts",
     "generate:importmap": "payload generate:importmap",
     "generate:types": "payload generate:types",

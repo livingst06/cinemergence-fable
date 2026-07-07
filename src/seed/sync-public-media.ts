@@ -5,6 +5,7 @@ import sharp from "sharp";
 
 import {
   formationCovers,
+  founderPhoto,
   galleryAssets,
   intervenantPhotos,
 } from "./media-lib";
@@ -50,6 +51,9 @@ async function main() {
   for (const [slug, file] of Object.entries(intervenantPhotos)) {
     await writeImage(file, `intervenants/${slug}.jpg`);
   }
+
+  console.log("→ Fondateur…");
+  await writeImage(founderPhoto, "founder/choukri-roua.jpg");
 
   console.log("→ Galerie…");
   let photoIndex = 1;

@@ -45,6 +45,8 @@ export const formationCovers: Record<string, string> = {
 
 export const intervenantPhotos: Record<string, string> = getIntervenantPhotoPaths();
 
+export const founderPhoto = "photos/image00019.jpeg";
+
 const heroVideoSource = "videos/VIDEO-2026-02-08-10-33-37.mp4";
 
 function resolveAsset(relativePath: string) {
@@ -213,8 +215,37 @@ export async function seedMediaContent(payload: Payload, options?: { force?: boo
     }
   }
 
+  const founderLogs = await seedFounderPhoto(payload);
+  logs.push(...founderLogs);
+
   logs.push("Seed media terminé.");
   return logs;
+}
+
+export async function seedFounderPhoto(payload: Payload) {
+  const logs: string[] = [];
+  const result = await uploadMedia(
+    payload,
+    founderPhoto,
+    "Choukri Rouha — fondateur sur le plateau",
+    "portrait",
+  );
+
+  if (!result.ok) {
+    logs.push(`⚠ Fondateur: ${result.message}`);
+    return logs;
+  }
+
+  await payload.updateGlobal({
+    slug: "site-settings",
+    data: { founderPhoto: result.media.id },
+  });
+  logs.push(`✓ Photo fondateur ← ${founderPhoto}`);
+  return logs;
+}
+
+export async function seedFounderPhotoOnly(payload: Payload) {
+  return seedFounderPhoto(payload);
 }
 
 export async function seedIntervenantPhotosOnly(payload: Payload, options?: { force?: boolean }) {

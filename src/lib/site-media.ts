@@ -23,6 +23,8 @@ export const staticIntervenantPhotos: Record<string, string> = {
   "karina-testa": "/images/site/intervenants/karina-testa.jpg",
 };
 
+export const staticFounderPhoto = "/images/site/founder/choukri-roua.jpg";
+
 export const staticGalleryItems: StaticGalleryItem[] = [
   { id: "g01", alt: "Plateau de tournage — direction d'acteur", url: "/images/site/gallery/01.jpg", mimeType: "image/jpeg" },
   { id: "g02", alt: "Plateau Cinémergence — équipe technique", url: "/images/site/gallery/02.jpg", mimeType: "image/jpeg" },

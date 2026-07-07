@@ -56,5 +56,11 @@ export const SiteSettings: GlobalConfig = {
       name: "instagramUrl",
       type: "text",
     },
+    {
+      name: "founderPhoto",
+      type: "upload",
+      relationTo: "media",
+      label: "Photo du fondateur",
+    },
   ],
 };

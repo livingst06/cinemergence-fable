@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { HeroVideoBackground } from "@/components/sections/HeroVideoBackground";
+import { MediaFrame } from "@/components/ui/MediaFrame";
 import { Reveal } from "@/components/ui/Reveal";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { CtaFinal } from "@/features/home/CtaFinal";
@@ -321,14 +322,23 @@ export default async function HomePage() {
       </Section>
 
       <Section variant="dark">
-        <div className="container-page grid gap-12 lg:grid-cols-5">
-          <div className="lg:col-span-2">
+        <div className="container-page grid gap-12 lg:grid-cols-5 lg:items-start">
+          <div className="space-y-8 lg:col-span-2">
             <SectionHeader
               eyebrow="Fondateur"
               title="Choukri Rouha"
               description="Réalisateur & fondateur de Cinémergence"
               align="left"
             />
+            <Reveal>
+              <MediaFrame
+                src={site.founderPhotoUrl}
+                mimeType={site.founderPhotoMimeType}
+                alt="Choukri Rouha sur le plateau de tournage"
+                aspect="portrait"
+                className="card-stage overflow-hidden rounded-lg border border-white/[0.06]"
+              />
+            </Reveal>
           </div>
           <div className="space-y-4 text-sm leading-relaxed text-muted-text lg:col-span-3">
             <p>

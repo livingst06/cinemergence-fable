@@ -19,6 +19,7 @@ import { isLocalMediaStorage } from "./storage-env";
 import {
   getStaticCarouselItems,
   staticFormationCovers,
+  staticFounderPhoto,
   staticGalleryItems,
   staticIntervenantPhotos,
 } from "./site-media";
@@ -55,12 +56,15 @@ export type SiteConfig = {
   partnerName: string;
   partnerRole: string;
   instagramUrl: string;
+  founderPhotoUrl?: string;
+  founderPhotoMimeType?: string;
 };
 
 export async function getSiteSettings(): Promise<SiteConfig> {
   try {
     const payload = await getPayloadClient();
-    const settings = await payload.findGlobal({ slug: "site-settings" });
+    const settings = await payload.findGlobal({ slug: "site-settings", depth: 1 });
+    const staticFounder = isLocalMediaStorage() ? staticFounderPhoto : undefined;
     return {
       name: settings.name ?? defaultSite.name,
       legalName: defaultSite.legalName,
@@ -76,9 +80,14 @@ export async function getSiteSettings(): Promise<SiteConfig> {
       partnerName: settings.partnerName ?? defaultSite.partnerName,
       partnerRole: defaultSite.partnerRole,
       instagramUrl: settings.instagramUrl ?? defaultSite.instagramUrl,
+      founderPhotoUrl: resolveDisplayMediaUrl(settings.founderPhoto, staticFounder),
+      founderPhotoMimeType: resolveMediaMimeType(settings.founderPhoto),
     };
   } catch {
-    return defaultSite;
+    return {
+      ...defaultSite,
+      founderPhotoUrl: isLocalMediaStorage() ? staticFounderPhoto : undefined,
+    };
   }
 }
 

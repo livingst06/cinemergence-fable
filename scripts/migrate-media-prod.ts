@@ -22,9 +22,11 @@ function loadEnvFile(filePath: string) {
 
 loadEnvConfig(process.cwd());
 loadEnvFile(path.resolve(".env.vercel.production"));
-process.env.MEDIA_STORAGE = "supabase";
-// development → Payload pousse le schéma Postgres ; S3 forcé via MEDIA_STORAGE
-process.env.NODE_ENV = "development";
+Object.assign(process.env, {
+  MEDIA_STORAGE: "supabase",
+  // development → Payload pousse le schéma Postgres ; S3 forcé via MEDIA_STORAGE
+  NODE_ENV: "development",
+});
 
 async function seedContentIfEmpty(payload: Awaited<ReturnType<typeof import("../src/lib/payload").getPayloadClient>>) {
   const { defaultFormations, defaultIntervenants, defaultSite, defaultTemoignages } =

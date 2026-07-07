@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Placeholder } from "@/components/ui/Placeholder";
+import { MediaFrame } from "@/components/ui/MediaFrame";
 import type { IntervenantData } from "@/lib/defaults";
 
 type IntervenantCardProps = {
@@ -14,8 +14,10 @@ export function IntervenantCard({ intervenant }: IntervenantCardProps) {
           Parrain
         </Badge>
       )}
-      <Placeholder
-        label={`Portrait — ${intervenant.nom}`}
+      <MediaFrame
+        src={intervenant.photoUrl}
+        mimeType={intervenant.photoMimeType}
+        alt={`Portrait — ${intervenant.nom}`}
         aspect="portrait"
         className="rounded-none border-0 border-b border-white/[0.06]"
       />

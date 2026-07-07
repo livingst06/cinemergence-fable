@@ -9,6 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "curl -s -X POST http://localhost:3000/api/seed",
+    "seed:media": "curl -s -X POST http://localhost:3000/api/seed/media",
+    "seed:hero": "curl -s -X POST http://localhost:3000/api/seed/hero",
     "generate:importmap": "payload generate:importmap",
     "generate:types": "payload generate:types",
     "test": "vitest run",

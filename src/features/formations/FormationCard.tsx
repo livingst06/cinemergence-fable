@@ -2,7 +2,7 @@ import { ArrowRight } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/ButtonLink";
-import { Placeholder } from "@/components/ui/Placeholder";
+import { MediaFrame } from "@/components/ui/MediaFrame";
 import type { FormationData } from "@/lib/defaults";
 import { cn } from "@/lib/utils";
 
@@ -20,8 +20,10 @@ export function FormationCard({ formation, featured }: FormationCardProps) {
       )}
     >
       <div className="relative overflow-hidden">
-        <Placeholder
-          label={`Plateau — ${formation.titreCourt}`}
+        <MediaFrame
+          src={formation.coverImageUrl}
+          mimeType={formation.coverImageMimeType}
+          alt={`Plateau — ${formation.titreCourt}`}
           aspect={featured ? "wide" : "video"}
           className={cn("rounded-none border-0 border-b border-white/[0.06]", featured && "md:aspect-auto md:h-full md:min-h-[260px]")}
         />

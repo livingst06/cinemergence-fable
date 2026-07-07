@@ -8,7 +8,21 @@ import {
   type IntervenantData,
   type TemoignageData,
 } from "./defaults";
+import {
+  isImageMimeType,
+  resolveMediaMimeType,
+  resolveMediaUrl,
+} from "./media-utils";
 import { getPayloadClient } from "./payload";
+
+export type GalleryMediaItem = {
+  id: string | number;
+  alt: string;
+  url?: string;
+  mimeType?: string;
+  caption?: string;
+  category?: string;
+};
 
 export type SiteConfig = {
   name: string;
@@ -52,6 +66,20 @@ export async function getSiteSettings(): Promise<SiteConfig> {
   }
 }
 
+function mapIntervenantSlugs(doc: Record<string, unknown>): string[] {
+  const raw = doc.intervenants;
+  if (!Array.isArray(raw)) return [];
+
+  return raw
+    .map((item) => {
+      if (typeof item === "object" && item && "slug" in item) {
+        return String((item as { slug: string }).slug);
+      }
+      return null;
+    })
+    .filter((slug): slug is string => Boolean(slug));
+}
+
 function mapFormation(doc: Record<string, unknown>): FormationData {
   return {
     slug: String(doc.slug),
@@ -70,10 +98,12 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     format: String(doc.format),
     tarif: doc.tarif ? String(doc.tarif) : null,
     financements: (doc.financements as FormationData["financements"]) ?? [],
-    intervenants: [],
+    intervenants: mapIntervenantSlugs(doc),
     faq: (doc.faq as { q: string; r: string }[] | undefined) ?? [],
     metaTitle: String(doc.metaTitle),
     metaDescription: String(doc.metaDescription),
+    coverImageUrl: resolveMediaUrl(doc.coverImage),
+    coverImageMimeType: resolveMediaMimeType(doc.coverImage),
   };
 }
 
@@ -84,6 +114,7 @@ export async function getFormations(): Promise<FormationData[]> {
       collection: "formations",
       limit: 20,
       sort: "-prioritaire",
+      depth: 1,
     });
     if (result.docs.length === 0) return defaultFormations;
     return result.docs.map((doc) => mapFormation(doc as Record<string, unknown>));
@@ -106,13 +137,15 @@ function mapIntervenant(doc: Record<string, unknown>): IntervenantData {
     bio: String(doc.bio),
     filmographie:
       (doc.filmographie as { titre: string }[] | undefined)?.map((f) => f.titre) ?? [],
+    photoUrl: resolveMediaUrl(doc.photo),
+    photoMimeType: resolveMediaMimeType(doc.photo),
   };
 }
 
 export async function getIntervenants(): Promise<IntervenantData[]> {
   try {
     const payload = await getPayloadClient();
-    const result = await payload.find({ collection: "intervenants", limit: 20 });
+    const result = await payload.find({ collection: "intervenants", limit: 20, depth: 1 });
     if (result.docs.length === 0) return defaultIntervenants;
     return result.docs.map((doc) => mapIntervenant(doc as Record<string, unknown>));
   } catch {
@@ -154,7 +187,7 @@ export async function getLegalContent() {
   }
 }
 
-export async function getGalleryMedia() {
+export async function getGalleryMedia(): Promise<GalleryMediaItem[]> {
   try {
     const payload = await getPayloadClient();
     const result = await payload.find({
@@ -162,8 +195,22 @@ export async function getGalleryMedia() {
       limit: 24,
       where: { category: { not_equals: "portrait" } },
     });
-    return result.docs;
+    return result.docs.map((doc) => ({
+      id: doc.id,
+      alt: String(doc.alt ?? "Média Cinémergence"),
+      url: resolveMediaUrl(doc),
+      mimeType: resolveMediaMimeType(doc),
+      caption: doc.caption ? String(doc.caption) : undefined,
+      category: doc.category ? String(doc.category) : undefined,
+    }));
   } catch {
     return [];
   }
+}
+
+export async function getCarouselMedia(limit = 8): Promise<GalleryMediaItem[]> {
+  const media = await getGalleryMedia();
+  return media
+    .filter((item) => item.url && isImageMimeType(item.mimeType, item.url))
+    .slice(0, limit);
 }

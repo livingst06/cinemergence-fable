@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/ButtonLink";
-import { Placeholder } from "@/components/ui/Placeholder";
+import { MediaFrame } from "@/components/ui/MediaFrame";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { PageHero } from "@/components/sections/PageHero";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
@@ -95,8 +95,10 @@ export default async function FormationPage({ params }: Props) {
             <p className="mt-6 text-sm font-medium text-or-light">{formation.publicCible}</p>
             <p className="mt-8 leading-relaxed text-muted-text">{formation.intro}</p>
           </div>
-          <Placeholder
-            label={`Visuel plateau — ${formation.titreCourt}`}
+          <MediaFrame
+            src={formation.coverImageUrl}
+            mimeType={formation.coverImageMimeType}
+            alt={`Visuel plateau — ${formation.titreCourt}`}
             aspect="video"
             className={formation.prioritaire ? "gold-glow" : undefined}
           />

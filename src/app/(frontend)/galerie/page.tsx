@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { MediaFrame } from "@/components/ui/MediaFrame";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { PageHero } from "@/components/sections/PageHero";
@@ -36,16 +37,26 @@ export default async function GaleriePage() {
           <SectionHeader
             eyebrow="Galerie"
             title="Images des stages"
-            description="Contenus administrables via Payload CMS. Placeholders en attendant les visuels validés."
+            description="Moments capturés sur nos plateaux et livrables produits par les stagiaires."
           />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {media.length > 0
               ? media.map((item) => (
-                  <Placeholder
-                    key={String(item.id)}
-                    label={String(item.alt ?? "Média")}
-                    aspect="video"
-                  />
+                  <article key={String(item.id)} className="group card-stage overflow-hidden">
+                    <MediaFrame
+                      src={item.url}
+                      mimeType={item.mimeType}
+                      alt={item.alt}
+                      aspect="video"
+                      className="rounded-none border-0"
+                    />
+                    <div className="p-4">
+                      <p className="text-sm font-medium text-cream">{item.alt}</p>
+                      {item.caption && (
+                        <p className="mt-1 text-xs text-muted-text">{item.caption}</p>
+                      )}
+                    </div>
+                  </article>
                 ))
               : placeholders.map((label) => (
                   <Placeholder key={label} label={label} aspect="video" />

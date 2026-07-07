@@ -24,6 +24,8 @@ export type FormationData = {
   faq: FaqItem[];
   metaTitle: string;
   metaDescription: string;
+  coverImageUrl?: string;
+  coverImageMimeType?: string;
 };
 
 export type IntervenantData = {
@@ -33,6 +35,8 @@ export type IntervenantData = {
   parrain: boolean;
   bio: string;
   filmographie: string[];
+  photoUrl?: string;
+  photoMimeType?: string;
 };
 
 export type TemoignageData = {

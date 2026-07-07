@@ -6,12 +6,14 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { CtaFinal } from "@/features/home/CtaFinal";
 import { CredibilityBar } from "@/features/home/CredibilityBar";
+import { PlateauCarousel } from "@/features/home/PlateauCarousel";
 import { Temoignages } from "@/features/home/Temoignages";
 import { FinancementSection } from "@/features/financement/FinancementSection";
 import { FormationCard } from "@/features/formations/FormationCard";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { NewsletterForm } from "@/features/contact/NewsletterForm";
 import {
+  getCarouselMedia,
   getFinancementDispositifs,
   getFormations,
   getIntervenants,
@@ -40,12 +42,14 @@ const equipeTechnique = [
 ];
 
 export default async function HomePage() {
-  const [site, formations, intervenants, temoignages, financement] = await Promise.all([
+  const [site, formations, intervenants, temoignages, financement, carouselPhotos] =
+    await Promise.all([
     getSiteSettings(),
     getFormations(),
     getIntervenants(),
     getTemoignages(),
     getFinancementDispositifs(),
+    getCarouselMedia(),
   ]);
 
   const prioritaires = formations.filter((f) => f.prioritaire);
@@ -129,7 +133,20 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      <Section id="formation" variant="secondary">
+      {carouselPhotos.length > 0 && (
+        <Section variant="secondary" id="plateau">
+          <div className="container-page">
+            <SectionHeader
+              eyebrow="Immersion"
+              title="Sur le plateau"
+              description="Des week-ends de tournage encadrés comme de vrais plateaux — master classes, répétitions et prises en conditions pro."
+            />
+            <PlateauCarousel slides={carouselPhotos} />
+          </div>
+        </Section>
+      )}
+
+      <Section id="formation">
         <div className="container-page">
           <SectionHeader
             eyebrow="La formation"

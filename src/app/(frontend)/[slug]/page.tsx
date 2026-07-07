@@ -16,6 +16,8 @@ import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } f
 import { defaultFinancement } from "@/lib/defaults";
 import { courseJsonLd } from "@/lib/seo";
 
+export const revalidate = 300;
+
 type Props = {
   params: Promise<{ slug: string }>;
 };

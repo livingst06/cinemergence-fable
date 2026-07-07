@@ -12,6 +12,7 @@ import { Temoignages } from "./collections/Temoignages";
 import { Users } from "./collections/Users";
 import { LegalPages } from "./globals/LegalPages";
 import { SiteSettings } from "./globals/SiteSettings";
+import { getStoragePlugins } from "./payload/storage";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -42,4 +43,5 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || "",
     },
   }),
+  plugins: getStoragePlugins(),
 });

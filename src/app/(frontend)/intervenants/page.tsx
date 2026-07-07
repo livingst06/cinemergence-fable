@@ -5,6 +5,8 @@ import { PageHero } from "@/components/sections/PageHero";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getIntervenants, getSiteSettings } from "@/lib/data";
 
+export const revalidate = 300;
+
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteSettings();
   return {

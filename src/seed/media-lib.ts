@@ -1,6 +1,7 @@
 import fs from "fs";
 import os from "os";
 import path from "path";
+import { randomUUID } from "crypto";
 
 import sharp from "sharp";
 
@@ -70,6 +71,11 @@ async function prepareImage(sourcePath: string): Promise<string> {
   return tmp;
 }
 
+function toSafeUploadPath(sourcePath: string): string {
+  const ext = path.extname(sourcePath).toLowerCase() || ".bin";
+  return path.join(os.tmpdir(), `cinemergence-${randomUUID()}${ext}`);
+}
+
 async function uploadMedia(
   payload: Payload,
   sourcePath: string,
@@ -81,19 +87,24 @@ async function uploadMedia(
     return { ok: false as const, message: `Fichier introuvable : ${sourcePath}` };
   }
 
-  const filePath = isImage(absolute) ? await prepareImage(absolute) : absolute;
+  const prepared = isImage(absolute) ? await prepareImage(absolute) : absolute;
+  const filePath = toSafeUploadPath(prepared);
+  fs.copyFileSync(prepared, filePath);
 
-  const created = await payload.create({
-    collection: "media",
-    data: { alt, category },
-    filePath,
-  });
-
-  if (filePath !== absolute && fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
+  try {
+    const created = await payload.create({
+      collection: "media",
+      data: { alt, category },
+      filePath,
+    });
+    return { ok: true as const, media: created };
+  } finally {
+    for (const tmp of [filePath, prepared]) {
+      if (tmp !== absolute && fs.existsSync(tmp)) {
+        fs.unlinkSync(tmp);
+      }
+    }
   }
-
-  return { ok: true as const, media: created };
 }
 
 export async function prepareHeroAssets() {
@@ -135,12 +146,20 @@ export async function prepareHeroAssets() {
   return ["Hero video + poster générés dans public/videos/"];
 }
 
-export async function seedMediaContent(payload: Payload) {
+export async function seedMediaContent(payload: Payload, options?: { force?: boolean }) {
   const logs: string[] = [];
 
   const existing = await payload.find({ collection: "media", limit: 1 });
-  if (existing.totalDocs > 0) {
-    return ["Médias déjà présents — seed media ignoré."];
+  if (existing.totalDocs > 0 && !options?.force) {
+    return ["Médias déjà présents — seed media ignoré. Utilisez force pour réimporter."];
+  }
+
+  if (options?.force && existing.totalDocs > 0) {
+    const all = await payload.find({ collection: "media", limit: 200 });
+    for (const doc of all.docs) {
+      await payload.delete({ collection: "media", id: doc.id });
+    }
+    logs.push("Médias existants supprimés (force).");
   }
 
   logs.push("Upload galerie…");

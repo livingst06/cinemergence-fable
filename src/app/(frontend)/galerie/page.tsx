@@ -6,6 +6,8 @@ import { Section, SectionHeader } from "@/components/ui/Section";
 import { PageHero } from "@/components/sections/PageHero";
 import { getGalleryMedia } from "@/lib/data";
 
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: "Galerie — Tournages et livrables",
   description:

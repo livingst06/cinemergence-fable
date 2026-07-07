@@ -99,6 +99,51 @@ Architecture Payload extensible pour :
 
 ## Déploiement
 
-- Hébergement EU recommandé (Vercel + Neon Postgres EU)
-- Variables d'environnement production : `DATABASE_URI`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SITE_URL`
+- Hébergement EU recommandé (Vercel + Supabase Postgres + Supabase Storage EU)
+
+### Stockage médias (local vs production)
+
+| Environnement | Métadonnées | Fichiers |
+| --- | --- | --- |
+| **localhost** | PostgreSQL (Docker) | Dossier `/media` sur disque |
+| **Vercel (prod)** | Supabase Postgres | Bucket Supabase `cinemergence-media` |
+
+En développement, **ne pas** définir les variables `S3_*` : le plugin Supabase est désactivé automatiquement (`NODE_ENV=development`). Upload via `/admin` → collection **Médias** ; les fichiers restent dans `/media` et les URLs passent par `/api/media/file/…`.
+
+### Variables Vercel (production)
+
+Copier `.env.vercel.production.example` → `.env.vercel.production`, remplir les secrets, puis :
+
+```bash
+vercel login && vercel link
+chmod +x scripts/sync-vercel-env.sh
+./scripts/sync-vercel-env.sh
+```
+
+| Variable | Description |
+| --- | --- |
+| `DATABASE_URI` | Postgres Supabase (connection string) |
+| `PAYLOAD_SECRET` | Secret Payload (32+ caractères) |
+| `NEXT_PUBLIC_SITE_URL` | URL publique du site |
+| `S3_BUCKET` | `cinemergence-media` |
+| `S3_REGION` | ex. `eu-central-1` |
+| `S3_ENDPOINT` | `https://<PROJECT_REF>.storage.supabase.co/storage/v1/s3` |
+| `S3_ACCESS_KEY_ID` | Clé S3 Supabase |
+| `S3_SECRET_ACCESS_KEY` | Secret S3 Supabase |
+| `SUPABASE_STORAGE_PUBLIC_URL` | `https://<PROJECT_REF>.supabase.co/storage/v1/object/public/cinemergence-media` |
+| `MIGRATE_MEDIA_SECRET` | Bearer pour `POST /api/seed/migrate-storage` |
+
 - HTTPS obligatoire
+
+### Médias en production (Supabase Storage)
+
+1. Créer un bucket **public** `cinemergence-media` dans Supabase Storage
+2. Activer **S3 Connection** et copier les clés dans Vercel
+3. Après déploiement, migrer les fichiers :
+
+```bash
+curl -X POST "https://votre-domaine/api/seed/migrate-storage?force=1" \
+  -H "Authorization: Bearer $MIGRATE_MEDIA_SECRET"
+```
+
+Voir `.cursor/skills/media-storage-architecture/SKILL.md` pour l'architecture complète.

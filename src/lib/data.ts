@@ -10,10 +10,26 @@ import {
 } from "./defaults";
 import {
   isImageMimeType,
+  resolveDisplayMediaUrl,
   resolveMediaMimeType,
   resolveMediaUrl,
 } from "./media-utils";
 import { getPayloadClient } from "./payload";
+import { isLocalMediaStorage } from "./storage-env";
+import {
+  getStaticCarouselItems,
+  staticFormationCovers,
+  staticGalleryItems,
+  staticIntervenantPhotos,
+} from "./site-media";
+
+function staticFormationCover(slug: string) {
+  return isLocalMediaStorage() ? staticFormationCovers[slug] : undefined;
+}
+
+function staticIntervenantPhoto(slug: string) {
+  return isLocalMediaStorage() ? staticIntervenantPhotos[slug] : undefined;
+}
 
 export type GalleryMediaItem = {
   id: string | number;
@@ -102,7 +118,10 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     faq: (doc.faq as { q: string; r: string }[] | undefined) ?? [],
     metaTitle: String(doc.metaTitle),
     metaDescription: String(doc.metaDescription),
-    coverImageUrl: resolveMediaUrl(doc.coverImage),
+    coverImageUrl: resolveDisplayMediaUrl(
+      doc.coverImage,
+      staticFormationCover(String(doc.slug)),
+    ),
     coverImageMimeType: resolveMediaMimeType(doc.coverImage),
   };
 }
@@ -116,7 +135,12 @@ export async function getFormations(): Promise<FormationData[]> {
       sort: "-prioritaire",
       depth: 1,
     });
-    if (result.docs.length === 0) return defaultFormations;
+    if (result.docs.length === 0) {
+      return defaultFormations.map((f) => ({
+        ...f,
+        coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
+      }));
+    }
     return result.docs.map((doc) => mapFormation(doc as Record<string, unknown>));
   } catch {
     return defaultFormations;
@@ -137,7 +161,7 @@ function mapIntervenant(doc: Record<string, unknown>): IntervenantData {
     bio: String(doc.bio),
     filmographie:
       (doc.filmographie as { titre: string }[] | undefined)?.map((f) => f.titre) ?? [],
-    photoUrl: resolveMediaUrl(doc.photo),
+    photoUrl: resolveDisplayMediaUrl(doc.photo, staticIntervenantPhoto(String(doc.slug))),
     photoMimeType: resolveMediaMimeType(doc.photo),
   };
 }
@@ -146,7 +170,12 @@ export async function getIntervenants(): Promise<IntervenantData[]> {
   try {
     const payload = await getPayloadClient();
     const result = await payload.find({ collection: "intervenants", limit: 20, depth: 1 });
-    if (result.docs.length === 0) return defaultIntervenants;
+    if (result.docs.length === 0) {
+      return defaultIntervenants.map((i) => ({
+        ...i,
+        photoUrl: i.photoUrl ?? staticIntervenantPhoto(i.slug),
+      }));
+    }
     return result.docs.map((doc) => mapIntervenant(doc as Record<string, unknown>));
   } catch {
     return defaultIntervenants;
@@ -195,22 +224,35 @@ export async function getGalleryMedia(): Promise<GalleryMediaItem[]> {
       limit: 24,
       where: { category: { not_equals: "portrait" } },
     });
-    return result.docs.map((doc) => ({
-      id: doc.id,
-      alt: String(doc.alt ?? "Média Cinémergence"),
-      url: resolveMediaUrl(doc),
-      mimeType: resolveMediaMimeType(doc),
-      caption: doc.caption ? String(doc.caption) : undefined,
-      category: doc.category ? String(doc.category) : undefined,
-    }));
+    const fromCms = result.docs.flatMap((doc, index) => {
+      const fallback = isLocalMediaStorage() ? staticGalleryItems[index] : undefined;
+      const url = resolveDisplayMediaUrl(doc, fallback?.url);
+      if (!url) return [];
+      return [
+        {
+          id: doc.id,
+          alt: String(doc.alt ?? fallback?.alt ?? "Média Cinémergence"),
+          url,
+          mimeType: resolveMediaMimeType(doc) ?? fallback?.mimeType,
+          caption: doc.caption ? String(doc.caption) : undefined,
+          category: doc.category ? String(doc.category) : undefined,
+        } satisfies GalleryMediaItem,
+      ];
+    });
+
+    if (fromCms.length > 0) return fromCms;
+    return isLocalMediaStorage() ? staticGalleryItems : [];
   } catch {
-    return [];
+    return isLocalMediaStorage() ? staticGalleryItems : [];
   }
 }
 
 export async function getCarouselMedia(limit = 8): Promise<GalleryMediaItem[]> {
   const media = await getGalleryMedia();
-  return media
+  const fromCms = media
     .filter((item) => item.url && isImageMimeType(item.mimeType, item.url))
     .slice(0, limit);
+
+  if (fromCms.length > 0) return fromCms;
+  return isLocalMediaStorage() ? getStaticCarouselItems(limit) : [];
 }

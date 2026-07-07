@@ -1,6 +1,7 @@
 "use server";
 
 import type { FormState } from "@/features/contact/form-state";
+import { sendContactNotification } from "@/lib/contact-notify";
 import { contactSchema } from "@/lib/validations";
 import { getPayloadClient } from "@/lib/payload";
 
@@ -53,6 +54,18 @@ export async function submitContact(
       status: "error",
       message: "L'envoi a échoué. Réessaie dans un instant ou contacte-nous par email.",
     };
+  }
+
+  const mail = await sendContactNotification(parsed.data);
+  if (!mail.ok && !mail.skipped) {
+    return {
+      status: "error",
+      message: "Message enregistré, mais la notification email a échoué. Réessaie ou contacte-nous directement.",
+    };
+  }
+
+  if (mail.skipped) {
+    console.warn("[contact] Notification email skipped — configure BREVO_API_KEY on Vercel");
   }
 
   return {

@@ -323,24 +323,23 @@ export default async function HomePage() {
 
       <Section variant="dark">
         <div className="container-page grid gap-12 lg:grid-cols-5 lg:items-start">
-          <div className="space-y-8 lg:col-span-2">
+          <Reveal className="lg:col-span-2">
+            <MediaFrame
+              src={site.founderPhotoUrl}
+              mimeType={site.founderPhotoMimeType}
+              alt="Choukri Rouha sur le plateau de tournage"
+              aspect="portrait"
+              className="card-stage overflow-hidden rounded-lg border border-white/[0.06]"
+            />
+          </Reveal>
+          <div className="space-y-8 lg:col-span-3">
             <SectionHeader
               eyebrow="Fondateur"
               title="Choukri Rouha"
               description="Réalisateur & fondateur de Cinémergence"
               align="left"
             />
-            <Reveal>
-              <MediaFrame
-                src={site.founderPhotoUrl}
-                mimeType={site.founderPhotoMimeType}
-                alt="Choukri Rouha sur le plateau de tournage"
-                aspect="portrait"
-                className="card-stage overflow-hidden rounded-lg border border-white/[0.06]"
-              />
-            </Reveal>
-          </div>
-          <div className="space-y-4 text-sm leading-relaxed text-muted-text lg:col-span-3">
+            <div className="space-y-4 text-sm leading-relaxed text-muted-text">
             <p>
               Formé au Cours Florent, Choukri Rouha débute comme acteur dans plusieurs films et
               séries. Il se consacre ensuite à l&apos;écriture, où il remporte plusieurs
@@ -357,6 +356,7 @@ export default async function HomePage() {
               Cannes. Il a également produit Rose, réalisé par Hassan Zahi, en parcours
               international en festivals.
             </p>
+            </div>
           </div>
         </div>
       </Section>

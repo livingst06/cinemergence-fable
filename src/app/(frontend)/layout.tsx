@@ -5,6 +5,7 @@ import { Analytics } from "@/components/Analytics";
 import { CookieBanner } from "@/components/CookieBanner";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { Toaster } from "@/components/ui/sonner";
 import { getFormations, getSiteSettings } from "@/lib/data";
 import { organizationJsonLd } from "@/lib/seo";
 
@@ -81,6 +82,7 @@ export default async function FrontendLayout({
         />
         <CookieBanner />
         <Analytics />
+        <Toaster />
       </body>
     </html>
   );

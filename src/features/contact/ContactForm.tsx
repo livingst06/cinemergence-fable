@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { submitContact } from "@/features/contact/actions";
+import { initialFormState } from "@/features/contact/form-state";
+import { FormFeedbackMessage } from "@/features/contact/FormFeedbackMessage";
+import { useFormFeedback } from "@/features/contact/use-form-feedback";
 import type { FormationData } from "@/lib/defaults";
 
 type ContactFormProps = {
@@ -15,14 +18,13 @@ type ContactFormProps = {
   defaultType?: "contact" | "inscription" | "financement";
 };
 
-const initialState = { success: false, message: "" };
-
 export function ContactForm({
   formations,
   defaultFormation,
   defaultType = "contact",
 }: ContactFormProps) {
-  const [state, action, pending] = useActionState(submitContact, initialState);
+  const [state, action, pending] = useActionState(submitContact, initialFormState);
+  useFormFeedback(state);
 
   return (
     <form action={action} className="space-y-6">
@@ -86,14 +88,7 @@ export function ContactForm({
         />
       </div>
 
-      {state.message && (
-        <p
-          className={`text-sm ${state.success ? "text-or-light" : "text-destructive"}`}
-          role="status"
-        >
-          {state.message}
-        </p>
-      )}
+      <FormFeedbackMessage state={state} />
 
       <Button
         type="submit"

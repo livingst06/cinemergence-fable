@@ -1,12 +1,8 @@
 "use server";
 
+import type { FormState } from "@/features/contact/form-state";
 import { contactSchema } from "@/lib/validations";
 import { getPayloadClient } from "@/lib/payload";
-
-type FormState = {
-  success: boolean;
-  message: string;
-};
 
 export async function submitContact(
   _prev: FormState,
@@ -24,11 +20,17 @@ export async function submitContact(
 
   const parsed = contactSchema.safeParse(raw);
   if (!parsed.success) {
-    return { success: false, message: parsed.error.issues[0]?.message ?? "Données invalides" };
+    return {
+      status: "validation",
+      message: parsed.error.issues[0]?.message ?? "Données invalides",
+    };
   }
 
   if (parsed.data.website) {
-    return { success: true, message: "Message envoyé. On te répond rapidement." };
+    return {
+      status: "success",
+      message: "Message envoyé. On te répond rapidement.",
+    };
   }
 
   try {
@@ -47,11 +49,14 @@ export async function submitContact(
     });
   } catch (error) {
     console.error("[contact]", error);
+    return {
+      status: "error",
+      message: "L'envoi a échoué. Réessaie dans un instant ou contacte-nous par email.",
+    };
   }
 
-  // Brancher email transactionnel via CONTACT_NOTIFICATION_EMAIL
   return {
-    success: true,
-    message: "Message envoyé. On te répond rapidement à " + parsed.data.email + ".",
+    status: "success",
+    message: "Message envoyé. On te répond rapidement.",
   };
 }

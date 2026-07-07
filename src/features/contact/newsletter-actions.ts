@@ -1,12 +1,8 @@
 "use server";
 
+import type { FormState } from "@/features/contact/form-state";
 import { newsletterSchema } from "@/lib/validations";
 import { getPayloadClient } from "@/lib/payload";
-
-type FormState = {
-  success: boolean;
-  message: string;
-};
 
 export async function submitNewsletter(
   _prev: FormState,
@@ -19,11 +15,17 @@ export async function submitNewsletter(
 
   const parsed = newsletterSchema.safeParse(raw);
   if (!parsed.success) {
-    return { success: false, message: parsed.error.issues[0]?.message ?? "Email invalide" };
+    return {
+      status: "validation",
+      message: parsed.error.issues[0]?.message ?? "Email invalide",
+    };
   }
 
   if (parsed.data.website) {
-    return { success: true, message: "Inscription enregistrée." };
+    return {
+      status: "success",
+      message: "Inscription enregistrée. À très bientôt.",
+    };
   }
 
   try {
@@ -38,8 +40,14 @@ export async function submitNewsletter(
     });
   } catch (error) {
     console.error("[newsletter]", error);
+    return {
+      status: "error",
+      message: "Inscription impossible pour le moment. Réessaie plus tard.",
+    };
   }
 
-  // Brancher Brevo via BREVO_API_KEY + BREVO_LIST_ID
-  return { success: true, message: "Inscription enregistrée. À très bientôt." };
+  return {
+    status: "success",
+    message: "Inscription enregistrée. À très bientôt.",
+  };
 }

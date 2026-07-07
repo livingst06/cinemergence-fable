@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 
 import { ButtonLink } from "@/components/ui/ButtonLink";
@@ -22,10 +22,33 @@ const navLinks = [
 export function Header({ formations }: HeaderProps) {
   const [formationsOpen, setFormationsOpen] = useState(false);
   const navToggleRef = useRef<HTMLInputElement>(null);
+  const formationsCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const openFormationsMenu = () => {
+    if (formationsCloseTimerRef.current) {
+      clearTimeout(formationsCloseTimerRef.current);
+      formationsCloseTimerRef.current = null;
+    }
+    setFormationsOpen(true);
+  };
+
+  const scheduleCloseFormationsMenu = () => {
+    if (formationsCloseTimerRef.current) clearTimeout(formationsCloseTimerRef.current);
+    formationsCloseTimerRef.current = setTimeout(() => {
+      setFormationsOpen(false);
+      formationsCloseTimerRef.current = null;
+    }, 180);
+  };
 
   const closeMobileNav = () => {
     if (navToggleRef.current) navToggleRef.current.checked = false;
   };
+
+  useEffect(() => {
+    return () => {
+      if (formationsCloseTimerRef.current) clearTimeout(formationsCloseTimerRef.current);
+    };
+  }, []);
 
   return (
     <>
@@ -36,32 +59,41 @@ export function Header({ formations }: HeaderProps) {
           <nav className="hidden items-center gap-6 lg:flex" aria-label="Navigation principale">
             <div
               className="relative"
-              onMouseEnter={() => setFormationsOpen(true)}
-              onMouseLeave={() => setFormationsOpen(false)}
+              onMouseEnter={openFormationsMenu}
+              onMouseLeave={scheduleCloseFormationsMenu}
+              onFocus={openFormationsMenu}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) {
+                  scheduleCloseFormationsMenu();
+                }
+              }}
             >
               <button
                 type="button"
                 className="text-sm font-medium text-cream/75 transition-colors hover:text-or-light"
                 aria-expanded={formationsOpen}
+                aria-haspopup="true"
               >
                 Formations
               </button>
               {formationsOpen && (
-                <div className="absolute left-0 top-full z-50 mt-3 w-80 overflow-hidden rounded-2xl border border-border bg-noir-secondary p-2 shadow-2xl plateau-glow">
-                  {formations.map((f) => (
-                    <Link
-                      key={f.slug}
-                      href={`/${f.slug}`}
-                      className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-cream/90 transition-colors hover:bg-noir-tertiary/50 hover:text-or-light"
-                    >
-                      <span>{f.titreCourt}</span>
-                      {f.prioritaire && (
-                        <span className="rounded-full bg-projector/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-projector-light">
-                          Live
-                        </span>
-                      )}
-                    </Link>
-                  ))}
+                <div className="absolute left-0 top-full z-50 pt-3">
+                  <div className="w-80 overflow-hidden rounded-2xl border border-border bg-noir-secondary p-2 shadow-2xl plateau-glow">
+                    {formations.map((f) => (
+                      <Link
+                        key={f.slug}
+                        href={`/${f.slug}`}
+                        className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-cream/90 transition-colors hover:bg-noir-tertiary/50 hover:text-or-light"
+                      >
+                        <span>{f.titreCourt}</span>
+                        {f.prioritaire && (
+                          <span className="rounded-full bg-projector/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-projector-light">
+                            Live
+                          </span>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -84,7 +116,7 @@ export function Header({ formations }: HeaderProps) {
 
           <div className="relative z-[1] flex shrink-0 items-center gap-3 lg:hidden">
             <ThemeToggle />
-            <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary text-or-light">
+            <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary transition-[background-color,border-color,color,box-shadow] duration-200">
               <input
                 ref={navToggleRef}
                 type="checkbox"
@@ -93,7 +125,7 @@ export function Header({ formations }: HeaderProps) {
               />
               <span className="pointer-events-none relative z-0 flex items-center justify-center" aria-hidden>
                 <Menu className="mobile-nav-icon-open h-6 w-6" />
-                <X className="mobile-nav-icon-close hidden h-6 w-6" />
+                <X className="mobile-nav-icon-close h-6 w-6" />
               </span>
               <span className="sr-only">Menu</span>
             </label>

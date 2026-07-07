@@ -146,21 +146,35 @@
       radial-gradient(ellipse 80% 50% at 0% 100%, rgba(139, 26, 43, 0.05), transparent 45%);
   }
 
+  .mobile-nav-panel {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .mobile-nav-icon-open {
+    display: block;
+  }
+
+  .mobile-nav-icon-close {
+    display: none;
+  }
+
+  .mobile-nav-trigger:not(:has(#mobile-nav-toggle:checked)) {
+    color: var(--or-light);
+  }
+
   @media (max-width: 767px) {
     main {
       overflow-x: clip;
     }
+  }
 
+  @media (max-width: 1023px) {
     /* Menu mobile — checkbox dans le label + panneau via :has() (CSS pur, fiable iOS) */
     html:has(#mobile-nav-toggle:checked),
     html:has(#mobile-nav-toggle:checked) body {
       overflow: hidden;
-    }
-
-    .mobile-nav-panel {
-      visibility: hidden;
-      opacity: 0;
-      pointer-events: none;
     }
 
     header:has(#mobile-nav-toggle:checked) ~ .mobile-nav-panel {
@@ -169,11 +183,29 @@
       pointer-events: auto;
     }
 
-    header:has(#mobile-nav-toggle:checked) .mobile-nav-icon-open {
+    .mobile-nav-trigger:has(#mobile-nav-toggle:checked) {
+      border-color: transparent;
+      color: var(--primary-foreground);
+      background: linear-gradient(
+        135deg,
+        var(--projector-light) 0%,
+        var(--projector) 55%,
+        #5c1018 100%
+      );
+      box-shadow:
+        0 0 0 1px rgba(201, 53, 80, 0.25) inset,
+        0 4px 16px -4px var(--projector-glow);
+    }
+
+    .mobile-nav-trigger:has(#mobile-nav-toggle:checked) svg {
+      color: var(--primary-foreground);
+    }
+
+    .mobile-nav-trigger:has(#mobile-nav-toggle:checked) .mobile-nav-icon-open {
       display: none;
     }
 
-    header:has(#mobile-nav-toggle:checked) .mobile-nav-icon-close {
+    .mobile-nav-trigger:has(#mobile-nav-toggle:checked) .mobile-nav-icon-close {
       display: block;
     }
 

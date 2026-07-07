@@ -9,6 +9,8 @@ export function Toaster(props: ToasterProps) {
       richColors
       closeButton
       position="top-center"
+      offset={{ top: "5rem" }}
+      duration={5000}
       toastOptions={{
         classNames: {
           toast:

@@ -1,15 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { submitContact } from "@/features/contact/actions";
-import { initialFormState } from "@/features/contact/form-state";
 import { FormFeedbackMessage } from "@/features/contact/FormFeedbackMessage";
-import { useFormFeedback } from "@/features/contact/use-form-feedback";
+import { useFormAction } from "@/features/contact/use-form-feedback";
 import type { FormationData } from "@/lib/defaults";
 
 type ContactFormProps = {
@@ -23,11 +20,10 @@ export function ContactForm({
   defaultFormation,
   defaultType = "contact",
 }: ContactFormProps) {
-  const [state, action, pending] = useActionState(submitContact, initialFormState);
-  useFormFeedback(state);
+  const { state, submit, pending } = useFormAction(submitContact);
 
   return (
-    <form action={action} className="space-y-6">
+    <form action={submit} className="space-y-6">
       <input type="hidden" name="type" value={defaultType} />
       <input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
 

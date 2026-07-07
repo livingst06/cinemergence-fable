@@ -32,6 +32,7 @@ async function main() {
   const payload = await getPayloadClient();
   const logs = await seedFounderPhotoOnly(payload);
   for (const line of logs) console.log(line);
+  process.exit(0);
 }
 
 main().catch((error) => {

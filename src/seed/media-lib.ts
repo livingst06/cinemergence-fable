@@ -228,7 +228,7 @@ export async function seedFounderPhoto(payload: Payload) {
     payload,
     founderPhoto,
     "Choukri Rouha — fondateur sur le plateau",
-    "portrait",
+    "autre",
   );
 
   if (!result.ok) {
@@ -253,16 +253,19 @@ export async function seedIntervenantPhotosOnly(payload: Payload, options?: { fo
   const photos = getIntervenantPhotoPaths();
 
   if (options?.force) {
-    const portraits = await payload.find({
-      collection: "media",
-      limit: 100,
-      where: { category: { equals: "portrait" } },
+    const intervenants = await payload.find({
+      collection: "intervenants",
+      limit: 20,
     });
-    for (const doc of portraits.docs) {
-      await payload.delete({ collection: "media", id: doc.id });
+    const linkedPhotoIds = intervenants.docs
+      .map((doc) => doc.photo)
+      .filter((id): id is number | string => id != null);
+
+    for (const id of linkedPhotoIds) {
+      await payload.delete({ collection: "media", id });
     }
-    if (portraits.docs.length > 0) {
-      logs.push(`Anciens portraits supprimés (${portraits.docs.length}).`);
+    if (linkedPhotoIds.length > 0) {
+      logs.push(`Anciens portraits intervenants supprimés (${linkedPhotoIds.length}).`);
     }
   }
 

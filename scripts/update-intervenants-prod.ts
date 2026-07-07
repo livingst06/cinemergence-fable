@@ -39,6 +39,7 @@ async function main() {
   const payload = await getPayloadClient();
   const logs = await seedIntervenantPhotosOnly(payload, { force: true });
   for (const line of logs) console.log(line);
+  process.exit(0);
 }
 
 main().catch((error) => {

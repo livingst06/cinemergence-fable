@@ -20,6 +20,7 @@ import {
   getStaticCarouselItems,
   staticFormationCovers,
   staticFounderPhoto,
+  staticFounderPhotoCommitted,
   staticGalleryItems,
   staticIntervenantPhotos,
 } from "./site-media";
@@ -64,7 +65,9 @@ export async function getSiteSettings(): Promise<SiteConfig> {
   try {
     const payload = await getPayloadClient();
     const settings = await payload.findGlobal({ slug: "site-settings", depth: 1 });
-    const staticFounder = isLocalMediaStorage() ? staticFounderPhoto : undefined;
+    const staticFounder = isLocalMediaStorage()
+      ? staticFounderPhoto
+      : staticFounderPhotoCommitted;
     return {
       name: settings.name ?? defaultSite.name,
       legalName: defaultSite.legalName,
@@ -86,7 +89,9 @@ export async function getSiteSettings(): Promise<SiteConfig> {
   } catch {
     return {
       ...defaultSite,
-      founderPhotoUrl: isLocalMediaStorage() ? staticFounderPhoto : undefined,
+      founderPhotoUrl: isLocalMediaStorage()
+        ? staticFounderPhoto
+        : staticFounderPhotoCommitted,
     };
   }
 }

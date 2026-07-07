@@ -16,6 +16,7 @@ import {
 } from "./media-utils";
 import { getPayloadClient } from "./payload";
 import { isLocalMediaStorage } from "./storage-env";
+import { getPublicSiteUrl } from "./site-url";
 import {
   getStaticCarouselItems,
   staticFormationCovers,
@@ -73,7 +74,7 @@ export async function getSiteSettings(): Promise<SiteConfig> {
       legalName: defaultSite.legalName,
       tagline: settings.tagline ?? defaultSite.tagline,
       description: settings.description ?? defaultSite.description,
-      url: settings.url ?? defaultSite.url,
+      url: getPublicSiteUrl(),
       email: settings.email ?? defaultSite.email,
       phone: defaultSite.phone,
       city: defaultSite.city,
@@ -89,6 +90,7 @@ export async function getSiteSettings(): Promise<SiteConfig> {
   } catch {
     return {
       ...defaultSite,
+      url: getPublicSiteUrl(),
       founderPhotoUrl: isLocalMediaStorage()
         ? staticFounderPhoto
         : staticFounderPhotoCommitted,

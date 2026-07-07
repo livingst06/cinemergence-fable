@@ -10,6 +10,7 @@ async function seed() {
     defaultTemoignages,
   } = await import("../lib/defaults");
   const { getPayloadClient } = await import("../lib/payload");
+  const { getPublicSiteUrl } = await import("../lib/site-url");
 
   const payload = await getPayloadClient();
 
@@ -36,7 +37,7 @@ async function seed() {
       name: defaultSite.name,
       tagline: defaultSite.tagline,
       description: defaultSite.description,
-      url: defaultSite.url,
+      url: getPublicSiteUrl(),
       email: defaultSite.email,
       nda: defaultSite.nda,
       qualiopiObtained: defaultSite.qualiopiObtained,

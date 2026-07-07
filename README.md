@@ -124,7 +124,7 @@ chmod +x scripts/sync-vercel-env.sh
 | --- | --- |
 | `DATABASE_URI` | Postgres Supabase (connection string) |
 | `PAYLOAD_SECRET` | Secret Payload (32+ caractères) |
-| `NEXT_PUBLIC_SITE_URL` | URL publique du site |
+| `NEXT_PUBLIC_SITE_URL` | URL publique canonique — `https://cinemergence.vercel.app` en prod pour l'instant ; `https://cinemergence.fr` une fois le DNS configuré |
 | `S3_BUCKET` | `cinemergence-media` |
 | `S3_REGION` | ex. `eu-central-1` |
 | `S3_ENDPOINT` | `https://<PROJECT_REF>.storage.supabase.co/storage/v1/s3` |

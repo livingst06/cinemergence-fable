@@ -6,6 +6,7 @@ import {
   defaultSite,
   defaultTemoignages,
 } from "@/lib/defaults";
+import { getPublicSiteUrl } from "@/lib/site-url";
 import { getPayloadClient } from "@/lib/payload";
 
 export async function POST() {
@@ -36,7 +37,7 @@ export async function POST() {
         name: defaultSite.name,
         tagline: defaultSite.tagline,
         description: defaultSite.description,
-        url: defaultSite.url,
+        url: getPublicSiteUrl(),
         email: defaultSite.email,
         nda: defaultSite.nda,
         qualiopiObtained: defaultSite.qualiopiObtained,

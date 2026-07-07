@@ -132,7 +132,8 @@ chmod +x scripts/sync-vercel-env.sh
 | `S3_SECRET_ACCESS_KEY` | Secret S3 Supabase |
 | `SUPABASE_STORAGE_PUBLIC_URL` | `https://<PROJECT_REF>.supabase.co/storage/v1/object/public/cinemergence-media` |
 | `MIGRATE_MEDIA_SECRET` | Bearer pour `POST /api/seed/migrate-storage` |
-| `BREVO_API_KEY` | Clé API Brevo — **obligatoire** pour recevoir les emails des formulaires |
+| `BREVO_API_KEY` | Clé Brevo : `xsmtpsib-…` (SMTP) ou `xkeysib-…` (API REST) |
+| `BREVO_SMTP_LOGIN` | **Obligatoire avec `xsmtpsib-`** — login affiché dans Brevo → SMTP & API → onglet SMTP (`xxx@smtp-brevo.com`) |
 | `CONTACT_NOTIFICATION_EMAIL` | Destinataire (ex. `verdat.sylvain@gmail.com`) |
 | `BREVO_SENDER_EMAIL` | Expéditeur vérifié dans Brevo (souvent la même adresse au départ) |
 
@@ -142,8 +143,11 @@ Les soumissions sont enregistrées dans Payload (**Admin → Form submissions**)
 
 1. Créer un compte sur [brevo.com](https://www.brevo.com)
 2. **Expéditeurs** → vérifier `verdat.sylvain@gmail.com` (ou ton domaine)
-3. **SMTP & API → Clés API** → créer une clé
-4. Ajouter dans `.env.vercel.production` : `BREVO_API_KEY`, `CONTACT_NOTIFICATION_EMAIL`, `BREVO_SENDER_EMAIL`
+3. **SMTP & API → onglet SMTP** :
+   - Copier le **login SMTP** (`xxx@smtp-brevo.com`) → `BREVO_SMTP_LOGIN`
+   - Copier la **clé SMTP** (`xsmtpsib-…`) → `BREVO_API_KEY`
+   - *(Alternative : clé API REST `xkeysib-…` sans `BREVO_SMTP_LOGIN`)*
+4. Ajouter dans `.env.vercel.production` : `BREVO_API_KEY`, `BREVO_SMTP_LOGIN`, `CONTACT_NOTIFICATION_EMAIL`, `BREVO_SENDER_EMAIL`
 5. `./scripts/sync-vercel-env.sh` puis redéployer Vercel
 
 Sans `BREVO_API_KEY`, le client voit le toast vert (données sauvegardées) mais **aucun email** n'est envoyé.

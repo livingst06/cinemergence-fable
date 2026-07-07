@@ -13,6 +13,8 @@
     "seed:hero": "curl -s -X POST http://localhost:3000/api/seed/hero",
     "migrate:storage": "curl -s -X POST 'http://localhost:3000/api/seed/migrate-storage?force=1'",
     "migrate:prod": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/migrate-media-prod.ts",
+    "migrate:intervenants": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-intervenants-prod.ts",
+    "seed:intervenants": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-intervenants-local.ts",
     "sync:media": "tsx src/seed/sync-public-media.ts",
     "generate:importmap": "payload generate:importmap",
     "generate:types": "payload generate:types",

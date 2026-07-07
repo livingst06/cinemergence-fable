@@ -7,6 +7,8 @@ import sharp from "sharp";
 
 import type { Payload } from "payload";
 
+import { getIntervenantPhotoPaths } from "./intervenant-photos";
+
 const assetsRoot = path.resolve("_assets-client");
 
 type MediaCategory = "plateau" | "livrable" | "portrait" | "autre";
@@ -41,12 +43,7 @@ export const formationCovers: Record<string, string> = {
   "formation-production-film": "photos/DSC07512.jpg",
 };
 
-export const intervenantPhotos: Record<string, string> = {
-  "bibi-naceri": "photos/image00019.jpeg",
-  "salim-kechiouche": "photos/DSC07228.jpg",
-  "edouard-montoute": "photos/DSC07226.jpg",
-  "karina-testa": "photos/DSC07233.jpg",
-};
+export const intervenantPhotos: Record<string, string> = getIntervenantPhotoPaths();
 
 const heroVideoSource = "videos/VIDEO-2026-02-08-10-33-37.mp4";
 
@@ -217,5 +214,50 @@ export async function seedMediaContent(payload: Payload, options?: { force?: boo
   }
 
   logs.push("Seed media terminé.");
+  return logs;
+}
+
+export async function seedIntervenantPhotosOnly(payload: Payload, options?: { force?: boolean }) {
+  const logs: string[] = [];
+  const photos = getIntervenantPhotoPaths();
+
+  if (options?.force) {
+    const portraits = await payload.find({
+      collection: "media",
+      limit: 100,
+      where: { category: { equals: "portrait" } },
+    });
+    for (const doc of portraits.docs) {
+      await payload.delete({ collection: "media", id: doc.id });
+    }
+    if (portraits.docs.length > 0) {
+      logs.push(`Anciens portraits supprimés (${portraits.docs.length}).`);
+    }
+  }
+
+  logs.push("Portraits intervenants…");
+  for (const [slug, file] of Object.entries(photos)) {
+    const result = await uploadMedia(payload, file, `Portrait — ${slug}`, "portrait");
+    if (!result.ok) {
+      logs.push(`⚠ ${slug}: ${result.message}`);
+      continue;
+    }
+
+    const intervenant = await payload.find({
+      collection: "intervenants",
+      where: { slug: { equals: slug } },
+      limit: 1,
+    });
+
+    if (intervenant.docs[0]) {
+      await payload.update({
+        collection: "intervenants",
+        id: intervenant.docs[0].id,
+        data: { photo: result.media.id },
+      });
+      logs.push(`✓ ${slug} ← ${file}`);
+    }
+  }
+
   return logs;
 }

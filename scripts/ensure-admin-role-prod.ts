@@ -25,7 +25,11 @@ function loadEnvFile(filePath: string) {
 
 loadEnvConfig(process.cwd());
 loadEnvFile(path.resolve(".env.vercel.production"));
-Object.assign(process.env, { NODE_ENV: "development" });
+Object.assign(process.env, {
+  MEDIA_STORAGE: "supabase", // sinon isS3StorageEnabled() renvoie false en NODE_ENV=development
+  // et Payload propose de supprimer la colonne `prefix` de la table media.
+  NODE_ENV: "development",
+});
 
 async function main() {
   const { getPayloadClient } = await import("../src/lib/payload");

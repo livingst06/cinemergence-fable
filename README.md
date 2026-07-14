@@ -98,6 +98,17 @@ pnpm migrate:admin-role
 
 L'ancien mot de passe local ne fonctionne plus après la bascule — c'est attendu.
 
+### ⚠️ TODO avant une vraie mise en production
+
+Les clés Clerk actuellement configurées (`pk_test_...` / `sk_test_...`) sont des **clés de développement**. Clerk déconseille explicitement leur usage en production (limites d'usage strictes, mécanisme de synchronisation « dev browser » qui peut provoquer des comportements inattendus sur les routes protégées côté serveur/robots).
+
+Avant un lancement officiel :
+
+1. Dans le dashboard Clerk → créer/passer en instance **Production**
+2. Récupérer les nouvelles clés `pk_live_...` / `sk_live_...`
+3. Les renseigner dans `.env.vercel.production`, puis lancer `./scripts/sync-vercel-env.sh`
+4. Redéployer (`vercel deploy --prod`) pour que le build intègre les nouvelles clés
+
 ---
 
 ## Formulaires & intégrations

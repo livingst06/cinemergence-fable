@@ -37,18 +37,12 @@ async function seedContentIfEmpty(payload: Awaited<ReturnType<typeof import("../
 
   console.log("Seed contenu CMS (prod vide)…");
 
-  const existingUser = await payload.find({ collection: "users", limit: 1 });
-  if (existingUser.docs.length === 0) {
-    await payload.create({
-      collection: "users",
-      data: {
-        email: "admin@cinemergence.paris",
-        password: "ChangeMe123!",
-        name: "Admin Cinémergence",
-      },
-    });
-    console.log("✓ Admin créé");
-  }
+  // Authentification déléguée à Clerk (voir src/lib/clerk-strategy.ts) : le
+  // document `users` admin se crée automatiquement à la première connexion
+  // Clerk, ou se lie à un compte existant.
+  const { ensureAdminRole } = await import("../src/lib/ensure-admin-role");
+  const adminLog = await ensureAdminRole(payload);
+  if (adminLog) console.log(`✓ ${adminLog}`);
 
   await payload.updateGlobal({
     slug: "site-settings",

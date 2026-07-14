@@ -6,6 +6,7 @@ import {
   defaultSite,
   defaultTemoignages,
 } from "@/lib/defaults";
+import { ensureAdminRole } from "@/lib/ensure-admin-role";
 import { getPublicSiteUrl } from "@/lib/site-url";
 import { getPayloadClient } from "@/lib/payload";
 
@@ -18,18 +19,11 @@ export async function POST() {
     const payload = await getPayloadClient();
     const logs: string[] = [];
 
-    const existingUser = await payload.find({ collection: "users", limit: 1 });
-    if (existingUser.docs.length === 0) {
-      await payload.create({
-        collection: "users",
-        data: {
-          email: "admin@cinemergence.paris",
-          password: "ChangeMe123!",
-          name: "Admin Cinémergence",
-        },
-      });
-      logs.push("Admin user created");
-    }
+    // Authentification déléguée à Clerk (voir src/lib/clerk-strategy.ts) : le
+    // document `users` admin se crée automatiquement à la première connexion
+    // Clerk, ou se lie à un compte existant.
+    const adminLog = await ensureAdminRole(payload);
+    if (adminLog) logs.push(adminLog);
 
     await payload.updateGlobal({
       slug: "site-settings",

@@ -23,6 +23,11 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      logout: {
+        Button: "@/components/admin/LogoutButton#LogoutButton",
+      },
+    },
   },
   collections: [
     Users,

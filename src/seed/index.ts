@@ -14,22 +14,13 @@ async function seed() {
 
   const payload = await getPayloadClient();
 
-  const existingUser = await payload.find({
-    collection: "users",
-    limit: 1,
-  });
-
-  if (existingUser.docs.length === 0) {
-    await payload.create({
-      collection: "users",
-      data: {
-        email: "admin@cinemergence.paris",
-        password: "ChangeMe123!",
-        name: "Admin Cinémergence",
-      },
-    });
-    console.log("✓ Admin user created (admin@cinemergence.paris / ChangeMe123!)");
-  }
+  // Authentification déléguée à Clerk (voir src/lib/clerk-strategy.ts) : le
+  // document `users` admin se crée automatiquement à la première connexion
+  // Clerk, ou se lie à un compte existant. On s'assure ici seulement qu'un
+  // éventuel compte préexistant a bien role: admin (et le bon email).
+  const { ensureAdminRole } = await import("../lib/ensure-admin-role");
+  const adminLog = await ensureAdminRole(payload);
+  if (adminLog) console.log(`✓ ${adminLog}`);
 
   await payload.updateGlobal({
     slug: "site-settings",

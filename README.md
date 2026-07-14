@@ -28,7 +28,7 @@ pnpm seed
 
 - Site public : http://localhost:3000
 - Admin Payload : http://localhost:3000/admin
-- Identifiants seed : `admin@cinemergence.paris` / `ChangeMe123!`
+- Authentification : **Clerk** (voir section [Authentification (Clerk)](#authentification-clerk) ci-dessous). Créer un compte via `/sign-up` avec l'email `verdat.sylvain@gmail.com` pour récupérer les droits admin existants.
 
 ---
 
@@ -66,6 +66,40 @@ Dans Payload → Paramètres du site → cocher « Certification Qualiopi obtenu
 
 ---
 
+## Authentification (Clerk)
+
+Toute l'authentification du site — visiteurs publics **et** admin Payload — est déléguée à [Clerk](https://clerk.com). Payload conserve une collection `users` en profil miroir (`clerkId`, `role`, données métier) via une [stratégie d'authentification custom](https://payloadcms.com/docs/authentication/custom-strategies) (`src/lib/clerk-strategy.ts`).
+
+### Configuration (dashboard Clerk)
+
+1. Créer une application sur [clerk.com](https://clerk.com) (nom : « Cinémergence »)
+2. **API Keys** → copier `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` et `CLERK_SECRET_KEY`
+3. Renseigner ces clés dans `.env.local` (dev) et `.env.vercel.production` (prod), puis `./scripts/sync-vercel-env.sh`
+4. Dans **Domains** (Clerk dashboard), whitelister le domaine de production (`https://cinemergence.vercel.app` puis `https://cinemergence.fr` une fois le DNS configuré)
+5. Les URLs de connexion/inscription sont déjà configurées par défaut (`NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in`, `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up`)
+
+### Fonctionnement
+
+- `src/proxy.ts` protège `/admin(.*)` et toute route non listée comme publique : un visiteur non connecté est redirigé vers `/sign-in`
+- À la première requête authentifiée sur `/admin`, `src/lib/clerk-strategy.ts` upsert le document `users` correspondant :
+  1. Recherche par `clerkId`
+  2. Sinon recherche par email (migration en douceur des comptes historiques) et lie le `clerkId`
+  3. Sinon crée un nouveau document avec `role: "stagiaire"` par défaut
+- Seuls les documents `users` avec `role: "admin"` peuvent accéder au panneau `/admin` (`access.admin` dans `src/collections/Users.ts`)
+- Page `/mon-compte` : espace minimal (« Bonjour {prénom} » + déconnexion), point d'extension pour un futur espace stagiaire
+
+### Migrer le compte admin historique
+
+Le compte `verdat.sylvain@gmail.com` (ex-authentification locale Payload) doit créer un compte Clerk avec **le même email** via `/sign-up`. Son document `users` existant sera automatiquement lié par email. Pour vérifier/forcer que `role: "admin"` est bien conservé en production :
+
+```bash
+pnpm migrate:admin-role
+```
+
+L'ancien mot de passe local ne fonctionne plus après la bascule — c'est attendu.
+
+---
+
 ## Formulaires & intégrations
 
 - Server Actions : contact / inscription / financement
@@ -90,7 +124,8 @@ pnpm build
 
 Architecture Payload extensible pour :
 
-- Authentification **Clerk** + espace stagiaire
+- Espace stagiaire complet (suivi de formation, documents, certificats) — s'appuie sur l'authentification Clerk déjà en place
+- Webhook Clerk (`/api/webhooks/clerk`) pour synchronisation temps réel / désactivation de comptes
 - Paiement **Stripe** + réservation de créneaux
 - Admin stages / sessions / créneaux horaires
 - Catalogue dynamique avec filtres
@@ -125,6 +160,10 @@ chmod +x scripts/sync-vercel-env.sh
 | `DATABASE_URI` | Postgres Supabase (connection string) |
 | `PAYLOAD_SECRET` | Secret Payload (32+ caractères) |
 | `NEXT_PUBLIC_SITE_URL` | URL publique canonique — `https://cinemergence.vercel.app` en prod pour l'instant ; `https://cinemergence.fr` une fois le DNS configuré |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk → API Keys (clé publique) |
+| `CLERK_SECRET_KEY` | Clerk → API Keys (clé secrète) |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | `/sign-in` |
+| `NEXT_PUBLIC_CLERK_SIGN_UP_URL` | `/sign-up` |
 | `S3_BUCKET` | `cinemergence-media` |
 | `S3_REGION` | ex. `eu-central-1` |
 | `S3_ENDPOINT` | `https://<PROJECT_REF>.storage.supabase.co/storage/v1/s3` |

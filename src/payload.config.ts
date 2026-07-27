@@ -39,6 +39,18 @@ export default buildConfig({
   ],
   globals: [SiteSettings, LegalPages],
   editor: lexicalEditor(),
+  email: ({ payload }) => ({
+    name: "console",
+    defaultFromAddress: "info@payloadcms.com",
+    defaultFromName: "Payload",
+    sendEmail: async ({ subject, to }) => {
+      payload.logger.info({
+        msg: "Payload email written to console",
+        subject,
+        to,
+      });
+    },
+  }),
   secret: process.env.PAYLOAD_SECRET || "dev-secret-change-in-production-min-32",
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),

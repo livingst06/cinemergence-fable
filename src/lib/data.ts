@@ -12,7 +12,6 @@ import {
   isImageMimeType,
   resolveDisplayMediaUrl,
   resolveMediaMimeType,
-  resolveMediaUrl,
 } from "./media-utils";
 import { getPayloadClient } from "./payload";
 import { isLocalMediaStorage } from "./storage-env";

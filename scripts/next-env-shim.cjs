@@ -1,3 +1,5 @@
+// This preload is intentionally CommonJS because Node loads it through --require.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const Module = require("module");
 
 const originalLoad = Module._load;

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import config from "@payload-config";
 import { RootLayout, handleServerFunctions } from "@payloadcms/next/layouts";
 import "@payloadcms/next/css";
@@ -19,6 +20,8 @@ const serverFunction = async (args: {
   args: Record<string, unknown>;
 }) => {
   "use server";
+  await auth.protect();
+
   return handleServerFunctions({
     ...args,
     config,

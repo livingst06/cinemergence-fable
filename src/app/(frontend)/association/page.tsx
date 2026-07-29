@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "L'association Cinémergence — À propos",
     description:
-      "Cinémergence, association loi 1901 à Paris. Stage Bande Démo Cinéma encadré comme un vrai plateau de tournage.",
+      "Cinémergence, école de formation cinéma à Paris. Association loi 1901 et organisme de formation déclaré.",
     alternates: { canonical: "/association" },
   };
 }
@@ -20,32 +20,32 @@ export default async function AssociationPage() {
     <>
       <PageHero
         eyebrow="À propos"
-        title="Le cinéma n'attend pas, et toi non plus"
-        description="Une équipe de professionnels du cinéma réunis pour rendre la qualité de tournage accessible à tous les comédiens."
+        title="École de formation cinéma"
+        description="Une équipe de professionnels réunis pour former en conditions réelles de plateau — comédiens, techniciens et entreprises."
       />
       <Section>
         <div className="container-page grid gap-12 lg:grid-cols-2">
           <div>
             <SectionHeader
               eyebrow="Notre mission"
-              title="Rendre le plateau accessible"
+              title="Former comme on tourne"
               align="left"
               className="mb-8"
             />
             <div className="space-y-4 text-muted-text">
               <p>
-                Nous sommes une équipe de professionnels du cinéma réunis autour d&apos;une même
-                idée : rendre la qualité de tournage accessible à tous les comédiens, même ceux qui
-                débutent.
+                Cinémergence est une école de formation cinéma à Paris. Nous réunissons des
+                professionnels du cinéma autour d&apos;une idée claire : former en conditions
+                réelles de plateau, avec le même niveau d&apos;exigence que sur un tournage.
               </p>
               <p>
                 Notre expérience dans la réalisation, la direction d&apos;acteur et la production
-                nous permet de proposer des week-ends de tournage encadrés comme de vrais plateaux.
+                nourrit des parcours concrets — chacun avec un livrable pour le stagiaire.
               </p>
               <p>
-                Le stage Bande Démo Cinéma a été conçu pour offrir à chaque participant une
-                expérience concrète, formatrice et valorisante, tout en respectant les standards du
-                cinéma professionnel.
+                Association loi 1901 et organisme de formation déclaré (NDA {site.nda}), nous
+                accompagnons aussi le financement des formations (AFDAS, OPCO, CPF, France
+                Travail).
               </p>
             </div>
           </div>
@@ -91,9 +91,14 @@ export default async function AssociationPage() {
           <p className="mx-auto mt-4 max-w-xl text-muted-text">
             Écris-nous ou appelle-nous au {site.phone} — on te répond rapidement.
           </p>
-          <ButtonLink href="/contact" className="mt-8 btn-cta">
-            Nous contacter
-          </ButtonLink>
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <ButtonLink href="/formations" className="btn-cta">
+              Voir les formations
+            </ButtonLink>
+            <ButtonLink href="/contact" className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider">
+              Nous contacter
+            </ButtonLink>
+          </div>
         </div>
       </Section>
     </>

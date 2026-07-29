@@ -19,7 +19,7 @@ export function Temoignages({ temoignages }: TemoignagesProps) {
         <SectionHeader
           eyebrow="Témoignages"
           title="L'avis de nos stagiaires"
-          description="Six parcours, six retours d'expérience sur le stage Bande Démo Cinéma."
+          description="Six parcours, six retours d'expérience sur nos formations."
         />
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {temoignages.map((t, i) => (

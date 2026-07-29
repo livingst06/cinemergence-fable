@@ -11,7 +11,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "Galerie — Tournages et livrables",
   description:
-    "Photos et vidéos des stages Cinémergence : plateaux de tournage, master classes et livrables des stagiaires.",
+    "Photos et vidéos des formations Cinémergence : plateaux de tournage et livrables des stagiaires.",
   alternates: { canonical: "/galerie" },
 };
 
@@ -19,7 +19,7 @@ export default async function GaleriePage() {
   const media = await getGalleryMedia();
 
   const placeholders = [
-    "Plateau de tournage — Master class",
+    "Plateau de tournage — Formation",
     "Livrable stagiaire — Court-métrage",
     "Plateau — Jeu d'acteur face caméra",
     "Livrable stagiaire — Bande démo",
@@ -32,13 +32,13 @@ export default async function GaleriePage() {
       <PageHero
         eyebrow="Médias"
         title="Sur le plateau"
-        description="Tournages, master classes et livrables produits par nos stagiaires."
+        description="Tournages et livrables produits par nos stagiaires."
       />
       <Section>
         <div className="container-page">
           <SectionHeader
             eyebrow="Galerie"
-            title="Images des stages"
+            title="Images des formations"
             description="Moments capturés sur nos plateaux et livrables produits par les stagiaires."
           />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

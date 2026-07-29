@@ -14,12 +14,14 @@ export const SiteSettings: GlobalConfig = {
       name: "tagline",
       type: "text",
       required: true,
-      defaultValue: "Le cinéma, c'est pour toi.",
+      defaultValue: "Formations cinéma en conditions réelles de plateau, à Paris.",
     },
     {
       name: "description",
       type: "textarea",
       required: true,
+      defaultValue:
+        "Cinémergence, école de formation cinéma à Paris. Formations professionnelles pour comédiens, techniciens et entreprises — encadrées comme de vrais plateaux.",
     },
     {
       name: "url",

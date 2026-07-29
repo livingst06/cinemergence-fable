@@ -27,11 +27,15 @@ export const Formations: CollectionConfig = {
       name: "pole",
       type: "text",
       required: true,
+      admin: {
+        description: "Pôle catalogue : Jeu, Réalisation, Technique, Écriture, Production, Entreprise…",
+      },
     },
     {
       name: "titre",
       type: "text",
       required: true,
+      label: "Intitulé",
     },
     {
       name: "titreCourt",
@@ -39,9 +43,17 @@ export const Formations: CollectionConfig = {
       required: true,
     },
     {
+      name: "sousTitre",
+      type: "text",
+      admin: {
+        description: "Sous-titre sous l'intitulé (fiche)",
+      },
+    },
+    {
       name: "prioritaire",
       type: "checkbox",
       defaultValue: false,
+      label: "À la une",
     },
     {
       name: "accroche",
@@ -57,11 +69,24 @@ export const Formations: CollectionConfig = {
       name: "livrable",
       type: "text",
       required: true,
+      admin: {
+        description: "Libellé court pour les cartes",
+      },
+    },
+    {
+      name: "livrables",
+      type: "array",
+      fields: [{ name: "item", type: "text", required: true }],
     },
     {
       name: "intro",
       type: "textarea",
       required: true,
+    },
+    {
+      name: "contexteFinalite",
+      type: "textarea",
+      label: "Contexte et finalité professionnelle",
     },
     {
       name: "pourQui",
@@ -75,24 +100,53 @@ export const Formations: CollectionConfig = {
       fields: [{ name: "item", type: "text", required: true }],
     },
     {
+      name: "competences",
+      type: "array",
+      label: "Compétences visées",
+      fields: [{ name: "item", type: "text", required: true }],
+    },
+    {
       name: "programme",
       type: "array",
       required: true,
       fields: [
+        { name: "jour", type: "number", admin: { description: "N° du jour (optionnel)" } },
         { name: "titre", type: "text", required: true },
-        { name: "detail", type: "textarea", required: true },
+        { name: "objectifJournee", type: "textarea" },
+        { name: "detail", type: "textarea" },
+        {
+          name: "sequences",
+          type: "array",
+          fields: [
+            { name: "titre", type: "text", required: true },
+            { name: "duree", type: "text" },
+            { name: "detail", type: "textarea" },
+          ],
+        },
       ],
     },
     {
       name: "duree",
       type: "text",
       required: true,
+      admin: { description: "Libellé affiché, ex. 35 heures — 5 journées" },
     },
+    { name: "dureeHeures", type: "number" },
+    { name: "dureeJours", type: "number" },
     {
       name: "format",
       type: "text",
       required: true,
     },
+    {
+      name: "modalite",
+      type: "text",
+      defaultValue: "Présentiel",
+    },
+    { name: "effectifMax", type: "number" },
+    { name: "prerequis", type: "textarea" },
+    { name: "lieu", type: "text" },
+    { name: "delaiAcces", type: "text" },
     {
       name: "tarif",
       type: "text",
@@ -105,6 +159,24 @@ export const Formations: CollectionConfig = {
       type: "select",
       hasMany: true,
       options: financementOptions,
+    },
+    {
+      name: "methodesPedagogiques",
+      type: "array",
+      fields: [{ name: "item", type: "text", required: true }],
+    },
+    {
+      name: "moyensTechniques",
+      type: "array",
+      fields: [{ name: "item", type: "text", required: true }],
+    },
+    { name: "encadrement", type: "textarea" },
+    { name: "evaluation", type: "textarea", label: "Modalités d'évaluation et de suivi" },
+    { name: "accessibilite", type: "textarea" },
+    {
+      name: "modalitesAccesFinancement",
+      type: "textarea",
+      label: "Modalités d'accès et financement",
     },
     {
       name: "intervenants",

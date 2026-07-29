@@ -8,6 +8,7 @@ import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Logo } from "@/components/layout/Logo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import type { FormationData } from "@/lib/defaults";
+import { formationPath } from "@/lib/defaults";
 
 type HeaderProps = {
   formations: Pick<FormationData, "slug" | "titreCourt" | "prioritaire">[];
@@ -50,6 +51,9 @@ export function Header({ formations }: HeaderProps) {
     };
   }, []);
 
+  const featured = formations.filter((f) => f.prioritaire);
+  const menuFormations = featured.length > 0 ? featured : formations.slice(0, 4);
+
   return (
     <>
       <header className="site-header fixed inset-x-0 top-0 z-[99999] border-b border-border bg-noir pt-[env(safe-area-inset-top,0px)]">
@@ -68,27 +72,33 @@ export function Header({ formations }: HeaderProps) {
                 }
               }}
             >
-              <button
-                type="button"
+              <Link
+                href="/formations"
                 className="text-sm font-medium text-cream/75 transition-colors hover:text-or-light"
                 aria-expanded={formationsOpen}
                 aria-haspopup="true"
               >
                 Formations
-              </button>
+              </Link>
               {formationsOpen && (
                 <div className="absolute left-0 top-full z-50 pt-3">
                   <div className="w-80 overflow-hidden rounded-2xl border border-border bg-noir-secondary p-2 shadow-2xl plateau-glow">
-                    {formations.map((f) => (
+                    <Link
+                      href="/formations"
+                      className="mb-1 block rounded-xl px-3 py-2.5 text-sm font-semibold text-or-light transition-colors hover:bg-noir-tertiary/50"
+                    >
+                      Voir tout le catalogue
+                    </Link>
+                    {menuFormations.map((f) => (
                       <Link
                         key={f.slug}
-                        href={`/${f.slug}`}
+                        href={formationPath(f.slug)}
                         className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-cream/90 transition-colors hover:bg-noir-tertiary/50 hover:text-or-light"
                       >
                         <span>{f.titreCourt}</span>
                         {f.prioritaire && (
                           <span className="rounded-full bg-projector/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-projector-light">
-                            Live
+                            À la une
                           </span>
                         )}
                       </Link>
@@ -110,7 +120,7 @@ export function Header({ formations }: HeaderProps) {
 
             <ThemeToggle className="h-9 w-9" />
             <ButtonLink href="/contact" size="sm" className="btn-cta px-5">
-              Je me lance
+              Je m&apos;inscris
             </ButtonLink>
           </nav>
 
@@ -145,10 +155,17 @@ export function Header({ formations }: HeaderProps) {
         >
           <div className="container-page flex flex-col gap-1 py-4 pb-8">
             <p className="eyebrow px-2 py-2">Formations</p>
+            <Link
+              href="/formations"
+              className="block rounded-xl px-3 py-3 text-sm font-semibold text-or-light active:bg-noir-tertiary/50"
+              onClick={closeMobileNav}
+            >
+              Voir tout le catalogue
+            </Link>
             {formations.map((f) => (
               <Link
                 key={f.slug}
-                href={`/${f.slug}`}
+                href={formationPath(f.slug)}
                 className="block rounded-xl px-3 py-3 text-sm text-cream/90 active:bg-noir-tertiary/50"
                 onClick={closeMobileNav}
               >
@@ -167,7 +184,7 @@ export function Header({ formations }: HeaderProps) {
               </Link>
             ))}
             <ButtonLink href="/contact" className="btn-cta mt-3" onClick={closeMobileNav}>
-              Je me lance
+              Je m&apos;inscris
             </ButtonLink>
           </div>
         </nav>

@@ -41,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(site.url),
     title: {
-      default: `${site.name} — Formation cinéma Paris`,
+      default: `${site.name} — École de formation cinéma Paris`,
       template: `%s | ${site.name}`,
     },
     description: site.description,

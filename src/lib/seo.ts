@@ -5,6 +5,7 @@ export function organizationJsonLd(site: SiteConfig) {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     name: site.name,
+    alternateName: "Cinémergence — École de formation cinéma",
     description: site.description,
     url: site.url,
     email: site.email,
@@ -31,10 +32,11 @@ export function courseJsonLd(
     "@type": "Course",
     name: formation.titre,
     description: formation.metaDescription,
-    url: `${site.url}/${formation.slug}`,
+    url: `${site.url}/formations/${formation.slug}`,
     provider: {
       "@type": "EducationalOrganization",
       name: site.name,
+      description: "École de formation cinéma",
     },
     timeRequired: formation.duree,
   };

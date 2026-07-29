@@ -111,24 +111,81 @@ function mapIntervenantSlugs(doc: Record<string, unknown>): string[] {
     .filter((slug): slug is string => Boolean(slug));
 }
 
+function mapStringArray(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((item) => {
+      if (typeof item === "string") return item;
+      if (typeof item === "object" && item && "item" in item) {
+        return String((item as { item: string }).item);
+      }
+      return null;
+    })
+    .filter((v): v is string => Boolean(v));
+}
+
+function mapProgramme(raw: unknown): FormationData["programme"] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((item) => {
+    const row = item as Record<string, unknown>;
+    const sequencesRaw = row.sequences;
+    const sequences = Array.isArray(sequencesRaw)
+      ? sequencesRaw.map((seq) => {
+          const s = seq as Record<string, unknown>;
+          return {
+            titre: String(s.titre ?? ""),
+            duree: s.duree ? String(s.duree) : undefined,
+            detail: s.detail ? String(s.detail) : undefined,
+          };
+        })
+      : undefined;
+    return {
+      jour: typeof row.jour === "number" ? row.jour : undefined,
+      titre: String(row.titre ?? ""),
+      objectifJournee: row.objectifJournee ? String(row.objectifJournee) : undefined,
+      detail: row.detail ? String(row.detail) : undefined,
+      sequences,
+    };
+  });
+}
+
 function mapFormation(doc: Record<string, unknown>): FormationData {
   return {
     slug: String(doc.slug),
     pole: String(doc.pole),
     titre: String(doc.titre),
     titreCourt: String(doc.titreCourt),
+    sousTitre: doc.sousTitre ? String(doc.sousTitre) : undefined,
     prioritaire: Boolean(doc.prioritaire),
     accroche: String(doc.accroche),
     publicCible: String(doc.publicCible),
     livrable: String(doc.livrable),
+    livrables: mapStringArray(doc.livrables),
     intro: String(doc.intro),
+    contexteFinalite: doc.contexteFinalite ? String(doc.contexteFinalite) : undefined,
     pourQui: String(doc.pourQui),
-    objectifs: (doc.objectifs as { item: string }[] | undefined)?.map((o) => o.item) ?? [],
-    programme: (doc.programme as { titre: string; detail: string }[] | undefined) ?? [],
+    objectifs: mapStringArray(doc.objectifs),
+    competences: mapStringArray(doc.competences),
+    programme: mapProgramme(doc.programme),
     duree: String(doc.duree),
+    dureeHeures: typeof doc.dureeHeures === "number" ? doc.dureeHeures : undefined,
+    dureeJours: typeof doc.dureeJours === "number" ? doc.dureeJours : undefined,
     format: String(doc.format),
+    modalite: doc.modalite ? String(doc.modalite) : undefined,
+    effectifMax: typeof doc.effectifMax === "number" ? doc.effectifMax : undefined,
+    prerequis: doc.prerequis ? String(doc.prerequis) : undefined,
+    lieu: doc.lieu ? String(doc.lieu) : undefined,
+    delaiAcces: doc.delaiAcces ? String(doc.delaiAcces) : undefined,
     tarif: doc.tarif ? String(doc.tarif) : null,
     financements: (doc.financements as FormationData["financements"]) ?? [],
+    methodesPedagogiques: mapStringArray(doc.methodesPedagogiques),
+    moyensTechniques: mapStringArray(doc.moyensTechniques),
+    encadrement: doc.encadrement ? String(doc.encadrement) : undefined,
+    evaluation: doc.evaluation ? String(doc.evaluation) : undefined,
+    accessibilite: doc.accessibilite ? String(doc.accessibilite) : undefined,
+    modalitesAccesFinancement: doc.modalitesAccesFinancement
+      ? String(doc.modalitesAccesFinancement)
+      : undefined,
     intervenants: mapIntervenantSlugs(doc),
     faq: (doc.faq as { q: string; r: string }[] | undefined) ?? [],
     metaTitle: String(doc.metaTitle),
@@ -146,7 +203,7 @@ export async function getFormations(): Promise<FormationData[]> {
     const payload = await getPayloadClient();
     const result = await payload.find({
       collection: "formations",
-      limit: 20,
+      limit: 50,
       sort: "-prioritaire",
       depth: 1,
     });
@@ -158,7 +215,10 @@ export async function getFormations(): Promise<FormationData[]> {
     }
     return result.docs.map((doc) => mapFormation(doc as Record<string, unknown>));
   } catch {
-    return defaultFormations;
+    return defaultFormations.map((f) => ({
+      ...f,
+      coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
+    }));
   }
 }
 

@@ -30,10 +30,18 @@ export function Footer({ site, formations }: FooterProps) {
               Formations
             </h3>
             <ul className="space-y-2">
+              <li>
+                <Link
+                  href="/formations"
+                  className="text-sm font-semibold text-or-light transition-colors hover:text-projector-light"
+                >
+                  Toutes les formations
+                </Link>
+              </li>
               {formations.map((f) => (
                 <li key={f.slug}>
                   <Link
-                    href={`/${f.slug}`}
+                    href={`/formations/${f.slug}`}
                     className="text-sm text-cream/70 transition-colors hover:text-or-light"
                   >
                     {f.titreCourt}

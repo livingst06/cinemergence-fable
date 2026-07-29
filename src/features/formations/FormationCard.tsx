@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { MediaFrame } from "@/components/ui/MediaFrame";
 import type { FormationData } from "@/lib/defaults";
+import { formationLivrableLabel, formationPath } from "@/lib/defaults";
 import { cn } from "@/lib/utils";
 
 type FormationCardProps = {
@@ -25,11 +26,14 @@ export function FormationCard({ formation, featured }: FormationCardProps) {
           mimeType={formation.coverImageMimeType}
           alt={`Plateau — ${formation.titreCourt}`}
           aspect={featured ? "wide" : "video"}
-          className={cn("rounded-none border-0 border-b border-white/[0.06]", featured && "md:aspect-auto md:h-full md:min-h-[260px]")}
+          className={cn(
+            "rounded-none border-0 border-b border-white/[0.06]",
+            featured && "md:aspect-auto md:h-full md:min-h-[260px]",
+          )}
         />
         {formation.prioritaire && (
           <span className="absolute left-4 top-4 rounded-full bg-projector px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-cream shadow-lg">
-            Prioritaire
+            À la une
           </span>
         )}
       </div>
@@ -44,10 +48,10 @@ export function FormationCard({ formation, featured }: FormationCardProps) {
           {formation.accroche}
         </p>
         <p className="mt-4 border-t border-white/[0.06] pt-4 text-xs font-medium uppercase tracking-[0.15em] text-or-light">
-          Livrable · {formation.livrable}
+          Livrable · {formationLivrableLabel(formation)}
         </p>
         <ButtonLink
-          href={`/${formation.slug}`}
+          href={formationPath(formation.slug)}
           variant="ghost"
           className="mt-5 w-fit px-0 text-or-light hover:bg-transparent hover:text-projector-light"
         >

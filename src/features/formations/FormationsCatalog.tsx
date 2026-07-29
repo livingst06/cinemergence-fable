@@ -42,6 +42,7 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
 
   const featured = filtered.filter((f) => f.prioritaire);
   const others = filtered.filter((f) => !f.prioritaire);
+  const ordered = [...featured, ...others];
 
   return (
     <div>
@@ -85,28 +86,13 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
         ))}
       </div>
 
-      {featured.length > 0 && (
-        <div className="grid gap-6 md:grid-cols-2">
-          {featured.map((f) => (
-            <FormationCard key={f.slug} formation={f} featured />
-          ))}
-        </div>
-      )}
-
-      {others.length > 0 && (
-        <div
-          className={cn(
-            "grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
-            featured.length > 0 && "mt-6",
-          )}
-        >
-          {others.map((f) => (
+      {ordered.length > 0 ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+          {ordered.map((f) => (
             <FormationCard key={f.slug} formation={f} />
           ))}
         </div>
-      )}
-
-      {filtered.length === 0 && (
+      ) : (
         <p className="text-center text-muted-text">
           Aucune formation pour ce filtre pour le moment.
         </p>

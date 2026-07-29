@@ -142,25 +142,11 @@ export default async function HomePage() {
             title="Nos formations"
             description="Des parcours professionnalisants, chacun avec un livrable clair pour le stagiaire."
           />
-          <div className="catalogue-scroll -mx-5 flex gap-5 overflow-x-auto px-5 pb-4 snap-x snap-mandatory md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0">
-            {apercu.map((f) => (
-              <div key={f.slug} className="min-w-[88vw] shrink-0 snap-center md:min-w-0">
-                <FormationCard formation={f} featured />
-              </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+            {[...apercu, ...autresApercu].map((f) => (
+              <FormationCard key={f.slug} formation={f} />
             ))}
           </div>
-          {autresApercu.length > 0 && (
-            <div className="catalogue-scroll mt-6 -mx-5 flex gap-5 overflow-x-auto px-5 pb-4 snap-x snap-mandatory lg:mx-0 lg:grid lg:grid-cols-4 lg:overflow-visible lg:px-0 lg:pb-0">
-              {autresApercu.map((f) => (
-                <div
-                  key={f.slug}
-                  className="min-w-[72vw] shrink-0 snap-center sm:min-w-[45vw] lg:min-w-0"
-                >
-                  <FormationCard formation={f} />
-                </div>
-              ))}
-            </div>
-          )}
           <div className="mt-10 text-center">
             <ButtonLink href="/formations" className="btn-cta">
               Voir toutes les formations

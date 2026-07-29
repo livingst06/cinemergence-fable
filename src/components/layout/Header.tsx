@@ -56,7 +56,7 @@ export function Header({ formations }: HeaderProps) {
 
   return (
     <>
-      <header className="site-header fixed inset-x-0 top-0 z-[99999] border-b border-border bg-noir pt-[env(safe-area-inset-top,0px)]">
+      <header className="site-header fixed inset-x-0 top-0 z-[99999] border-b border-border bg-noir-secondary/95 pt-[env(safe-area-inset-top,0px)] backdrop-blur-md">
         <div className="container-page flex h-16 items-center justify-between gap-3 md:h-[4.5rem]">
           <Logo className="min-w-0 max-w-[55%] shrink" />
 

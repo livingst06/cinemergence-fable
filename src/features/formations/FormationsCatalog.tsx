@@ -87,7 +87,7 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
       </div>
 
       {ordered.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+        <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
           {ordered.map((f) => (
             <FormationCard key={f.slug} formation={f} />
           ))}

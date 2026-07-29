@@ -141,9 +141,6 @@
 
   body {
     @apply bg-noir text-cream font-sans antialiased;
-    background-image:
-      radial-gradient(ellipse 120% 80% at 100% -20%, var(--cool-mist), transparent 50%),
-      radial-gradient(ellipse 80% 50% at 0% 100%, rgba(139, 26, 43, 0.05), transparent 45%);
   }
 
   .mobile-nav-panel {

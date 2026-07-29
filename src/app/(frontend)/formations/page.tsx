@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 
-import { Section, SectionHeader } from "@/components/ui/Section";
-import { PageHero } from "@/components/sections/PageHero";
 import { FormationsCatalog } from "@/features/formations/FormationsCatalog";
 import { getFormations, getSiteSettings } from "@/lib/data";
 
@@ -20,24 +18,17 @@ export default async function FormationsIndexPage() {
   const formations = await getFormations();
 
   return (
-    <>
-      <PageHero
-        eyebrow="Catalogue"
-        title="Nos formations"
-        description="Parcours professionnalisants pour comédiens, techniciens et entreprises — chacun avec un livrable clair pour le stagiaire."
-      />
-      <Section>
-        <div className="container-page">
-          <SectionHeader
-            eyebrow="Choisir"
-            title="Trouve ta formation"
-            description="Filtre par pôle ou parcours toute l'offre."
-            align="left"
-            className="mb-10"
-          />
-          <FormationsCatalog formations={formations} />
-        </div>
-      </Section>
-    </>
+    <div className="container-page py-12 md:py-16 lg:py-20">
+      <header className="mb-10 max-w-3xl md:mb-12">
+        <p className="eyebrow mb-4">Catalogue</p>
+        <h1 className="display-title text-cream">Nos formations</h1>
+        <p className="mt-5 text-base leading-relaxed text-muted-text md:text-lg">
+          Parcours professionnalisants pour comédiens, techniciens et entreprises — chacun
+          avec un livrable clair pour le stagiaire.
+        </p>
+      </header>
+
+      <FormationsCatalog formations={formations} />
+    </div>
   );
 }

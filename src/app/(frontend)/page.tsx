@@ -142,7 +142,7 @@ export default async function HomePage() {
             title="Nos formations"
             description="Des parcours professionnalisants, chacun avec un livrable clair pour le stagiaire."
           />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+          <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
             {[...apercu, ...autresApercu].map((f) => (
               <FormationCard key={f.slug} formation={f} />
             ))}

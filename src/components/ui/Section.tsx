@@ -4,20 +4,13 @@ type SectionProps = {
   children: React.ReactNode;
   className?: string;
   id?: string;
+  /** Conservé pour compat — plus d’alternance de fond. */
   variant?: "default" | "secondary" | "dark";
 };
 
-export function Section({ children, className, id, variant = "default" }: SectionProps) {
+export function Section({ children, className, id }: SectionProps) {
   return (
-    <section
-      id={id}
-      className={cn(
-        "py-20 md:py-28",
-        variant === "secondary" && "bg-noir-secondary",
-        variant === "dark" && "bg-noir-tertiary",
-        className,
-      )}
-    >
+    <section id={id} className={cn("py-20 md:py-28", className)}>
       {children}
     </section>
   );

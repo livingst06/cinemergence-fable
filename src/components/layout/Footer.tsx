@@ -10,7 +10,7 @@ type FooterProps = {
 
 export function Footer({ site, formations }: FooterProps) {
   return (
-    <footer className="border-t border-white/[0.06] bg-noir-deep">
+    <footer className="border-t border-border bg-noir-secondary">
       <div className="container-page py-16">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div>

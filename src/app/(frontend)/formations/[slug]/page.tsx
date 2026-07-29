@@ -9,8 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { MediaFrame } from "@/components/ui/MediaFrame";
-import { Section, SectionHeader } from "@/components/ui/Section";
-import { PageHero } from "@/components/sections/PageHero";
+import { SectionHeader } from "@/components/ui/Section";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { defaultFinancement, formationLivrableLabel, formationPath } from "@/lib/defaults";
@@ -74,67 +73,66 @@ export default async function FormationDetailPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <PageHero
-        eyebrow={formation.pole}
-        title={formation.titre}
-        description={formation.sousTitre ?? formation.accroche}
-      >
-        <div className="mt-8 flex flex-wrap gap-3">
-          {formation.prioritaire && (
-            <Badge className="bg-projector text-cream">À la une</Badge>
-          )}
-          <Badge variant="outline" className="border-white/10 bg-white/[0.03] text-or-light">
-            Livrable : {formationLivrableLabel(formation)}
-          </Badge>
-          {formation.modalite && (
-            <Badge variant="outline" className="border-white/10 bg-white/[0.03] text-cream/80">
-              {formation.modalite}
+      <div className="container-page space-y-16 py-12 md:space-y-20 md:py-16 lg:py-20">
+        <header className="max-w-4xl">
+          <p className="eyebrow mb-4">{formation.pole}</p>
+          <h1 className="display-title text-cream">{formation.titre}</h1>
+          <p className="mt-5 text-base leading-relaxed text-muted-text md:text-lg">
+            {formation.sousTitre ?? formation.accroche}
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            {formation.prioritaire && (
+              <Badge className="bg-projector text-cream">À la une</Badge>
+            )}
+            <Badge variant="outline" className="border-white/10 bg-white/[0.03] text-or-light">
+              Livrable : {formationLivrableLabel(formation)}
             </Badge>
-          )}
-        </div>
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-          <ButtonLink
-            href={`/contact?formation=${formation.slug}`}
-            size="lg"
-            className="btn-cta"
-          >
-            Je m&apos;inscris
-          </ButtonLink>
-          <ButtonLink
-            href="/financement"
-            size="lg"
-            className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
-          >
-            Financer ma formation
-          </ButtonLink>
-        </div>
-      </PageHero>
+            {formation.modalite && (
+              <Badge variant="outline" className="border-white/10 bg-white/[0.03] text-cream/80">
+                {formation.modalite}
+              </Badge>
+            )}
+          </div>
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+            <ButtonLink
+              href={`/contact?formation=${formation.slug}`}
+              size="lg"
+              className="btn-cta"
+            >
+              Je m&apos;inscris
+            </ButtonLink>
+            <ButtonLink
+              href="/financement"
+              size="lg"
+              className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
+            >
+              Financer ma formation
+            </ButtonLink>
+          </div>
+        </header>
 
-      <Section>
-        <div className="container-page grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          <div className="card-stage p-6">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+          <div className="card-stage p-5 md:p-6">
             <p className="eyebrow">Durée</p>
             <p className="mt-2 font-heading text-2xl text-cream">{formation.duree}</p>
           </div>
-          <div className="card-stage p-6">
+          <div className="card-stage p-5 md:p-6">
             <p className="eyebrow">Format</p>
             <p className="mt-2 font-heading text-2xl text-cream">{formation.format}</p>
           </div>
-          <div className="card-stage p-6">
+          <div className="card-stage p-5 md:p-6">
             <p className="eyebrow">Tarif</p>
             <p className="mt-2 font-heading text-2xl text-cream">
               {formation.tarif ?? "À confirmer"}
             </p>
           </div>
-          <div className="card-stage p-6">
+          <div className="card-stage p-5 md:p-6">
             <p className="eyebrow">Public</p>
             <p className="mt-2 text-sm leading-relaxed text-cream/90">{formation.publicCible}</p>
           </div>
         </div>
-      </Section>
 
-      <Section variant="secondary">
-        <div className="container-page grid gap-12 lg:grid-cols-2">
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
           <div>
             <h2 className="section-title text-cream">Pour qui ?</h2>
             <p className="mt-4 text-muted-text">{formation.pourQui}</p>
@@ -165,27 +163,28 @@ export default async function FormationDetailPage({ params }: Props) {
             className={formation.prioritaire ? "gold-glow" : undefined}
           />
         </div>
-      </Section>
 
-      <Section>
-        <div className="container-page max-w-3xl">
+        <div className="max-w-3xl">
           <SectionHeader
             eyebrow="Finalité"
             title="Ce que cette formation change"
             align="left"
+            className="mb-6 md:mb-8"
           />
-          <p className="mt-6 leading-relaxed text-muted-text">
+          <p className="leading-relaxed text-muted-text">
             {formation.contexteFinalite ?? formation.intro}
           </p>
           {formation.contexteFinalite && (
             <p className="mt-4 leading-relaxed text-muted-text">{formation.intro}</p>
           )}
         </div>
-      </Section>
 
-      <Section variant="secondary">
-        <div className="container-page">
-          <SectionHeader eyebrow="Objectifs pédagogiques" title="À l'issue, tu seras capable de" />
+        <div>
+          <SectionHeader
+            eyebrow="Objectifs pédagogiques"
+            title="À l'issue, tu seras capable de"
+            className="mb-8 md:mb-10"
+          />
           <ul className="grid gap-3 md:grid-cols-2">
             {formation.objectifs.map((obj) => (
               <li
@@ -198,12 +197,14 @@ export default async function FormationDetailPage({ params }: Props) {
             ))}
           </ul>
         </div>
-      </Section>
 
-      {competences.length > 0 && (
-        <Section>
-          <div className="container-page">
-            <SectionHeader eyebrow="Compétences visées" title="Ce que tu développes" />
+        {competences.length > 0 && (
+          <div>
+            <SectionHeader
+              eyebrow="Compétences visées"
+              title="Ce que tu développes"
+              className="mb-8 md:mb-10"
+            />
             <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {competences.map((c) => (
                 <li key={c} className="card-stage p-5 text-sm text-cream/90">
@@ -212,12 +213,14 @@ export default async function FormationDetailPage({ params }: Props) {
               ))}
             </ul>
           </div>
-        </Section>
-      )}
+        )}
 
-      <Section variant="secondary">
-        <div className="container-page">
-          <SectionHeader eyebrow="Programme" title="Déroulement de la formation" />
+        <div>
+          <SectionHeader
+            eyebrow="Programme"
+            title="Déroulement de la formation"
+            className="mb-8 md:mb-10"
+          />
           <div className="grid gap-4 md:grid-cols-2">
             {formation.programme.map((module, i) => (
               <div key={`${module.titre}-${i}`} className="card-stage p-6">
@@ -252,11 +255,9 @@ export default async function FormationDetailPage({ params }: Props) {
             ))}
           </div>
         </div>
-      </Section>
 
-      <Section>
-        <div className="container-page">
-          <SectionHeader eyebrow="Livrables" title="Tu repars avec" />
+        <div>
+          <SectionHeader eyebrow="Livrables" title="Tu repars avec" className="mb-8 md:mb-10" />
           <ul className="grid gap-3 md:grid-cols-2">
             {livrables.map((item) => (
               <li
@@ -269,11 +270,9 @@ export default async function FormationDetailPage({ params }: Props) {
             ))}
           </ul>
         </div>
-      </Section>
 
-      {(methodes.length > 0 || moyens.length > 0 || formation.encadrement) && (
-        <Section variant="secondary">
-          <div className="container-page grid gap-10 lg:grid-cols-3">
+        {(methodes.length > 0 || moyens.length > 0 || formation.encadrement) && (
+          <div className="grid max-w-3xl gap-10">
             {methodes.length > 0 && (
               <div>
                 <h3 className="font-heading text-xl text-cream">Méthodes pédagogiques</h3>
@@ -303,18 +302,17 @@ export default async function FormationDetailPage({ params }: Props) {
               </div>
             )}
           </div>
-        </Section>
-      )}
+        )}
 
-      <Section>
-        <div className="container-page max-w-3xl">
+        <div className="max-w-3xl">
           <SectionHeader
             eyebrow="Financement & accès"
             title="Comment s'inscrire"
             align="left"
+            className="mb-6 md:mb-8"
           />
           {financementLabels.length > 0 && (
-            <p className="mt-6 text-sm text-muted-text">
+            <p className="text-sm text-muted-text">
               Financements éligibles :{" "}
               <span className="text-or-light">{financementLabels.join(" · ")}</span>
             </p>
@@ -343,30 +341,34 @@ export default async function FormationDetailPage({ params }: Props) {
             </p>
           )}
           <div className="mt-8">
-            <ButtonLink href="/financement" className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider">
+            <ButtonLink
+              href="/financement"
+              className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
+            >
               Vérifier mon financement
             </ButtonLink>
           </div>
         </div>
-      </Section>
 
-      {linkedIntervenants.length > 0 && (
-        <Section variant="secondary">
-          <div className="container-page">
-            <SectionHeader eyebrow="Intervenants" title="Encadré par" />
+        {linkedIntervenants.length > 0 && (
+          <div>
+            <SectionHeader eyebrow="Intervenants" title="Encadré par" className="mb-8 md:mb-10" />
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {linkedIntervenants.map((i) => (
                 <IntervenantCard key={i.slug} intervenant={i} />
               ))}
             </div>
           </div>
-        </Section>
-      )}
+        )}
 
-      {formation.faq.length > 0 && (
-        <Section variant="dark">
-          <div className="container-page max-w-3xl">
-            <SectionHeader eyebrow="FAQ" title="Questions fréquentes" align="left" />
+        {formation.faq.length > 0 && (
+          <div className="max-w-3xl">
+            <SectionHeader
+              eyebrow="FAQ"
+              title="Questions fréquentes"
+              align="left"
+              className="mb-6 md:mb-8"
+            />
             <Accordion className="w-full">
               {formation.faq.map((item, i) => (
                 <AccordionItem key={item.q} value={`faq-${i}`} className="border-white/[0.06]">
@@ -378,11 +380,9 @@ export default async function FormationDetailPage({ params }: Props) {
               ))}
             </Accordion>
           </div>
-        </Section>
-      )}
+        )}
 
-      <Section>
-        <div className="container-page text-center">
+        <div className="border-t border-white/[0.06] pt-12 text-center md:pt-16">
           <h2 className="section-title text-cream">Prêt à te lancer ?</h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-text">
             Contacte-nous pour t&apos;inscrire ou vérifier le financement de cette formation.
@@ -403,7 +403,7 @@ export default async function FormationDetailPage({ params }: Props) {
             </ButtonLink>
           </div>
         </div>
-      </Section>
+      </div>
     </>
   );
 }

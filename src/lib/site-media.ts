@@ -1,4 +1,8 @@
-/** Static media shipped in `public/images/site/` for production (Vercel has no local /media disk). */
+/**
+ * Media URLs for the public site.
+ * Production covers live in the public Supabase bucket `cinemergence-media`.
+ * Local `/images/site/*` remains gitignored (sync:media only).
+ */
 
 export type StaticGalleryItem = {
   id: string;
@@ -7,23 +11,36 @@ export type StaticGalleryItem = {
   mimeType: string;
 };
 
+/** Public base URL of the Supabase Storage bucket (no trailing slash). */
+export const SUPABASE_MEDIA_PUBLIC_BASE =
+  process.env.NEXT_PUBLIC_SUPABASE_STORAGE_PUBLIC_URL?.replace(/\/$/, "") ||
+  process.env.SUPABASE_STORAGE_PUBLIC_URL?.replace(/\/$/, "") ||
+  "https://vbazsgvvxjfodgtpgobf.supabase.co/storage/v1/object/public/cinemergence-media";
+
+function supabaseMediaUrl(objectKey: string): string {
+  const key = objectKey.replace(/^\//, "");
+  return `${SUPABASE_MEDIA_PUBLIC_BASE}/${key}`;
+}
+
+const cover = (filename: string) => supabaseMediaUrl(`media/covers/${filename}`);
+
 export const staticFormationCovers: Record<string, string> = {
-  "formation-jouer-face-camera": "/images/formations/formation-jouer-face-camera.jpg",
-  "formation-tourner-bande-demo": "/images/formations/formation-bande-demo.jpg",
-  "formation-realiser-film-court": "/images/formations/formation-realiser-court-metrage.jpg",
-  "formation-ecriture-court-metrage": "/images/formations/formation-ecriture-scenario.jpg",
-  "formation-lumiere-image": "/images/formations/formation-camera-cinema.jpg",
-  "formation-passer-a-la-realisation": "/images/formations/formation-production-film.jpg",
+  "formation-jouer-face-camera": cover("formation-jouer-face-camera.jpg"),
+  "formation-tourner-bande-demo": cover("formation-bande-demo.jpg"),
+  "formation-realiser-film-court": cover("formation-realiser-court-metrage.jpg"),
+  "formation-ecriture-court-metrage": cover("formation-ecriture-scenario.jpg"),
+  "formation-lumiere-image": cover("formation-camera-cinema.jpg"),
+  "formation-passer-a-la-realisation": cover("formation-production-film.jpg"),
 };
 
-/** Pool d'images plateau versionnées (public/images/formations) — hors /images/site gitignoré. */
+/** Pool de covers Supabase pour les formations sans image dédiée. */
 const formationCoverFallbacks = [
-  "/images/formations/formation-jouer-face-camera.jpg",
-  "/images/formations/formation-bande-demo.jpg",
-  "/images/formations/formation-realiser-court-metrage.jpg",
-  "/images/formations/formation-ecriture-scenario.jpg",
-  "/images/formations/formation-camera-cinema.jpg",
-  "/images/formations/formation-production-film.jpg",
+  cover("formation-jouer-face-camera.jpg"),
+  cover("formation-bande-demo.jpg"),
+  cover("formation-realiser-court-metrage.jpg"),
+  cover("formation-ecriture-scenario.jpg"),
+  cover("formation-camera-cinema.jpg"),
+  cover("formation-production-film.jpg"),
 ] as const;
 
 function hashSlug(slug: string): number {
@@ -34,14 +51,19 @@ function hashSlug(slug: string): number {
   return h;
 }
 
-function isDeployablePublicPath(url: string): boolean {
-  // /images/site/* is gitignored and absent on Vercel
-  return !url.startsWith("/images/site/");
+function isUsableCoverUrl(url: string): boolean {
+  if (!url) return false;
+  // Local-only paths — never on Vercel
+  if (url.startsWith("/images/site/")) return false;
+  return true;
 }
 
 /** Cover dédiée si connue, sinon image plateau de secours (stable par slug). */
 export function resolveFormationCoverUrl(slug: string, explicit?: string | null): string {
-  if (explicit && isDeployablePublicPath(explicit)) return explicit;
+  if (explicit && isUsableCoverUrl(explicit)) {
+    // Prefer Supabase / absolute URLs; allow remaining /images/formations during transition
+    return explicit;
+  }
   if (staticFormationCovers[slug]) return staticFormationCovers[slug];
   return formationCoverFallbacks[hashSlug(slug) % formationCoverFallbacks.length];
 }
@@ -55,8 +77,8 @@ export const staticIntervenantPhotos: Record<string, string> = {
 
 export const staticFounderPhoto = "/images/site/founder/choukri-roua.jpg";
 
-/** Fallback prod si la relation Payload est cassée (fichier versionné Git). */
-export const staticFounderPhotoCommitted = "/images/founder/choukri-roua.jpg";
+/** Fallback prod — même fichier hébergé sur Supabase. */
+export const staticFounderPhotoCommitted = cover("founder-choukri-roua.jpg");
 
 export const staticGalleryItems: StaticGalleryItem[] = [
   { id: "g01", alt: "Plateau de tournage — direction d'acteur", url: "/images/site/gallery/01.jpg", mimeType: "image/jpeg" },

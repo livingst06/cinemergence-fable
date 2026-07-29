@@ -8,31 +8,22 @@ export type StaticGalleryItem = {
 };
 
 export const staticFormationCovers: Record<string, string> = {
-  "formation-jouer-face-camera": "/images/site/formations/formation-jouer-face-camera.jpg",
-  "formation-tourner-bande-demo": "/images/site/formations/formation-bande-demo.jpg",
-  "formation-realiser-film-court": "/images/site/formations/formation-realiser-court-metrage.jpg",
-  "formation-ecriture-court-metrage": "/images/site/formations/formation-ecriture-scenario.jpg",
-  "formation-lumiere-image": "/images/site/formations/formation-camera-cinema.jpg",
-  "formation-passer-a-la-realisation": "/images/site/formations/formation-production-film.jpg",
+  "formation-jouer-face-camera": "/images/formations/formation-jouer-face-camera.jpg",
+  "formation-tourner-bande-demo": "/images/formations/formation-bande-demo.jpg",
+  "formation-realiser-film-court": "/images/formations/formation-realiser-court-metrage.jpg",
+  "formation-ecriture-court-metrage": "/images/formations/formation-ecriture-scenario.jpg",
+  "formation-lumiere-image": "/images/formations/formation-camera-cinema.jpg",
+  "formation-passer-a-la-realisation": "/images/formations/formation-production-film.jpg",
 };
 
-/** Pool d'images plateau réutilisées tant que chaque formation n'a pas sa cover dédiée. */
+/** Pool d'images plateau versionnées (public/images/formations) — hors /images/site gitignoré. */
 const formationCoverFallbacks = [
-  "/images/site/gallery/01.jpg",
-  "/images/site/gallery/02.jpg",
-  "/images/site/gallery/03.jpg",
-  "/images/site/gallery/04.jpg",
-  "/images/site/gallery/05.jpg",
-  "/images/site/gallery/06.jpg",
-  "/images/site/gallery/07.jpg",
-  "/images/site/gallery/08.jpg",
-  "/images/site/gallery/09.jpg",
-  "/images/site/formations/formation-jouer-face-camera.jpg",
-  "/images/site/formations/formation-bande-demo.jpg",
-  "/images/site/formations/formation-realiser-court-metrage.jpg",
-  "/images/site/formations/formation-ecriture-scenario.jpg",
-  "/images/site/formations/formation-camera-cinema.jpg",
-  "/images/site/formations/formation-production-film.jpg",
+  "/images/formations/formation-jouer-face-camera.jpg",
+  "/images/formations/formation-bande-demo.jpg",
+  "/images/formations/formation-realiser-court-metrage.jpg",
+  "/images/formations/formation-ecriture-scenario.jpg",
+  "/images/formations/formation-camera-cinema.jpg",
+  "/images/formations/formation-production-film.jpg",
 ] as const;
 
 function hashSlug(slug: string): number {
@@ -43,9 +34,14 @@ function hashSlug(slug: string): number {
   return h;
 }
 
+function isDeployablePublicPath(url: string): boolean {
+  // /images/site/* is gitignored and absent on Vercel
+  return !url.startsWith("/images/site/");
+}
+
 /** Cover dédiée si connue, sinon image plateau de secours (stable par slug). */
 export function resolveFormationCoverUrl(slug: string, explicit?: string | null): string {
-  if (explicit) return explicit;
+  if (explicit && isDeployablePublicPath(explicit)) return explicit;
   if (staticFormationCovers[slug]) return staticFormationCovers[slug];
   return formationCoverFallbacks[hashSlug(slug) % formationCoverFallbacks.length];
 }

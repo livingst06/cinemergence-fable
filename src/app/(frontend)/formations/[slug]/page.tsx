@@ -256,7 +256,7 @@ export default async function FormationDetailPage({ params }: Props) {
 
       <Section>
         <div className="container-page">
-          <SectionHeader eyebrow="Livrables" title="Ce que tu repars avec" />
+          <SectionHeader eyebrow="Livrables" title="Tu repars avec" />
           <ul className="grid gap-3 md:grid-cols-2">
             {livrables.map((item) => (
               <li

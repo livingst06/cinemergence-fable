@@ -56,6 +56,16 @@ export const Formations: CollectionConfig = {
       label: "À la une",
     },
     {
+      name: "audience",
+      type: "select",
+      required: true,
+      defaultValue: "intermittent",
+      options: [
+        { label: "Intermittents / audiovisuel", value: "intermittent" },
+        { label: "Entreprise", value: "entreprise" },
+      ],
+    },
+    {
       name: "accroche",
       type: "textarea",
       required: true,

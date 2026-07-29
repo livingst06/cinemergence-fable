@@ -14,6 +14,7 @@ import { PageHero } from "@/components/sections/PageHero";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { defaultFinancement, formationLivrableLabel, formationPath } from "@/lib/defaults";
+import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { courseJsonLd } from "@/lib/seo";
 
 export const revalidate = 300;
@@ -157,8 +158,8 @@ export default async function FormationDetailPage({ params }: Props) {
             )}
           </div>
           <MediaFrame
-            src={formation.coverImageUrl}
-            mimeType={formation.coverImageMimeType}
+            src={resolveFormationCoverUrl(formation.slug, formation.coverImageUrl)}
+            mimeType={formation.coverImageMimeType ?? "image/jpeg"}
             alt={`Visuel plateau — ${formation.titreCourt}`}
             aspect="video"
             className={formation.prioritaire ? "gold-glow" : undefined}

@@ -5,6 +5,7 @@ import { ButtonLink } from "@/components/ui/ButtonLink";
 import { MediaFrame } from "@/components/ui/MediaFrame";
 import type { FormationData } from "@/lib/defaults";
 import { formationLivrableLabel, formationPath } from "@/lib/defaults";
+import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { cn } from "@/lib/utils";
 
 type FormationCardProps = {
@@ -13,6 +14,8 @@ type FormationCardProps = {
 };
 
 export function FormationCard({ formation, featured }: FormationCardProps) {
+  const coverSrc = resolveFormationCoverUrl(formation.slug, formation.coverImageUrl);
+
   return (
     <article
       className={cn(
@@ -22,8 +25,8 @@ export function FormationCard({ formation, featured }: FormationCardProps) {
     >
       <div className="relative overflow-hidden">
         <MediaFrame
-          src={formation.coverImageUrl}
-          mimeType={formation.coverImageMimeType}
+          src={coverSrc}
+          mimeType={formation.coverImageMimeType ?? "image/jpeg"}
           alt={`Plateau — ${formation.titreCourt}`}
           aspect={featured ? "wide" : "video"}
           className={cn(

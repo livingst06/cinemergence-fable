@@ -82,6 +82,7 @@ async function seed() {
       titreCourt: f.titreCourt,
       sousTitre: f.sousTitre,
       prioritaire: f.prioritaire,
+      audience: f.audience,
       accroche: f.accroche,
       publicCible: f.publicCible,
       livrable: f.livrable,

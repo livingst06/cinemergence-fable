@@ -36,11 +36,11 @@ export const galleryAssets: GalleryAsset[] = [
 
 export const formationCovers: Record<string, string> = {
   "formation-jouer-face-camera": "photos/DSC07230.jpg",
-  "formation-realiser-court-metrage": "photos/DSC07252.jpg",
-  "formation-ecriture-scenario": "photos/image00010.jpeg",
-  "formation-bande-demo": "photos/DSC07225.jpg",
-  "formation-camera-cinema": "photos/DSC07234.jpg",
-  "formation-production-film": "photos/DSC07512.jpg",
+  "formation-tourner-bande-demo": "photos/DSC07225.jpg",
+  "formation-realiser-film-court": "photos/DSC07252.jpg",
+  "formation-ecriture-court-metrage": "photos/image00010.jpeg",
+  "formation-lumiere-image": "photos/DSC07234.jpg",
+  "formation-passer-a-la-realisation": "photos/DSC07512.jpg",
 };
 
 export const intervenantPhotos: Record<string, string> = getIntervenantPhotoPaths();

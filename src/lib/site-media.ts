@@ -9,12 +9,46 @@ export type StaticGalleryItem = {
 
 export const staticFormationCovers: Record<string, string> = {
   "formation-jouer-face-camera": "/images/site/formations/formation-jouer-face-camera.jpg",
-  "formation-realiser-court-metrage": "/images/site/formations/formation-realiser-court-metrage.jpg",
-  "formation-ecriture-scenario": "/images/site/formations/formation-ecriture-scenario.jpg",
-  "formation-bande-demo": "/images/site/formations/formation-bande-demo.jpg",
-  "formation-camera-cinema": "/images/site/formations/formation-camera-cinema.jpg",
-  "formation-production-film": "/images/site/formations/formation-production-film.jpg",
+  "formation-tourner-bande-demo": "/images/site/formations/formation-bande-demo.jpg",
+  "formation-realiser-film-court": "/images/site/formations/formation-realiser-court-metrage.jpg",
+  "formation-ecriture-court-metrage": "/images/site/formations/formation-ecriture-scenario.jpg",
+  "formation-lumiere-image": "/images/site/formations/formation-camera-cinema.jpg",
+  "formation-passer-a-la-realisation": "/images/site/formations/formation-production-film.jpg",
 };
+
+/** Pool d'images plateau réutilisées tant que chaque formation n'a pas sa cover dédiée. */
+const formationCoverFallbacks = [
+  "/images/site/gallery/01.jpg",
+  "/images/site/gallery/02.jpg",
+  "/images/site/gallery/03.jpg",
+  "/images/site/gallery/04.jpg",
+  "/images/site/gallery/05.jpg",
+  "/images/site/gallery/06.jpg",
+  "/images/site/gallery/07.jpg",
+  "/images/site/gallery/08.jpg",
+  "/images/site/gallery/09.jpg",
+  "/images/site/formations/formation-jouer-face-camera.jpg",
+  "/images/site/formations/formation-bande-demo.jpg",
+  "/images/site/formations/formation-realiser-court-metrage.jpg",
+  "/images/site/formations/formation-ecriture-scenario.jpg",
+  "/images/site/formations/formation-camera-cinema.jpg",
+  "/images/site/formations/formation-production-film.jpg",
+] as const;
+
+function hashSlug(slug: string): number {
+  let h = 0;
+  for (let i = 0; i < slug.length; i++) {
+    h = (h * 31 + slug.charCodeAt(i)) >>> 0;
+  }
+  return h;
+}
+
+/** Cover dédiée si connue, sinon image plateau de secours (stable par slug). */
+export function resolveFormationCoverUrl(slug: string, explicit?: string | null): string {
+  if (explicit) return explicit;
+  if (staticFormationCovers[slug]) return staticFormationCovers[slug];
+  return formationCoverFallbacks[hashSlug(slug) % formationCoverFallbacks.length];
+}
 
 export const staticIntervenantPhotos: Record<string, string> = {
   "bibi-naceri": "/images/site/intervenants/bibi-naceri.jpg",

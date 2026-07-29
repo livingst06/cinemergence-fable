@@ -55,7 +55,12 @@ export default async function FinancementPage() {
           <FinancementGuide />
         </div>
       </Section>
-      <FinancementSection dispositifs={dispositifs} />
+      <FinancementSection
+        dispositifs={dispositifs}
+        title="Les dispositifs"
+        description="Ce que chaque financeur peut prendre en charge."
+        showCta={false}
+      />
       <Section variant="secondary">
         <div className="container-page max-w-3xl">
           <SectionHeader eyebrow="FAQ" title="Les vraies questions" align="left" />

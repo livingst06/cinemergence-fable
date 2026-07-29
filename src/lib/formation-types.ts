@@ -25,6 +25,8 @@ export type FormationData = {
   /** Sous-titre / accroche courte sous l'intitulé (fiche). */
   sousTitre?: string;
   prioritaire: boolean;
+  /** Public catalogue : intermittents / audiovisuel vs entreprise. */
+  audience: "intermittent" | "entreprise";
   accroche: string;
   publicCible: string;
   /** Libellé court pour cartes (legacy + display). */

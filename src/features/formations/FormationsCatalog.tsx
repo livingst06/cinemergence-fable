@@ -10,6 +10,14 @@ type FormationsCatalogProps = {
   formations: FormationData[];
 };
 
+type AudienceFilter = "tous" | "intermittent" | "entreprise";
+
+const audienceLabels: Record<AudienceFilter, string> = {
+  tous: "Tous publics",
+  intermittent: "Intermittents",
+  entreprise: "Entreprise",
+};
+
 export function FormationsCatalog({ formations }: FormationsCatalogProps) {
   const poles = useMemo(() => {
     const unique = Array.from(new Set(formations.map((f) => f.pole))).sort((a, b) =>
@@ -19,17 +27,44 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
   }, [formations]);
 
   const [pole, setPole] = useState("Tous");
+  const [audience, setAudience] = useState<AudienceFilter>("tous");
 
   const filtered = useMemo(() => {
-    const list = pole === "Tous" ? formations : formations.filter((f) => f.pole === pole);
+    let list = formations;
+    if (audience !== "tous") {
+      list = list.filter((f) => f.audience === audience);
+    }
+    if (pole !== "Tous") {
+      list = list.filter((f) => f.pole === pole);
+    }
     return [...list].sort((a, b) => Number(b.prioritaire) - Number(a.prioritaire));
-  }, [formations, pole]);
+  }, [formations, pole, audience]);
 
   const featured = filtered.filter((f) => f.prioritaire);
   const others = filtered.filter((f) => !f.prioritaire);
 
   return (
     <div>
+      <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Filtrer par public">
+        {(Object.keys(audienceLabels) as AudienceFilter[]).map((key) => (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={audience === key}
+            onClick={() => setAudience(key)}
+            className={cn(
+              "rounded-lg border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
+              audience === key
+                ? "border-or/40 bg-or/15 text-cream"
+                : "border-white/10 bg-transparent text-cream/70 hover:border-or/30 hover:text-or-light",
+            )}
+          >
+            {audienceLabels[key]}
+          </button>
+        ))}
+      </div>
+
       <div className="mb-10 flex flex-wrap gap-2" role="tablist" aria-label="Filtrer par pôle">
         {poles.map((p) => (
           <button
@@ -72,7 +107,9 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
       )}
 
       {filtered.length === 0 && (
-        <p className="text-center text-muted-text">Aucune formation dans ce pôle pour le moment.</p>
+        <p className="text-center text-muted-text">
+          Aucune formation pour ce filtre pour le moment.
+        </p>
       )}
     </div>
   );

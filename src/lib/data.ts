@@ -18,7 +18,7 @@ import { isLocalMediaStorage } from "./storage-env";
 import { getPublicSiteUrl } from "./site-url";
 import {
   getStaticCarouselItems,
-  staticFormationCovers,
+  resolveFormationCoverUrl,
   staticFounderPhoto,
   staticFounderPhotoCommitted,
   staticGalleryItems,
@@ -26,7 +26,7 @@ import {
 } from "./site-media";
 
 function staticFormationCover(slug: string) {
-  return isLocalMediaStorage() ? staticFormationCovers[slug] : undefined;
+  return resolveFormationCoverUrl(slug);
 }
 
 function staticIntervenantPhoto(slug: string) {
@@ -157,6 +157,10 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     titreCourt: String(doc.titreCourt),
     sousTitre: doc.sousTitre ? String(doc.sousTitre) : undefined,
     prioritaire: Boolean(doc.prioritaire),
+    audience:
+      doc.audience === "entreprise" || doc.audience === "intermittent"
+        ? doc.audience
+        : "intermittent",
     accroche: String(doc.accroche),
     publicCible: String(doc.publicCible),
     livrable: String(doc.livrable),
@@ -207,7 +211,7 @@ export async function getFormations(): Promise<FormationData[]> {
       sort: "-prioritaire",
       depth: 1,
     });
-    if (result.docs.length === 0) {
+    if (result.docs.length === 0 || result.docs.length < defaultFormations.length) {
       return defaultFormations.map((f) => ({
         ...f,
         coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),

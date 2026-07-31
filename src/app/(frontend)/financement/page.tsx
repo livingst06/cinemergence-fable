@@ -47,8 +47,16 @@ export default async function FinancementPage() {
     <>
       <PageHero
         eyebrow="Financement"
-        title="Ton projet peut être pris en charge"
-        description="AFDAS, OPCO, CPF, France Travail — on t'explique simplement comment financer ta formation."
+        title={"Ton projet peut être pris en\u00a0charge"}
+        description={
+          <div className="space-y-1">
+            <p>AFDAS, OPCO, CPF, France Travail</p>
+            <p>
+              on t&apos;explique simplement comment{" "}
+              <span className="whitespace-nowrap">financer ta formation.</span>
+            </p>
+          </div>
+        }
       />
       <Section>
         <div className="container-page">
@@ -78,7 +86,7 @@ export default async function FinancementPage() {
         <div className="container-page max-w-2xl">
           <SectionHeader
             eyebrow="Contact"
-            title="Je veux vérifier mon financement"
+            title={"Je veux vérifier mon\u00a0financement"}
             align="left"
           />
           <ContactForm

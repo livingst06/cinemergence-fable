@@ -8,6 +8,12 @@ import { cn } from "@/lib/utils";
 type ButtonLinkProps = ComponentProps<typeof Link> &
   VariantProps<typeof buttonVariants>;
 
+function hasCustomSurface(className: ButtonLinkProps["className"]) {
+  if (!className) return false;
+  const value = typeof className === "string" ? className : String(className);
+  return value.includes("btn-cta") || value.includes("btn-outline-warm");
+}
+
 export function ButtonLink({
   className,
   variant,
@@ -16,7 +22,14 @@ export function ButtonLink({
 }: ButtonLinkProps) {
   return (
     <Link
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(
+        buttonVariants({
+          // Évite bg-primary sous le dégradé btn-cta (double fond)
+          variant: variant ?? (hasCustomSurface(className) ? "ghost" : "default"),
+          size,
+        }),
+        className,
+      )}
       {...props}
     />
   );

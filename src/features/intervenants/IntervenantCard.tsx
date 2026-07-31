@@ -14,6 +14,11 @@ export function IntervenantCard({ intervenant }: IntervenantCardProps) {
           Parrain
         </Badge>
       )}
+      {!intervenant.parrain && intervenant.categorie === "formateur" && (
+        <Badge className="absolute right-4 top-4 z-20 border-or/30 bg-noir/80 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-or-light backdrop-blur-sm">
+          Formateur
+        </Badge>
+      )}
       <MediaFrame
         src={intervenant.photoUrl}
         mimeType={intervenant.photoMimeType}

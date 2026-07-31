@@ -31,7 +31,12 @@ export default async function ContactPage({ searchParams }: Props) {
       <PageHero
         eyebrow="Contact"
         title="Je me lance"
-        description="Une question, une inscription, un projet de financement ? Écris-nous — on te répond rapidement."
+        description={
+          <>
+            <p>Une question, une inscription, un projet de financement&nbsp;?</p>
+            <p className="mt-1">Écris-nous — on te répond rapidement.</p>
+          </>
+        }
       />
       <Section>
         <div className="container-page grid gap-12 lg:grid-cols-5">

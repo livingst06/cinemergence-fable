@@ -6,9 +6,9 @@ import { getSiteSettings } from "@/lib/data";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "L'association Cinémergence — À propos",
+    title: "Qui sommes-nous ? — Cinémergence",
     description:
-      "Cinémergence, école de formation cinéma à Paris. Association loi 1901 et organisme de formation déclaré.",
+      "Cinémergence, école de formation cinéma à Paris. Organisme de formation déclaré et certifié Qualiopi.",
     alternates: { canonical: "/association" },
   };
 }
@@ -19,9 +19,17 @@ export default async function AssociationPage() {
   return (
     <>
       <PageHero
-        eyebrow="À propos"
+        eyebrow="Qui sommes-nous ?"
         title="École de formation cinéma"
-        description="Une équipe de professionnels réunis pour former en conditions réelles de plateau — comédiens, techniciens et entreprises."
+        description={
+          <>
+            <p>
+              Une équipe de professionnels réunis pour former en conditions réelles de
+              plateau
+            </p>
+            <p className="mt-1">comédiens, techniciens et&nbsp;entreprises.</p>
+          </>
+        }
       />
       <Section>
         <div className="container-page grid gap-12 lg:grid-cols-2">
@@ -43,9 +51,8 @@ export default async function AssociationPage() {
                 nourrit des parcours concrets — chacun avec un livrable pour le stagiaire.
               </p>
               <p>
-                Association loi 1901 et organisme de formation déclaré (NDA {site.nda}), nous
-                accompagnons aussi le financement des formations (AFDAS, OPCO, CPF, France
-                Travail).
+                Organisme de formation déclaré (NDA {site.nda}), nous accompagnons aussi le
+                financement des formations (AFDAS, OPCO, CPF, France Travail).
               </p>
             </div>
           </div>
@@ -66,9 +73,7 @@ export default async function AssociationPage() {
               </div>
               <div>
                 <dt className="text-or-light">Qualiopi</dt>
-                <dd className="text-muted-text">
-                  {site.qualiopiObtained ? "Certifié Qualiopi" : site.qualiopiLabel}
-                </dd>
+                <dd className="text-muted-text">Organisme certifié Qualiopi</dd>
               </div>
               <div>
                 <dt className="text-or-light">Partenaire</dt>
@@ -77,11 +82,6 @@ export default async function AssociationPage() {
                 </dd>
               </div>
             </dl>
-            {!site.qualiopiObtained && (
-              <div className="mt-6 rounded-lg border border-dashed border-white/10 p-4 text-center text-xs text-muted-text">
-                Emplacement réservé — Logo Qualiopi (activation sans redéveloppement)
-              </div>
-            )}
           </div>
         </div>
       </Section>

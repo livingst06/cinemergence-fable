@@ -6,13 +6,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { MediaFrame } from "@/components/ui/MediaFrame";
 import { SectionHeader } from "@/components/ui/Section";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
-import { defaultFinancement, formationLivrableLabel, formationPath } from "@/lib/defaults";
+import { defaultFinancement, formationPath } from "@/lib/defaults";
 import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { courseJsonLd } from "@/lib/seo";
 
@@ -48,8 +47,8 @@ export default async function FormationDetailPage({ params }: Props) {
     getIntervenants(),
   ]);
 
-  const linkedIntervenants = allIntervenants.filter((i) =>
-    formation.intervenants.includes(i.slug),
+  const linkedIntervenants = allIntervenants.filter(
+    (i) => formation.intervenants.includes(i.slug) && i.slug !== "karina-testa",
   );
 
   const financementLabels = defaultFinancement
@@ -76,21 +75,36 @@ export default async function FormationDetailPage({ params }: Props) {
       <div className="container-page space-y-16 py-12 md:space-y-20 md:py-16 lg:py-20">
         <header className="max-w-4xl">
           <p className="eyebrow mb-4">{formation.pole}</p>
-          <h1 className="display-title text-cream">{formation.titre}</h1>
+          <h1 className="display-title max-w-5xl text-cream">{formation.titre}</h1>
           <p className="mt-5 text-base leading-relaxed text-muted-text md:text-lg">
             {formation.sousTitre ?? formation.accroche}
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-col items-start gap-3">
             {formation.prioritaire && (
-              <Badge className="bg-projector text-cream">À la une</Badge>
+              <span className="rounded-full bg-projector px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-cream">
+                À la une
+              </span>
             )}
-            <Badge variant="outline" className="border-white/10 bg-white/[0.03] text-or-light">
-              Livrable : {formationLivrableLabel(formation)}
-            </Badge>
+            <div className="w-full max-w-2xl rounded-xl border border-or/25 bg-or/5 px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-or-light">
+                Livrable
+              </p>
+              <ul className="mt-2 space-y-1.5 text-sm leading-snug text-or-light">
+                {(formation.livrables && formation.livrables.length > 0
+                  ? formation.livrables
+                  : [formation.livrable]
+                ).map((item) => (
+                  <li key={item} className="flex gap-2">
+                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-projector" aria-hidden />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
             {formation.modalite && (
-              <Badge variant="outline" className="border-white/10 bg-white/[0.03] text-cream/80">
+              <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-cream/80">
                 {formation.modalite}
-              </Badge>
+              </span>
             )}
           </div>
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -182,7 +196,7 @@ export default async function FormationDetailPage({ params }: Props) {
         <div>
           <SectionHeader
             eyebrow="Objectifs pédagogiques"
-            title="À l'issue, tu seras capable de"
+            title={"À l'issue, tu seras capable\u00a0de"}
             className="mb-8 md:mb-10"
           />
           <ul className="grid gap-3 md:grid-cols-2">

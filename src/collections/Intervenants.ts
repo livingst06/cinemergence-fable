@@ -31,6 +31,15 @@ export const Intervenants: CollectionConfig = {
       },
     },
     {
+      name: "categorie",
+      type: "select",
+      defaultValue: "professionnel",
+      options: [
+        { label: "Intervenant professionnel", value: "professionnel" },
+        { label: "Formateur pédagogique", value: "formateur" },
+      ],
+    },
+    {
       name: "bio",
       type: "textarea",
       required: true,

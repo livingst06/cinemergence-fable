@@ -23,7 +23,9 @@ export function FinancementGuide() {
 
   return (
     <div className="card-stage p-6 md:p-8">
-      <h3 className="font-heading text-2xl text-cream">Quel financement pour mon profil ?</h3>
+      <h3 className="font-heading text-2xl text-balance text-cream">
+        Quel financement pour mon&nbsp;profil&nbsp;?
+      </h3>
       <p className="mt-2 text-sm text-muted-text">
         Sélectionne ta situation pour voir les dispositifs adaptés.
       </p>

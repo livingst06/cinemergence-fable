@@ -12,6 +12,8 @@ export type IntervenantData = {
   nom: string;
   role: string;
   parrain: boolean;
+  /** Guest / intervenant pro vs formateur pédagogique. */
+  categorie?: "professionnel" | "formateur";
   bio: string;
   filmographie: string[];
   photoUrl?: string;
@@ -36,8 +38,8 @@ export const defaultSite = {
   phone: "+33 7 69 18 55 94",
   city: "Paris, Île-de-France",
   nda: "117 888 658 78",
-  qualiopiObtained: false,
-  qualiopiLabel: "Certification Qualiopi en cours d'obtention",
+  qualiopiObtained: true,
+  qualiopiLabel: "Organisme certifié Qualiopi",
   partnerName: "Bakelite Films",
   partnerRole: "Production partenaire",
   instagramUrl: "https://www.instagram.com/cinemergence.paris",
@@ -49,7 +51,8 @@ export const defaultIntervenants: IntervenantData[] = [
     nom: "Bibi Naceri",
     role: "Acteur, réalisateur & scénariste",
     parrain: true,
-    bio: "Parrain de la 1ère édition. Acteur, réalisateur et scénariste reconnu, il intervient lors de sessions de direction d'acteur sur le texte, l'émotion et la justesse du jeu.",
+    categorie: "professionnel",
+    bio: "Parrain de Cinémergence. Acteur, réalisateur et scénariste reconnu, il intervient en masterclass et direction d'acteur : texte, émotion, justesse du jeu face caméra. Un regard pro direct pour faire progresser chaque stagiaire.",
     filmographie: ["Banlieue 13", "Taken", "District 13"],
   },
   {
@@ -57,7 +60,8 @@ export const defaultIntervenants: IntervenantData[] = [
     nom: "Salim Kéchiouche",
     role: "Acteur",
     parrain: false,
-    bio: "Intervenant d'exception. Il accompagne les stagiaires sur le plateau avec une direction d'acteur exigeante et bienveillante.",
+    categorie: "professionnel",
+    bio: "Intervenant d'exception sur le plateau. Direction d'acteur exigeante et bienveillante, focus présence caméra et écoute. Les stagiaires repartent avec des retours concrets, immédiatement exploitables en casting.",
     filmographie: ["L'Esquive", "3 Hearts", "Le Grand Jeu"],
   },
   {
@@ -65,16 +69,31 @@ export const defaultIntervenants: IntervenantData[] = [
     nom: "Édouard Montoute",
     role: "Acteur",
     parrain: false,
-    bio: "Intervenant d'exception. Comédien polyvalent, il partage son expérience du jeu face caméra en conditions réelles de tournage.",
+    categorie: "professionnel",
+    bio: "Comédien polyvalent, il partage son expérience du jeu face caméra en conditions réelles de tournage. Un accompagnement de plateau qui pousse la précision, la présence et la confiance.",
     filmographie: ["Neuilly sa mère", "Les Kaïra", "La Môme"],
   },
   {
-    slug: "karina-testa",
-    nom: "Karina Testa",
-    role: "Actrice",
+    slug: "hassan-zahi",
+    nom: "Hassan Zahi",
+    role: "Réalisateur & formateur",
     parrain: false,
-    bio: "Actrice engagée, présente sur les plateaux Cinémergence. Elle intervient sur le jeu d'acteur et la mise en scène avec une attention particulière à l'authenticité.",
-    filmographie: ["Le Tombeau des Anges", "La Môme", "Polisse"],
+    categorie: "formateur",
+    bio: "Formateur pédagogique. Accompagne les stagiaires sur la mise en scène, le découpage et la conduite de plateau. Retours pro directs pour gagner en autonomie sur un vrai tournage.",
+    filmographie: ["Rose"],
+    photoUrl: "/images/formations/formation-realiser-court-metrage.jpg",
+    photoMimeType: "image/jpeg",
+  },
+  {
+    slug: "sandy-formateur",
+    nom: "Sandy",
+    role: "Formatrice pédagogique",
+    parrain: false,
+    categorie: "formateur",
+    bio: "Formatrice pédagogique. Encadre la progression des stagiaires avec des retours concrets sur le jeu, la préparation et la présence face caméra. Profil à préciser — photo provisoire.",
+    filmographie: [],
+    photoUrl: "/images/formations/formation-jouer-face-camera.jpg",
+    photoMimeType: "image/jpeg",
   },
 ];
 

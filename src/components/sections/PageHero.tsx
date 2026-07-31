@@ -1,18 +1,26 @@
+import type { ReactNode } from "react";
+
 type PageHeroProps = {
   eyebrow?: string;
-  title: string;
-  description?: string;
+  title: ReactNode;
+  description?: ReactNode;
   children?: React.ReactNode;
 };
 
 export function PageHero({ eyebrow, title, description, children }: PageHeroProps) {
   return (
-    <section className="plateau-bg cinematic-grain relative overflow-hidden border-b border-white/[0.06] bg-noir pt-16 pb-20 md:pt-24 md:pb-28">
-      <div className="container-page relative z-10">
-        {eyebrow && <p className="eyebrow mb-5">{eyebrow}</p>}
-        <h1 className="display-title max-w-4xl text-cream">{title}</h1>
+    <section className="relative overflow-hidden bg-noir pt-12 pb-10 md:pt-16 md:pb-14">
+      <div className="container-page">
+        {eyebrow && <p className="eyebrow mb-4">{eyebrow}</p>}
+        <h1 className="display-title max-w-5xl text-cream">{title}</h1>
         {description && (
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-text">{description}</p>
+          <div className="mt-5 max-w-4xl text-base leading-relaxed text-muted-text">
+            {typeof description === "string" ? (
+              <p className="text-pretty">{description}</p>
+            ) : (
+              description
+            )}
+          </div>
         )}
         {children}
       </div>

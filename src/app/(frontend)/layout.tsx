@@ -81,6 +81,7 @@ export default async function FrontendLayout({
             formations={formations.map((f) => ({
               slug: f.slug,
               titreCourt: f.titreCourt,
+              prioritaire: f.prioritaire,
             }))}
           />
           <CookieBanner />

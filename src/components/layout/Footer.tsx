@@ -5,23 +5,23 @@ import type { SiteConfig } from "@/lib/data";
 
 type FooterProps = {
   site: SiteConfig;
-  formations: { slug: string; titreCourt: string }[];
+  formations: { slug: string; titreCourt: string; prioritaire?: boolean }[];
 };
 
 export function Footer({ site, formations }: FooterProps) {
+  const featured = formations.filter((f) => f.prioritaire);
+  const footerFormations = featured.length > 0 ? featured : formations.slice(0, 3);
+
   return (
     <footer className="border-t border-border bg-noir-secondary">
       <div className="container-page py-16">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <Logo />
-            <p className="mt-4 text-sm leading-relaxed text-muted-text">
-              {site.description}
-            </p>
             <p className="mt-4 text-xs text-muted-text">
               NDA {site.nda}
               <br />
-              {site.qualiopiObtained ? "Certifié Qualiopi" : site.qualiopiLabel}
+              Organisme certifié Qualiopi
             </p>
           </div>
 
@@ -38,7 +38,7 @@ export function Footer({ site, formations }: FooterProps) {
                   Toutes les formations
                 </Link>
               </li>
-              {formations.map((f) => (
+              {footerFormations.map((f) => (
                 <li key={f.slug}>
                   <Link
                     href={`/formations/${f.slug}`}
@@ -68,7 +68,7 @@ export function Footer({ site, formations }: FooterProps) {
               </li>
               <li>
                 <Link href="/association" className="transition-colors hover:text-or-light">
-                  L&apos;association
+                  Qui sommes-nous ?
                 </Link>
               </li>
               <li>
@@ -115,7 +115,7 @@ export function Footer({ site, formations }: FooterProps) {
         </div>
 
         <div className="mt-12 flex flex-col gap-4 border-t border-white/[0.06] pt-8 text-xs text-muted-text md:flex-row md:items-center md:justify-between">
-          <p>© {new Date().getFullYear()} {site.legalName}</p>
+          <p>© {new Date().getFullYear()} {site.name}</p>
           <div className="flex flex-wrap gap-4">
             <Link href="/mentions-legales" className="transition-colors hover:text-or-light">
               Mentions légales

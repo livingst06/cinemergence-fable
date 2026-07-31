@@ -14,9 +14,9 @@ export function CtaFinal({ site }: CtaFinalProps) {
         <h2 className="display-title mx-auto max-w-4xl text-cream">
           Prêt à passer
           <br />
-          <span className="text-tungsten">à l&apos;action ?</span>
+          <span className="text-tungsten">à l&apos;action&nbsp;?</span>
         </h2>
-        <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-text md:text-lg">
+        <p className="mx-auto mt-6 max-w-3xl text-pretty text-base leading-relaxed text-muted-text md:text-lg">
           {site.tagline} Contacte-nous par email ou WhatsApp au{" "}
           <a href={`tel:${site.phone.replace(/\s/g, "")}`} className="text-or-light hover:underline">
             {site.phone}

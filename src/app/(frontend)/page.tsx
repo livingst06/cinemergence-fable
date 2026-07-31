@@ -74,9 +74,9 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="cinematic-grain hero-slash relative min-h-[85vh] overflow-hidden bg-noir md:min-h-[90vh]">
+      <section className="cinematic-grain hero-slash relative min-h-[70vh] overflow-hidden bg-noir md:min-h-[75vh]">
         <HeroVideoBackground />
-        <div className="container-page relative z-10 flex min-h-[85vh] flex-col justify-center py-20 md:min-h-[90vh] md:py-28 lg:py-32">
+        <div className="container-page relative z-10 flex min-h-[70vh] flex-col justify-center py-16 md:min-h-[75vh] md:py-20 lg:py-24">
           <div className="max-w-3xl">
             <p className="eyebrow animate-fade-up">École de formation cinéma · Paris</p>
             <h1 className="display-title mt-6 animate-fade-up-delay-1 text-cream">
@@ -85,15 +85,16 @@ export default async function HomePage() {
             <p className="mt-4 animate-fade-up-delay-1 text-xl font-heading uppercase tracking-wide text-tungsten md:text-2xl">
               Le cinéma, en conditions réelles.
             </p>
-            <p className="mt-6 max-w-2xl animate-fade-up-delay-2 text-base leading-relaxed text-cream/85 md:text-lg">
-              Une immersion totale sur de vrais plateaux — avec un livrable concret pour chaque
-              parcours.
+            <p className="mt-6 max-w-3xl animate-fade-up-delay-2 text-base leading-relaxed text-cream/85 md:text-lg">
+              Une immersion totale sur de vrais&nbsp;plateaux
+              <br />
+              avec un livrable concret pour chaque&nbsp;parcours.
             </p>
             <ul className="mt-8 flex animate-fade-up-delay-2 flex-wrap gap-x-5 gap-y-2">
               {heroPoints.map((point) => (
                 <li
                   key={point}
-                  className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-cream/80 md:text-[11px]"
+                  className="flex items-center gap-2 whitespace-nowrap text-xs font-semibold uppercase tracking-[0.14em] text-cream/80 md:text-[11px]"
                 >
                   <span
                     className="h-1 w-1 shrink-0 rounded-full bg-projector shadow-[0_0_8px_var(--projector-glow)]"
@@ -127,17 +128,14 @@ export default async function HomePage() {
             <SectionHeader
               eyebrow="Résultats"
               title="Sur le plateau"
-              description="Répétitions, tournages et mises en situation filmées — ce que tu vis avant d'expliquer le reste."
+              description={
+                <>
+                  <p>Répétitions, tournages et mises en situation filmées</p>
+                  <p className="mt-1">ce que tu vis avant d&apos;expliquer le reste.</p>
+                </>
+              }
             />
             <PlateauCarousel slides={carouselPhotos} />
-            <div className="mt-8 text-center">
-              <ButtonLink
-                href="/galerie"
-                className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
-              >
-                Voir la galerie
-              </ButtonLink>
-            </div>
           </div>
         </Section>
       )}
@@ -146,8 +144,18 @@ export default async function HomePage() {
         <div className="container-page">
           <SectionHeader
             eyebrow="L'école"
-            title="Une immersion totale sur un vrai plateau"
-            description="Cinémergence forme comédiens, techniciens et entreprises en conditions réelles — avec le même niveau d'exigence que sur un tournage."
+            title={"Une immersion totale sur un vrai\u00a0plateau"}
+            description={
+              <>
+                <p>
+                  Cinémergence forme comédiens, techniciens et entreprises en conditions
+                  réelles
+                </p>
+                <p className="mt-1">
+                  avec le même niveau d&apos;exigence que sur un&nbsp;tournage.
+                </p>
+              </>
+            }
           />
           <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {schoolBenefits.map((item) => (
@@ -171,7 +179,12 @@ export default async function HomePage() {
           <SectionHeader
             eyebrow="Catalogue"
             title="Nos formations"
-            description="Des parcours professionnalisants, chacun avec un livrable clair pour le stagiaire."
+            description={
+              <>
+                <p>Des parcours professionnalisants,</p>
+                <p className="mt-1">chacun avec un livrable clair pour le&nbsp;stagiaire.</p>
+              </>
+            }
           />
           <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
             {[...apercu, ...autresApercu].map((f) => (
@@ -193,8 +206,14 @@ export default async function HomePage() {
             title="Nos intervenants"
             description="Des professionnels en activité qui transmettent leur exigence sur le plateau."
           />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {intervenants.map((i) => (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {intervenants
+              .filter(
+                (i) =>
+                  (i.categorie ?? "professionnel") === "professionnel" &&
+                  i.slug !== "karina-testa",
+              )
+              .map((i) => (
               <IntervenantCard key={i.slug} intervenant={i} />
             ))}
           </div>
@@ -211,7 +230,7 @@ export default async function HomePage() {
       </Section>
 
       <Section>
-        <div className="container-page grid gap-12 lg:grid-cols-5 lg:items-start">
+        <div className="container-page grid gap-12 lg:grid-cols-5 lg:items-center">
           <Reveal className="lg:col-span-2">
             <MediaFrame
               src={site.founderPhotoUrl}
@@ -306,7 +325,7 @@ export default async function HomePage() {
           <div>
             <SectionHeader
               eyebrow="Projets"
-              title="Un tremplin vers la production"
+              title={"Un tremplin vers la\u00a0production"}
               align="left"
               className="mb-6"
             />

@@ -78,8 +78,8 @@ export async function getSiteSettings(): Promise<SiteConfig> {
       phone: defaultSite.phone,
       city: defaultSite.city,
       nda: settings.nda ?? defaultSite.nda,
-      qualiopiObtained: settings.qualiopiObtained ?? defaultSite.qualiopiObtained,
-      qualiopiLabel: settings.qualiopiLabel ?? defaultSite.qualiopiLabel,
+      qualiopiObtained: true,
+      qualiopiLabel: "Organisme certifié Qualiopi",
       partnerName: settings.partnerName ?? defaultSite.partnerName,
       partnerRole: defaultSite.partnerRole,
       instagramUrl: settings.instagramUrl ?? defaultSite.instagramUrl,
@@ -232,11 +232,16 @@ export async function getFormationBySlug(slug: string): Promise<FormationData | 
 }
 
 function mapIntervenant(doc: Record<string, unknown>): IntervenantData {
+  const categorie =
+    doc.categorie === "formateur" || doc.categorie === "professionnel"
+      ? doc.categorie
+      : "professionnel";
   return {
     slug: String(doc.slug),
     nom: String(doc.nom),
     role: String(doc.role),
     parrain: Boolean(doc.parrain),
+    categorie,
     bio: String(doc.bio),
     filmographie:
       (doc.filmographie as { titre: string }[] | undefined)?.map((f) => f.titre) ?? [],
@@ -255,7 +260,14 @@ export async function getIntervenants(): Promise<IntervenantData[]> {
         photoUrl: i.photoUrl ?? staticIntervenantPhoto(i.slug),
       }));
     }
-    return result.docs.map((doc) => mapIntervenant(doc as Record<string, unknown>));
+    const fromCms = result.docs
+      .map((doc) => mapIntervenant(doc as Record<string, unknown>))
+      .filter((i) => i.slug !== "karina-testa");
+    const cmsSlugs = new Set(fromCms.map((i) => i.slug));
+    const missingFormateurs = defaultIntervenants.filter(
+      (i) => i.categorie === "formateur" && !cmsSlugs.has(i.slug),
+    );
+    return [...fromCms, ...missingFormateurs];
   } catch {
     return defaultIntervenants;
   }

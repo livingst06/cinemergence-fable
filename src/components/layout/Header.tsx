@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 
@@ -9,18 +10,29 @@ import { Logo } from "@/components/layout/Logo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import type { FormationData } from "@/lib/defaults";
 import { formationPath } from "@/lib/defaults";
+import { cn } from "@/lib/utils";
 
 type HeaderProps = {
   formations: Pick<FormationData, "slug" | "titreCourt" | "prioritaire">[];
 };
 
 const navLinks = [
+  { href: "/", label: "Accueil" },
   { href: "/intervenants", label: "Intervenants" },
   { href: "/financement", label: "Financement" },
-  { href: "/association", label: "L'association" },
+  { href: "/galerie", label: "Galerie" },
+  { href: "/association", label: "Qui sommes-nous ?" },
 ];
 
+function navLinkClass(active: boolean) {
+  return cn(
+    "text-sm font-medium transition-colors hover:text-or-light",
+    active ? "text-projector-light" : "text-cream/75",
+  );
+}
+
 export function Header({ formations }: HeaderProps) {
+  const pathname = usePathname();
   const [formationsOpen, setFormationsOpen] = useState(false);
   const navToggleRef = useRef<HTMLInputElement>(null);
   const formationsCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -53,6 +65,7 @@ export function Header({ formations }: HeaderProps) {
 
   const featured = formations.filter((f) => f.prioritaire);
   const menuFormations = featured.length > 0 ? featured : formations.slice(0, 4);
+  const formationsActive = pathname === "/formations" || pathname.startsWith("/formations/");
 
   return (
     <>
@@ -60,7 +73,11 @@ export function Header({ formations }: HeaderProps) {
         <div className="container-page flex h-16 items-center justify-between gap-3 md:h-[4.5rem]">
           <Logo className="min-w-0 max-w-[55%] shrink" />
 
-          <nav className="hidden items-center gap-6 lg:flex" aria-label="Navigation principale">
+          <nav className="hidden items-center gap-5 xl:gap-6 lg:flex" aria-label="Navigation principale">
+            <Link href="/" className={navLinkClass(pathname === "/")} aria-current={pathname === "/" ? "page" : undefined}>
+              Accueil
+            </Link>
+
             <div
               className="relative"
               onMouseEnter={openFormationsMenu}
@@ -74,9 +91,10 @@ export function Header({ formations }: HeaderProps) {
             >
               <Link
                 href="/formations"
-                className="text-sm font-medium text-cream/75 transition-colors hover:text-or-light"
+                className={navLinkClass(formationsActive)}
                 aria-expanded={formationsOpen}
                 aria-haspopup="true"
+                aria-current={formationsActive ? "page" : undefined}
               >
                 Formations
               </Link>
@@ -87,7 +105,7 @@ export function Header({ formations }: HeaderProps) {
                       href="/formations"
                       className="mb-1 block rounded-xl px-3 py-2.5 text-sm font-semibold text-or-light transition-colors hover:bg-noir-tertiary/50"
                     >
-                      Voir tout le catalogue
+                      Toutes les formations
                     </Link>
                     {menuFormations.map((f) => (
                       <Link
@@ -108,15 +126,22 @@ export function Header({ formations }: HeaderProps) {
               )}
             </div>
 
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-cream/75 transition-colors hover:text-or-light"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks
+              .filter((link) => link.href !== "/")
+              .map((link) => {
+                const active =
+                  pathname === link.href || pathname.startsWith(`${link.href}/`);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={navLinkClass(active)}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
 
             <ThemeToggle className="h-9 w-9" />
             <ButtonLink href="/contact" size="sm" className="btn-cta px-5">
@@ -154,15 +179,25 @@ export function Header({ formations }: HeaderProps) {
           aria-label="Navigation mobile"
         >
           <div className="container-page flex flex-col gap-1 py-4 pb-8">
+            <Link
+              href="/"
+              className={cn(
+                "block rounded-xl px-3 py-3 text-sm font-semibold active:bg-noir-tertiary/50",
+                pathname === "/" ? "text-projector-light" : "text-cream/90",
+              )}
+              onClick={closeMobileNav}
+            >
+              Accueil
+            </Link>
             <p className="eyebrow px-2 py-2">Formations</p>
             <Link
               href="/formations"
               className="block rounded-xl px-3 py-3 text-sm font-semibold text-or-light active:bg-noir-tertiary/50"
               onClick={closeMobileNav}
             >
-              Voir tout le catalogue
+              Toutes les formations
             </Link>
-            {formations.map((f) => (
+            {menuFormations.map((f) => (
               <Link
                 key={f.slug}
                 href={formationPath(f.slug)}
@@ -173,16 +208,25 @@ export function Header({ formations }: HeaderProps) {
               </Link>
             ))}
             <div className="my-2 h-px bg-border" />
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block rounded-xl px-3 py-3 text-sm text-cream/90 active:bg-noir-tertiary/50"
-                onClick={closeMobileNav}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks
+              .filter((link) => link.href !== "/")
+              .map((link) => {
+                const active =
+                  pathname === link.href || pathname.startsWith(`${link.href}/`);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "block rounded-xl px-3 py-3 text-sm active:bg-noir-tertiary/50",
+                      active ? "text-projector-light" : "text-cream/90",
+                    )}
+                    onClick={closeMobileNav}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
             <ButtonLink href="/contact" className="btn-cta mt-3" onClick={closeMobileNav}>
               Je m&apos;inscris
             </ButtonLink>

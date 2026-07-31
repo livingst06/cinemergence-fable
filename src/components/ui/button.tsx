@@ -46,10 +46,21 @@ function Button({
   size = "default",
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  const classValue =
+    typeof className === "string" ? className : className ? String(className) : "";
+  const customSurface =
+    classValue.includes("btn-cta") || classValue.includes("btn-outline-warm");
+
   return (
     <ButtonPrimitive
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(
+        buttonVariants({
+          variant: customSurface && variant === "default" ? "ghost" : variant,
+          size,
+        }),
+        className,
+      )}
       {...props}
     />
   )

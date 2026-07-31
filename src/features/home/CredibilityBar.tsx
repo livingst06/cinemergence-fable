@@ -6,7 +6,7 @@ type CredibilityBarProps = {
 
 export function CredibilityBar({ site }: CredibilityBarProps) {
   const items = [
-    site.qualiopiObtained ? "Certifié Qualiopi" : site.qualiopiLabel,
+    "Organisme certifié Qualiopi",
     `NDA ${site.nda}`,
     "Finançable AFDAS · OPCO · CPF · France Travail",
   ];

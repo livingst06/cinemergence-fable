@@ -19,12 +19,13 @@ export default async function FormationsIndexPage() {
 
   return (
     <div className="container-page py-12 md:py-16 lg:py-20">
-      <header className="mb-10 max-w-3xl md:mb-12">
+      <header className="mb-10 max-w-4xl md:mb-12">
         <p className="eyebrow mb-4">Catalogue</p>
         <h1 className="display-title text-cream">Nos formations</h1>
         <p className="mt-5 text-base leading-relaxed text-muted-text md:text-lg">
-          Parcours professionnalisants pour comédiens, techniciens et entreprises — chacun
-          avec un livrable clair pour le stagiaire.
+          Parcours professionnalisants pour comédiens, techniciens et entreprises
+          <br />
+          chacun avec un livrable clair pour le&nbsp;stagiaire.
         </p>
       </header>
 

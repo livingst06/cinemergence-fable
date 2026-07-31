@@ -41,13 +41,16 @@ export const SiteSettings: GlobalConfig = {
     {
       name: "qualiopiObtained",
       type: "checkbox",
-      defaultValue: false,
+      defaultValue: true,
       label: "Certification Qualiopi obtenue",
     },
     {
       name: "qualiopiLabel",
       type: "text",
-      defaultValue: "Certification Qualiopi en cours d'obtention",
+      defaultValue: "Organisme certifié Qualiopi",
+      admin: {
+        description: "Libellé affiché (ex. Organisme certifié Qualiopi)",
+      },
     },
     {
       name: "partnerName",

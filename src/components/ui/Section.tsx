@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { cn } from "@/lib/utils";
 
 type SectionProps = {
@@ -18,8 +20,8 @@ export function Section({ children, className, id }: SectionProps) {
 
 type SectionHeaderProps = {
   eyebrow?: string;
-  title: string;
-  description?: string;
+  title: ReactNode;
+  description?: ReactNode;
   align?: "left" | "center";
   className?: string;
 };
@@ -35,16 +37,17 @@ export function SectionHeader({
     <div
       className={cn(
         "mb-12 md:mb-16",
-        align === "center" && "mx-auto max-w-3xl text-center",
+        align === "center" && "mx-auto max-w-4xl text-center",
+        align === "left" && "max-w-4xl",
         className,
       )}
     >
       {eyebrow && <p className="eyebrow mb-4">{eyebrow}</p>}
       <h2 className="section-title text-cream">{title}</h2>
       {description && (
-        <p className="mt-4 text-base leading-relaxed text-muted-text md:text-lg">
-          {description}
-        </p>
+        <div className="mt-4 text-pretty text-base leading-relaxed text-muted-text md:text-lg">
+          {typeof description === "string" ? <p>{description}</p> : description}
+        </div>
       )}
     </div>
   );

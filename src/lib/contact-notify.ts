@@ -26,6 +26,9 @@ function buildEmailContent(data: ContactInput, to: string) {
   const formationLine = data.formationSlug
     ? `<p><strong>Formation :</strong> ${escapeHtml(data.formationSlug)}</p>`
     : "";
+  const parrainageLine = data.codeParrainage
+    ? `<p><strong>Code parrainage :</strong> ${escapeHtml(data.codeParrainage)}</p>`
+    : "";
 
   const html = `
     <h2>Nouvelle demande — ${TYPE_LABELS[data.type]}</h2>
@@ -33,6 +36,7 @@ function buildEmailContent(data: ContactInput, to: string) {
     <p><strong>Email :</strong> <a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a></p>
     ${phoneLine}
     ${formationLine}
+    ${parrainageLine}
     <p><strong>Message :</strong></p>
     <p>${escapeHtml(data.message).replace(/\n/g, "<br>")}</p>
   `.trim();
@@ -43,6 +47,7 @@ function buildEmailContent(data: ContactInput, to: string) {
     `Email : ${data.email}`,
     data.telephone ? `Téléphone : ${data.telephone}` : "",
     data.formationSlug ? `Formation : ${data.formationSlug}` : "",
+    data.codeParrainage ? `Code parrainage : ${data.codeParrainage}` : "",
     "",
     "Message :",
     data.message,

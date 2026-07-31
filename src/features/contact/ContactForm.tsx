@@ -84,6 +84,17 @@ export function ContactForm({
         />
       </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="codeParrainage">Code parrainage</Label>
+        <Input
+          id="codeParrainage"
+          name="codeParrainage"
+          autoComplete="off"
+          className="border-or/20 bg-noir-tertiary"
+          placeholder="Si tu as été parrainé·e, indique le code ici"
+        />
+      </div>
+
       <FormFeedbackMessage state={state} />
 
       <Button

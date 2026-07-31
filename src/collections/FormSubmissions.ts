@@ -4,7 +4,7 @@ export const FormSubmissions: CollectionConfig = {
   slug: "form-submissions",
   admin: {
     useAsTitle: "email",
-    defaultColumns: ["type", "email", "createdAt"],
+    defaultColumns: ["type", "email", "codeParrainage", "createdAt"],
   },
   access: {
     create: () => true,
@@ -44,6 +44,14 @@ export const FormSubmissions: CollectionConfig = {
     {
       name: "formationSlug",
       type: "text",
+    },
+    {
+      name: "codeParrainage",
+      type: "text",
+      label: "Code parrainage",
+      admin: {
+        description: "Code saisi par le stagiaire pour rémunérer son parrain",
+      },
     },
     {
       name: "profilFinancement",

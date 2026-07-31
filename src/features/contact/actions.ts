@@ -15,6 +15,7 @@ export async function submitContact(
     telephone: String(formData.get("telephone") ?? "") || undefined,
     message: String(formData.get("message") ?? ""),
     formationSlug: String(formData.get("formationSlug") ?? "") || undefined,
+    codeParrainage: String(formData.get("codeParrainage") ?? "") || undefined,
     type: String(formData.get("type") ?? "contact") as "contact" | "inscription" | "financement",
     website: String(formData.get("website") ?? ""),
   };
@@ -45,6 +46,7 @@ export async function submitContact(
         telephone: parsed.data.telephone,
         message: parsed.data.message,
         formationSlug: parsed.data.formationSlug,
+        codeParrainage: parsed.data.codeParrainage,
         payload: parsed.data,
       },
     });

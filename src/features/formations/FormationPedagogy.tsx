@@ -83,7 +83,7 @@ export function FormationPedagogy({ methodes, moyens, encadrement }: PedagogyPro
                 className="card-stage flex items-start gap-3 px-4 py-3.5"
               >
                 <Dot />
-                <p className="min-w-0 flex-1 text-justify text-sm leading-snug text-cream/90 [hyphens:none]">
+                <p className="min-w-0 flex-1 text-justify text-sm leading-snug text-cream/90">
                   {m}
                 </p>
               </li>

@@ -23,14 +23,18 @@ describe("contactSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("rejects short message", () => {
+  it("accepts optional referral code", () => {
     const result = contactSchema.safeParse({
-      nom: "Jean",
+      nom: "Jean Dupont",
       email: "jean@example.com",
-      message: "court",
-      type: "contact",
+      message: "Je souhaite m'inscrire à une formation.",
+      type: "inscription",
+      codeParrainage: " PARRAIN-42 ",
     });
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.codeParrainage).toBe("PARRAIN-42");
+    }
   });
 });
 

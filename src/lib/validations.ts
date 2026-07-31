@@ -6,6 +6,12 @@ export const contactSchema = z.object({
   telephone: z.string().optional(),
   message: z.string().min(10, "Message requis (10 caractères minimum)"),
   formationSlug: z.string().optional(),
+  codeParrainage: z
+    .string()
+    .trim()
+    .max(64, "Code parrainage trop long")
+    .optional()
+    .transform((value) => (value ? value : undefined)),
   type: z.enum(["contact", "inscription", "financement"]).default("contact"),
   website: z.string().max(0).optional(),
 });

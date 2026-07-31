@@ -125,7 +125,7 @@ export default async function FormationDetailPage({ params }: Props) {
               size="lg"
               className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
             >
-              Je finance ma formation
+              Vérifier le financement
             </ButtonLink>
           </div>
         </header>

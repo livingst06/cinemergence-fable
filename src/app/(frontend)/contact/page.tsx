@@ -94,7 +94,7 @@ export default async function ContactPage({ searchParams }: Props) {
                       rel="noopener noreferrer"
                       className="hover:text-cream"
                     >
-                      @cinemergence.paris
+                      @cinemergence
                     </a>
                   </li>
                 )}

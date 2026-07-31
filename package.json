@@ -21,6 +21,8 @@
     "migrate:admin-role": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/ensure-admin-role-prod.ts",
     "supabase:rls": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/apply-supabase-rls.ts",
     "sync:site-url": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-site-url-prod.ts",
+    "sync:instagram": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-instagram.ts",
+    "sync:instagram:local": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-instagram.ts --local",
     "sync:media": "tsx src/seed/sync-public-media.ts",
     "generate:importmap": "payload generate:importmap",
     "generate:types": "payload generate:types",

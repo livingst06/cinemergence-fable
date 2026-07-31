@@ -60,6 +60,10 @@ export const SiteSettings: GlobalConfig = {
     {
       name: "instagramUrl",
       type: "text",
+      defaultValue: "https://www.instagram.com/cinemergence",
+      admin: {
+        description: "URL du compte Instagram officiel",
+      },
     },
     {
       name: "founderPhoto",

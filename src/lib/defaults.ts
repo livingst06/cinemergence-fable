@@ -42,7 +42,7 @@ export const defaultSite = {
   qualiopiLabel: "Organisme certifié Qualiopi",
   partnerName: "Bakelite Films",
   partnerRole: "Production partenaire",
-  instagramUrl: "https://www.instagram.com/cinemergence.paris",
+  instagramUrl: "https://www.instagram.com/cinemergence",
 } as const;
 
 export const defaultIntervenants: IntervenantData[] = [

@@ -31,7 +31,7 @@ export function NewsletterForm() {
         disabled={pending}
         className="btn-cta"
       >
-        {pending ? "..." : "M'informer"}
+        {pending ? "..." : "Je m'informe"}
       </Button>
       <FormFeedbackMessage state={state} className="w-full" />
     </form>

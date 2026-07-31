@@ -25,14 +25,14 @@ export function CtaFinal({ site }: CtaFinalProps) {
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <ButtonLink href="/contact" size="lg" className="btn-cta px-10">
-            Réserver ma place
+            Je réserve ma place
           </ButtonLink>
           <ButtonLink
             href={`https://wa.me/${site.phone.replace(/\D/g, "")}`}
             size="lg"
             className="btn-outline-warm rounded-lg px-10 py-2.5 text-sm font-semibold uppercase tracking-wider"
           >
-            WhatsApp
+            Je contacte sur WhatsApp
           </ButtonLink>
         </div>
 

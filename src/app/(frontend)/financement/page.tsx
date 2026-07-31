@@ -86,7 +86,7 @@ export default async function FinancementPage() {
         <div className="container-page max-w-2xl">
           <SectionHeader
             eyebrow="Contact"
-            title={"Je veux vérifier mon\u00a0financement"}
+            title={"Je vérifie mon\u00a0financement"}
             align="left"
           />
           <ContactForm

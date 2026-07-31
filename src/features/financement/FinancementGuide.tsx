@@ -65,7 +65,7 @@ export function FinancementGuide() {
 
       <div className="mt-8">
         <ButtonLink href="/contact?type=financement" className="btn-cta">
-          Je veux vérifier mon financement
+          Je vérifie mon financement
         </ButtonLink>
       </div>
     </div>

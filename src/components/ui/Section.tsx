@@ -45,7 +45,12 @@ export function SectionHeader({
       {eyebrow && <p className="eyebrow mb-4">{eyebrow}</p>}
       <h2 className="section-title text-cream">{title}</h2>
       {description && (
-        <div className="mt-4 text-pretty text-base leading-relaxed text-muted-text md:text-lg">
+        <div
+          className={cn(
+            "mt-4 text-pretty text-base leading-relaxed text-muted-text md:text-lg",
+            align === "left" && "text-justify",
+          )}
+        >
           {typeof description === "string" ? <p>{description}</p> : description}
         </div>
       )}

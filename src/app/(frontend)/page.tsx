@@ -106,14 +106,14 @@ export default async function HomePage() {
             </ul>
             <div className="mt-10 flex animate-fade-up-delay-3 flex-col gap-4 sm:flex-row">
               <ButtonLink href="/formations" size="lg" className="btn-cta px-10">
-                Voir les formations
+                Je vois les formations
               </ButtonLink>
               <ButtonLink
                 href="/contact"
                 size="lg"
                 className="btn-outline-warm rounded-lg px-10 py-2.5 text-sm font-semibold uppercase tracking-wider"
               >
-                Réserver ma place
+                Je réserve ma place
               </ButtonLink>
             </div>
           </div>
@@ -167,7 +167,7 @@ export default async function HomePage() {
                   className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]"
                   aria-hidden
                 />
-                {item}
+                <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
               </li>
             ))}
           </ul>
@@ -193,7 +193,7 @@ export default async function HomePage() {
           </div>
           <div className="mt-10 text-center">
             <ButtonLink href="/formations" className="btn-cta">
-              Voir toutes les formations
+              Je vois toutes les formations
             </ButtonLink>
           </div>
         </div>
@@ -223,7 +223,7 @@ export default async function HomePage() {
               href="/intervenants"
               className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
             >
-              Voir toutes les fiches
+              Je vois toutes les fiches
             </ButtonLink>
           </div>
         </div>
@@ -259,7 +259,7 @@ export default async function HomePage() {
                     className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-or shadow-[0_0_6px_var(--or-glow)]"
                     aria-hidden
                   />
-                  {item}
+                  <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
                 </li>
               ))}
             </ul>

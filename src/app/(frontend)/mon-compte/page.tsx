@@ -36,7 +36,7 @@ export default async function MonComptePage() {
             <div className="mt-8">
               <SignOutButton redirectUrl="/">
                 <Button variant="outline" type="button">
-                  Se déconnecter
+                  Je me déconnecte
                 </Button>
               </SignOutButton>
             </div>

@@ -36,10 +36,10 @@ export function StickyCta() {
               size="sm"
               className="btn-outline-warm justify-center rounded-lg px-5 py-2.5 text-xs font-semibold uppercase tracking-wider"
             >
-              Voir les formations
+              Je vois les formations
             </ButtonLink>
             <ButtonLink href="/contact" size="sm" className="btn-cta justify-center px-5">
-              Réserver ma place
+              Je réserve ma place
             </ButtonLink>
           </div>
         </div>

@@ -29,7 +29,7 @@ export function IntervenantCard({ intervenant }: IntervenantCardProps) {
       <div className="p-6">
         <h3 className="font-heading text-2xl leading-none text-cream">{intervenant.nom}</h3>
         <p className="mt-2 text-sm font-medium text-or-light">{intervenant.role}</p>
-        <p className="mt-4 text-sm leading-relaxed text-muted-text">{intervenant.bio}</p>
+        <p className="mt-4 text-justify text-sm leading-relaxed text-muted-text">{intervenant.bio}</p>
         {intervenant.filmographie.length > 0 && (
           <p className="mt-4 text-xs leading-relaxed text-cool-glow">
             {intervenant.filmographie.join(" · ")}

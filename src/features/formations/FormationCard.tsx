@@ -21,7 +21,7 @@ export function FormationCard({ formation }: FormationCardProps) {
   return (
     <Link
       href={href}
-      aria-label={`Découvrir la formation ${formation.titreCourt}`}
+      aria-label={`Je découvre la formation ${formation.titreCourt}`}
       className={cn(
         "group card-stage flex h-auto w-full flex-col overflow-hidden transition-all duration-500",
         "hover:-translate-y-1 hover:plateau-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-or/50",
@@ -62,7 +62,7 @@ export function FormationCard({ formation }: FormationCardProps) {
           </p>
         )}
         <span className="inline-flex w-fit shrink-0 items-center text-sm font-medium text-or-light transition-colors group-hover:text-projector-light">
-          Découvrir
+          Je découvre
           <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
         </span>
       </div>

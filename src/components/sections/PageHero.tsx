@@ -14,7 +14,7 @@ export function PageHero({ eyebrow, title, description, children }: PageHeroProp
         {eyebrow && <p className="eyebrow mb-4">{eyebrow}</p>}
         <h1 className="display-title max-w-5xl text-cream">{title}</h1>
         {description && (
-          <div className="mt-5 max-w-4xl text-base leading-relaxed text-muted-text">
+          <div className="mt-5 max-w-4xl text-justify text-base leading-relaxed text-muted-text">
             {typeof description === "string" ? (
               <p className="text-pretty">{description}</p>
             ) : (

@@ -117,7 +117,7 @@ export function PlateauCarousel({ slides }: PlateauCarouselProps) {
           variant="outline"
           className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
         >
-          Voir toute la galerie
+          Je vois toute la galerie
         </ButtonLink>
       </div>
     </div>

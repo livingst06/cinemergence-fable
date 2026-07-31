@@ -91,7 +91,7 @@ export function ContactForm({
         disabled={pending}
         className="btn-cta"
       >
-        {pending ? "Envoi en cours..." : "Envoyer ma demande"}
+        {pending ? "J'envoie..." : "J'envoie ma demande"}
       </Button>
     </form>
   );

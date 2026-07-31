@@ -1,3 +1,4 @@
+import { sanitizeEncadrement, sanitizePedagogyList } from "./formation-format";
 import {
   defaultFinancement,
   defaultFormations,
@@ -182,9 +183,11 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     delaiAcces: doc.delaiAcces ? String(doc.delaiAcces) : undefined,
     tarif: doc.tarif ? String(doc.tarif) : null,
     financements: (doc.financements as FormationData["financements"]) ?? [],
-    methodesPedagogiques: mapStringArray(doc.methodesPedagogiques),
-    moyensTechniques: mapStringArray(doc.moyensTechniques),
-    encadrement: doc.encadrement ? String(doc.encadrement) : undefined,
+    methodesPedagogiques: sanitizePedagogyList(mapStringArray(doc.methodesPedagogiques)),
+    moyensTechniques: sanitizePedagogyList(mapStringArray(doc.moyensTechniques)),
+    encadrement: sanitizeEncadrement(
+      doc.encadrement ? String(doc.encadrement) : undefined,
+    ),
     evaluation: doc.evaluation ? String(doc.evaluation) : undefined,
     accessibilite: doc.accessibilite ? String(doc.accessibilite) : undefined,
     modalitesAccesFinancement: doc.modalitesAccesFinancement

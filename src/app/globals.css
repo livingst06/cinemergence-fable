@@ -143,6 +143,24 @@
     @apply bg-noir text-cream font-sans antialiased;
   }
 
+  p,
+  li,
+  blockquote,
+  dd,
+  figcaption {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+  }
+
+  /* Les blocs explicitement centrés gardent leur alignement */
+  .text-center,
+  .text-center :where(p, li, blockquote, dd, figcaption) {
+    text-align: center;
+    text-justify: auto;
+    hyphens: manual;
+  }
+
   .mobile-nav-panel {
     visibility: hidden;
     opacity: 0;
@@ -323,6 +341,9 @@
 
   .card-stage {
     @apply relative overflow-hidden rounded-2xl border border-white/[0.06] bg-noir-secondary/80 backdrop-blur-sm;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.04) inset,
       0 24px 48px -24px rgba(0, 0, 0, 0.6);
@@ -394,6 +415,9 @@
 
   .truth-card {
     @apply relative overflow-hidden rounded-2xl border border-white/[0.06] bg-noir-secondary/80 p-6 backdrop-blur-sm md:p-7;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.04) inset,
       0 24px 48px -24px rgba(0, 0, 0, 0.6);

@@ -9,6 +9,11 @@ import {
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { MediaFrame } from "@/components/ui/MediaFrame";
 import { SectionHeader } from "@/components/ui/Section";
+import {
+  FormationLabeledGrid,
+  FormationPedagogy,
+  FormationProse,
+} from "@/features/formations/FormationPedagogy";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { defaultFinancement, formationPath } from "@/lib/defaults";
@@ -120,7 +125,7 @@ export default async function FormationDetailPage({ params }: Props) {
               size="lg"
               className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
             >
-              Financer ma formation
+              Je finance ma formation
             </ButtonLink>
           </div>
         </header>
@@ -185,12 +190,19 @@ export default async function FormationDetailPage({ params }: Props) {
             align="left"
             className="mb-6 md:mb-8"
           />
-          <p className="leading-relaxed text-muted-text">
-            {formation.contexteFinalite ?? formation.intro}
-          </p>
-          {formation.contexteFinalite && (
-            <p className="mt-4 leading-relaxed text-muted-text">{formation.intro}</p>
-          )}
+          <FormationProse>
+            {(formation.contexteFinalite ?? formation.intro)
+              .split(/\n\n+/)
+              .filter(Boolean)
+              .map((para) => (
+                <p key={para.slice(0, 48)}>{para}</p>
+              ))}
+            {formation.contexteFinalite &&
+              formation.intro &&
+              !formation.contexteFinalite.includes(formation.intro) && (
+                <p>{formation.intro}</p>
+              )}
+          </FormationProse>
         </div>
 
         <div>
@@ -206,7 +218,7 @@ export default async function FormationDetailPage({ params }: Props) {
                 className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
               >
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]" />
-                {obj}
+                <p className="min-w-0 flex-1 text-justify leading-relaxed">{obj}</p>
               </li>
             ))}
           </ul>
@@ -219,13 +231,7 @@ export default async function FormationDetailPage({ params }: Props) {
               title="Ce que tu développes"
               className="mb-8 md:mb-10"
             />
-            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {competences.map((c) => (
-                <li key={c} className="card-stage p-5 text-sm text-cream/90">
-                  {c}
-                </li>
-              ))}
-            </ul>
+            <FormationLabeledGrid items={competences} />
           </div>
         )}
 
@@ -237,7 +243,7 @@ export default async function FormationDetailPage({ params }: Props) {
           />
           <div className="grid gap-4 md:grid-cols-2">
             {formation.programme.map((module, i) => (
-              <div key={`${module.titre}-${i}`} className="card-stage p-6">
+              <article key={`${module.titre}-${i}`} className="card-stage flex flex-col p-6">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-or-light">
                   {module.jour != null
                     ? `Jour ${String(module.jour).padStart(2, "0")}`
@@ -247,25 +253,37 @@ export default async function FormationDetailPage({ params }: Props) {
                 {module.objectifJournee && (
                   <p className="mt-2 text-sm font-medium text-or-light">{module.objectifJournee}</p>
                 )}
-                {module.detail && (
+                {module.detail && !module.sequences?.length && (
                   <p className="mt-2 text-sm text-muted-text">{module.detail}</p>
                 )}
                 {module.sequences && module.sequences.length > 0 && (
-                  <ul className="mt-4 space-y-2 border-t border-white/[0.06] pt-4">
+                  <ul className="mt-5 space-y-3 border-t border-white/[0.06] pt-4">
                     {module.sequences.map((seq) => (
-                      <li
-                        key={seq.titre}
-                        className="flex items-start justify-between gap-3 text-sm text-cream/85"
-                      >
-                        <span>{seq.titre}</span>
-                        {seq.duree && (
-                          <span className="shrink-0 text-xs text-muted-text">{seq.duree}</span>
-                        )}
+                      <li key={seq.titre} className="flex items-start gap-3">
+                        <span
+                          className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-projector"
+                          aria-hidden
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-3">
+                            <p className="text-sm font-medium text-cream/90">{seq.titre}</p>
+                            {seq.duree && (
+                              <span className="shrink-0 rounded-md border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-text">
+                                {seq.duree}
+                              </span>
+                            )}
+                          </div>
+                          {seq.detail && (
+                            <p className="mt-1 text-justify text-xs leading-relaxed text-muted-text">
+                              {seq.detail}
+                            </p>
+                          )}
+                        </div>
                       </li>
                     ))}
                   </ul>
                 )}
-              </div>
+              </article>
             ))}
           </div>
         </div>
@@ -285,10 +303,6 @@ export default async function FormationDetailPage({ params }: Props) {
               formation.format ? `Format : ${formation.format}` : null,
               formation.modalite ? `Modalité : ${formation.modalite}` : null,
               ...livrables.slice(0, 3).map((item) => `Livrable — ${item}`),
-              moyens[0] ? moyens[0].replace(/^·\s*/, "") : null,
-              formation.encadrement
-                ? `Encadrement — ${formation.encadrement.split(".")[0]}.`
-                : null,
             ]
               .filter((item): item is string => Boolean(item))
               .slice(0, 8)
@@ -298,7 +312,7 @@ export default async function FormationDetailPage({ params }: Props) {
                   className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
                 >
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]" />
-                  {item}
+                  <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
                 </li>
               ))}
           </ul>
@@ -313,43 +327,18 @@ export default async function FormationDetailPage({ params }: Props) {
                 className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
               >
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-or shadow-[0_0_6px_var(--or-glow)]" />
-                {item}
+                <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
               </li>
             ))}
           </ul>
         </div>
 
         {(methodes.length > 0 || moyens.length > 0 || formation.encadrement) && (
-          <div className="grid max-w-3xl gap-10">
-            {methodes.length > 0 && (
-              <div>
-                <h3 className="font-heading text-xl text-cream">Méthodes pédagogiques</h3>
-                <ul className="mt-4 space-y-2 text-sm text-muted-text">
-                  {methodes.map((m) => (
-                    <li key={m}>· {m}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {moyens.length > 0 && (
-              <div>
-                <h3 className="font-heading text-xl text-cream">Moyens techniques</h3>
-                <ul className="mt-4 space-y-2 text-sm text-muted-text">
-                  {moyens.map((m) => (
-                    <li key={m}>· {m}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {formation.encadrement && (
-              <div>
-                <h3 className="font-heading text-xl text-cream">Encadrement</h3>
-                <p className="mt-4 text-sm leading-relaxed text-muted-text">
-                  {formation.encadrement}
-                </p>
-              </div>
-            )}
-          </div>
+          <FormationPedagogy
+            methodes={methodes}
+            moyens={moyens}
+            encadrement={formation.encadrement}
+          />
         )}
 
         <div className="max-w-3xl">
@@ -393,7 +382,7 @@ export default async function FormationDetailPage({ params }: Props) {
               href="/financement"
               className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
             >
-              Vérifier mon financement
+              Je vérifie mon financement
             </ButtonLink>
           </div>
         </div>
@@ -447,7 +436,7 @@ export default async function FormationDetailPage({ params }: Props) {
               href="/financement"
               className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
             >
-              Vérifier mon financement
+              Je vérifie mon financement
             </ButtonLink>
           </div>
         </div>

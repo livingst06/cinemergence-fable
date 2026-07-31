@@ -9,7 +9,7 @@ export default function NotFound() {
         Cette page n&apos;existe pas ou a été déplacée.
       </p>
       <ButtonLink href="/" className="mt-8 btn-cta">
-        Retour à l&apos;accueil
+        Je retourne à l&apos;accueil
       </ButtonLink>
     </section>
   );

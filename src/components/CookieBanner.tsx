@@ -57,10 +57,10 @@ export function CookieBanner() {
             onClick={reject}
             className="border-or/30 text-cream hover:bg-or/10"
           >
-            Refuser
+            Je refuse
           </Button>
           <Button onClick={accept} className="btn-cta">
-            Accepter
+            J&apos;accepte
           </Button>
         </div>
       </div>

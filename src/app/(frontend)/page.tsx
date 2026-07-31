@@ -8,6 +8,7 @@ import { Section, SectionHeader } from "@/components/ui/Section";
 import { CtaFinal } from "@/features/home/CtaFinal";
 import { CredibilityBar } from "@/features/home/CredibilityBar";
 import { PlateauCarousel } from "@/features/home/PlateauCarousel";
+import { StickyCta } from "@/features/home/StickyCta";
 import { Temoignages } from "@/features/home/Temoignages";
 import { FinancementSection } from "@/features/financement/FinancementSection";
 import { FormationCard } from "@/features/formations/FormationCard";
@@ -23,6 +24,29 @@ import {
 } from "@/lib/data";
 
 export const revalidate = 300;
+
+const heroPoints = [
+  "Réalisateur primé",
+  "Caméras RED / ARRI",
+  "Invités & intervenants pro",
+  "Livrables prêts pour castings",
+];
+
+const schoolBenefits = [
+  "Conditions réelles de plateau",
+  "Direction d'acteur & encadrement pro",
+  "Matériel cinéma professionnel",
+  "Livrable concret par formation",
+  "Montage / post-prod selon parcours",
+  "Finançable AFDAS · OPCO · CPF · France Travail",
+];
+
+const founderHighlights = [
+  "Prix Orange Beaumarchais & Canal+ Talents",
+  "Sacré Cœur — Grand Prix d'Oujda, Prix du public (New York Film Festival)",
+  "Le Tombeau des Anges — prix à Los Angeles, Dubaï et Cannes",
+  "Producteur avec Bakelite Films (dont Rose, Hassan Zahi)",
+];
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteSettings();
@@ -59,22 +83,36 @@ export default async function HomePage() {
               Cinémergence
             </h1>
             <p className="mt-4 animate-fade-up-delay-1 text-xl font-heading uppercase tracking-wide text-tungsten md:text-2xl">
-              Forme-toi sur de vrais plateaux
+              Le cinéma, en conditions réelles.
             </p>
             <p className="mt-6 max-w-2xl animate-fade-up-delay-2 text-base leading-relaxed text-cream/85 md:text-lg">
-              {site.tagline} Des parcours concrets pour comédiens, techniciens et
-              professionnels — encadrés comme le cinéma les exige.
+              Une immersion totale sur de vrais plateaux — avec un livrable concret pour chaque
+              parcours.
             </p>
+            <ul className="mt-8 flex animate-fade-up-delay-2 flex-wrap gap-x-5 gap-y-2">
+              {heroPoints.map((point) => (
+                <li
+                  key={point}
+                  className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-cream/80 md:text-[11px]"
+                >
+                  <span
+                    className="h-1 w-1 shrink-0 rounded-full bg-projector shadow-[0_0_8px_var(--projector-glow)]"
+                    aria-hidden
+                  />
+                  {point}
+                </li>
+              ))}
+            </ul>
             <div className="mt-10 flex animate-fade-up-delay-3 flex-col gap-4 sm:flex-row">
               <ButtonLink href="/formations" size="lg" className="btn-cta px-10">
                 Voir les formations
               </ButtonLink>
               <ButtonLink
-                href="/financement"
+                href="/contact"
                 size="lg"
                 className="btn-outline-warm rounded-lg px-10 py-2.5 text-sm font-semibold uppercase tracking-wider"
               >
-                Financer ma formation
+                Réserver ma place
               </ButtonLink>
             </div>
           </div>
@@ -83,57 +121,50 @@ export default async function HomePage() {
 
       <CredibilityBar site={site} />
 
-      <Section id="apropos">
-        <div className="container-page grid gap-12 lg:grid-cols-2">
-          <div>
-            <SectionHeader
-              eyebrow="L'école"
-              title="Une école de formation cinéma"
-              align="left"
-            />
-            <div className="mt-8 space-y-4 text-muted-text">
-              <p>
-                Cinémergence réunit des professionnels du cinéma autour d&apos;une idée claire :
-                former en conditions réelles de plateau, avec le même niveau d&apos;exigence que
-                sur un tournage.
-              </p>
-              <p>
-                Notre catalogue s&apos;adresse aux comédiens, aux techniciens et aux entreprises
-                qui veulent gagner en présence, en technique ou en employabilité — avec un
-                livrable concret à chaque formation.
-              </p>
-              <p>
-                Association loi 1901 et organisme de formation déclaré (NDA {site.nda}), nous
-                accompagnons aussi le financement (AFDAS, OPCO, CPF, France Travail).
-              </p>
-            </div>
-          </div>
-          <Reveal>
-            <blockquote className="card-stage flex h-full flex-col justify-center p-8 md:p-10">
-              <p className="font-heading text-3xl leading-snug text-cream md:text-4xl">
-                &ldquo; Action ! &rdquo;
-              </p>
-              <p className="mt-6 text-base leading-relaxed text-muted-text">
-                C&apos;est ce que dit le réalisateur avant chaque prise. C&apos;est aussi ce mot
-                qui nous anime : passer à l&apos;action, se former, se montrer.
-              </p>
-            </blockquote>
-          </Reveal>
-        </div>
-      </Section>
-
       {carouselPhotos.length > 0 && (
-        <Section variant="secondary" id="plateau">
+        <Section id="plateau">
           <div className="container-page">
             <SectionHeader
-              eyebrow="Immersion"
+              eyebrow="Résultats"
               title="Sur le plateau"
-              description="Répétitions, tournages et mises en situation filmées — le quotidien de nos formations."
+              description="Répétitions, tournages et mises en situation filmées — ce que tu vis avant d'expliquer le reste."
             />
             <PlateauCarousel slides={carouselPhotos} />
+            <div className="mt-8 text-center">
+              <ButtonLink
+                href="/galerie"
+                className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
+              >
+                Voir la galerie
+              </ButtonLink>
+            </div>
           </div>
         </Section>
       )}
+
+      <Section id="apropos">
+        <div className="container-page">
+          <SectionHeader
+            eyebrow="L'école"
+            title="Une immersion totale sur un vrai plateau"
+            description="Cinémergence forme comédiens, techniciens et entreprises en conditions réelles — avec le même niveau d'exigence que sur un tournage."
+          />
+          <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {schoolBenefits.map((item) => (
+              <li
+                key={item}
+                className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
+              >
+                <span
+                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]"
+                  aria-hidden
+                />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Section>
 
       <Section id="formations">
         <div className="container-page">
@@ -179,7 +210,7 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      <Section variant="dark">
+      <Section>
         <div className="container-page grid gap-12 lg:grid-cols-5 lg:items-start">
           <Reveal className="lg:col-span-2">
             <MediaFrame
@@ -197,24 +228,22 @@ export default async function HomePage() {
               description="Réalisateur & fondateur de Cinémergence"
               align="left"
             />
-            <div className="space-y-4 text-sm leading-relaxed text-muted-text">
-              <p>
-                Formé au Cours Florent, Choukri Rouha débute comme acteur dans plusieurs films et
-                séries. Il se consacre ensuite à l&apos;écriture, où il remporte plusieurs
-                distinctions, dont le prix Orange Beaumarchais et Canal + Talents.
-              </p>
-              <p>
-                Réalisateur de spots publicitaires et de clips, il s&apos;impose aussi comme
-                producteur avec Sacré Cœur, récompensé par le Grand Prix d&apos;Oujda, le Prix du
-                public au New York Film Festival et Fast Love en tant que réalisateur.
-              </p>
-              <p>
-                Ses dernières réalisations : Le Tombeau des Anges, avec Karina Testa, Catherine Bad,
-                Daniel Njo Lobé et Mathéo Capelli, a remporté plusieurs prix à Los Angeles, Dubaï et
-                Cannes. Il a également produit Rose, réalisé par Hassan Zahi, en parcours
-                international en festivals.
-              </p>
-            </div>
+            <p className="text-sm leading-relaxed text-muted-text">
+              Formé au Cours Florent, Choukri Rouha débute comme acteur, puis s&apos;impose à
+              l&apos;écriture et à la réalisation. Il a fondé Cinémergence pour offrir un cadre
+              pro, du matériel cinéma et un résultat concret à chaque stagiaire.
+            </p>
+            <ul className="space-y-3">
+              {founderHighlights.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-sm text-cream/90">
+                  <span
+                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-or shadow-[0_0_6px_var(--or-glow)]"
+                    aria-hidden
+                  />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </Section>
@@ -253,7 +282,7 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      <Section variant="secondary">
+      <Section>
         <div className="container-page grid gap-12 lg:grid-cols-2">
           <div>
             <SectionHeader
@@ -298,7 +327,7 @@ export default async function HomePage() {
       <Temoignages temoignages={temoignages} />
       <FinancementSection dispositifs={financement} />
 
-      <Section variant="secondary">
+      <Section>
         <div className="container-page mx-auto max-w-xl text-center">
           <SectionHeader
             eyebrow="Newsletter"
@@ -310,6 +339,7 @@ export default async function HomePage() {
       </Section>
 
       <CtaFinal site={site} />
+      <StickyCta />
     </>
   );
 }

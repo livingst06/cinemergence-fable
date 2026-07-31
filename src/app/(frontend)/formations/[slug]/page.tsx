@@ -142,10 +142,10 @@ export default async function FormationDetailPage({ params }: Props) {
                 {formation.prerequis}
               </p>
             )}
-            {formation.effectifMax && (
+            {formation.effectifMax != null && (
               <p className="mt-3 text-sm text-muted-text">
-                <span className="font-semibold text-or-light">Effectif — </span>
-                {formation.effectifMax} stagiaires maximum
+                <span className="font-semibold text-or-light">Places — </span>
+                {formation.effectifMax} places max par session
               </p>
             )}
             {formation.lieu && (
@@ -254,6 +254,40 @@ export default async function FormationDetailPage({ params }: Props) {
               </div>
             ))}
           </div>
+        </div>
+
+        <div>
+          <SectionHeader
+            eyebrow="Inclus"
+            title="Ce qui est inclus"
+            className="mb-8 md:mb-10"
+          />
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {[
+              formation.duree ? `Durée : ${formation.duree}` : null,
+              formation.effectifMax != null
+                ? `${formation.effectifMax} places max par session`
+                : null,
+              formation.format ? `Format : ${formation.format}` : null,
+              formation.modalite ? `Modalité : ${formation.modalite}` : null,
+              ...livrables.slice(0, 3).map((item) => `Livrable — ${item}`),
+              moyens[0] ? moyens[0].replace(/^·\s*/, "") : null,
+              formation.encadrement
+                ? `Encadrement — ${formation.encadrement.split(".")[0]}.`
+                : null,
+            ]
+              .filter((item): item is string => Boolean(item))
+              .slice(0, 8)
+              .map((item) => (
+                <li
+                  key={item}
+                  className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
+                >
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]" />
+                  {item}
+                </li>
+              ))}
+          </ul>
         </div>
 
         <div>

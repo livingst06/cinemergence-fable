@@ -56,6 +56,11 @@ export function FormationCard({ formation }: FormationCardProps) {
         <p className="line-clamp-2 border-t border-white/[0.06] pt-2.5 text-[10px] font-medium uppercase leading-snug tracking-[0.12em] text-or-light md:text-xs">
           Livrable · {formationLivrableLabel(formation)}
         </p>
+        {formation.effectifMax != null && (
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-text">
+            {formation.effectifMax} places max par session
+          </p>
+        )}
         <span className="inline-flex w-fit shrink-0 items-center text-sm font-medium text-or-light transition-colors group-hover:text-projector-light">
           Découvrir
           <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />

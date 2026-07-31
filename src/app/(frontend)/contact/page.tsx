@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { PageHero } from "@/components/sections/PageHero";
@@ -50,7 +51,7 @@ export default async function ContactPage({ searchParams }: Props) {
               defaultType={defaultType}
             />
           </div>
-          <aside className="lg:col-span-2">
+          <aside className="lg:col-span-2 space-y-6">
             <div className="card-stage p-6">
               <h3 className="font-heading text-xl text-cream">Coordonnées</h3>
               <ul className="mt-4 space-y-3 text-sm text-muted-text">
@@ -92,6 +93,23 @@ export default async function ContactPage({ searchParams }: Props) {
                     </a>
                   </li>
                 )}
+              </ul>
+            </div>
+            <div className="card-stage p-6">
+              <h3 className="font-heading text-xl text-cream">Réassurance</h3>
+              <ul className="mt-4 space-y-3 text-sm text-muted-text">
+                <li>Inscription accompagnée · devis &amp; facture</li>
+                <li>Organisme de formation déclaré · NDA {site.nda}</li>
+                <li>
+                  <Link href="/cgv" className="text-or-light hover:underline">
+                    CGV &amp; politique d&apos;annulation
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/confidentialite" className="text-or-light hover:underline">
+                    Confidentialité
+                  </Link>
+                </li>
               </ul>
             </div>
           </aside>

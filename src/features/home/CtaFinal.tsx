@@ -1,5 +1,6 @@
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import type { SiteConfig } from "@/lib/data";
+import Link from "next/link";
 
 type CtaFinalProps = {
   site: SiteConfig;
@@ -7,8 +8,8 @@ type CtaFinalProps = {
 
 export function CtaFinal({ site }: CtaFinalProps) {
   return (
-    <section className="plateau-bg cinematic-grain relative overflow-hidden bg-noir-tertiary py-24 md:py-32">
-      <div className="container-page relative z-10 text-center">
+    <section className="border-t border-border bg-noir py-24 md:py-32">
+      <div className="container-page text-center">
         <p className="eyebrow mb-5 justify-center">Inscription</p>
         <h2 className="display-title mx-auto max-w-4xl text-cream">
           Prêt à passer
@@ -24,7 +25,7 @@ export function CtaFinal({ site }: CtaFinalProps) {
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <ButtonLink href="/contact" size="lg" className="btn-cta px-10">
-            Je m&apos;inscris
+            Réserver ma place
           </ButtonLink>
           <ButtonLink
             href={`https://wa.me/${site.phone.replace(/\D/g, "")}`}
@@ -34,6 +35,21 @@ export function CtaFinal({ site }: CtaFinalProps) {
             WhatsApp
           </ButtonLink>
         </div>
+
+        <ul className="mx-auto mt-10 flex max-w-3xl flex-col gap-2 text-center text-xs text-muted-text sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2">
+          <li>Inscription accompagnée · devis &amp; facture</li>
+          <li>Organisme déclaré · NDA {site.nda}</li>
+          <li>
+            <a href={`mailto:${site.email}`} className="hover:text-or-light">
+              {site.email}
+            </a>
+          </li>
+          <li>
+            <Link href="/cgv" className="hover:text-or-light">
+              CGV &amp; annulation
+            </Link>
+          </li>
+        </ul>
       </div>
     </section>
   );

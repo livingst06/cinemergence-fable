@@ -1,0 +1,284 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState, useTransition } from "react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  createFormationAction,
+  updateFormationAction,
+  type FormationAdminInput,
+} from "@/features/formations/admin-actions";
+import type { FormationData } from "@/lib/defaults";
+import { slugify } from "@/lib/utils";
+
+type AdminFormationDialogProps = {
+  open: boolean;
+  formation: FormationData | null;
+  onClose: () => void;
+  onSaved: () => void;
+};
+
+type FormState = {
+  slug: string;
+  titre: string;
+  titreCourt: string;
+  pole: string;
+  accroche: string;
+  duree: string;
+  format: string;
+  tarif: string;
+  prioritaire: boolean;
+  audience: "intermittent" | "entreprise";
+  publicCible: string;
+  livrable: string;
+};
+
+const emptyForm = (): FormState => ({
+  slug: "",
+  titre: "",
+  titreCourt: "",
+  pole: "Jeu",
+  accroche: "",
+  duree: "",
+  format: "",
+  tarif: "",
+  prioritaire: false,
+  audience: "intermittent",
+  publicCible: "",
+  livrable: "",
+});
+
+function fromFormation(formation: FormationData): FormState {
+  return {
+    slug: formation.slug,
+    titre: formation.titre,
+    titreCourt: formation.titreCourt,
+    pole: formation.pole,
+    accroche: formation.accroche,
+    duree: formation.duree,
+    format: formation.format,
+    tarif: formation.tarif ?? "",
+    prioritaire: formation.prioritaire,
+    audience: formation.audience,
+    publicCible: formation.publicCible,
+    livrable: formation.livrable,
+  };
+}
+
+const fieldClass =
+  "border-border bg-noir-tertiary/60 text-cream placeholder:text-muted-text";
+
+export function AdminFormationDialog({
+  open,
+  formation,
+  onClose,
+  onSaved,
+}: AdminFormationDialogProps) {
+  const isEdit = Boolean(formation);
+  const [form, setForm] = useState<FormState>(emptyForm);
+  const [slugTouched, setSlugTouched] = useState(false);
+  const [pending, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (!open) return;
+    setForm(formation ? fromFormation(formation) : emptyForm());
+    setSlugTouched(Boolean(formation));
+  }, [open, formation]);
+
+  if (!open) return null;
+
+  const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+    setForm((prev) => {
+      const next = { ...prev, [key]: value };
+      if (key === "titre" && !slugTouched && typeof value === "string") {
+        next.slug = slugify(value);
+      }
+      return next;
+    });
+  };
+
+  const submit = () => {
+    const payload: FormationAdminInput = {
+      ...form,
+      tarif: form.tarif.trim() || null,
+    };
+
+    startTransition(async () => {
+      const result =
+        isEdit && formation?.id != null
+          ? await updateFormationAction(formation.id, payload)
+          : await createFormationAction(payload);
+
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+      toast.success(result.message);
+      onSaved();
+      onClose();
+    });
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[100000] flex items-start justify-center overflow-y-auto bg-noir/70 p-4 backdrop-blur-sm sm:items-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="formation-editor-title"
+    >
+      <div className="my-8 w-full max-w-2xl rounded-2xl border border-border bg-noir-secondary p-6 shadow-2xl sm:p-8">
+        <h2 id="formation-editor-title" className="font-heading text-3xl text-cream">
+          {isEdit ? "Modifier la formation" : "Ajouter une formation"}
+        </h2>
+        <p className="mt-2 text-sm text-muted-text">
+          Champs essentiels uniquement. Pour le programme Qualiopi complet, utilise l’admin
+          Payload.
+        </p>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2 space-y-2">
+            <Label htmlFor="f-titre">Titre</Label>
+            <Input
+              id="f-titre"
+              className={fieldClass}
+              value={form.titre}
+              onChange={(e) => setField("titre", e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-titreCourt">Titre court</Label>
+            <Input
+              id="f-titreCourt"
+              className={fieldClass}
+              value={form.titreCourt}
+              onChange={(e) => setField("titreCourt", e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-slug">Slug</Label>
+            <Input
+              id="f-slug"
+              className={fieldClass}
+              value={form.slug}
+              onChange={(e) => {
+                setSlugTouched(true);
+                setField("slug", e.target.value);
+              }}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-pole">Pôle</Label>
+            <Input
+              id="f-pole"
+              className={fieldClass}
+              value={form.pole}
+              onChange={(e) => setField("pole", e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-audience">Public</Label>
+            <select
+              id="f-audience"
+              className={`flex h-9 w-full rounded-lg border px-3 text-sm ${fieldClass}`}
+              value={form.audience}
+              onChange={(e) =>
+                setField("audience", e.target.value as FormState["audience"])
+              }
+            >
+              <option value="intermittent">Intermittents</option>
+              <option value="entreprise">Entreprise</option>
+            </select>
+          </div>
+          <div className="sm:col-span-2 space-y-2">
+            <Label htmlFor="f-accroche">Accroche</Label>
+            <Textarea
+              id="f-accroche"
+              className={fieldClass}
+              rows={3}
+              value={form.accroche}
+              onChange={(e) => setField("accroche", e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-duree">Durée</Label>
+            <Input
+              id="f-duree"
+              className={fieldClass}
+              value={form.duree}
+              onChange={(e) => setField("duree", e.target.value)}
+              placeholder="35 heures — 5 journées"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-format">Format</Label>
+            <Input
+              id="f-format"
+              className={fieldClass}
+              value={form.format}
+              onChange={(e) => setField("format", e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-tarif">Tarif</Label>
+            <Input
+              id="f-tarif"
+              className={fieldClass}
+              value={form.tarif}
+              onChange={(e) => setField("tarif", e.target.value)}
+              placeholder="À confirmer"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-livrable">Livrable</Label>
+            <Input
+              id="f-livrable"
+              className={fieldClass}
+              value={form.livrable}
+              onChange={(e) => setField("livrable", e.target.value)}
+            />
+          </div>
+          <div className="sm:col-span-2 space-y-2">
+            <Label htmlFor="f-public">Public cible</Label>
+            <Input
+              id="f-public"
+              className={fieldClass}
+              value={form.publicCible}
+              onChange={(e) => setField("publicCible", e.target.value)}
+            />
+          </div>
+          <label className="flex items-center gap-2 text-sm text-cream sm:col-span-2">
+            <input
+              type="checkbox"
+              checked={form.prioritaire}
+              onChange={(e) => setField("prioritaire", e.target.checked)}
+              className="size-4 rounded border-border"
+            />
+            À la une
+          </label>
+        </div>
+
+        {isEdit && (
+          <p className="mt-4 text-xs text-muted-text">
+            <Link href="/admin" className="text-or-light underline-offset-2 hover:underline">
+              Édition complète dans Payload
+            </Link>
+          </p>
+        )}
+
+        <div className="mt-6 flex flex-wrap justify-end gap-3">
+          <Button type="button" variant="outline" onClick={onClose} disabled={pending}>
+            Annuler
+          </Button>
+          <Button type="button" className="btn-cta" onClick={submit} disabled={pending}>
+            {pending ? "Enregistrement…" : isEdit ? "J'enregistre" : "Je crée la formation"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

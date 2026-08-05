@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -8,8 +9,12 @@ import { TagManager } from "@/components/TagManager";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { SiteNoticeBanner } from "@/components/layout/SiteNoticeBanner";
+import { Toaster } from "@/components/ui/sonner";
+import { AdminUiProvider } from "@/features/admin/AdminUiContext";
+import { clerkAppearance } from "@/lib/clerk-appearance";
 import { getFormations, getSiteSettings } from "@/lib/data";
 import { facebookDomainVerification, organizationJsonLd } from "@/lib/seo";
+import { getSessionProfile } from "@/lib/session-profile";
 import { socialMetadata } from "@/lib/share-metadata";
 import { cn } from "@/lib/utils";
 
@@ -55,49 +60,64 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function FrontendLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [site, formations] = await Promise.all([getSiteSettings(), getFormations()]);
+  const [site, formations, profile] = await Promise.all([
+    getSiteSettings(),
+    getFormations(),
+    getSessionProfile(),
+  ]);
   const jsonLd = organizationJsonLd(site);
 
   return (
-    <html
-      lang="fr"
-      className={cn(
-        inter.variable,
-        "dark min-h-dvh",
-      )}
-      data-scroll-behavior="smooth"
-      suppressHydrationWarning
+    <ClerkProvider
+      appearance={clerkAppearance}
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+      signInFallbackRedirectUrl="/"
+      signUpFallbackRedirectUrl="/"
     >
-      <body className="flex min-h-dvh flex-col overflow-x-clip">
-        <TagManager />
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        <SiteNoticeBanner nda={site.nda} />
-        <Header
-          formations={formations.map((f) => ({
-            slug: f.slug,
-            titreCourt: f.titreCourt,
-            prioritaire: f.prioritaire,
-          }))}
-        />
-        <main className="flex-1 overflow-x-clip pt-[calc(var(--site-notice-h)+var(--site-header-h)+env(safe-area-inset-top,0px))]">
-          {children}
-        </main>
-        <Footer
-          site={site}
-          formations={formations.map((f) => ({
-            slug: f.slug,
-            titreCourt: f.titreCourt,
-            prioritaire: f.prioritaire,
-          }))}
-        />
-        <DeferredSiteChrome />
-        <Analytics />
-        <SpeedInsights />
-      </body>
-    </html>
+      <html
+        lang="fr"
+        className={cn(inter.variable, "dark min-h-dvh")}
+        data-scroll-behavior="smooth"
+        suppressHydrationWarning
+      >
+        <body className="flex min-h-dvh flex-col overflow-x-clip">
+          <TagManager />
+          <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
+          <AdminUiProvider
+            initialUserEmail={profile.email}
+            initialIsAdminEligible={profile.isAdminEligible}
+          >
+            <SiteNoticeBanner nda={site.nda} />
+            <Header
+              formations={formations.map((f) => ({
+                slug: f.slug,
+                titreCourt: f.titreCourt,
+                prioritaire: f.prioritaire,
+              }))}
+            />
+            <main className="flex-1 overflow-x-clip pt-[calc(var(--site-notice-h)+var(--site-header-h)+env(safe-area-inset-top,0px))]">
+              {children}
+            </main>
+            <Footer
+              site={site}
+              formations={formations.map((f) => ({
+                slug: f.slug,
+                titreCourt: f.titreCourt,
+                prioritaire: f.prioritaire,
+              }))}
+            />
+            <DeferredSiteChrome />
+            <Toaster />
+            <Analytics />
+            <SpeedInsights />
+          </AdminUiProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

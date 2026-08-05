@@ -210,6 +210,7 @@ function sanitizeFormationCopy(formation: FormationData): FormationData {
 
 function mapFormation(doc: Record<string, unknown>): FormationData {
   return {
+    id: doc.id as number | string | undefined,
     slug: String(doc.slug),
     pole: String(doc.pole),
     titre: sanitizePublicText(String(doc.titre)),

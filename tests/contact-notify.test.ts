@@ -28,6 +28,7 @@ const sample = {
   email: "jean@example.com",
   message: "Message de test valide",
   type: "contact" as const,
+  codeParrainage: undefined,
 };
 
 describe("resolveContactNotificationEmail", () => {
@@ -105,6 +106,7 @@ describe("sendContactNotification", () => {
       message: "Message de test valide",
       type: "inscription",
       formationSlug: "formation-jouer-face-camera",
+      codeParrainage: undefined,
     });
 
     expect(result.ok).toBe(true);
@@ -127,6 +129,7 @@ describe("sendContactNotification", () => {
       email: "jean@example.com",
       message: "Message de test valide",
       type: "contact",
+      codeParrainage: undefined,
     });
 
     expect(result.ok).toBe(false);
@@ -146,6 +149,7 @@ describe("sendContactNotification", () => {
       email: "jean@example.com",
       message: "Message de test valide",
       type: "contact",
+      codeParrainage: undefined,
     });
 
     expect(result.ok).toBe(true);
@@ -170,6 +174,7 @@ describe("sendContactNotification", () => {
       email: "jean@example.com",
       message: "Message de test valide",
       type: "contact",
+      codeParrainage: undefined,
     });
 
     expect(result.ok).toBe(true);

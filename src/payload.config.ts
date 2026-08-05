@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 
 import { Formations } from "./collections/Formations";
 import { FormSubmissions } from "./collections/FormSubmissions";
+import { Inscriptions } from "./collections/Inscriptions";
 import { Intervenants } from "./collections/Intervenants";
 import { Media } from "./collections/Media";
 import { Temoignages } from "./collections/Temoignages";
@@ -36,6 +37,7 @@ export default buildConfig({
     Intervenants,
     Temoignages,
     FormSubmissions,
+    Inscriptions,
   ],
   globals: [SiteSettings, LegalPages],
   editor: lexicalEditor(),

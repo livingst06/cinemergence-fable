@@ -13,6 +13,12 @@ export const Formations: CollectionConfig = {
     useAsTitle: "titre",
     defaultColumns: ["titre", "pole", "prioritaire", "updatedAt"],
   },
+  access: {
+    read: () => true,
+    create: ({ req }) => req.user?.role === "admin",
+    update: ({ req }) => req.user?.role === "admin",
+    delete: ({ req }) => req.user?.role === "admin",
+  },
   fields: [
     {
       name: "slug",

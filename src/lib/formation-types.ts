@@ -18,6 +18,8 @@ export type ProgrammeJour = {
 };
 
 export type FormationData = {
+  /** ID Payload CMS — absent pour les fallbacks catalogue statique. */
+  id?: number | string;
   slug: string;
   pole: string;
   titre: string;

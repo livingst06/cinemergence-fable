@@ -1,9 +1,7 @@
 /**
- * S'assure que le compte admin (verdat.sylvain@gmail.com) a bien role: "admin"
- * en production, avant/après sa première connexion via Clerk (voir
- * src/lib/clerk-strategy.ts qui lie automatiquement par email mais ne touche
- * jamais au role d'un compte existant). Renomme aussi l'ex-email de seed local
- * (admin@cinemergence.paris) si le document existe encore sous cette forme.
+ * S'assure que chaque email de ADMIN_LIST a bien role: "admin" en production.
+ * Renomme aussi l'ex-email de seed local (admin@cinemergence.paris) si besoin.
+ * La stratégie Clerk synchronise aussi le rôle à chaque login via ADMIN_LIST.
  *
  * Usage: pnpm migrate:admin-role
  */

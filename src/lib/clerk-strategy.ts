@@ -1,6 +1,8 @@
 import { createClerkClient, verifyToken } from "@clerk/backend";
 import type { AuthStrategy, AuthStrategyResult } from "payload";
 
+import { roleForEmail } from "@/lib/admin-auth";
+
 function extractSessionToken(headers: Request["headers"]): string | null {
   const authHeader = headers.get("authorization");
   if (authHeader?.startsWith("Bearer ")) {
@@ -16,7 +18,7 @@ function extractSessionToken(headers: Request["headers"]): string | null {
 /**
  * Stratégie d'authentification Payload qui délègue entièrement l'identité à Clerk.
  * Upsert paresseux du document `users` : lié par clerkId, puis par email (migration
- * en douceur des comptes locaux existants), sinon création avec role "stagiaire".
+ * en douceur des comptes locaux existants), sinon création. Le rôle suit `ADMIN_LIST`.
  */
 export const clerkStrategy: AuthStrategy = {
   name: "clerk",
@@ -45,7 +47,17 @@ export const clerkStrategy: AuthStrategy = {
     });
 
     if (byClerkId.docs[0]) {
-      return { user: { collection: "users", ...byClerkId.docs[0] } };
+      const existing = byClerkId.docs[0];
+      const desiredRole = roleForEmail(existing.email);
+      if (existing.role !== desiredRole) {
+        const synced = await payload.update({
+          collection: "users",
+          id: existing.id,
+          data: { role: desiredRole },
+        });
+        return { user: { collection: "users", ...synced } };
+      }
+      return { user: { collection: "users", ...existing } };
     }
 
     const clerkClient = createClerkClient({ secretKey });
@@ -57,6 +69,7 @@ export const clerkStrategy: AuthStrategy = {
     if (!email) return { user: null };
 
     const fullName = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ");
+    const role = roleForEmail(email);
 
     const byEmail = await payload.find({
       collection: "users",
@@ -68,7 +81,7 @@ export const clerkStrategy: AuthStrategy = {
       const linked = await payload.update({
         collection: "users",
         id: byEmail.docs[0].id,
-        data: { clerkId: clerkUserId },
+        data: { clerkId: clerkUserId, role },
       });
       return { user: { collection: "users", ...linked } };
     }
@@ -79,7 +92,7 @@ export const clerkStrategy: AuthStrategy = {
         email,
         name: fullName || undefined,
         clerkId: clerkUserId,
-        role: "stagiaire",
+        role,
       },
     });
 

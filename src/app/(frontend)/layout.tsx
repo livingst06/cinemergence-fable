@@ -7,8 +7,10 @@ import { CookieBanner } from "@/components/CookieBanner";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { Toaster } from "@/components/ui/sonner";
+import { AdminUiProvider } from "@/features/admin/AdminUiContext";
 import { getFormations, getSiteSettings } from "@/lib/data";
 import { clerkAppearance } from "@/lib/clerk-appearance";
+import { getSessionProfile } from "@/lib/session-profile";
 import { organizationJsonLd } from "@/lib/seo";
 
 import "../globals.css";
@@ -56,7 +58,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function FrontendLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [site, formations] = await Promise.all([getSiteSettings(), getFormations()]);
+  const [site, formations, profile] = await Promise.all([
+    getSiteSettings(),
+    getFormations(),
+    getSessionProfile(),
+  ]);
   const jsonLd = organizationJsonLd(site);
 
   return (
@@ -68,25 +74,30 @@ export default async function FrontendLayout({
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
-          <Header
-            formations={formations.map((f) => ({
-              slug: f.slug,
-              titreCourt: f.titreCourt,
-              prioritaire: f.prioritaire,
-            }))}
-          />
-          <main className="flex-1 overflow-x-clip pt-16 md:pt-[4.5rem]">{children}</main>
-          <Footer
-            site={site}
-            formations={formations.map((f) => ({
-              slug: f.slug,
-              titreCourt: f.titreCourt,
-              prioritaire: f.prioritaire,
-            }))}
-          />
-          <CookieBanner />
-          <Analytics />
-          <Toaster />
+          <AdminUiProvider
+            initialUserEmail={profile.email}
+            initialIsAdminEligible={profile.isAdminEligible}
+          >
+            <Header
+              formations={formations.map((f) => ({
+                slug: f.slug,
+                titreCourt: f.titreCourt,
+                prioritaire: f.prioritaire,
+              }))}
+            />
+            <main className="flex-1 overflow-x-clip pt-16 md:pt-[4.5rem]">{children}</main>
+            <Footer
+              site={site}
+              formations={formations.map((f) => ({
+                slug: f.slug,
+                titreCourt: f.titreCourt,
+                prioritaire: f.prioritaire,
+              }))}
+            />
+            <CookieBanner />
+            <Analytics />
+            <Toaster />
+          </AdminUiProvider>
         </body>
       </html>
     </ClerkProvider>

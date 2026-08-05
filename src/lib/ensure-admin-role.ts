@@ -1,48 +1,62 @@
 import type { Payload } from "payload";
 
-const ADMIN_EMAIL = "verdat.sylvain@gmail.com";
+import { getAdminEmails } from "@/lib/admin-auth";
+
 const LEGACY_ADMIN_EMAIL = "admin@cinemergence.paris";
 
 /**
- * S'assure que le compte admin (verdat.sylvain@gmail.com) a bien role: "admin".
- * Si un ancien document existe encore sous l'ex-email de seed local
- * (admin@cinemergence.paris), il est renommé pour que la liaison par email de
- * la stratégie Clerk (src/lib/clerk-strategy.ts) le retrouve à la connexion.
+ * S'assure que chaque email de `ADMIN_LIST` a bien `role: "admin"` en base.
+ * Migre aussi l'ancien email de seed local (`admin@cinemergence.paris`) vers
+ * le premier email de la whitelist, pour que clerk-strategy le retrouve.
  */
 export async function ensureAdminRole(payload: Payload): Promise<string | null> {
-  const byNewEmail = await payload.find({
+  const adminEmails = getAdminEmails();
+  if (adminEmails.length === 0) {
+    return "ADMIN_LIST vide — aucun rôle admin forcé";
+  }
+
+  const logs: string[] = [];
+  const primaryEmail = adminEmails[0]!;
+
+  const byLegacyEmail = await payload.find({
     collection: "users",
-    where: { email: { equals: ADMIN_EMAIL } },
+    where: { email: { equals: LEGACY_ADMIN_EMAIL } },
     limit: 1,
   });
-
-  let doc = byNewEmail.docs[0];
-
-  if (!doc) {
-    const byLegacyEmail = await payload.find({
+  const legacyDoc = byLegacyEmail.docs[0];
+  if (legacyDoc) {
+    const existingPrimary = await payload.find({
       collection: "users",
-      where: { email: { equals: LEGACY_ADMIN_EMAIL } },
+      where: { email: { equals: primaryEmail } },
       limit: 1,
     });
-    const legacyDoc = byLegacyEmail.docs[0];
-    if (legacyDoc) {
-      doc = await payload.update({
+    if (!existingPrimary.docs[0]) {
+      await payload.update({
         collection: "users",
         id: legacyDoc.id,
-        data: { email: ADMIN_EMAIL, role: "admin" },
+        data: { email: primaryEmail, role: "admin" },
       });
-      return `Email admin migré : ${LEGACY_ADMIN_EMAIL} → ${ADMIN_EMAIL}`;
+      logs.push(`Email admin migré : ${LEGACY_ADMIN_EMAIL} → ${primaryEmail}`);
     }
   }
 
-  if (doc && doc.role !== "admin") {
-    await payload.update({
+  for (const email of adminEmails) {
+    const found = await payload.find({
       collection: "users",
-      id: doc.id,
-      data: { role: "admin" },
+      where: { email: { equals: email } },
+      limit: 1,
     });
-    return `Role admin confirmé pour ${ADMIN_EMAIL}`;
+    const doc = found.docs[0];
+    if (!doc) continue;
+    if (doc.role !== "admin") {
+      await payload.update({
+        collection: "users",
+        id: doc.id,
+        data: { role: "admin" },
+      });
+      logs.push(`Role admin confirmé pour ${email}`);
+    }
   }
 
-  return null;
+  return logs.length > 0 ? logs.join(" · ") : null;
 }

@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SignOutButton, useAuth } from "@clerk/nextjs";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 
+import { AdminModeToggle } from "@/features/admin/AdminModeToggle";
+import { Button } from "@/components/ui/button";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Logo } from "@/components/layout/Logo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -28,6 +31,95 @@ function navLinkClass(active: boolean) {
   return cn(
     "text-sm font-medium transition-colors hover:text-or-light",
     active ? "text-projector-light" : "text-cream/75",
+  );
+}
+
+function AuthNavDesktop() {
+  const { isSignedIn } = useAuth();
+
+  if (!isSignedIn) {
+    return (
+      <>
+        <Link href="/sign-in" className={navLinkClass(false)}>
+          Je me connecte
+        </Link>
+        <ButtonLink href="/sign-up" size="sm" variant="outline" className="btn-outline-warm px-4">
+          Je crée mon compte
+        </ButtonLink>
+        <ButtonLink href="/contact" size="sm" className="btn-cta px-5">
+          Je m&apos;inscris
+        </ButtonLink>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <AdminModeToggle />
+      <Link href="/mon-compte" className={navLinkClass(false)}>
+        Mon compte
+      </Link>
+      <SignOutButton redirectUrl="/">
+        <Button type="button" size="sm" variant="outline" className="btn-outline-warm px-4">
+          Je me déconnecte
+        </Button>
+      </SignOutButton>
+      <ButtonLink href="/contact" size="sm" className="btn-cta px-5">
+        Je m&apos;inscris
+      </ButtonLink>
+    </>
+  );
+}
+
+function AuthNavMobile({ onNavigate }: { onNavigate: () => void }) {
+  const { isSignedIn } = useAuth();
+
+  if (!isSignedIn) {
+    return (
+      <>
+        <ButtonLink
+          href="/sign-in"
+          variant="outline"
+          className="btn-outline-warm mt-3"
+          onClick={onNavigate}
+        >
+          Je me connecte
+        </ButtonLink>
+        <ButtonLink
+          href="/sign-up"
+          variant="outline"
+          className="btn-outline-warm"
+          onClick={onNavigate}
+        >
+          Je crée mon compte
+        </ButtonLink>
+        <ButtonLink href="/contact" className="btn-cta" onClick={onNavigate}>
+          Je m&apos;inscris
+        </ButtonLink>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="mt-3 flex items-center justify-between gap-3 px-1">
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted-text">
+          Mode admin
+        </span>
+        <AdminModeToggle />
+      </div>
+      <ButtonLink href="/mon-compte" variant="outline" className="btn-outline-warm" onClick={onNavigate}>
+        Mon compte
+      </ButtonLink>
+      <SignOutButton redirectUrl="/">
+        <Button type="button" variant="outline" className="btn-outline-warm w-full" onClick={onNavigate}>
+          Je me déconnecte
+        </Button>
+      </SignOutButton>
+      <ButtonLink href="/contact" className="btn-cta" onClick={onNavigate}>
+        Je m&apos;inscris
+      </ButtonLink>
+    </>
   );
 }
 
@@ -144,9 +236,7 @@ export function Header({ formations }: HeaderProps) {
               })}
 
             <ThemeToggle className="h-9 w-9" />
-            <ButtonLink href="/contact" size="sm" className="btn-cta px-5">
-              Je m&apos;inscris
-            </ButtonLink>
+            <AuthNavDesktop />
           </nav>
 
           <div className="relative z-[1] flex shrink-0 items-center gap-3 lg:hidden">
@@ -227,9 +317,7 @@ export function Header({ formations }: HeaderProps) {
                   </Link>
                 );
               })}
-            <ButtonLink href="/contact" className="btn-cta mt-3" onClick={closeMobileNav}>
-              Je m&apos;inscris
-            </ButtonLink>
+            <AuthNavMobile onNavigate={closeMobileNav} />
           </div>
         </nav>
       </div>

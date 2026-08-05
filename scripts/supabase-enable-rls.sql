@@ -1,6 +1,9 @@
--- Enable RLS on Payload CMS tables in Supabase.
+-- Enable RLS on ALL public tables in Supabase (Payload CMS).
 -- Payload/Vercel connect as the `postgres` role (bypasses RLS).
 -- PostgREST (anon/authenticated API keys) is blocked — no permissive policies.
+--
+-- Run: pnpm supabase:rls
+-- Or paste into Supabase → SQL Editor.
 
 DO $$
 DECLARE
@@ -10,20 +13,8 @@ BEGIN
     SELECT tablename
     FROM pg_tables
     WHERE schemaname = 'public'
-      AND (
-        tablename LIKE 'payload\_%' ESCAPE '\'
-        OR tablename LIKE 'formations%'
-        OR tablename LIKE 'intervenants%'
-        OR tablename IN (
-          'users',
-          'users_sessions',
-          'media',
-          'temoignages',
-          'form_submissions',
-          'site_settings',
-          'legal_pages'
-        )
-      )
+      -- Skip PostGIS / extension system tables if present
+      AND tablename NOT IN ('spatial_ref_sys', 'geography_columns', 'geometry_columns')
   LOOP
     EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY', r.tablename);
     EXECUTE format('REVOKE ALL ON TABLE public.%I FROM anon, authenticated', r.tablename);

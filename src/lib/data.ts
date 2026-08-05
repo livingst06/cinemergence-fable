@@ -152,6 +152,7 @@ function mapProgramme(raw: unknown): FormationData["programme"] {
 
 function mapFormation(doc: Record<string, unknown>): FormationData {
   return {
+    id: doc.id as number | string | undefined,
     slug: String(doc.slug),
     pole: String(doc.pole),
     titre: String(doc.titre),

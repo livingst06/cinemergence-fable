@@ -43,15 +43,7 @@ async function main() {
       JOIN pg_namespace n ON n.oid = c.relnamespace
       WHERE n.nspname = 'public'
         AND c.relkind = 'r'
-        AND (
-          c.relname LIKE 'payload_%'
-          OR c.relname LIKE 'formations%'
-          OR c.relname LIKE 'intervenants%'
-          OR c.relname IN (
-            'users', 'users_sessions', 'media', 'temoignages',
-            'form_submissions', 'site_settings', 'legal_pages'
-          )
-        )
+        AND c.relname NOT IN ('spatial_ref_sys', 'geography_columns', 'geometry_columns')
       ORDER BY c.relname
     `);
 
@@ -61,7 +53,7 @@ async function main() {
       process.exit(1);
     }
 
-    console.log(`✓ RLS activé sur ${rows.length} tables Payload.`);
+    console.log(`✓ RLS activé sur ${rows.length} tables public.`);
     for (const row of rows) {
       console.log(`  · ${row.tablename}`);
     }

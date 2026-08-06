@@ -12,11 +12,14 @@ type FormationCardProps = {
   formation: FormationData;
   /** Conservé pour compat — toutes les cards ont désormais le même format. */
   featured?: boolean;
+  /** Places restantes (null = non configuré → bandeau masqué). */
+  placesRestantes?: number | null;
 };
 
-export function FormationCard({ formation }: FormationCardProps) {
+export function FormationCard({ formation, placesRestantes }: FormationCardProps) {
   const coverSrc = resolveFormationCoverUrl(formation.slug, formation.coverImageUrl);
   const href = formationPath(formation.slug);
+  const showPlaces = placesRestantes != null;
 
   return (
     <Link
@@ -56,16 +59,26 @@ export function FormationCard({ formation }: FormationCardProps) {
         <p className="line-clamp-2 border-t border-white/[0.06] pt-2.5 text-[10px] font-medium uppercase leading-snug tracking-[0.12em] text-or-light md:text-xs">
           Livrable · {formationLivrableLabel(formation)}
         </p>
-        {formation.effectifMax != null && (
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-text">
-            {formation.effectifMax} places max par session
-          </p>
-        )}
         <span className="inline-flex w-fit shrink-0 items-center text-sm font-medium text-or-light transition-colors group-hover:text-projector-light">
           Je découvre
           <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
         </span>
       </div>
+
+      {showPlaces ? (
+        <div
+          className={cn(
+            "mt-auto w-full px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.14em]",
+            placesRestantes > 0
+              ? "bg-emerald-600 text-white"
+              : "bg-emerald-900/80 text-emerald-100/90",
+          )}
+        >
+          {placesRestantes > 0
+            ? `${placesRestantes} place${placesRestantes > 1 ? "s" : ""} restante${placesRestantes > 1 ? "s" : ""}`
+            : "Complet"}
+        </div>
+      ) : null}
     </Link>
   );
 }

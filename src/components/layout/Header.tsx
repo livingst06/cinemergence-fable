@@ -2,13 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SignOutButton, useAuth } from "@clerk/nextjs";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 
 import { AdminModeToggle } from "@/features/admin/AdminModeToggle";
-import { Button } from "@/components/ui/button";
-import { ButtonLink } from "@/components/ui/ButtonLink";
+import { HeaderUserMenu } from "@/components/layout/HeaderUserMenu";
 import { Logo } from "@/components/layout/Logo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import type { FormationData } from "@/lib/defaults";
@@ -34,42 +32,8 @@ function navLinkClass(active: boolean) {
   );
 }
 
-const loginButtonClass =
-  "inline-flex h-8 shrink-0 items-center rounded-full border border-border/70 bg-noir-tertiary/80 px-3.5 text-xs font-medium text-cream/90 shadow-sm backdrop-blur-md transition-colors duration-200 hover:border-or/35 hover:bg-noir-tertiary hover:text-or-light";
-
-/** Toujours visible dans la barre header (desktop + mobile) : Admin + Login/Logout. */
-function HeaderAuthChrome() {
-  const { isSignedIn } = useAuth();
-
-  return (
-    <div className="flex shrink-0 items-center gap-2">
-      <AdminModeToggle />
-      {isSignedIn ? (
-        <>
-          <Link
-            href="/mon-compte"
-            className={cn(navLinkClass(false), "hidden whitespace-nowrap lg:inline")}
-          >
-            Mon compte
-          </Link>
-          <SignOutButton redirectUrl="/">
-            <Button type="button" variant="ghost" className={loginButtonClass}>
-              Logout
-            </Button>
-          </SignOutButton>
-        </>
-      ) : (
-        <ButtonLink href="/sign-in" variant="ghost" className={loginButtonClass}>
-          Login
-        </ButtonLink>
-      )}
-    </div>
-  );
-}
-
 export function Header({ formations }: HeaderProps) {
   const pathname = usePathname();
-  const { isSignedIn } = useAuth();
   const [formationsOpen, setFormationsOpen] = useState(false);
   const navToggleRef = useRef<HTMLInputElement>(null);
   const formationsCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -185,7 +149,6 @@ export function Header({ formations }: HeaderProps) {
                 })}
             </nav>
 
-            <HeaderAuthChrome />
             <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary transition-[background-color,border-color,color,box-shadow] duration-200 lg:hidden">
               <input
                 ref={navToggleRef}
@@ -199,6 +162,8 @@ export function Header({ formations }: HeaderProps) {
               </span>
               <span className="sr-only">Menu</span>
             </label>
+            <AdminModeToggle />
+            <HeaderUserMenu />
             <ThemeToggle className="h-9 w-9" />
           </div>
         </div>
@@ -263,16 +228,6 @@ export function Header({ formations }: HeaderProps) {
                   </Link>
                 );
               })}
-            {isSignedIn ? (
-              <ButtonLink
-                href="/mon-compte"
-                variant="outline"
-                className="btn-outline-warm mt-3"
-                onClick={closeMobileNav}
-              >
-                Mon compte
-              </ButtonLink>
-            ) : null}
           </div>
         </nav>
       </div>

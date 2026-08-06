@@ -22,6 +22,7 @@ import {
   getSiteSettings,
   getTemoignages,
 } from "@/lib/data";
+import { getPlacesRestantesMap } from "@/lib/places";
 
 export const revalidate = 300;
 
@@ -71,6 +72,8 @@ export default async function HomePage() {
   const prioritaires = formations.filter((f) => f.prioritaire);
   const apercu = prioritaires.length > 0 ? prioritaires : formations.slice(0, 2);
   const autresApercu = formations.filter((f) => !apercu.some((p) => p.slug === f.slug)).slice(0, 4);
+  const apercuList = [...apercu, ...autresApercu];
+  const placesByFormationId = await getPlacesRestantesMap(apercuList);
 
   return (
     <>
@@ -187,8 +190,14 @@ export default async function HomePage() {
             }
           />
           <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
-            {[...apercu, ...autresApercu].map((f) => (
-              <FormationCard key={f.slug} formation={f} />
+            {apercuList.map((f) => (
+              <FormationCard
+                key={f.slug}
+                formation={f}
+                placesRestantes={
+                  f.id != null ? (placesByFormationId[String(f.id)] ?? null) : null
+                }
+              />
             ))}
           </div>
           <div className="mt-10 text-center">

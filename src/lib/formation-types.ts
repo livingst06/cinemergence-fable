@@ -47,6 +47,10 @@ export type FormationData = {
   format: string;
   modalite?: string;
   effectifMax?: number;
+  /** Places pour la session datée (réservations). */
+  placesOffertes?: number;
+  dateDebut?: string;
+  dateFin?: string;
   prerequis?: string;
   lieu?: string;
   delaiAcces?: string;

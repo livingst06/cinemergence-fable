@@ -8,14 +8,20 @@ import { Button } from "@/components/ui/button";
 
 type FormationCardAdminProps = {
   formation: FormationData;
+  placesRestantes?: number | null;
   onEdit: () => void;
   onDelete: () => void;
 };
 
-export function FormationCardAdmin({ formation, onEdit, onDelete }: FormationCardAdminProps) {
+export function FormationCardAdmin({
+  formation,
+  placesRestantes,
+  onEdit,
+  onDelete,
+}: FormationCardAdminProps) {
   return (
     <div className="relative h-full">
-      <FormationCard formation={formation} />
+      <FormationCard formation={formation} placesRestantes={placesRestantes} />
       <div className="absolute top-3 right-3 z-30 flex items-center gap-2">
         <button
           type="button"

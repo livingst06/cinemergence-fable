@@ -23,6 +23,9 @@ const formationAdminSchema = z.object({
   audience: z.enum(["intermittent", "entreprise"]),
   publicCible: z.string().trim().min(1, "Public cible requis"),
   livrable: z.string().trim().min(1, "Livrable requis"),
+  placesOffertes: z.number().int().min(0).optional().nullable(),
+  dateDebut: z.string().trim().optional().nullable(),
+  dateFin: z.string().trim().optional().nullable(),
 });
 
 export type FormationAdminInput = z.infer<typeof formationAdminSchema>;
@@ -46,6 +49,10 @@ function placeholdersFromEssentials(data: FormationAdminInput) {
     audience: data.audience,
     publicCible: data.publicCible,
     livrable: data.livrable,
+    placesOffertes:
+      typeof data.placesOffertes === "number" ? data.placesOffertes : undefined,
+    dateDebut: data.dateDebut?.trim() || undefined,
+    dateFin: data.dateFin?.trim() || undefined,
     intro,
     pourQui: data.publicCible,
     objectifs: [{ item: "À compléter dans l’admin Payload" }],
@@ -128,6 +135,12 @@ export async function updateFormationAction(
         audience: parsed.data.audience,
         publicCible: parsed.data.publicCible,
         livrable: parsed.data.livrable,
+        placesOffertes:
+          typeof parsed.data.placesOffertes === "number"
+            ? parsed.data.placesOffertes
+            : null,
+        dateDebut: parsed.data.dateDebut?.trim() || null,
+        dateFin: parsed.data.dateFin?.trim() || null,
         metaTitle: current.metaTitle || parsed.data.titre,
         metaDescription: current.metaDescription || parsed.data.accroche.slice(0, 160),
       },

@@ -79,6 +79,17 @@ export async function getSessionProfile(): Promise<SessionProfile> {
   }
 }
 
+/** Guard serveur — utilisateur Clerk connecté. */
+export async function requireAuth(): Promise<
+  { ok: true; profile: SessionProfile } | { ok: false; error: string }
+> {
+  const profile = await getSessionProfile();
+  if (!profile.clerkUser) {
+    return { ok: false, error: "Connexion requise" };
+  }
+  return { ok: true, profile };
+}
+
 /** Guard serveur pour mutations admin — source de vérité = ADMIN_LIST. */
 export async function requireAdmin(): Promise<
   { ok: true; profile: SessionProfile } | { ok: false; error: string }

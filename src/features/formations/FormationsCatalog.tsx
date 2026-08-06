@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 
 type FormationsCatalogProps = {
   formations: FormationData[];
+  placesByFormationId?: Record<string, number | null>;
 };
 
 type AudienceFilter = "tous" | "intermittent" | "entreprise";
@@ -26,7 +27,10 @@ const audienceLabels: Record<AudienceFilter, string> = {
   entreprise: "Entreprise",
 };
 
-export function FormationsCatalog({ formations }: FormationsCatalogProps) {
+export function FormationsCatalog({
+  formations,
+  placesByFormationId = {},
+}: FormationsCatalogProps) {
   const { isAdminMode } = useAdminUi();
   const router = useRouter();
   const poles = useMemo(() => {
@@ -123,11 +127,14 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
 
       {ordered.length > 0 || isAdminMode ? (
         <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
-          {ordered.map((f) =>
-            isAdminMode ? (
+          {ordered.map((f) => {
+            const placesRestantes =
+              f.id != null ? (placesByFormationId[String(f.id)] ?? null) : null;
+            return isAdminMode ? (
               <FormationCardAdmin
                 key={f.slug}
                 formation={f}
+                placesRestantes={placesRestantes}
                 onEdit={() => {
                   if (f.id == null) {
                     toast.error("Formation hors CMS — édite-la dans Payload après seed.");
@@ -139,9 +146,13 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
                 onDelete={() => setDeleteTarget(f)}
               />
             ) : (
-              <FormationCard key={f.slug} formation={f} />
-            ),
-          )}
+              <FormationCard
+                key={f.slug}
+                formation={f}
+                placesRestantes={placesRestantes}
+              />
+            );
+          })}
           {isAdminMode && (
             <AdminAddFormationCard
               onAdd={() => {

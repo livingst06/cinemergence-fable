@@ -1,11 +1,26 @@
 import type { CollectionConfig } from "payload";
 
+export const INSCRIPTION_STATUSES = [
+  { label: "En cours d'instruction", value: "en_instruction" },
+  { label: "Validée", value: "validee" },
+  { label: "Refusée", value: "refusee" },
+  { label: "En attente de pièce complémentaire", value: "pieces_complementaires" },
+  // Legacy (migration douce)
+  { label: "Demande (legacy)", value: "demande" },
+  { label: "Inscrit (legacy)", value: "inscrit" },
+  { label: "Annulé (legacy)", value: "annule" },
+] as const;
+
+export type InscriptionStatusValue =
+  (typeof INSCRIPTION_STATUSES)[number]["value"];
+
 export const Inscriptions: CollectionConfig = {
   slug: "inscriptions",
   admin: {
     useAsTitle: "id",
     defaultColumns: ["user", "formation", "status", "updatedAt"],
-    description: "Inscriptions stagiaires — passe en « inscrit » pour afficher sur Mon compte.",
+    description:
+      "Demandes d'inscription stagiaires — valider, refuser ou demander des pièces.",
   },
   access: {
     read: ({ req }) => {
@@ -36,12 +51,16 @@ export const Inscriptions: CollectionConfig = {
       name: "status",
       type: "select",
       required: true,
-      defaultValue: "demande",
-      options: [
-        { label: "Demande", value: "demande" },
-        { label: "Inscrit", value: "inscrit" },
-        { label: "Annulé", value: "annule" },
-      ],
+      defaultValue: "en_instruction",
+      options: [...INSCRIPTION_STATUSES],
+    },
+    {
+      name: "commentaireAdmin",
+      type: "textarea",
+      label: "Commentaire administrateur",
+      admin: {
+        description: "Visible par le stagiaire en cas de refus ou de pièces demandées.",
+      },
     },
     {
       name: "codeParrainage",

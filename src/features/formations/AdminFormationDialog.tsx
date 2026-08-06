@@ -36,6 +36,9 @@ type FormState = {
   audience: "intermittent" | "entreprise";
   publicCible: string;
   livrable: string;
+  placesOffertes: string;
+  dateDebut: string;
+  dateFin: string;
 };
 
 const emptyForm = (): FormState => ({
@@ -51,7 +54,17 @@ const emptyForm = (): FormState => ({
   audience: "intermittent",
   publicCible: "",
   livrable: "",
+  placesOffertes: "",
+  dateDebut: "",
+  dateFin: "",
 });
+
+function toDateInputValue(iso: string | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toISOString().slice(0, 10);
+}
 
 function fromFormation(formation: FormationData): FormState {
   return {
@@ -67,6 +80,14 @@ function fromFormation(formation: FormationData): FormState {
     audience: formation.audience,
     publicCible: formation.publicCible,
     livrable: formation.livrable,
+    placesOffertes:
+      formation.placesOffertes != null
+        ? String(formation.placesOffertes)
+        : formation.effectifMax != null
+          ? String(formation.effectifMax)
+          : "",
+    dateDebut: toDateInputValue(formation.dateDebut),
+    dateFin: toDateInputValue(formation.dateFin),
   };
 }
 
@@ -103,9 +124,30 @@ export function AdminFormationDialog({
   };
 
   const submit = () => {
+    const placesRaw = form.placesOffertes.trim();
+    const placesOffertes =
+      placesRaw === "" ? null : Number.parseInt(placesRaw, 10);
+    if (placesRaw !== "" && Number.isNaN(placesOffertes)) {
+      toast.error("Places offertes invalides");
+      return;
+    }
+
     const payload: FormationAdminInput = {
-      ...form,
+      slug: form.slug,
+      titre: form.titre,
+      titreCourt: form.titreCourt,
+      pole: form.pole,
+      accroche: form.accroche,
+      duree: form.duree,
+      format: form.format,
+      prioritaire: form.prioritaire,
+      audience: form.audience,
+      publicCible: form.publicCible,
+      livrable: form.livrable,
       tarif: form.tarif.trim() || null,
+      placesOffertes,
+      dateDebut: form.dateDebut.trim() || null,
+      dateFin: form.dateFin.trim() || null,
     };
 
     startTransition(async () => {
@@ -240,6 +282,38 @@ export function AdminFormationDialog({
               className={fieldClass}
               value={form.livrable}
               onChange={(e) => setField("livrable", e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-places">Places offertes</Label>
+            <Input
+              id="f-places"
+              type="number"
+              min={0}
+              className={fieldClass}
+              value={form.placesOffertes}
+              onChange={(e) => setField("placesOffertes", e.target.value)}
+              placeholder="ex. 12"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-debut">Date de début</Label>
+            <Input
+              id="f-debut"
+              type="date"
+              className={fieldClass}
+              value={form.dateDebut}
+              onChange={(e) => setField("dateDebut", e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-fin">Date de fin</Label>
+            <Input
+              id="f-fin"
+              type="date"
+              className={fieldClass}
+              value={form.dateFin}
+              onChange={(e) => setField("dateFin", e.target.value)}
             />
           </div>
           <div className="sm:col-span-2 space-y-2">

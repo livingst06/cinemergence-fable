@@ -160,6 +160,30 @@ export const Formations: CollectionConfig = {
       defaultValue: "Présentiel",
     },
     { name: "effectifMax", type: "number" },
+    {
+      name: "placesOffertes",
+      type: "number",
+      label: "Places offertes (session)",
+      admin: {
+        description: "Nombre de places pour cette session datée. Requis pour ouvrir les réservations.",
+      },
+    },
+    {
+      name: "dateDebut",
+      type: "date",
+      label: "Date de début",
+      admin: {
+        date: { pickerAppearance: "dayOnly" },
+      },
+    },
+    {
+      name: "dateFin",
+      type: "date",
+      label: "Date de fin",
+      admin: {
+        date: { pickerAppearance: "dayOnly" },
+      },
+    },
     { name: "prerequis", type: "textarea" },
     { name: "lieu", type: "text" },
     { name: "delaiAcces", type: "text" },

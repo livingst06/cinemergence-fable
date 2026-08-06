@@ -179,6 +179,14 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     format: String(doc.format),
     modalite: doc.modalite ? String(doc.modalite) : undefined,
     effectifMax: typeof doc.effectifMax === "number" ? doc.effectifMax : undefined,
+    placesOffertes:
+      typeof doc.placesOffertes === "number"
+        ? doc.placesOffertes
+        : typeof doc.effectifMax === "number"
+          ? doc.effectifMax
+          : undefined,
+    dateDebut: doc.dateDebut ? String(doc.dateDebut) : undefined,
+    dateFin: doc.dateFin ? String(doc.dateFin) : undefined,
     prerequis: doc.prerequis ? String(doc.prerequis) : undefined,
     lieu: doc.lieu ? String(doc.lieu) : undefined,
     delaiAcces: doc.delaiAcces ? String(doc.delaiAcces) : undefined,

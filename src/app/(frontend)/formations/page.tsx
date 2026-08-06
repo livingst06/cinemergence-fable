@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { FormationsCatalog } from "@/features/formations/FormationsCatalog";
 import { getFormations, getSiteSettings } from "@/lib/data";
+import { getPlacesRestantesMap } from "@/lib/places";
 
 export const revalidate = 300;
 
@@ -16,6 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function FormationsIndexPage() {
   const formations = await getFormations();
+  const placesByFormationId = await getPlacesRestantesMap(formations);
 
   return (
     <div className="container-page py-12 md:py-16 lg:py-20">
@@ -29,7 +31,10 @@ export default async function FormationsIndexPage() {
         </p>
       </header>
 
-      <FormationsCatalog formations={formations} />
+      <FormationsCatalog
+        formations={formations}
+        placesByFormationId={placesByFormationId}
+      />
     </div>
   );
 }

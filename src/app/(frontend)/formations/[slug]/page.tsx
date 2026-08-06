@@ -14,9 +14,18 @@ import {
   FormationPedagogy,
   FormationProse,
 } from "@/features/formations/FormationPedagogy";
+import { DemandeInscriptionButton } from "@/features/inscriptions/DemandeInscriptionButton";
+import { getPlacesRestantes } from "@/features/inscriptions/actions";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { defaultFinancement, formationPath } from "@/lib/defaults";
+import {
+  ACTIVE_DEMANDE_STATUSES,
+  formatFormationDate,
+} from "@/lib/inscription-status";
+import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
+import { getPayloadClient } from "@/lib/payload";
+import { getSessionProfile } from "@/lib/session-profile";
 import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { courseJsonLd } from "@/lib/seo";
 
@@ -47,10 +56,51 @@ export default async function FormationDetailPage({ params }: Props) {
   const formation = await getFormationBySlug(slug);
   if (!formation) notFound();
 
-  const [site, allIntervenants] = await Promise.all([
+  const [site, allIntervenants, session] = await Promise.all([
     getSiteSettings(),
     getIntervenants(),
+    getSessionProfile(),
   ]);
+
+  let placesRestantes: number | null = null;
+  let alreadyRequested = false;
+  if (formation.id != null) {
+    try {
+      const seats = await getPlacesRestantes(formation.id);
+      placesRestantes = seats.placesRestantes;
+    } catch {
+      placesRestantes = null;
+    }
+
+    if (session.clerkUser) {
+      try {
+        let payloadUserId = session.payloadUserId;
+        if (!payloadUserId) {
+          const user = await ensurePayloadUserForClerk();
+          payloadUserId = user?.id ?? null;
+        }
+        if (payloadUserId) {
+          const payload = await getPayloadClient();
+          const existing = await payload.find({
+            collection: "inscriptions",
+            where: {
+              and: [
+                { user: { equals: payloadUserId } },
+                { formation: { equals: formation.id } },
+                { status: { in: ACTIVE_DEMANDE_STATUSES } },
+              ],
+            },
+            limit: 1,
+            depth: 0,
+            overrideAccess: true,
+          });
+          alreadyRequested = Boolean(existing.docs[0]);
+        }
+      } catch {
+        alreadyRequested = false;
+      }
+    }
+  }
 
   const linkedIntervenants = allIntervenants.filter(
     (i) => formation.intervenants.includes(i.slug) && i.slug !== "karina-testa",
@@ -69,6 +119,8 @@ export default async function FormationDetailPage({ params }: Props) {
   const methodes = formation.methodesPedagogiques ?? [];
   const moyens = formation.moyensTechniques ?? [];
   const jsonLd = courseJsonLd(formation, site);
+  const dateDebutLabel = formatFormationDate(formation.dateDebut);
+  const dateFinLabel = formatFormationDate(formation.dateFin);
 
   return (
     <>
@@ -113,13 +165,12 @@ export default async function FormationDetailPage({ params }: Props) {
             )}
           </div>
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <ButtonLink
-              href={`/contact?formation=${formation.slug}`}
-              size="lg"
-              className="btn-cta"
-            >
-              Je m&apos;inscris
-            </ButtonLink>
+            <DemandeInscriptionButton
+              formationId={formation.id}
+              formationSlug={formation.slug}
+              placesRestantes={placesRestantes}
+              alreadyRequested={alreadyRequested}
+            />
             <ButtonLink
               href="/financement"
               size="lg"
@@ -128,6 +179,24 @@ export default async function FormationDetailPage({ params }: Props) {
               Vérifier le financement
             </ButtonLink>
           </div>
+          {(dateDebutLabel || dateFinLabel || placesRestantes != null) && (
+            <p className="mt-4 text-sm text-muted-text">
+              {[
+                dateDebutLabel && dateFinLabel
+                  ? `Session du ${dateDebutLabel} au ${dateFinLabel}`
+                  : dateDebutLabel
+                    ? `Début le ${dateDebutLabel}`
+                    : null,
+                placesRestantes != null
+                  ? placesRestantes > 0
+                    ? `${placesRestantes} place${placesRestantes > 1 ? "s" : ""} restante${placesRestantes > 1 ? "s" : ""}`
+                    : "Complet"
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+          )}
         </header>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">

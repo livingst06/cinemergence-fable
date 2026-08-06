@@ -7,7 +7,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ButtonLink } from "@/components/ui/ButtonLink";
-import { MediaFrame } from "@/components/ui/MediaFrame";
 import { SectionHeader } from "@/components/ui/Section";
 import {
   FormationLabeledGrid,
@@ -16,6 +15,7 @@ import {
 } from "@/features/formations/FormationPedagogy";
 import { DemandeInscriptionButton } from "@/features/inscriptions/DemandeInscriptionButton";
 import { getPlacesRestantes } from "@/features/inscriptions/actions";
+import { FormationDetailGallery } from "@/features/formations/FormationDetailGallery";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { defaultFinancement, formationPath } from "@/lib/defaults";
@@ -243,12 +243,16 @@ export default async function FormationDetailPage({ params }: Props) {
               </p>
             )}
           </div>
-          <MediaFrame
-            src={resolveFormationCoverUrl(formation.slug, formation.coverImageUrl)}
+          <FormationDetailGallery
+            urls={
+              formation.galleryUrls && formation.galleryUrls.length > 0
+                ? formation.galleryUrls
+                : [resolveFormationCoverUrl(formation.slug, formation.coverImageUrl)]
+            }
+            fallbackUrl={resolveFormationCoverUrl(formation.slug, formation.coverImageUrl)}
             mimeType={formation.coverImageMimeType ?? "image/jpeg"}
             alt={`Visuel plateau — ${formation.titreCourt}`}
-            aspect="video"
-            className={formation.prioritaire ? "gold-glow" : undefined}
+            glow={formation.prioritaire}
           />
         </div>
 

@@ -1,4 +1,4 @@
-/** Supabase Storage (S3-compatible) — production only. Local dev uses disk + PostgreSQL. */
+/** Stockage médias unique : bucket Supabase (S3) pour local, preview et prod. */
 
 function hasS3Credentials(): boolean {
   return Boolean(
@@ -11,10 +11,11 @@ function hasS3Credentials(): boolean {
 }
 
 /**
- * Local (localhost): Payload stores metadata in PostgreSQL, binaries in `/media`.
- * Production (Vercel): Supabase Storage bucket via the S3 plugin.
+ * Même bucket Supabase partout (localhost / preview / prod) dès que les
+ * credentials S3_* sont présentes — partagé avec la BDD Postgres unique.
  *
- * Override with `MEDIA_STORAGE=local` or `MEDIA_STORAGE=supabase`.
+ * Opt-out explicite : `MEDIA_STORAGE=local` (disque `/media`, hors sync).
+ * Forçage : `MEDIA_STORAGE=supabase` ou `MEDIA_STORAGE=s3`.
  */
 export function isS3StorageEnabled(): boolean {
   const mode = process.env.MEDIA_STORAGE?.toLowerCase();
@@ -22,12 +23,15 @@ export function isS3StorageEnabled(): boolean {
   if (mode === "local") return false;
 
   if (mode === "supabase" || mode === "s3") {
-    return hasS3Credentials();
+    if (!hasS3Credentials()) {
+      throw new Error(
+        "MEDIA_STORAGE=supabase mais credentials S3_* / SUPABASE_STORAGE_PUBLIC_URL manquantes.",
+      );
+    }
+    return true;
   }
 
-  // Default: never S3 in development, Supabase when creds exist in production.
-  if (process.env.NODE_ENV === "development") return false;
-
+  // Défaut : Supabase dès que les credentials sont là (tous environnements).
   return hasS3Credentials();
 }
 
@@ -42,7 +46,7 @@ export function getMediaStorageMode(): "local" | "supabase" {
 export function assertS3StorageConfigured(): void {
   if (!isS3StorageEnabled()) {
     throw new Error(
-      "Stockage S3/Supabase non configuré. Définir S3_BUCKET, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_ENDPOINT et SUPABASE_STORAGE_PUBLIC_URL (production uniquement).",
+      "Stockage S3/Supabase non configuré. Définir S3_BUCKET, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_ENDPOINT et SUPABASE_STORAGE_PUBLIC_URL (même config local / preview / prod).",
     );
   }
 }

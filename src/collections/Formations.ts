@@ -236,6 +236,26 @@ export const Formations: CollectionConfig = {
       name: "coverImage",
       type: "upload",
       relationTo: "media",
+      admin: {
+        description: "Cover card — synchronisée avec la 1re photo de la galerie.",
+      },
+    },
+    {
+      name: "images",
+      type: "array",
+      label: "Galerie photos",
+      maxRows: 8,
+      admin: {
+        description: "Ordre = apparition. La 1re photo est la cover de la card.",
+      },
+      fields: [
+        {
+          name: "image",
+          type: "upload",
+          relationTo: "media",
+          required: true,
+        },
+      ],
     },
     {
       name: "metaTitle",

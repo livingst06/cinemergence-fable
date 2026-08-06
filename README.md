@@ -147,16 +147,17 @@ Architecture Payload extensible pour :
 
 - Hébergement EU recommandé (Vercel + Supabase Postgres + Supabase Storage EU)
 
-### Stockage médias (local vs production)
+### Stockage médias (unique pour tous les envs)
 
 | Environnement | Métadonnées | Fichiers |
 | --- | --- | --- |
-| **localhost** | PostgreSQL (Docker) | Dossier `/media` sur disque |
-| **Vercel (prod)** | Supabase Postgres | Bucket Supabase `cinemergence-media` |
+| **localhost / preview / prod** | Postgres Supabase (même `DATABASE_URI`) | Bucket Supabase `cinemergence-media` |
 
-En développement, **ne pas** définir les variables `S3_*` : le plugin Supabase est désactivé automatiquement (`NODE_ENV=development`). Upload via `/admin` → collection **Médias** ; les fichiers restent dans `/media` et les URLs passent par `/api/media/file/…`.
+Dès que les variables `S3_*` + `SUPABASE_STORAGE_PUBLIC_URL` sont définies, le plugin Supabase est actif **aussi en local** (`MEDIA_STORAGE=supabase` recommandé dans `.env.local`). Opt-out disque : `MEDIA_STORAGE=local`.
 
-### Variables Vercel (production)
+Les images uploadées en localhost sont donc visibles en preview et en prod (même BDD + même bucket).
+
+### Variables Vercel (production + preview)
 
 Copier `.env.vercel.production.example` → `.env.vercel.production`, remplir les secrets, puis :
 

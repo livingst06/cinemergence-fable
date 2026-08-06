@@ -68,6 +68,12 @@ export type FormationData = {
   metaDescription: string;
   coverImageUrl?: string;
   coverImageMimeType?: string;
+  /** ID media de la cover (édition admin). */
+  coverImageId?: number | string;
+  /** Galerie ordonnée (1re = cover). */
+  galleryImages?: { id: number | string; url: string }[];
+  /** URLs galerie pour la fiche détail. */
+  galleryUrls?: string[];
 };
 
 export function formationPath(slug: string) {

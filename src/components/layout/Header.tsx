@@ -37,65 +37,39 @@ function navLinkClass(active: boolean) {
 const loginButtonClass =
   "inline-flex h-8 shrink-0 items-center rounded-full border border-border/70 bg-noir-tertiary/80 px-3.5 text-xs font-medium text-cream/90 shadow-sm backdrop-blur-md transition-colors duration-200 hover:border-or/35 hover:bg-noir-tertiary hover:text-or-light";
 
-function AuthNavDesktop() {
+/** Toujours visible dans la barre header (desktop + mobile) : Admin + Login/Logout. */
+function HeaderAuthChrome() {
   const { isSignedIn } = useAuth();
 
-  if (!isSignedIn) {
-    return (
-      <ButtonLink href="/sign-in" variant="ghost" className={loginButtonClass}>
-        Login
-      </ButtonLink>
-    );
-  }
-
   return (
-    <>
+    <div className="flex shrink-0 items-center gap-2">
       <AdminModeToggle />
-      <Link href="/mon-compte" className={navLinkClass(false)}>
-        Mon compte
-      </Link>
-      <SignOutButton redirectUrl="/">
-        <Button type="button" variant="ghost" className={loginButtonClass}>
-          Logout
-        </Button>
-      </SignOutButton>
-    </>
-  );
-}
-
-function AuthNavMobile({ onNavigate }: { onNavigate: () => void }) {
-  const { isSignedIn } = useAuth();
-
-  if (!isSignedIn) {
-    return (
-      <ButtonLink href="/sign-in" variant="ghost" className={cn(loginButtonClass, "mt-3 w-full justify-center")} onClick={onNavigate}>
-        Login
-      </ButtonLink>
-    );
-  }
-
-  return (
-    <>
-      <div className="mt-3 flex items-center justify-between gap-3 px-1">
-        <span className="text-xs font-semibold uppercase tracking-wider text-muted-text">
-          Mode admin
-        </span>
-        <AdminModeToggle />
-      </div>
-      <ButtonLink href="/mon-compte" variant="outline" className="btn-outline-warm" onClick={onNavigate}>
-        Mon compte
-      </ButtonLink>
-      <SignOutButton redirectUrl="/">
-        <Button type="button" variant="ghost" className={cn(loginButtonClass, "w-full justify-center")} onClick={onNavigate}>
-          Logout
-        </Button>
-      </SignOutButton>
-    </>
+      {isSignedIn ? (
+        <>
+          <Link
+            href="/mon-compte"
+            className={cn(navLinkClass(false), "hidden whitespace-nowrap lg:inline")}
+          >
+            Mon compte
+          </Link>
+          <SignOutButton redirectUrl="/">
+            <Button type="button" variant="ghost" className={loginButtonClass}>
+              Logout
+            </Button>
+          </SignOutButton>
+        </>
+      ) : (
+        <ButtonLink href="/sign-in" variant="ghost" className={loginButtonClass}>
+          Login
+        </ButtonLink>
+      )}
+    </div>
   );
 }
 
 export function Header({ formations }: HeaderProps) {
   const pathname = usePathname();
+  const { isSignedIn } = useAuth();
   const [formationsOpen, setFormationsOpen] = useState(false);
   const navToggleRef = useRef<HTMLInputElement>(null);
   const formationsCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -133,86 +107,86 @@ export function Header({ formations }: HeaderProps) {
   return (
     <>
       <header className="site-header fixed inset-x-0 top-0 z-[99999] border-b border-border bg-noir-secondary/95 pt-[env(safe-area-inset-top,0px)] backdrop-blur-md">
-        <div className="container-page flex h-16 items-center justify-between gap-3 md:h-[4.5rem]">
+        <div className="container-page flex h-16 items-center gap-3 md:h-[4.5rem]">
           <Logo />
 
-          <nav className="hidden items-center gap-5 xl:gap-6 lg:flex" aria-label="Navigation principale">
-            <Link href="/" className={navLinkClass(pathname === "/")} aria-current={pathname === "/" ? "page" : undefined}>
-              Accueil
-            </Link>
-
-            <div
-              className="relative"
-              onMouseEnter={openFormationsMenu}
-              onMouseLeave={scheduleCloseFormationsMenu}
-              onFocus={openFormationsMenu}
-              onBlur={(event) => {
-                if (!event.currentTarget.contains(event.relatedTarget)) {
-                  scheduleCloseFormationsMenu();
-                }
-              }}
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
+            <nav
+              className="mr-1 hidden items-center gap-5 xl:gap-6 lg:flex"
+              aria-label="Navigation principale"
             >
-              <Link
-                href="/formations"
-                className={navLinkClass(formationsActive)}
-                aria-expanded={formationsOpen}
-                aria-haspopup="true"
-                aria-current={formationsActive ? "page" : undefined}
-              >
-                Formations
+              <Link href="/" className={navLinkClass(pathname === "/")} aria-current={pathname === "/" ? "page" : undefined}>
+                Accueil
               </Link>
-              {formationsOpen && (
-                <div className="absolute left-0 top-full z-50 pt-3">
-                  <div className="w-80 overflow-hidden rounded-2xl border border-border bg-noir-secondary p-2 shadow-2xl plateau-glow">
-                    <Link
-                      href="/formations"
-                      className="mb-1 block rounded-xl px-3 py-2.5 text-sm font-semibold text-or-light transition-colors hover:bg-noir-tertiary/50"
-                    >
-                      Toutes les formations
-                    </Link>
-                    {menuFormations.map((f) => (
+
+              <div
+                className="relative"
+                onMouseEnter={openFormationsMenu}
+                onMouseLeave={scheduleCloseFormationsMenu}
+                onFocus={openFormationsMenu}
+                onBlur={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget)) {
+                    scheduleCloseFormationsMenu();
+                  }
+                }}
+              >
+                <Link
+                  href="/formations"
+                  className={navLinkClass(formationsActive)}
+                  aria-expanded={formationsOpen}
+                  aria-haspopup="true"
+                  aria-current={formationsActive ? "page" : undefined}
+                >
+                  Formations
+                </Link>
+                {formationsOpen && (
+                  <div className="absolute left-0 top-full z-50 pt-3">
+                    <div className="w-80 overflow-hidden rounded-2xl border border-border bg-noir-secondary p-2 shadow-2xl plateau-glow">
                       <Link
-                        key={f.slug}
-                        href={formationPath(f.slug)}
-                        className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-cream/90 transition-colors hover:bg-noir-tertiary/50 hover:text-or-light"
+                        href="/formations"
+                        className="mb-1 block rounded-xl px-3 py-2.5 text-sm font-semibold text-or-light transition-colors hover:bg-noir-tertiary/50"
                       >
-                        <span>{f.titreCourt}</span>
-                        {f.prioritaire && (
-                          <span className="rounded-full bg-projector/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-projector-light">
-                            À la une
-                          </span>
-                        )}
+                        Toutes les formations
                       </Link>
-                    ))}
+                      {menuFormations.map((f) => (
+                        <Link
+                          key={f.slug}
+                          href={formationPath(f.slug)}
+                          className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-cream/90 transition-colors hover:bg-noir-tertiary/50 hover:text-or-light"
+                        >
+                          <span>{f.titreCourt}</span>
+                          {f.prioritaire && (
+                            <span className="rounded-full bg-projector/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-projector-light">
+                              À la une
+                            </span>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
 
-            {navLinks
-              .filter((link) => link.href !== "/")
-              .map((link) => {
-                const active =
-                  pathname === link.href || pathname.startsWith(`${link.href}/`);
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={navLinkClass(active)}
-                    aria-current={active ? "page" : undefined}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
+              {navLinks
+                .filter((link) => link.href !== "/")
+                .map((link) => {
+                  const active =
+                    pathname === link.href || pathname.startsWith(`${link.href}/`);
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={navLinkClass(active)}
+                      aria-current={active ? "page" : undefined}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
+            </nav>
 
-            <ThemeToggle className="h-9 w-9" />
-            <AuthNavDesktop />
-          </nav>
-
-          <div className="relative z-[1] flex shrink-0 items-center gap-3 lg:hidden">
-            <ThemeToggle />
-            <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary transition-[background-color,border-color,color,box-shadow] duration-200">
+            <HeaderAuthChrome />
+            <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary transition-[background-color,border-color,color,box-shadow] duration-200 lg:hidden">
               <input
                 ref={navToggleRef}
                 type="checkbox"
@@ -225,6 +199,7 @@ export function Header({ formations }: HeaderProps) {
               </span>
               <span className="sr-only">Menu</span>
             </label>
+            <ThemeToggle className="h-9 w-9" />
           </div>
         </div>
       </header>
@@ -288,7 +263,16 @@ export function Header({ formations }: HeaderProps) {
                   </Link>
                 );
               })}
-            <AuthNavMobile onNavigate={closeMobileNav} />
+            {isSignedIn ? (
+              <ButtonLink
+                href="/mon-compte"
+                variant="outline"
+                className="btn-outline-warm mt-3"
+                onClick={closeMobileNav}
+              >
+                Mon compte
+              </ButtonLink>
+            ) : null}
           </div>
         </nav>
       </div>

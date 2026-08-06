@@ -106,7 +106,7 @@ export default async function HomePage() {
             </ul>
             <div className="mt-10 flex animate-fade-up-delay-3 flex-col gap-4 sm:flex-row">
               <ButtonLink href="/formations" size="lg" className="btn-cta px-10">
-                Je vois les formations
+                Les formations
               </ButtonLink>
               <ButtonLink
                 href="/contact"

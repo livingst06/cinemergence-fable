@@ -93,7 +93,7 @@ export default async function AssociationPage() {
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <ButtonLink href="/formations" className="btn-cta">
-              Je vois les formations
+              Les formations
             </ButtonLink>
             <ButtonLink href="/contact" className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider">
               Je vous contacte

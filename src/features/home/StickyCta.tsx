@@ -36,7 +36,7 @@ export function StickyCta() {
               size="sm"
               className="btn-outline-warm justify-center rounded-lg px-5 py-2.5 text-xs font-semibold uppercase tracking-wider"
             >
-              Je vois les formations
+              Les formations
             </ButtonLink>
             <ButtonLink href="/contact" size="sm" className="btn-cta justify-center px-5">
               Je réserve ma place

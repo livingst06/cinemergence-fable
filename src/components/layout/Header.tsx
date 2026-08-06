@@ -34,22 +34,17 @@ function navLinkClass(active: boolean) {
   );
 }
 
+const loginButtonClass =
+  "inline-flex h-8 shrink-0 items-center rounded-full border border-border/70 bg-noir-tertiary/80 px-3.5 text-xs font-medium text-cream/90 shadow-sm backdrop-blur-md transition-colors duration-200 hover:border-or/35 hover:bg-noir-tertiary hover:text-or-light";
+
 function AuthNavDesktop() {
   const { isSignedIn } = useAuth();
 
   if (!isSignedIn) {
     return (
-      <>
-        <Link href="/sign-in" className={navLinkClass(false)}>
-          Je me connecte
-        </Link>
-        <ButtonLink href="/sign-up" size="sm" variant="outline" className="btn-outline-warm px-4">
-          Je crée mon compte
-        </ButtonLink>
-        <ButtonLink href="/contact" size="sm" className="btn-cta px-5">
-          Je m&apos;inscris
-        </ButtonLink>
-      </>
+      <ButtonLink href="/sign-in" variant="ghost" className={loginButtonClass}>
+        Login
+      </ButtonLink>
     );
   }
 
@@ -60,13 +55,10 @@ function AuthNavDesktop() {
         Mon compte
       </Link>
       <SignOutButton redirectUrl="/">
-        <Button type="button" size="sm" variant="outline" className="btn-outline-warm px-4">
-          Je me déconnecte
+        <Button type="button" variant="ghost" className={loginButtonClass}>
+          Logout
         </Button>
       </SignOutButton>
-      <ButtonLink href="/contact" size="sm" className="btn-cta px-5">
-        Je m&apos;inscris
-      </ButtonLink>
     </>
   );
 }
@@ -76,27 +68,9 @@ function AuthNavMobile({ onNavigate }: { onNavigate: () => void }) {
 
   if (!isSignedIn) {
     return (
-      <>
-        <ButtonLink
-          href="/sign-in"
-          variant="outline"
-          className="btn-outline-warm mt-3"
-          onClick={onNavigate}
-        >
-          Je me connecte
-        </ButtonLink>
-        <ButtonLink
-          href="/sign-up"
-          variant="outline"
-          className="btn-outline-warm"
-          onClick={onNavigate}
-        >
-          Je crée mon compte
-        </ButtonLink>
-        <ButtonLink href="/contact" className="btn-cta" onClick={onNavigate}>
-          Je m&apos;inscris
-        </ButtonLink>
-      </>
+      <ButtonLink href="/sign-in" variant="ghost" className={cn(loginButtonClass, "mt-3 w-full justify-center")} onClick={onNavigate}>
+        Login
+      </ButtonLink>
     );
   }
 
@@ -112,13 +86,10 @@ function AuthNavMobile({ onNavigate }: { onNavigate: () => void }) {
         Mon compte
       </ButtonLink>
       <SignOutButton redirectUrl="/">
-        <Button type="button" variant="outline" className="btn-outline-warm w-full" onClick={onNavigate}>
-          Je me déconnecte
+        <Button type="button" variant="ghost" className={cn(loginButtonClass, "w-full justify-center")} onClick={onNavigate}>
+          Logout
         </Button>
       </SignOutButton>
-      <ButtonLink href="/contact" className="btn-cta" onClick={onNavigate}>
-        Je m&apos;inscris
-      </ButtonLink>
     </>
   );
 }
@@ -163,7 +134,7 @@ export function Header({ formations }: HeaderProps) {
     <>
       <header className="site-header fixed inset-x-0 top-0 z-[99999] border-b border-border bg-noir-secondary/95 pt-[env(safe-area-inset-top,0px)] backdrop-blur-md">
         <div className="container-page flex h-16 items-center justify-between gap-3 md:h-[4.5rem]">
-          <Logo className="min-w-0 max-w-[55%] shrink" />
+          <Logo />
 
           <nav className="hidden items-center gap-5 xl:gap-6 lg:flex" aria-label="Navigation principale">
             <Link href="/" className={navLinkClass(pathname === "/")} aria-current={pathname === "/" ? "page" : undefined}>

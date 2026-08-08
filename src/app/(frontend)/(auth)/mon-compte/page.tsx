@@ -49,11 +49,11 @@ export default async function MonComptePage() {
               </ButtonLink>
               {profile.isAdminEligible ? (
                 <ButtonLink
-                  href="/les-demandes"
+                  href="/les-sessions"
                   variant="outline"
                   className="btn-outline-warm"
                 >
-                  Les demandes
+                  Les sessions
                 </ButtonLink>
               ) : null}
               <SignOutButton redirectUrl="/">
@@ -67,8 +67,8 @@ export default async function MonComptePage() {
           <div className="card-stage p-8">
             <h2 className="font-heading text-2xl text-cream">Profil</h2>
             <p className="mt-2 text-sm text-muted-text text-pretty">
-              Suivez vos demandes d&apos;inscription et leurs statuts depuis
-              Mes réservations.
+              Retrouvez vos places réservées (paiement confirmé = inscription)
+              dans Mes réservations.
             </p>
             <div className="mt-6">
               <ButtonLink href="/formations" variant="outline" className="btn-outline-warm">

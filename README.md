@@ -80,7 +80,7 @@ Toute l'authentification du site — visiteurs publics **et** admin Payload — 
 
 ### Fonctionnement
 
-- `src/proxy.ts` protège `/admin(.*)` et toute route non listée comme publique : un visiteur non connecté est redirigé vers `/sign-in`
+- `src/proxy.ts` active la session Clerk ; la protection se fait ressource par ressource (`auth.protect()` sur `/admin`, `requireAuth` / `requireAdmin` et redirections sur les pages stagiaire/admin)
 - À la première requête authentifiée sur `/admin`, `src/lib/clerk-strategy.ts` upsert le document `users` correspondant :
   1. Recherche par `clerkId`
   2. Sinon recherche par email (migration en douceur des comptes historiques) et lie le `clerkId`

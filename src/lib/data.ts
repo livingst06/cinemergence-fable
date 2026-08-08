@@ -23,6 +23,7 @@ import { getPayloadClient } from "./payload";
 import { isLocalMediaStorage } from "./storage-env";
 import { getPublicSiteUrl } from "./site-url";
 import { PUBLIC_FINANCEMENT_KEYS, isFormationActive } from "./formation-types";
+import { parseEurosFromTarifLabel } from "./inscription-status";
 import {
   getStaticCarouselItems,
   committedIntervenantPhotos,
@@ -32,6 +33,20 @@ import {
   staticGalleryItems,
   staticIntervenantPhotos,
 } from "./site-media";
+
+const catalogBySlug = new Map(defaultFormations.map((f) => [f.slug, f]));
+
+function resolveTarifEurosForDoc(doc: Record<string, unknown>): number | undefined {
+  const slug = String(doc.slug ?? "");
+  if (typeof doc.tarifEuros === "number" && doc.tarifEuros > 0) {
+    return Math.trunc(doc.tarifEuros);
+  }
+  const fromLabel = parseEurosFromTarifLabel(doc.tarif ? String(doc.tarif) : null);
+  if (fromLabel) return fromLabel;
+  const catalog = catalogBySlug.get(slug);
+  if (catalog?.tarifEuros && catalog.tarifEuros > 0) return catalog.tarifEuros;
+  return parseEurosFromTarifLabel(catalog?.tarif ?? null) ?? undefined;
+}
 
 function staticFormationCover(slug: string) {
   return resolveFormationCoverUrl(slug);
@@ -299,7 +314,10 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     prerequis: doc.prerequis ? String(doc.prerequis) : undefined,
     lieu: doc.lieu ? String(doc.lieu) : undefined,
     delaiAcces: sanitizeOptionalText(doc.delaiAcces ? String(doc.delaiAcces) : undefined),
-    tarif: doc.tarif ? String(doc.tarif) : null,
+    tarif: doc.tarif
+      ? String(doc.tarif)
+      : (catalogBySlug.get(String(doc.slug))?.tarif ?? null),
+    tarifEuros: resolveTarifEurosForDoc(doc),
     financements: [],
     methodesPedagogiques: sanitizePedagogyList(mapStringArray(doc.methodesPedagogiques)),
     moyensTechniques: sanitizePedagogyList(mapStringArray(doc.moyensTechniques)),

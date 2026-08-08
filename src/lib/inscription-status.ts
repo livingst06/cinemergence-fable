@@ -1,5 +1,7 @@
 export type InscriptionStatus =
   | "en_instruction"
+  | "en_paiement"
+  | "payee"
   | "validee"
   | "refusee"
   | "pieces_complementaires"
@@ -7,15 +9,27 @@ export type InscriptionStatus =
   | "inscrit"
   | "annule";
 
+/** Bloque une nouvelle demande / hold pour le même couple user×formation. */
 export const ACTIVE_DEMANDE_STATUSES: InscriptionStatus[] = [
   "en_instruction",
+  "en_paiement",
+  "payee",
   "demande",
   "validee",
   "inscrit",
   "pieces_complementaires",
 ];
 
-export const PLACE_TAKING_STATUSES: InscriptionStatus[] = ["validee", "inscrit"];
+/** Statuts qui consomment une place (hold + confirmés). */
+export const PLACE_TAKING_STATUSES: InscriptionStatus[] = [
+  "en_paiement",
+  "payee",
+  "validee",
+  "inscrit",
+];
+
+/** Durée du hold paiement (min. Stripe Checkout expires_at = 30 min). */
+export const HOLD_TTL_MINUTES = 30;
 
 /** Normalise les anciens statuts legacy vers le vocabulaire UI. */
 export function normalizeInscriptionStatus(raw: string | null | undefined): InscriptionStatus {
@@ -25,6 +39,8 @@ export function normalizeInscriptionStatus(raw: string | null | undefined): Insc
     case "inscrit":
       return "validee";
     case "en_instruction":
+    case "en_paiement":
+    case "payee":
     case "validee":
     case "refusee":
     case "pieces_complementaires":
@@ -39,8 +55,12 @@ export function inscriptionStatusLabel(status: InscriptionStatus): string {
   switch (normalizeInscriptionStatus(status)) {
     case "en_instruction":
       return "En cours d'instruction";
+    case "en_paiement":
+      return "Paiement en cours";
+    case "payee":
+      return "Inscrit";
     case "validee":
-      return "Validée";
+      return "Inscrit";
     case "refusee":
       return "Refusée";
     case "pieces_complementaires":
@@ -50,6 +70,19 @@ export function inscriptionStatusLabel(status: InscriptionStatus): string {
     default:
       return status;
   }
+}
+
+/** Extrait un montant entier en euros depuis un libellé (« 1 400 € » → 1400). */
+export function parseEurosFromTarifLabel(tarif: string | null | undefined): number | null {
+  if (!tarif) return null;
+  const digits = tarif.replace(/[^\d]/g, "");
+  if (!digits) return null;
+  const n = Number(digits);
+  return Number.isFinite(n) && n > 0 ? Math.trunc(n) : null;
+}
+
+export function formatEurosLabel(euros: number): string {
+  return `${euros.toLocaleString("fr-FR")} €`;
 }
 
 export function formatFormationDate(iso: string | undefined): string | null {

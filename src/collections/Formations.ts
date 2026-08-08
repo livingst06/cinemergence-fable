@@ -237,6 +237,15 @@ export const Formations: CollectionConfig = {
       },
     },
     {
+      name: "tarifEuros",
+      type: "number",
+      label: "Tarif (euros entiers)",
+      admin: {
+        description:
+          "Montant Stripe en euros entiers (ex. 1400). Requis pour ouvrir le paiement en ligne.",
+      },
+    },
+    {
       name: "financements",
       type: "select",
       hasMany: true,

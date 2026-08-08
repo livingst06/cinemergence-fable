@@ -15,20 +15,18 @@ import {
 } from "@/features/formations/FormationPedagogy";
 import { FormationSessionGallery } from "@/features/formations/FormationSessionGallery";
 import { FormationViewItem } from "@/features/measurement/FormationViewItem";
-import { DemandeInscriptionButton } from "@/features/inscriptions/DemandeInscriptionButton";
-import { getPlacesRestantes } from "@/features/inscriptions/actions";
 import { FormationDetailGallery } from "@/features/formations/FormationDetailGallery";
-import { FormationSessionBanner } from "@/features/formations/FormationSessionBanner";
+import { FormationInstancesBooking } from "@/features/formations/FormationInstancesBooking";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { canonicalFormationSlug, formationPath } from "@/lib/defaults";
 import { splitDuree } from "@/lib/formation-format";
-import {
-  ACTIVE_DEMANDE_STATUSES,
-  formatFormationSessionLabel,
-} from "@/lib/inscription-status";
+import { formatFormationSessionLabel } from "@/lib/inscription-status";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
-import { getPayloadClient } from "@/lib/payload";
+import {
+  listInstancesForFormation,
+  type FormationInstanceView,
+} from "@/lib/places";
 import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { getSessionProfile } from "@/lib/session-profile";
 import { courseJsonLd } from "@/lib/seo";
@@ -77,43 +75,45 @@ export default async function FormationDetailPage({ params }: Props) {
     .filter((i): i is NonNullable<typeof i> => i != null && i.slug !== "karina-testa");
 
   let placesRestantes: number | null = null;
-  let alreadyRequested = false;
-  if (formation.id != null) {
-    try {
-      const seats = await getPlacesRestantes(formation.id);
-      placesRestantes = seats.placesRestantes;
-    } catch {
-      placesRestantes = null;
-    }
+  let instances: FormationInstanceView[] = [];
+  const paymentEnabled =
+    typeof formation.tarifEuros === "number" && formation.tarifEuros > 0;
 
-    if (session.clerkUser) {
+  if (formation.id != null) {
+    let payloadUserId = session.payloadUserId;
+    if (session.clerkUser && !payloadUserId) {
       try {
-        let payloadUserId = session.payloadUserId;
-        if (!payloadUserId) {
-          const user = await ensurePayloadUserForClerk();
-          payloadUserId = user?.id ?? null;
-        }
-        if (payloadUserId) {
-          const payload = await getPayloadClient();
-          const existing = await payload.find({
-            collection: "inscriptions",
-            where: {
-              and: [
-                { user: { equals: payloadUserId } },
-                { formation: { equals: formation.id } },
-                { status: { in: ACTIVE_DEMANDE_STATUSES } },
-              ],
-            },
-            limit: 1,
-            depth: 0,
-            overrideAccess: true,
-          });
-          alreadyRequested = Boolean(existing.docs[0]);
-        }
+        const user = await ensurePayloadUserForClerk();
+        payloadUserId = user?.id ?? null;
       } catch {
-        alreadyRequested = false;
+        payloadUserId = null;
       }
     }
+    try {
+      instances = await listInstancesForFormation(formation.id, {
+        userId: payloadUserId,
+      });
+    } catch {
+      instances = [];
+    }
+    const nextOpen = instances.find(
+      (i) => i.active && (i.placesRestantes == null || i.placesRestantes > 0),
+    );
+    placesRestantes =
+      nextOpen?.placesRestantes ??
+      instances.find((i) => i.active)?.placesRestantes ??
+      null;
+    if (placesRestantes == null) {
+      if (typeof formation.placesOffertes === "number") {
+        placesRestantes = formation.placesOffertes;
+      } else if (typeof formation.effectifMax === "number") {
+        placesRestantes = formation.effectifMax;
+      }
+    }
+  } else if (typeof formation.placesOffertes === "number") {
+    placesRestantes = formation.placesOffertes;
+  } else if (typeof formation.effectifMax === "number") {
+    placesRestantes = formation.effectifMax;
   }
 
   const livrables =
@@ -179,20 +179,16 @@ export default async function FormationDetailPage({ params }: Props) {
             )}
           </div>
 
-          <div className="mt-8 w-full max-w-2xl space-y-5">
-            <FormationSessionBanner
-              sessionLabel={sessionLabel}
-              placesRestantes={placesRestantes}
+          <div className="mt-8">
+            <FormationInstancesBooking
+              formationSlug={formation.slug}
+              paymentEnabled={paymentEnabled}
+              instances={instances}
+              fallback={{
+                sessionLabel,
+                placesRestantes,
+              }}
             />
-            <div className="flex flex-col items-center gap-3">
-              <DemandeInscriptionButton
-                formationId={formation.id}
-                formationSlug={formation.slug}
-                placesRestantes={placesRestantes}
-                alreadyRequested={alreadyRequested}
-                className="min-w-[14rem] px-8"
-              />
-            </div>
           </div>
         </header>
 
@@ -456,19 +452,15 @@ export default async function FormationDetailPage({ params }: Props) {
         <div className="border-t border-white/[0.06] pt-12 md:pt-16">
           <div className="mx-auto w-full max-w-2xl space-y-5">
             <h2 className="section-title text-center text-cream">Prêt à te lancer ?</h2>
-            <FormationSessionBanner
-              sessionLabel={sessionLabel}
-              placesRestantes={placesRestantes}
+            <FormationInstancesBooking
+              formationSlug={formation.slug}
+              paymentEnabled={paymentEnabled}
+              instances={instances}
+              fallback={{
+                sessionLabel,
+                placesRestantes,
+              }}
             />
-            <div className="flex flex-col items-center gap-3">
-              <DemandeInscriptionButton
-                formationId={formation.id}
-                formationSlug={formation.slug}
-                placesRestantes={placesRestantes}
-                alreadyRequested={alreadyRequested}
-                className="min-w-[14rem] px-8"
-              />
-            </div>
           </div>
         </div>
       </div>

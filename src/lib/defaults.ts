@@ -1,6 +1,7 @@
 import type { FormationData, FaqItem, FinancementKey, ProgrammeJour } from "./formation-types";
 import { isFormationActive } from "./formation-types";
 import { formationsCatalog } from "./formations-catalog";
+import { parseEurosFromTarifLabel } from "@/lib/inscription-status";
 
 export type { FormationData, FaqItem, FinancementKey, ProgrammeJour } from "./formation-types";
 export {
@@ -189,6 +190,7 @@ export function resolvePlacesRestantesForCard(
 export const defaultFormations: FormationData[] = formationsCatalog.map((f) => {
   const places = placesFromSlug(f.slug);
   const dates = datesFromSlug(f.slug);
+  const tarifEuros = f.tarifEuros ?? parseEurosFromTarifLabel(f.tarif) ?? undefined;
   return {
     ...f,
     active: isFormationActive(f.slug),
@@ -196,6 +198,7 @@ export const defaultFormations: FormationData[] = formationsCatalog.map((f) => {
     effectifMax: f.effectifMax ?? places,
     dateDebut: f.dateDebut ?? dates.dateDebut,
     dateFin: f.dateFin ?? dates.dateFin,
+    tarifEuros,
   };
 });
 

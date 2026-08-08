@@ -7,23 +7,30 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { ButtonLink } from "@/components/ui/ButtonLink";
-import { createInscriptionDemande } from "@/features/inscriptions/actions";
+import { startCheckout } from "@/features/inscriptions/checkout-actions";
 import { cn } from "@/lib/utils";
 
 type DemandeInscriptionButtonProps = {
-  formationId: number | string | undefined;
+  instanceId: number | string | undefined;
   placesRestantes: number | null;
   alreadyRequested?: boolean;
+  checkoutPending?: boolean;
+  pendingInscriptionId?: string | null;
   formationSlug: string;
+  /** false si tarifEuros absent */
+  paymentEnabled?: boolean;
   className?: string;
   size?: "default" | "sm" | "lg" | "icon";
 };
 
 export function DemandeInscriptionButton({
-  formationId,
+  instanceId,
   placesRestantes,
   alreadyRequested,
+  checkoutPending,
+  pendingInscriptionId,
   formationSlug,
+  paymentEnabled = true,
   className,
   size = "lg",
 }: DemandeInscriptionButtonProps) {
@@ -31,39 +38,28 @@ export function DemandeInscriptionButton({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
-  if (!formationId) {
+  if (checkoutPending && pendingInscriptionId) {
     return (
       <ButtonLink
-        href={`/contact?formation=${formationSlug}&type=inscription`}
+        href={`/paiement/${pendingInscriptionId}`}
         size={size}
         className={cn("btn-convert", className)}
       >
-        Je m'inscris
-      </ButtonLink>
-    );
-  }
-
-  if (!isSignedIn) {
-    return (
-      <ButtonLink
-        href={`/sign-in?redirect_url=${encodeURIComponent(`/formations/${formationSlug}`)}`}
-        size={size}
-        className={cn("btn-convert", className)}
-      >
-        Je m'inscris
+        Finaliser le paiement
       </ButtonLink>
     );
   }
 
   if (alreadyRequested) {
     return (
-      <ButtonLink
-        href="/mes-reservations"
+      <Button
+        type="button"
         size={size}
-        className={cn("btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider", className)}
+        className={cn("btn-convert", className)}
+        disabled
       >
-        Voir ma demande
-      </ButtonLink>
+        Vous êtes déjà inscrit
+      </Button>
     );
   }
 
@@ -75,6 +71,37 @@ export function DemandeInscriptionButton({
     );
   }
 
+  if (!instanceId || !paymentEnabled) {
+    return (
+      <Button
+        type="button"
+        size={size}
+        className={cn("btn-convert", className)}
+        onClick={() =>
+          toast.error(
+            !instanceId
+              ? "Cette session n’est pas encore ouverte au paiement en ligne."
+              : "Tarif de paiement non configuré pour cette formation.",
+          )
+        }
+      >
+        Je réserve
+      </Button>
+    );
+  }
+
+  if (!isSignedIn) {
+    return (
+      <ButtonLink
+        href={`/sign-in?redirect_url=${encodeURIComponent(`/formations/${formationSlug}`)}`}
+        size={size}
+        className={cn("btn-convert", className)}
+      >
+        Je réserve
+      </ButtonLink>
+    );
+  }
+
   return (
     <Button
       type="button"
@@ -83,7 +110,7 @@ export function DemandeInscriptionButton({
       disabled={pending}
       onClick={() => {
         startTransition(async () => {
-          const result = await createInscriptionDemande(formationId);
+          const result = await startCheckout(instanceId);
           if (!result.ok) {
             if (result.code === "auth") {
               router.push(
@@ -91,16 +118,21 @@ export function DemandeInscriptionButton({
               );
               return;
             }
+            if (result.code === "duplicate") {
+              toast.message(result.error);
+              router.refresh();
+              return;
+            }
             toast.error(result.error);
+            router.refresh();
             return;
           }
-          toast.success(result.message);
-          router.push("/mes-reservations");
+          router.push(`/paiement/${result.inscriptionId}`);
           router.refresh();
         });
       }}
     >
-      {pending ? "Envoi…" : "Je m'inscris"}
+      {pending ? "Réservation…" : "Je réserve"}
     </Button>
   );
 }

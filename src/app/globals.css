@@ -638,10 +638,11 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
 
   /*
    * Conversion stagiaire (payer / s’inscrire / panier).
-   * Toujours ce dégradé vert — pas le rouge brand (btn-cta).
+   * Texte blanc fixe — contraste sur le dégradé vert en jour et en nuit.
    */
   .btn-convert {
-    @apply relative overflow-hidden border-0 font-semibold uppercase tracking-wider text-white;
+    @apply relative overflow-hidden border-0 font-semibold uppercase tracking-wider;
+    color: #ffffff;
     background: linear-gradient(
       135deg,
       var(--convert-light) 0%,
@@ -673,6 +674,7 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     box-shadow: none;
   }
 
+  /* Contour : bordure/texte adaptés jour (fond clair) vs nuit */
   .btn-outline-warm {
     @apply border border-white/10 bg-white/[0.03] font-sans text-base font-semibold text-cream backdrop-blur-sm;
     letter-spacing: -0.011em;
@@ -683,6 +685,67 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     border-color: rgba(47, 91, 255, 0.7);
     background: rgba(47, 91, 255, 0.16);
     color: #ffffff;
+  }
+
+  /*
+   * Badges de statut — fond teinté + texte contrasté
+   * Jour : texte foncé · Nuit : texte clair
+   */
+  .status-badge {
+    @apply inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider;
+  }
+
+  .status-badge-or {
+    border-color: rgba(139, 26, 43, 0.35);
+    background: rgba(139, 26, 43, 0.12);
+    color: #5c1018;
+  }
+  .dark .status-badge-or {
+    border-color: rgba(232, 99, 122, 0.4);
+    background: rgba(139, 26, 43, 0.22);
+    color: #f9c4ce;
+  }
+
+  .status-badge-amber {
+    border-color: rgba(180, 83, 9, 0.35);
+    background: rgba(245, 158, 11, 0.18);
+    color: #78350f;
+  }
+  .dark .status-badge-amber {
+    border-color: rgba(251, 191, 36, 0.35);
+    background: rgba(245, 158, 11, 0.18);
+    color: #fde68a;
+  }
+
+  .status-badge-success {
+    border-color: rgba(4, 120, 87, 0.35);
+    background: rgba(16, 185, 129, 0.18);
+    color: #064e3b;
+  }
+  .dark .status-badge-success {
+    border-color: rgba(52, 211, 153, 0.4);
+    background: rgba(16, 185, 129, 0.2);
+    color: #a7f3d0;
+  }
+
+  .status-badge-danger {
+    border-color: rgba(185, 28, 28, 0.35);
+    background: rgba(239, 68, 68, 0.12);
+    color: #7f1d1d;
+  }
+  .dark .status-badge-danger {
+    border-color: rgba(248, 113, 113, 0.4);
+    background: rgba(239, 68, 68, 0.18);
+    color: #fecaca;
+  }
+
+  .status-badge-muted {
+    border-color: var(--border);
+    background: rgba(18, 16, 14, 0.04);
+    color: var(--muted-text);
+  }
+  .dark .status-badge-muted {
+    background: rgba(255, 255, 255, 0.05);
   }
 
   .catalogue-scroll {

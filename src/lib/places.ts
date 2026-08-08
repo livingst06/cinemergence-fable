@@ -1,6 +1,12 @@
 import "server-only";
 
-import { PLACE_TAKING_STATUSES } from "@/lib/inscription-status";
+import type { Where } from "payload";
+
+import {
+  HOLD_TTL_MINUTES,
+  PLACE_TAKING_STATUSES,
+  parseEurosFromTarifLabel,
+} from "@/lib/inscription-status";
 import { getPayloadClient } from "@/lib/payload";
 
 export function formationPlacesOffertes(doc: {
@@ -16,6 +22,36 @@ export function formationPlacesOffertes(doc: {
   return null;
 }
 
+export function formationTarifEuros(doc: {
+  tarifEuros?: number | null;
+  tarif?: string | null;
+}): number | null {
+  if (typeof doc.tarifEuros === "number" && doc.tarifEuros > 0) {
+    return Math.trunc(doc.tarifEuros);
+  }
+  return parseEurosFromTarifLabel(doc.tarif ?? null);
+}
+
+export async function countPlacesPrisesForInstance(
+  instanceId: number | string,
+): Promise<number> {
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "inscriptions",
+    where: {
+      and: [
+        { instance: { equals: instanceId } },
+        { status: { in: PLACE_TAKING_STATUSES } },
+      ],
+    },
+    limit: 1,
+    depth: 0,
+    overrideAccess: true,
+  });
+  return result.totalDocs;
+}
+
+/** @deprecated Prefer countPlacesPrisesForInstance */
 export async function countPlacesPrises(formationId: number | string): Promise<number> {
   const payload = await getPayloadClient();
   const result = await payload.find({
@@ -33,12 +69,57 @@ export async function countPlacesPrises(formationId: number | string): Promise<n
   return result.totalDocs;
 }
 
+export async function getPlacesRestantesForInstance(
+  instanceId: number | string,
+): Promise<{
+  placesOffertes: number | null;
+  placesPrises: number;
+  placesRestantes: number | null;
+}> {
+  const payload = await getPayloadClient();
+  const instance = await payload.findByID({
+    collection: "formation-instances",
+    id: instanceId,
+    depth: 0,
+    overrideAccess: true,
+  });
+  const placesOffertes =
+    typeof instance.placesOffertes === "number" ? instance.placesOffertes : null;
+  const placesPrises = await countPlacesPrisesForInstance(instanceId);
+  return {
+    placesOffertes,
+    placesPrises,
+    placesRestantes:
+      placesOffertes == null ? null : Math.max(0, placesOffertes - placesPrises),
+  };
+}
+
+/** Agrège la prochaine instance active d’une formation (cartes catalogue). */
 export async function getPlacesRestantes(formationId: number | string): Promise<{
   placesOffertes: number | null;
   placesPrises: number;
   placesRestantes: number | null;
 }> {
   const payload = await getPayloadClient();
+  const instances = await payload.find({
+    collection: "formation-instances",
+    where: {
+      and: [
+        { formation: { equals: formationId } },
+        { active: { equals: true } },
+      ],
+    },
+    sort: "dateDebut",
+    limit: 1,
+    depth: 0,
+    overrideAccess: true,
+  });
+  const instance = instances.docs[0];
+  if (instance) {
+    return getPlacesRestantesForInstance(instance.id);
+  }
+
+  // Fallback legacy (formation sans instance encore)
   const formation = await payload.findByID({
     collection: "formations",
     id: formationId,
@@ -59,7 +140,6 @@ export async function getPlacesRestantes(formationId: number | string): Promise<
   };
 }
 
-/** Map id formation → places restantes (null = non configuré). */
 export async function getPlacesRestantesMap(
   formations: Array<{
     id?: number | string;
@@ -69,38 +149,225 @@ export async function getPlacesRestantesMap(
 ): Promise<Record<string, number | null>> {
   const withId = formations.filter((f) => f.id != null);
   const map: Record<string, number | null> = {};
-
   if (withId.length === 0) return map;
 
+  await Promise.all(
+    withId.map(async (formation) => {
+      const id = String(formation.id);
+      try {
+        const seats = await getPlacesRestantes(formation.id!);
+        map[id] = seats.placesRestantes;
+      } catch {
+        map[id] = null;
+      }
+    }),
+  );
+  return map;
+}
+
+export async function releaseExpiredHolds(
+  scope?: { formationId?: number | string; instanceId?: number | string },
+): Promise<number> {
   const payload = await getPayloadClient();
-  const inscriptions = await payload.find({
+  const nowIso = new Date().toISOString();
+  const and: Where[] = [
+    { status: { equals: "en_paiement" } },
+    { holdExpiresAt: { less_than: nowIso } },
+  ];
+  if (scope?.instanceId != null) {
+    and.push({ instance: { equals: scope.instanceId } });
+  } else if (scope?.formationId != null) {
+    and.push({ formation: { equals: scope.formationId } });
+  }
+
+  const expired = await payload.find({
     collection: "inscriptions",
-    where: { status: { in: PLACE_TAKING_STATUSES } },
-    limit: 1000,
+    where: { and },
+    limit: 100,
     depth: 0,
     overrideAccess: true,
   });
 
-  const prisesByFormation = new Map<string, number>();
-  for (const doc of inscriptions.docs) {
-    const formationRef = doc.formation;
-    const fid =
-      typeof formationRef === "object" && formationRef
-        ? String((formationRef as { id: number | string }).id)
-        : String(formationRef);
-    prisesByFormation.set(fid, (prisesByFormation.get(fid) ?? 0) + 1);
+  let released = 0;
+  for (const doc of expired.docs) {
+    await payload.update({
+      collection: "inscriptions",
+      id: doc.id,
+      data: { status: "annule" },
+      overrideAccess: true,
+    });
+    released += 1;
+  }
+  return released;
+}
+
+/** @deprecated Use releaseExpiredHolds({ formationId }) */
+export async function releaseExpiredHoldsLegacy(
+  formationId?: number | string,
+): Promise<number> {
+  return releaseExpiredHolds(
+    formationId != null ? { formationId } : undefined,
+  );
+}
+
+export function holdExpiresAtDate(from = new Date()): Date {
+  return new Date(from.getTime() + HOLD_TTL_MINUTES * 60 * 1000);
+}
+
+export async function enforceCapacityKeepOldest(
+  instanceId: number | string,
+  inscriptionId: number | string,
+  placesOffertes: number,
+): Promise<boolean> {
+  const payload = await getPayloadClient();
+  const taking = await payload.find({
+    collection: "inscriptions",
+    where: {
+      and: [
+        { instance: { equals: instanceId } },
+        { status: { in: PLACE_TAKING_STATUSES } },
+      ],
+    },
+    sort: "createdAt",
+    limit: 200,
+    depth: 0,
+    overrideAccess: true,
+  });
+
+  if (taking.docs.length <= placesOffertes) return true;
+
+  const keep = new Set(
+    taking.docs.slice(0, placesOffertes).map((d) => String(d.id)),
+  );
+
+  for (const doc of taking.docs.slice(placesOffertes)) {
+    if (doc.status !== "en_paiement") continue;
+    await payload.update({
+      collection: "inscriptions",
+      id: doc.id,
+      data: { status: "annule" },
+      overrideAccess: true,
+    });
   }
 
-  for (const formation of withId) {
-    const id = String(formation.id);
-    const offertes = formationPlacesOffertes(formation);
-    if (offertes == null) {
-      map[id] = null;
-      continue;
+  return keep.has(String(inscriptionId));
+}
+
+export async function releaseHoldById(
+  inscriptionId: number | string,
+  opts?: { onlyIfEnPaiement?: boolean },
+): Promise<boolean> {
+  const payload = await getPayloadClient();
+  const doc = await payload.findByID({
+    collection: "inscriptions",
+    id: inscriptionId,
+    depth: 0,
+    overrideAccess: true,
+  });
+  if (!doc) return false;
+  if (opts?.onlyIfEnPaiement !== false && doc.status !== "en_paiement") {
+    return false;
+  }
+  await payload.update({
+    collection: "inscriptions",
+    id: inscriptionId,
+    data: { status: "annule" },
+    overrideAccess: true,
+  });
+  return true;
+}
+
+export type FormationInstanceView = {
+  id: number | string;
+  label: string | null;
+  dateDebut: string;
+  dateFin: string;
+  placesOffertes: number;
+  placesRestantes: number | null;
+  tarifEuros: number | null;
+  active: boolean;
+  alreadyEnrolled: boolean;
+  checkoutPending: boolean;
+  pendingInscriptionId: string | null;
+};
+
+export async function listInstancesForFormation(
+  formationId: number | string,
+  opts?: { userId?: number | string | null },
+): Promise<FormationInstanceView[]> {
+  const payload = await getPayloadClient();
+  await releaseExpiredHolds({ formationId });
+
+  const result = await payload.find({
+    collection: "formation-instances",
+    where: { formation: { equals: formationId } },
+    sort: "dateDebut",
+    limit: 50,
+    depth: 0,
+    overrideAccess: true,
+  });
+
+  const views: FormationInstanceView[] = [];
+  for (const doc of result.docs) {
+    const seats = await getPlacesRestantesForInstance(doc.id);
+    let alreadyEnrolled = false;
+    let checkoutPending = false;
+    let pendingInscriptionId: string | null = null;
+
+    if (opts?.userId != null) {
+      const existing = await payload.find({
+        collection: "inscriptions",
+        where: {
+          and: [
+            { user: { equals: opts.userId } },
+            { instance: { equals: doc.id } },
+            {
+              status: {
+                in: [
+                  "en_instruction",
+                  "en_paiement",
+                  "payee",
+                  "demande",
+                  "validee",
+                  "inscrit",
+                  "pieces_complementaires",
+                ],
+              },
+            },
+          ],
+        },
+        limit: 1,
+        depth: 0,
+        overrideAccess: true,
+      });
+      const insc = existing.docs[0];
+      if (insc) {
+        if (insc.status === "en_paiement") {
+          checkoutPending = true;
+          pendingInscriptionId = String(insc.id);
+        } else {
+          alreadyEnrolled = true;
+        }
+      }
     }
-    const prises = prisesByFormation.get(id) ?? 0;
-    map[id] = Math.max(0, offertes - prises);
-  }
 
-  return map;
+    views.push({
+      id: doc.id,
+      label: doc.label ? String(doc.label) : null,
+      dateDebut: String(doc.dateDebut),
+      dateFin: String(doc.dateFin),
+      placesOffertes:
+        typeof doc.placesOffertes === "number" ? doc.placesOffertes : 0,
+      placesRestantes: seats.placesRestantes,
+      tarifEuros:
+        typeof doc.tarifEuros === "number" && doc.tarifEuros > 0
+          ? doc.tarifEuros
+          : null,
+      active: doc.active !== false,
+      alreadyEnrolled,
+      checkoutPending,
+      pendingInscriptionId,
+    });
+  }
+  return views;
 }

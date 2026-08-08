@@ -28,7 +28,7 @@ pnpm seed
 
 - Site public : http://localhost:3000
 - Admin Payload : http://localhost:3000/admin
-- Authentification : **Clerk** (voir section [Authentification (Clerk)](#authentification-clerk) ci-dessous). Créer un compte via `/sign-up` avec l'email `verdat.sylvain@gmail.com` pour récupérer les droits admin existants.
+- Authentification : **Clerk** (voir section [Authentification (Clerk)](#authentification-clerk) ci-dessous). Les droits admin sont gérés uniquement via la variable d'environnement `ADMIN_LIST` (ex. `tom.mccallaghan@gmail.com`).
 
 ---
 
@@ -88,15 +88,15 @@ Toute l'authentification du site — visiteurs publics **et** admin Payload — 
 - Seuls les documents `users` avec `role: "admin"` peuvent accéder au panneau `/admin` (`access.admin` dans `src/collections/Users.ts`)
 - Page `/mon-compte` : espace minimal (« Bonjour {prénom} » + déconnexion), point d'extension pour un futur espace stagiaire
 
-### Migrer le compte admin historique
+### Admin via `ADMIN_LIST`
 
-Le compte `verdat.sylvain@gmail.com` (ex-authentification locale Payload) doit créer un compte Clerk avec **le même email** via `/sign-up`. Son document `users` existant sera automatiquement lié par email. Pour vérifier/forcer que `role: "admin"` est bien conservé en production :
+La source de vérité du rôle admin est **`ADMIN_LIST`** (env locale + Vercel, même BDD Supabase). Au login Clerk, [`clerk-strategy`](src/lib/clerk-strategy.ts) synchronise `users.role` (`admin` | `stagiaire`). Pour forcer l'alignement en base :
 
 ```bash
 pnpm migrate:admin-role
 ```
 
-L'ancien mot de passe local ne fonctionne plus après la bascule — c'est attendu.
+Aucun email admin n'est hardcodé dans le code.
 
 ### ⚠️ TODO avant une vraie mise en production
 

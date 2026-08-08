@@ -72,7 +72,7 @@ export async function POST(request: Request) {
         collection: "media",
         data: {
           alt: altBase.slice(0, 120),
-          category: "autre",
+          category: "formation",
         },
         filePath: tmpPath,
         overrideAccess: true,

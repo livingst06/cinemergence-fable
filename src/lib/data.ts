@@ -408,16 +408,26 @@ export async function getGalleryMedia(): Promise<GalleryMediaItem[]> {
     const result = await payload.find({
       collection: "media",
       limit: 24,
-      where: { category: { not_equals: "portrait" } },
+      where: {
+        and: [
+          { category: { not_equals: "portrait" } },
+          { category: { not_equals: "formation" } },
+          // Covers / uploads admin orphelins ne doivent pas polluer la galerie publique
+          { category: { not_equals: "autre" } },
+        ],
+      },
     });
     const fromCms = result.docs.flatMap((doc, index) => {
       const fallback = isLocalMediaStorage() ? staticGalleryItems[index] : undefined;
       const url = resolveDisplayMediaUrl(doc, fallback?.url);
       if (!url) return [];
+      // Exclure les anciennes covers seed encore catégorisées "plateau"
+      const alt = String(doc.alt ?? "");
+      if (/^Couverture\s+[—–-]/u.test(alt.trim())) return [];
       return [
         {
           id: doc.id,
-          alt: String(doc.alt ?? fallback?.alt ?? "Média Cinémergence"),
+          alt: alt || fallback?.alt || "Média Cinémergence",
           url,
           mimeType: resolveMediaMimeType(doc) ?? fallback?.mimeType,
           caption: doc.caption ? String(doc.caption) : undefined,

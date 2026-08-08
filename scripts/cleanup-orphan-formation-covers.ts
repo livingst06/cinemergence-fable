@@ -1,8 +1,6 @@
 /**
- * Aligne les rôles Payload `users` sur `ADMIN_LIST` en production.
- * La stratégie Clerk synchronise aussi le rôle à chaque login via `ADMIN_LIST`.
- *
- * Usage: pnpm migrate:admin-role
+ * Supprime les covers orphelines (formations déjà effacées).
+ * Usage: pnpm exec tsx — via package script si besoin.
  */
 import fs from "fs";
 import path from "path";
@@ -21,20 +19,19 @@ function loadEnvFile(filePath: string) {
 }
 
 loadEnvConfig(process.cwd());
+loadEnvFile(path.resolve(".env.local"));
 loadEnvFile(path.resolve(".env.vercel.production"));
 Object.assign(process.env, {
-  MEDIA_STORAGE: "supabase", // sinon isS3StorageEnabled() renvoie false en NODE_ENV=development
-  // et Payload propose de supprimer la colonne `prefix` de la table media.
+  MEDIA_STORAGE: "supabase",
   NODE_ENV: "development",
 });
 
 async function main() {
   const { getPayloadClient } = await import("../src/lib/payload");
-  const { ensureAdminRole } = await import("../src/lib/ensure-admin-role");
+  const { cleanupOrphanFormationCovers } = await import("../src/lib/formation-media");
   const payload = await getPayloadClient();
-
-  const log = await ensureAdminRole(payload);
-  console.log(log ?? "✓ Rien à migrer — le compte admin est déjà à jour (ou n'existe pas encore).");
+  const deleted = await cleanupOrphanFormationCovers(payload);
+  console.log(`✓ ${deleted} cover(s) orpheline(s) supprimée(s)`);
   process.exit(0);
 }
 

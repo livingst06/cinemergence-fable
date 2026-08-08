@@ -19,6 +19,7 @@
     "seed:founder": "curl -s -X POST http://localhost:3000/api/seed/founder",
     "migrate:founder": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-founder-prod.ts",
     "migrate:admin-role": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/ensure-admin-role-prod.ts",
+    "cleanup:orphan-covers": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/cleanup-orphan-formation-covers.ts",
     "supabase:rls": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/apply-supabase-rls.ts",
     "migrate:inscription-statuses": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/migrate-inscription-statuses.ts",
     "sync:site-url": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-site-url-prod.ts",

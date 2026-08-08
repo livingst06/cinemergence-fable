@@ -29,6 +29,7 @@ export const Media: CollectionConfig = {
         { label: "Plateau", value: "plateau" },
         { label: "Livrable stagiaire", value: "livrable" },
         { label: "Portrait", value: "portrait" },
+        { label: "Formation (cover / galerie fiche)", value: "formation" },
         { label: "Autre", value: "autre" },
       ],
       defaultValue: "autre",

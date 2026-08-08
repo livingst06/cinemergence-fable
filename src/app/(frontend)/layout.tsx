@@ -36,7 +36,7 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const themeInitScript = `(function(){try{var t=localStorage.getItem("cinemergence-theme");if(t==="light"){document.documentElement.classList.remove("dark");}else{document.documentElement.classList.add("dark");}}catch(e){document.documentElement.classList.add("dark");}})();`;
+const themeInitScript = `(function(){var KEY="cinemergence-theme";var ID="cinemergence-theme-toggle";function apply(theme){document.documentElement.classList.toggle("dark",theme!=="light");try{localStorage.setItem(KEY,theme==="light"?"light":"dark");}catch(e){}var el=document.getElementById(ID);if(el)el.checked=theme!=="light";}try{var t=localStorage.getItem(KEY);apply(t==="light"?"light":"dark");}catch(e){apply("dark");}function syncInput(){var el=document.getElementById(ID);if(el)el.checked=document.documentElement.classList.contains("dark");}document.addEventListener("change",function(e){var t=e.target;if(!t||t.id!==ID)return;apply(t.checked?"dark":"light");},true);if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",syncInput);else syncInput();setTimeout(syncInput,0);setTimeout(syncInput,120);})();`;
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteSettings();

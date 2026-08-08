@@ -164,7 +164,7 @@ export function Header({ formations }: HeaderProps) {
             </label>
             <AdminModeToggle />
             <HeaderUserMenu />
-            <ThemeToggle className="h-9 w-9" />
+            <ThemeToggle />
           </div>
         </div>
       </header>

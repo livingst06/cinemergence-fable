@@ -4,6 +4,10 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireAdmin } from "@/lib/session-profile";
+import {
+  cleanupOrphanFormationCovers,
+  deleteFormationWithMedia,
+} from "@/lib/formation-media";
 import { getPayloadClient } from "@/lib/payload";
 
 const formationAdminSchema = z.object({
@@ -176,14 +180,14 @@ export async function deleteFormationAction(
 
   try {
     const payload = await getPayloadClient();
-    await payload.delete({
-      collection: "formations",
-      id,
-      overrideAccess: true,
-    });
+    await deleteFormationWithMedia(payload, id);
+    // Couvertures orphelines d'anciennes suppressions (avant cascade)
+    await cleanupOrphanFormationCovers(payload);
+
     revalidatePath("/formations");
     revalidatePath("/");
-    return { ok: true, message: "Formation supprimée" };
+    revalidatePath("/galerie");
+    return { ok: true, message: "Formation et médias associés supprimés" };
   } catch (error) {
     console.error("[deleteFormation]", error);
     return { ok: false, error: "Suppression impossible" };

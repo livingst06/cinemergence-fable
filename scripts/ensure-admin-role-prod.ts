@@ -1,7 +1,6 @@
 /**
- * S'assure que chaque email de ADMIN_LIST a bien role: "admin" en production.
- * Renomme aussi l'ex-email de seed local (admin@cinemergence.paris) si besoin.
- * La stratégie Clerk synchronise aussi le rôle à chaque login via ADMIN_LIST.
+ * Aligne les rôles Payload `users` sur `ADMIN_LIST` en production.
+ * La stratégie Clerk synchronise aussi le rôle à chaque login via `ADMIN_LIST`.
  *
  * Usage: pnpm migrate:admin-role
  */

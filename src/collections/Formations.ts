@@ -19,6 +19,33 @@ export const Formations: CollectionConfig = {
     update: ({ req }) => req.user?.role === "admin",
     delete: ({ req }) => req.user?.role === "admin",
   },
+  hooks: {
+    beforeDelete: [
+      async ({ id, req }) => {
+        const doc = await req.payload.findByID({
+          collection: "formations",
+          id,
+          depth: 0,
+          overrideAccess: true,
+        });
+        const { collectFormationMediaIds } = await import("@/lib/formation-media");
+        const mediaIds = collectFormationMediaIds(
+          doc as { coverImage?: unknown; images?: unknown },
+        );
+        (req.context as { formationMediaIds?: Array<number | string> }).formationMediaIds =
+          mediaIds;
+      },
+    ],
+    afterDelete: [
+      async ({ req }) => {
+        const mediaIds = (req.context as { formationMediaIds?: Array<number | string> })
+          .formationMediaIds;
+        if (!mediaIds?.length) return;
+        const { deleteMediaByIds } = await import("@/lib/formation-media");
+        await deleteMediaByIds(req.payload, mediaIds);
+      },
+    ],
+  },
   fields: [
     {
       name: "slug",

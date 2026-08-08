@@ -36,9 +36,9 @@ export function DemandeInscriptionButton({
       <ButtonLink
         href={`/contact?formation=${formationSlug}&type=inscription`}
         size={size}
-        className={cn("btn-cta", className)}
+        className={cn("btn-convert", className)}
       >
-        Je demande mon inscription
+        Je m'inscris
       </ButtonLink>
     );
   }
@@ -48,9 +48,9 @@ export function DemandeInscriptionButton({
       <ButtonLink
         href={`/sign-in?redirect_url=${encodeURIComponent(`/formations/${formationSlug}`)}`}
         size={size}
-        className={cn("btn-cta", className)}
+        className={cn("btn-convert", className)}
       >
-        Je demande mon inscription
+        Je m'inscris
       </ButtonLink>
     );
   }
@@ -69,7 +69,7 @@ export function DemandeInscriptionButton({
 
   if (placesRestantes != null && placesRestantes <= 0) {
     return (
-      <Button type="button" size={size} className={cn("btn-cta", className)} disabled>
+      <Button type="button" size={size} className={cn("btn-convert", className)} disabled>
         Complet
       </Button>
     );
@@ -79,7 +79,7 @@ export function DemandeInscriptionButton({
     <Button
       type="button"
       size={size}
-      className={cn("btn-cta", className)}
+      className={cn("btn-convert", className)}
       disabled={pending}
       onClick={() => {
         startTransition(async () => {
@@ -100,7 +100,7 @@ export function DemandeInscriptionButton({
         });
       }}
     >
-      {pending ? "Envoi…" : "Je demande mon inscription"}
+      {pending ? "Envoi…" : "Je m'inscris"}
     </Button>
   );
 }

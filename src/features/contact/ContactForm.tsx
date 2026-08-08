@@ -124,7 +124,7 @@ export function ContactForm({
       <Button
         type="submit"
         disabled={pending}
-        className="btn-cta min-h-11"
+        className={defaultType === "inscription" ? "btn-convert min-h-11" : "btn-cta min-h-11"}
       >
         {pending ? "J'envoie…" : "J'envoie ma demande"}
       </Button>

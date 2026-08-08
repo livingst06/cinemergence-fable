@@ -18,13 +18,14 @@ import { FormationViewItem } from "@/features/measurement/FormationViewItem";
 import { DemandeInscriptionButton } from "@/features/inscriptions/DemandeInscriptionButton";
 import { getPlacesRestantes } from "@/features/inscriptions/actions";
 import { FormationDetailGallery } from "@/features/formations/FormationDetailGallery";
+import { FormationSessionBanner } from "@/features/formations/FormationSessionBanner";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { canonicalFormationSlug, formationPath } from "@/lib/defaults";
 import { splitDuree } from "@/lib/formation-format";
 import {
   ACTIVE_DEMANDE_STATUSES,
-  formatFormationDate,
+  formatFormationSessionLabel,
 } from "@/lib/inscription-status";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
 import { getPayloadClient } from "@/lib/payload";
@@ -129,8 +130,11 @@ export default async function FormationDetailPage({ params }: Props) {
     formation.dureeHeures,
     formation.dureeJours,
   );
-  const dateDebutLabel = formatFormationDate(formation.dateDebut);
-  const dateFinLabel = formatFormationDate(formation.dateFin);
+  const sessionLabel = formatFormationSessionLabel(
+    formation.dateDebut,
+    formation.dateFin,
+    { month: "long" },
+  );
 
   return (
     <>
@@ -174,32 +178,22 @@ export default async function FormationDetailPage({ params }: Props) {
               </span>
             )}
           </div>
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <DemandeInscriptionButton
-              formationId={formation.id}
-              formationSlug={formation.slug}
+
+          <div className="mt-8 w-full max-w-2xl space-y-5">
+            <FormationSessionBanner
+              sessionLabel={sessionLabel}
               placesRestantes={placesRestantes}
-              alreadyRequested={alreadyRequested}
             />
+            <div className="flex flex-col items-center gap-3">
+              <DemandeInscriptionButton
+                formationId={formation.id}
+                formationSlug={formation.slug}
+                placesRestantes={placesRestantes}
+                alreadyRequested={alreadyRequested}
+                className="min-w-[14rem] px-8"
+              />
+            </div>
           </div>
-          {(dateDebutLabel || dateFinLabel || placesRestantes != null) && (
-            <p className="mt-4 text-sm text-muted-text">
-              {[
-                dateDebutLabel && dateFinLabel
-                  ? `Session du ${dateDebutLabel} au ${dateFinLabel}`
-                  : dateDebutLabel
-                    ? `Début le ${dateDebutLabel}`
-                    : null,
-                placesRestantes != null
-                  ? placesRestantes > 0
-                    ? `${placesRestantes} place${placesRestantes > 1 ? "s" : ""} restante${placesRestantes > 1 ? "s" : ""}`
-                    : "Complet"
-                  : null,
-              ]
-                .filter(Boolean)
-                .join(" · ")}
-            </p>
-          )}
         </header>
 
         <div>
@@ -459,19 +453,22 @@ export default async function FormationDetailPage({ params }: Props) {
           </div>
         )}
 
-        <div className="border-t border-white/[0.06] pt-12 text-center md:pt-16">
-          <h2 className="section-title">Prêt à te lancer ?</h2>
-          <p className="mx-auto mt-4 max-w-xl text-muted-text">
-            Contacte-nous pour t&apos;inscrire à cette formation.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <ButtonLink
-              href={`/contact?formation=${formation.slug}`}
-              size="lg"
-              className="btn-cta"
-            >
-              Je m&apos;inscris
-            </ButtonLink>
+        <div className="border-t border-white/[0.06] pt-12 md:pt-16">
+          <div className="mx-auto w-full max-w-2xl space-y-5">
+            <h2 className="section-title text-center text-cream">Prêt à te lancer ?</h2>
+            <FormationSessionBanner
+              sessionLabel={sessionLabel}
+              placesRestantes={placesRestantes}
+            />
+            <div className="flex flex-col items-center gap-3">
+              <DemandeInscriptionButton
+                formationId={formation.id}
+                formationSlug={formation.slug}
+                placesRestantes={placesRestantes}
+                alreadyRequested={alreadyRequested}
+                className="min-w-[14rem] px-8"
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { MediaFrame } from "@/components/ui/MediaFrame";
 import { FormationCardSessionsBanner } from "@/features/formations/FormationCardSessionsBanner";
 import type { FormationData } from "@/lib/defaults";
 import { formationLivrableLabel, formationPath } from "@/lib/defaults";
+import { formatFormationSessionRange } from "@/lib/inscription-status";
 import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,11 @@ export function FormationCard({ formation, placesRestantes }: FormationCardProps
   const coverSrc = resolveFormationCoverUrl(formation.slug, formation.coverImageUrl);
   const href = formationPath(formation.slug);
   const showPlaces = placesRestantes != null;
+  const sessionLabel = formatFormationSessionRange(
+    formation.dateDebut,
+    formation.dateFin,
+    { month: "short", capitalize: false },
+  );
 
   return (
     <article
@@ -57,6 +63,9 @@ export function FormationCard({ formation, placesRestantes }: FormationCardProps
           <h3 className="line-clamp-2 font-heading text-base font-semibold leading-snug text-cream md:text-lg">
             {formation.titre}
           </h3>
+          {sessionLabel ? (
+            <p className="text-sm font-medium text-cream/80">{sessionLabel}</p>
+          ) : null}
           <p className="line-clamp-2 text-base leading-relaxed text-muted-text">
             {formation.accroche}
           </p>

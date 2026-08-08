@@ -20,6 +20,8 @@
     "migrate:founder": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-founder-prod.ts",
     "migrate:admin-role": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/ensure-admin-role-prod.ts",
     "cleanup:orphan-covers": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/cleanup-orphan-formation-covers.ts",
+    "seed:places": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/seed-places-offertes.ts",
+    "seed:dates": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/seed-formation-dates.ts",
     "supabase:rls": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/apply-supabase-rls.ts",
     "migrate:inscription-statuses": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/migrate-inscription-statuses.ts",
     "sync:site-url": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-site-url-prod.ts",

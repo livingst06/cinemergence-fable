@@ -22,7 +22,7 @@ export function CtaFinal({ site }: CtaFinalProps) {
           </a>
         </p>
         <div className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center">
-          <ButtonLink href="/contact" size="lg" className="btn-cta min-h-12 w-full px-8 sm:w-auto sm:px-10">
+          <ButtonLink href="/contact" size="lg" className="btn-convert min-h-12 w-full px-8 sm:w-auto sm:px-10">
             Je réserve ma place
           </ButtonLink>
           <ButtonLink

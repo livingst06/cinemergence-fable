@@ -32,15 +32,15 @@ export function formationTarifEuros(doc: {
   return parseEurosFromTarifLabel(doc.tarif ?? null);
 }
 
-export async function countPlacesPrisesForInstance(
-  instanceId: number | string,
+export async function countPlacesPrisesForSession(
+  sessionId: number | string,
 ): Promise<number> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "inscriptions",
     where: {
       and: [
-        { instance: { equals: instanceId } },
+        { session: { equals: sessionId } },
         { status: { in: PLACE_TAKING_STATUSES } },
       ],
     },
@@ -51,7 +51,7 @@ export async function countPlacesPrisesForInstance(
   return result.totalDocs;
 }
 
-/** @deprecated Prefer countPlacesPrisesForInstance */
+/** @deprecated Prefer countPlacesPrisesForSession */
 export async function countPlacesPrises(formationId: number | string): Promise<number> {
   const payload = await getPayloadClient();
   const result = await payload.find({
@@ -69,23 +69,23 @@ export async function countPlacesPrises(formationId: number | string): Promise<n
   return result.totalDocs;
 }
 
-export async function getPlacesRestantesForInstance(
-  instanceId: number | string,
+export async function getPlacesRestantesForSession(
+  sessionId: number | string,
 ): Promise<{
   placesOffertes: number | null;
   placesPrises: number;
   placesRestantes: number | null;
 }> {
   const payload = await getPayloadClient();
-  const instance = await payload.findByID({
-    collection: "formation-instances",
-    id: instanceId,
+  const sessionDoc = await payload.findByID({
+    collection: "formation-sessions",
+    id: sessionId,
     depth: 0,
     overrideAccess: true,
   });
   const placesOffertes =
-    typeof instance.placesOffertes === "number" ? instance.placesOffertes : null;
-  const placesPrises = await countPlacesPrisesForInstance(instanceId);
+    typeof sessionDoc.placesOffertes === "number" ? sessionDoc.placesOffertes : null;
+  const placesPrises = await countPlacesPrisesForSession(sessionId);
   return {
     placesOffertes,
     placesPrises,
@@ -94,15 +94,15 @@ export async function getPlacesRestantesForInstance(
   };
 }
 
-/** Agrège la prochaine instance active d’une formation (cartes catalogue). */
+/** Agrège la prochaine session active d’une formation (cartes catalogue). */
 export async function getPlacesRestantes(formationId: number | string): Promise<{
   placesOffertes: number | null;
   placesPrises: number;
   placesRestantes: number | null;
 }> {
   const payload = await getPayloadClient();
-  const instances = await payload.find({
-    collection: "formation-instances",
+  const sessions = await payload.find({
+    collection: "formation-sessions",
     where: {
       and: [
         { formation: { equals: formationId } },
@@ -114,12 +114,12 @@ export async function getPlacesRestantes(formationId: number | string): Promise<
     depth: 0,
     overrideAccess: true,
   });
-  const instance = instances.docs[0];
-  if (instance) {
-    return getPlacesRestantesForInstance(instance.id);
+  const sessionDoc = sessions.docs[0];
+  if (sessionDoc) {
+    return getPlacesRestantesForSession(sessionDoc.id);
   }
 
-  // Fallback legacy (formation sans instance encore)
+  // Fallback legacy (formation sans session encore)
   const formation = await payload.findByID({
     collection: "formations",
     id: formationId,
@@ -166,7 +166,7 @@ export async function getPlacesRestantesMap(
 }
 
 export async function releaseExpiredHolds(
-  scope?: { formationId?: number | string; instanceId?: number | string },
+  scope?: { formationId?: number | string; sessionId?: number | string },
 ): Promise<number> {
   const payload = await getPayloadClient();
   const nowIso = new Date().toISOString();
@@ -174,8 +174,8 @@ export async function releaseExpiredHolds(
     { status: { equals: "en_paiement" } },
     { holdExpiresAt: { less_than: nowIso } },
   ];
-  if (scope?.instanceId != null) {
-    and.push({ instance: { equals: scope.instanceId } });
+  if (scope?.sessionId != null) {
+    and.push({ session: { equals: scope.sessionId } });
   } else if (scope?.formationId != null) {
     and.push({ formation: { equals: scope.formationId } });
   }
@@ -215,7 +215,7 @@ export function holdExpiresAtDate(from = new Date()): Date {
 }
 
 export async function enforceCapacityKeepOldest(
-  instanceId: number | string,
+  sessionId: number | string,
   inscriptionId: number | string,
   placesOffertes: number,
 ): Promise<boolean> {
@@ -224,7 +224,7 @@ export async function enforceCapacityKeepOldest(
     collection: "inscriptions",
     where: {
       and: [
-        { instance: { equals: instanceId } },
+        { session: { equals: sessionId } },
         { status: { in: PLACE_TAKING_STATUSES } },
       ],
     },
@@ -277,7 +277,7 @@ export async function releaseHoldById(
   return true;
 }
 
-export type FormationInstanceView = {
+export type FormationSessionView = {
   id: number | string;
   label: string | null;
   dateDebut: string;
@@ -291,15 +291,15 @@ export type FormationInstanceView = {
   pendingInscriptionId: string | null;
 };
 
-export async function listInstancesForFormation(
+export async function listSessionsForFormation(
   formationId: number | string,
   opts?: { userId?: number | string | null },
-): Promise<FormationInstanceView[]> {
+): Promise<FormationSessionView[]> {
   const payload = await getPayloadClient();
   await releaseExpiredHolds({ formationId });
 
   const result = await payload.find({
-    collection: "formation-instances",
+    collection: "formation-sessions",
     where: { formation: { equals: formationId } },
     sort: "dateDebut",
     limit: 50,
@@ -307,9 +307,24 @@ export async function listInstancesForFormation(
     overrideAccess: true,
   });
 
-  const views: FormationInstanceView[] = [];
+  let formationTarif: number | null = null;
+  try {
+    const formation = await payload.findByID({
+      collection: "formations",
+      id: formationId,
+      depth: 0,
+      overrideAccess: true,
+    });
+    formationTarif = formationTarifEuros(
+      formation as { tarifEuros?: number | null; tarif?: string | null },
+    );
+  } catch {
+    formationTarif = null;
+  }
+
+  const views: FormationSessionView[] = [];
   for (const doc of result.docs) {
-    const seats = await getPlacesRestantesForInstance(doc.id);
+    const seats = await getPlacesRestantesForSession(doc.id);
     let alreadyEnrolled = false;
     let checkoutPending = false;
     let pendingInscriptionId: string | null = null;
@@ -320,7 +335,7 @@ export async function listInstancesForFormation(
         where: {
           and: [
             { user: { equals: opts.userId } },
-            { instance: { equals: doc.id } },
+            { session: { equals: doc.id } },
             {
               status: {
                 in: [
@@ -359,10 +374,7 @@ export async function listInstancesForFormation(
       placesOffertes:
         typeof doc.placesOffertes === "number" ? doc.placesOffertes : 0,
       placesRestantes: seats.placesRestantes,
-      tarifEuros:
-        typeof doc.tarifEuros === "number" && doc.tarifEuros > 0
-          ? doc.tarifEuros
-          : null,
+      tarifEuros: formationTarif,
       active: doc.active !== false,
       alreadyEnrolled,
       checkoutPending,
@@ -370,4 +382,47 @@ export async function listInstancesForFormation(
     });
   }
   return views;
+}
+
+export type NextSessionSummary = {
+  dateDebut: string;
+  dateFin: string;
+  placesRestantes: number | null;
+  sessionCount: number;
+};
+
+/** Prochaine session active + places, pour les cards catalogue. */
+export async function getNextSessionMap(
+  formations: Array<{ id?: number | string }>,
+): Promise<Record<string, NextSessionSummary | null>> {
+  const withId = formations.filter((f) => f.id != null);
+  const map: Record<string, NextSessionSummary | null> = {};
+  if (withId.length === 0) return map;
+
+  await Promise.all(
+    withId.map(async (formation) => {
+      const id = String(formation.id);
+      try {
+        const sessions = await listSessionsForFormation(formation.id!);
+        const active = sessions.filter((s) => s.active);
+        if (active.length === 0) {
+          map[id] = null;
+          return;
+        }
+        const next =
+          active.find(
+            (s) => s.placesRestantes == null || s.placesRestantes > 0,
+          ) ?? active[0]!;
+        map[id] = {
+          dateDebut: next.dateDebut,
+          dateFin: next.dateFin,
+          placesRestantes: next.placesRestantes,
+          sessionCount: active.length,
+        };
+      } catch {
+        map[id] = null;
+      }
+    }),
+  );
+  return map;
 }

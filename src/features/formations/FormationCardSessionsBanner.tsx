@@ -21,7 +21,7 @@ export function FormationCardSessionsBanner({
         className,
       )}
     >
-      Voir le détail de la formation
+      Voir les prochaines sessions
     </Link>
   );
 }

@@ -16,7 +16,7 @@ import {
 import { FormationSessionGallery } from "@/features/formations/FormationSessionGallery";
 import { FormationViewItem } from "@/features/measurement/FormationViewItem";
 import { FormationDetailGallery } from "@/features/formations/FormationDetailGallery";
-import { FormationInstancesBooking } from "@/features/formations/FormationInstancesBooking";
+import { FormationSessionsSection } from "@/features/formations/FormationSessionsSection";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { canonicalFormationSlug, formationPath } from "@/lib/defaults";
@@ -24,8 +24,8 @@ import { splitDuree } from "@/lib/formation-format";
 import { formatFormationSessionLabel } from "@/lib/inscription-status";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
 import {
-  listInstancesForFormation,
-  type FormationInstanceView,
+  listSessionsForFormation,
+  type FormationSessionView,
 } from "@/lib/places";
 import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { getSessionProfile } from "@/lib/session-profile";
@@ -74,8 +74,7 @@ export default async function FormationDetailPage({ params }: Props) {
     .map((item) => intervenantBySlug.get(item))
     .filter((i): i is NonNullable<typeof i> => i != null && i.slug !== "karina-testa");
 
-  let placesRestantes: number | null = null;
-  let instances: FormationInstanceView[] = [];
+  let sessions: FormationSessionView[] = [];
   const paymentEnabled =
     typeof formation.tarifEuros === "number" && formation.tarifEuros > 0;
 
@@ -90,31 +89,23 @@ export default async function FormationDetailPage({ params }: Props) {
       }
     }
     try {
-      instances = await listInstancesForFormation(formation.id, {
+      sessions = await listSessionsForFormation(formation.id, {
         userId: payloadUserId,
       });
     } catch {
-      instances = [];
+      sessions = [];
     }
-    const nextOpen = instances.find(
-      (i) => i.active && (i.placesRestantes == null || i.placesRestantes > 0),
-    );
-    placesRestantes =
-      nextOpen?.placesRestantes ??
-      instances.find((i) => i.active)?.placesRestantes ??
-      null;
-    if (placesRestantes == null) {
-      if (typeof formation.placesOffertes === "number") {
-        placesRestantes = formation.placesOffertes;
-      } else if (typeof formation.effectifMax === "number") {
-        placesRestantes = formation.effectifMax;
-      }
-    }
-  } else if (typeof formation.placesOffertes === "number") {
-    placesRestantes = formation.placesOffertes;
-  } else if (typeof formation.effectifMax === "number") {
-    placesRestantes = formation.effectifMax;
   }
+
+  const activeSessions = sessions.filter((s) => s.active);
+  const nextSession = activeSessions.find(
+    (s) => s.placesRestantes == null || s.placesRestantes > 0,
+  ) ?? activeSessions[0];
+  const nextSessionLabel = nextSession
+    ? formatFormationSessionLabel(nextSession.dateDebut, nextSession.dateFin, {
+        month: "long",
+      })
+    : null;
 
   const livrables =
     formation.livrables && formation.livrables.length > 0
@@ -129,11 +120,6 @@ export default async function FormationDetailPage({ params }: Props) {
     formation.duree,
     formation.dureeHeures,
     formation.dureeJours,
-  );
-  const sessionLabel = formatFormationSessionLabel(
-    formation.dateDebut,
-    formation.dateFin,
-    { month: "long" },
   );
 
   return (
@@ -179,16 +165,35 @@ export default async function FormationDetailPage({ params }: Props) {
             )}
           </div>
 
-          <div className="mt-8">
-            <FormationInstancesBooking
-              formationSlug={formation.slug}
-              paymentEnabled={paymentEnabled}
-              instances={instances}
-              fallback={{
-                sessionLabel,
-                placesRestantes,
-              }}
-            />
+          <div className="mt-8 flex w-full max-w-2xl flex-col items-start gap-3">
+            {nextSessionLabel ? (
+              <p className="text-sm text-muted-text">
+                Prochaine session :{" "}
+                <span className="font-medium text-cream">{nextSessionLabel}</span>
+                {activeSessions.length > 1
+                  ? ` · ${activeSessions.length} sessions`
+                  : null}
+              </p>
+            ) : (
+              <p className="text-sm text-muted-text">
+                Aucune session ouverte pour le moment.
+              </p>
+            )}
+            <ButtonLink
+              href="#sessions"
+              size="lg"
+              className="btn-convert min-w-[14rem] px-8"
+            >
+              Voir toutes les sessions
+            </ButtonLink>
+            <ButtonLink
+              href={`/contact?formation=${formation.slug}&type=inscription`}
+              variant="link"
+              size="sm"
+              className="h-auto px-0 text-sm font-medium text-muted-text hover:text-or-light"
+            >
+              Je pose une question
+            </ButtonLink>
           </div>
         </header>
 
@@ -418,6 +423,40 @@ export default async function FormationDetailPage({ params }: Props) {
           />
         )}
 
+        {(formation.delaiAcces || formation.evaluation || formation.accessibilite) && (
+          <div className="max-w-3xl">
+            <SectionHeader
+              title="Accès et évaluation"
+              align="left"
+              className="mb-6 md:mb-8"
+            />
+            {formation.delaiAcces && (
+              <p className="text-sm text-muted-text">
+                <span className="font-semibold text-or-light">Délai d&apos;accès — </span>
+                {formation.delaiAcces}
+              </p>
+            )}
+            {formation.evaluation && (
+              <p className="mt-4 text-sm text-muted-text">
+                <span className="font-semibold text-or-light">Évaluation — </span>
+                {formation.evaluation}
+              </p>
+            )}
+            {formation.accessibilite && (
+              <p className="mt-4 text-sm text-muted-text">
+                <span className="font-semibold text-or-light">Accessibilité — </span>
+                {formation.accessibilite}
+              </p>
+            )}
+          </div>
+        )}
+
+        <FormationSessionsSection
+          formationSlug={formation.slug}
+          paymentEnabled={paymentEnabled}
+          sessions={sessions}
+        />
+
         {linkedIntervenants.length > 0 && (
           <div>
             <SectionHeader title="Encadré par" align="left" className="mb-8 md:mb-10" />
@@ -450,17 +489,11 @@ export default async function FormationDetailPage({ params }: Props) {
         )}
 
         <div className="border-t border-white/[0.06] pt-12 md:pt-16">
-          <div className="mx-auto w-full max-w-2xl space-y-5">
-            <h2 className="section-title text-center text-cream">Prêt à te lancer ?</h2>
-            <FormationInstancesBooking
-              formationSlug={formation.slug}
-              paymentEnabled={paymentEnabled}
-              instances={instances}
-              fallback={{
-                sessionLabel,
-                placesRestantes,
-              }}
-            />
+          <div className="mx-auto flex w-full max-w-2xl flex-col items-center gap-4 text-center">
+            <h2 className="section-title text-cream">Prêt à te lancer ?</h2>
+            <ButtonLink href="#sessions" size="lg" className="btn-convert min-w-[14rem] px-8">
+              Voir toutes les sessions
+            </ButtonLink>
           </div>
         </div>
       </div>

@@ -20,9 +20,9 @@ export const Inscriptions: CollectionConfig = {
   slug: "inscriptions",
   admin: {
     useAsTitle: "id",
-    defaultColumns: ["user", "instance", "formation", "status", "updatedAt"],
+    defaultColumns: ["user", "session", "formation", "status", "updatedAt"],
     description:
-      "Inscriptions stagiaires liées à une instance. Paiement Stripe → statut « payee » = place confirmée (pas de validation admin).",
+      "Inscriptions stagiaires liées à une session. Paiement Stripe → statut « payee » = place confirmée (pas de validation admin).",
   },
   access: {
     read: ({ req }) => {
@@ -43,15 +43,15 @@ export const Inscriptions: CollectionConfig = {
       index: true,
     },
     {
-      name: "instance",
+      name: "session",
       type: "relationship",
-      relationTo: "formation-instances",
+      relationTo: "formation-sessions",
       required: false,
       index: true,
-      label: "Instance (session datée)",
+      label: "Session",
       admin: {
         description:
-          "Obligatoire pour les nouvelles inscriptions. Une place = une instance.",
+          "Obligatoire pour les nouvelles inscriptions. Une place = une session.",
       },
     },
     {
@@ -61,7 +61,7 @@ export const Inscriptions: CollectionConfig = {
       required: true,
       index: true,
       admin: {
-        description: "Dénormalisé depuis l’instance (filtre / affichage).",
+        description: "Dénormalisé depuis la session (filtre / affichage).",
       },
     },
     {
@@ -128,19 +128,19 @@ export const Inscriptions: CollectionConfig = {
   hooks: {
     beforeChange: [
       async ({ data, req, operation, originalDoc }) => {
-        if (!data?.instance) return data;
-        const instanceId =
-          typeof data.instance === "object" && data.instance
-            ? (data.instance as { id: number | string }).id
-            : data.instance;
+        if (!data?.session) return data;
+        const sessionId =
+          typeof data.session === "object" && data.session
+            ? (data.session as { id: number | string }).id
+            : data.session;
         try {
-          const instance = await req.payload.findByID({
-            collection: "formation-instances",
-            id: instanceId,
+          const sessionDoc = await req.payload.findByID({
+            collection: "formation-sessions",
+            id: sessionId,
             depth: 0,
             overrideAccess: true,
           });
-          const formationRef = instance.formation;
+          const formationRef = sessionDoc.formation;
           data.formation =
             typeof formationRef === "object" && formationRef
               ? (formationRef as { id: number | string }).id
@@ -149,7 +149,7 @@ export const Inscriptions: CollectionConfig = {
           /* keep existing formation */
         }
 
-        // Une seule inscription active par couple user + instance
+        // Une seule inscription active par couple user + session
         const userId =
           typeof data.user === "object" && data.user
             ? (data.user as { id: number | string }).id
@@ -164,13 +164,13 @@ export const Inscriptions: CollectionConfig = {
           "inscrit",
           "pieces_complementaires",
         ];
-        if (userId && instanceId && status && blocking.includes(String(status))) {
+        if (userId && sessionId && status && blocking.includes(String(status))) {
           const existing = await req.payload.find({
             collection: "inscriptions",
             where: {
               and: [
                 { user: { equals: userId } },
-                { instance: { equals: instanceId } },
+                { session: { equals: sessionId } },
                 { status: { in: blocking } },
               ],
             },
@@ -185,7 +185,7 @@ export const Inscriptions: CollectionConfig = {
           const conflict = existing.docs.find((d) => String(d.id) !== selfId);
           if (conflict) {
             throw new Error(
-              "Ce stagiaire est déjà inscrit à cette instance de formation.",
+              "Ce stagiaire est déjà inscrit à cette session de formation.",
             );
           }
         }

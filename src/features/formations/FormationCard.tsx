@@ -5,7 +5,6 @@ import { MediaFrame } from "@/components/ui/MediaFrame";
 import { FormationCardSessionsBanner } from "@/features/formations/FormationCardSessionsBanner";
 import type { FormationData } from "@/lib/defaults";
 import { formationLivrableLabel, formationPath } from "@/lib/defaults";
-import { formatFormationSessionRange } from "@/lib/inscription-status";
 import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { cn } from "@/lib/utils";
 
@@ -13,19 +12,12 @@ type FormationCardProps = {
   formation: FormationData;
   /** Conservé pour compat — toutes les cards ont désormais le même format. */
   featured?: boolean;
-  /** Places restantes (null = non configuré → bandeau masqué). */
-  placesRestantes?: number | null;
 };
 
-export function FormationCard({ formation, placesRestantes }: FormationCardProps) {
+export function FormationCard({ formation }: FormationCardProps) {
   const coverSrc = resolveFormationCoverUrl(formation.slug, formation.coverImageUrl);
   const href = formationPath(formation.slug);
-  const showPlaces = placesRestantes != null;
-  const sessionLabel = formatFormationSessionRange(
-    formation.dateDebut,
-    formation.dateFin,
-    { month: "short", capitalize: false },
-  );
+  const sessionsHref = `${href}#sessions`;
 
   return (
     <article
@@ -63,9 +55,6 @@ export function FormationCard({ formation, placesRestantes }: FormationCardProps
           <h3 className="line-clamp-2 font-heading text-base font-semibold leading-snug text-cream md:text-lg">
             {formation.titre}
           </h3>
-          {sessionLabel ? (
-            <p className="text-sm font-medium text-cream/80">{sessionLabel}</p>
-          ) : null}
           <p className="line-clamp-2 text-base leading-relaxed text-muted-text">
             {formation.accroche}
           </p>
@@ -78,24 +67,9 @@ export function FormationCard({ formation, placesRestantes }: FormationCardProps
             </p>
           )}
         </div>
-
-        {showPlaces ? (
-          <div
-            className={cn(
-              "mt-auto w-full px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.14em]",
-              placesRestantes > 0
-                ? "bg-emerald-600 text-white"
-                : "bg-emerald-900/80 text-emerald-100/90",
-            )}
-          >
-            {placesRestantes > 0
-              ? `${placesRestantes} place${placesRestantes > 1 ? "s" : ""} restante${placesRestantes > 1 ? "s" : ""}`
-              : "Complet"}
-          </div>
-        ) : null}
       </Link>
 
-      <FormationCardSessionsBanner href={href} />
+      <FormationCardSessionsBanner href={sessionsHref} />
     </article>
   );
 }

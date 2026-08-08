@@ -5,7 +5,7 @@ import { buildConfig } from "payload";
 import { fileURLToPath } from "url";
 
 import { Formations } from "./collections/Formations";
-import { FormationInstances } from "./collections/FormationInstances";
+import { FormationSessions } from "./collections/FormationSessions";
 import { FormSubmissions } from "./collections/FormSubmissions";
 import { Inscriptions } from "./collections/Inscriptions";
 import { Intervenants } from "./collections/Intervenants";
@@ -35,7 +35,7 @@ export default buildConfig({
     Users,
     Media,
     Formations,
-    FormationInstances,
+    FormationSessions,
     Intervenants,
     Temoignages,
     FormSubmissions,

@@ -1,6 +1,6 @@
 /**
- * Crée une instance par formation (dates/places existantes) et rattache les inscriptions.
- * Usage: pnpm migrate:instances
+ * Crée une session par formation (dates/places existantes) et rattache les inscriptions.
+ * Usage: pnpm migrate:sessions
  */
 import fs from "fs";
 import path from "path";
@@ -44,16 +44,16 @@ async function main() {
 
   for (const f of formations.docs) {
     const existing = await payload.find({
-      collection: "formation-instances",
+      collection: "formation-sessions",
       where: { formation: { equals: f.id } },
       limit: 1,
       depth: 0,
       overrideAccess: true,
     });
 
-    let instanceId = existing.docs[0]?.id;
+    let sessionId = existing.docs[0]?.id;
 
-    if (!instanceId) {
+    if (!sessionId) {
       const slug = String(f.slug);
       const fallbackDates = datesFromSlug(slug);
       const dateDebut = f.dateDebut
@@ -70,7 +70,7 @@ async function main() {
             : placesFromSlug(slug);
 
       const createdDoc = await payload.create({
-        collection: "formation-instances",
+        collection: "formation-sessions",
         data: {
           formation: f.id,
           dateDebut,
@@ -85,11 +85,11 @@ async function main() {
         },
         overrideAccess: true,
       });
-      instanceId = createdDoc.id;
+      sessionId = createdDoc.id;
       created += 1;
-      console.log(`+ instance ${slug} #${instanceId}`);
+      console.log(`+ session ${slug} #${sessionId}`);
     } else {
-      console.log(`= instance exists ${f.slug} #${instanceId}`);
+      console.log(`= session exists ${f.slug} #${sessionId}`);
     }
 
     const inscriptions = await payload.find({
@@ -97,7 +97,7 @@ async function main() {
       where: {
         and: [
           { formation: { equals: f.id } },
-          { instance: { exists: false } },
+          { session: { exists: false } },
         ],
       },
       limit: 200,
@@ -109,14 +109,13 @@ async function main() {
       await payload.update({
         collection: "inscriptions",
         id: insc.id,
-        data: { instance: instanceId },
+        data: { session: sessionId },
         overrideAccess: true,
       });
       linked += 1;
     }
   }
 
-  // Also link any inscription with null instance via formation relation
   const orphanInscriptions = await payload.find({
     collection: "inscriptions",
     limit: 500,
@@ -124,30 +123,30 @@ async function main() {
     overrideAccess: true,
   });
   for (const insc of orphanInscriptions.docs) {
-    if (insc.instance) continue;
+    if (insc.session) continue;
     const formationId =
       typeof insc.formation === "object" && insc.formation
         ? (insc.formation as { id: number | string }).id
         : insc.formation;
     if (!formationId) continue;
-    const inst = await payload.find({
-      collection: "formation-instances",
+    const sessions = await payload.find({
+      collection: "formation-sessions",
       where: { formation: { equals: formationId } },
       sort: "dateDebut",
       limit: 1,
       overrideAccess: true,
     });
-    if (!inst.docs[0]) continue;
+    if (!sessions.docs[0]) continue;
     await payload.update({
       collection: "inscriptions",
       id: insc.id,
-      data: { instance: inst.docs[0].id },
+      data: { session: sessions.docs[0].id },
       overrideAccess: true,
     });
     linked += 1;
   }
 
-  console.log(`Done. instances créées=${created}, inscriptions liées=${linked}`);
+  console.log(`Done. sessions créées=${created}, inscriptions liées=${linked}`);
   process.exit(0);
 }
 

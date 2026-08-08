@@ -79,9 +79,9 @@ async function getMyReservations(
       };
       if (!f.slug) continue;
 
-      const instance =
-        typeof doc.instance === "object" && doc.instance
-          ? (doc.instance as {
+      const sessionDoc =
+        typeof doc.session === "object" && doc.session
+          ? (doc.session as {
               dateDebut?: string;
               dateFin?: string;
               label?: string | null;
@@ -96,13 +96,13 @@ async function getMyReservations(
           : null,
         formationTitre: String(f.titre ?? f.titreCourt ?? f.slug),
         formationSlug: String(f.slug),
-        dateDebut: instance?.dateDebut
-          ? String(instance.dateDebut)
+        dateDebut: sessionDoc?.dateDebut
+          ? String(sessionDoc.dateDebut)
           : f.dateDebut
             ? String(f.dateDebut)
             : undefined,
-        dateFin: instance?.dateFin
-          ? String(instance.dateFin)
+        dateFin: sessionDoc?.dateFin
+          ? String(sessionDoc.dateFin)
           : f.dateFin
             ? String(f.dateFin)
             : undefined,

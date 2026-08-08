@@ -10,6 +10,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { buttonVariants } from "@/components/ui/button";
+import { AdminDeleteButton, AdminEditButton } from "@/features/admin/AdminMutationButtons";
 import { InscriptionStatusBadge } from "@/features/inscriptions/InscriptionStatusBadge";
 import { formationPath } from "@/lib/defaults";
 import {
@@ -27,13 +28,15 @@ export type AdminSessionTrainee = {
 };
 
 export type AdminSessionGroup = {
-  instanceId: number | string;
+  sessionId: number | string;
+  formationId: number | string;
   label: string | null;
   formationTitre: string;
   formationSlug: string;
   dateDebut: string;
   dateFin: string;
   placesOffertes: number;
+  tarifEuros: number | null;
   active: boolean;
   trainees: AdminSessionTrainee[];
 };
@@ -71,19 +74,25 @@ function buildMailto(args: {
 
 export function AdminDemandesPanel({
   sessions,
+  isAdminMode = false,
+  onEdit,
+  onDelete,
 }: {
   sessions: AdminSessionGroup[];
+  isAdminMode?: boolean;
+  onEdit?: (session: AdminSessionGroup) => void;
+  onDelete?: (session: AdminSessionGroup) => void;
 }) {
   if (sessions.length === 0) {
     return (
       <p className="text-sm text-muted-text">
-        Aucune session avec stagiaire inscrit pour le moment.
+        Aucune session pour le moment.
       </p>
     );
   }
 
   return (
-    <Accordion className="w-full space-y-3">
+    <Accordion className="w-full space-y-3 overflow-visible pt-3 pr-3">
       {sessions.map((session) => {
         const sessionLabel = formatFormationSessionLabel(
           session.dateDebut,
@@ -93,30 +102,34 @@ export function AdminDemandesPanel({
         const enrolledCount = session.trainees.filter((t) =>
           isEnrolled(t.status),
         ).length;
+        const canMutate = isAdminMode && enrolledCount === 0;
         const emails = participantEmails(session.trainees);
         const mailto = buildMailto({
           emails,
           formationTitre: session.formationTitre,
           sessionLabel,
         });
-        const value = `session-${session.instanceId}`;
+        const value = `session-${session.sessionId}`;
 
         return (
           <AccordionItem
             key={value}
             value={value}
-            className="overflow-hidden rounded-2xl border border-border bg-noir-tertiary/40 last:border-b"
+            className="relative overflow-visible rounded-2xl border border-border bg-noir-tertiary/40 last:border-b"
           >
+            {isAdminMode ? (
+              <AdminDeleteButton
+                className="absolute -top-3 -right-3 z-30"
+                label={`Supprimer ${session.formationTitre}`}
+                disabled={!canMutate}
+                disabledReason="Impossible : au moins un stagiaire est inscrit"
+                onClick={() => onDelete?.(session)}
+              />
+            ) : null}
+
             <div className="px-4 pt-4 sm:px-5 sm:pt-5">
-              <AccordionTrigger
-                className={cn(
-                  "items-center gap-4 py-0 hover:no-underline",
-                  "rounded-none border-0 focus-visible:ring-offset-0",
-                  // Masque le petit chevron par défaut du composant Accordion
-                  "**:data-[slot=accordion-trigger-icon]:hidden",
-                )}
-              >
-                <div className="min-w-0 flex-1 text-left">
+              <div className="flex w-full items-center gap-3 sm:gap-4">
+                <div className="min-w-0 flex-1">
                   <p className="font-heading text-xl leading-snug text-cream sm:text-2xl">
                     {session.formationTitre}
                   </p>
@@ -136,18 +149,43 @@ export function AdminDemandesPanel({
                     {!session.active ? " · fermée" : ""}
                   </p>
                 </div>
-                <span
-                  aria-hidden
+
+                {isAdminMode ? (
+                  <AdminEditButton
+                    className="shrink-0"
+                    label={`Modifier ${session.formationTitre}`}
+                    disabled={!canMutate}
+                    disabledReason="Impossible : au moins un stagiaire est inscrit"
+                    onClick={() => onEdit?.(session)}
+                  />
+                ) : null}
+
+                <AccordionTrigger
+                  aria-label={
+                    sessionLabel
+                      ? `Ouvrir ou fermer ${session.formationTitre} — ${sessionLabel}`
+                      : `Ouvrir ou fermer ${session.formationTitre}`
+                  }
+                  headerClassName="shrink-0"
                   className={cn(
-                    "btn-outline-warm inline-flex size-12 shrink-0 items-center justify-center rounded-xl",
-                    "text-cream transition-colors",
-                    "group-aria-expanded/accordion-trigger:border-or/45 group-aria-expanded/accordion-trigger:bg-or/15 group-aria-expanded/accordion-trigger:text-or-light",
+                    "size-12 shrink-0 flex-none items-center justify-center p-0 hover:no-underline",
+                    "rounded-xl border-0 focus-visible:ring-offset-0",
+                    "**:data-[slot=accordion-trigger-icon]:hidden",
                   )}
                 >
-                  <ChevronDown className="size-6 group-aria-expanded/accordion-trigger:hidden" />
-                  <ChevronUp className="hidden size-6 group-aria-expanded/accordion-trigger:inline" />
-                </span>
-              </AccordionTrigger>
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "btn-outline-warm inline-flex size-12 items-center justify-center rounded-xl",
+                      "text-cream transition-colors",
+                      "group-aria-expanded/accordion-trigger:border-or/45 group-aria-expanded/accordion-trigger:bg-or/15 group-aria-expanded/accordion-trigger:text-or-light",
+                    )}
+                  >
+                    <ChevronDown className="size-6 group-aria-expanded/accordion-trigger:hidden" />
+                    <ChevronUp className="hidden size-6 group-aria-expanded/accordion-trigger:inline" />
+                  </span>
+                </AccordionTrigger>
+              </div>
 
               <div className="mt-3 pb-4">
                 {mailto ? (

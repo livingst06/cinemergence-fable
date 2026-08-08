@@ -1,19 +1,19 @@
 import type { CollectionConfig } from "payload";
 
 /**
- * Session datée d’une formation (plusieurs instances possibles par formation).
+ * Session datée d’une formation (plusieurs sessions possibles par formation).
  */
-export const FormationInstances: CollectionConfig = {
-  slug: "formation-instances",
+export const FormationSessions: CollectionConfig = {
+  slug: "formation-sessions",
   labels: {
-    singular: "Instance de formation",
-    plural: "Instances de formation",
+    singular: "Session",
+    plural: "Sessions",
   },
   admin: {
     useAsTitle: "label",
     defaultColumns: ["label", "formation", "dateDebut", "dateFin", "placesOffertes", "active"],
     description:
-      "Sessions datées : une formation peut avoir plusieurs instances à des dates différentes.",
+      "Sessions datées : une formation peut avoir plusieurs sessions à des dates différentes. Les stagiaires s’inscrivent à une session.",
   },
   access: {
     read: () => true,
@@ -67,15 +67,6 @@ export const FormationInstances: CollectionConfig = {
       },
     },
     {
-      name: "tarifEuros",
-      type: "number",
-      label: "Tarif (euros) — optionnel",
-      admin: {
-        description:
-          "Si vide, le tarif de la formation parente est utilisé pour Stripe.",
-      },
-    },
-    {
       name: "active",
       type: "checkbox",
       defaultValue: true,
@@ -85,6 +76,10 @@ export const FormationInstances: CollectionConfig = {
   hooks: {
     beforeChange: [
       ({ data }) => {
+        // Le tarif est toujours celui de la formation (pas de override session).
+        if (data && "tarifEuros" in data) {
+          delete data.tarifEuros;
+        }
         if (data?.dateDebut && data?.dateFin && !data.label) {
           const d1 = String(data.dateDebut).slice(0, 10);
           const d2 = String(data.dateFin).slice(0, 10);

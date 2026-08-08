@@ -116,6 +116,9 @@
   --color-muted-text: var(--muted-text);
   --color-cool: var(--cool);
   --color-cool-glow: var(--cool-glow);
+  --color-convert: var(--convert);
+  --color-convert-light: var(--convert-light);
+  --color-convert-deep: var(--convert-deep);
   --font-sans: var(--font-jakarta);
   --font-heading: var(--font-bebas);
   --color-card: var(--card);

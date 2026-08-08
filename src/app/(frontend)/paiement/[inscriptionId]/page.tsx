@@ -130,21 +130,21 @@ export default async function PaiementPage({ params }: Props) {
         })
       : null;
 
-  const instance =
-    typeof doc.instance === "object" && doc.instance
-      ? (doc.instance as { dateDebut?: string; dateFin?: string })
+  const sessionDoc =
+    typeof doc.session === "object" && doc.session
+      ? (doc.session as { dateDebut?: string; dateFin?: string })
       : null;
 
   const amountEuros =
     typeof doc.amountEuros === "number" ? doc.amountEuros : null;
   const sessionLabel = formatFormationSessionLabel(
-    instance?.dateDebut
-      ? String(instance.dateDebut)
+    sessionDoc?.dateDebut
+      ? String(sessionDoc.dateDebut)
       : formation?.dateDebut
         ? String(formation.dateDebut)
         : undefined,
-    instance?.dateFin
-      ? String(instance.dateFin)
+    sessionDoc?.dateFin
+      ? String(sessionDoc.dateFin)
       : formation?.dateFin
         ? String(formation.dateFin)
         : undefined,

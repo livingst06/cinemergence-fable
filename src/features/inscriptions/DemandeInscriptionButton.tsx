@@ -11,7 +11,7 @@ import { startCheckout } from "@/features/inscriptions/checkout-actions";
 import { cn } from "@/lib/utils";
 
 type DemandeInscriptionButtonProps = {
-  instanceId: number | string | undefined;
+  sessionId: number | string | undefined;
   placesRestantes: number | null;
   alreadyRequested?: boolean;
   checkoutPending?: boolean;
@@ -24,7 +24,7 @@ type DemandeInscriptionButtonProps = {
 };
 
 export function DemandeInscriptionButton({
-  instanceId,
+  sessionId,
   placesRestantes,
   alreadyRequested,
   checkoutPending,
@@ -71,7 +71,7 @@ export function DemandeInscriptionButton({
     );
   }
 
-  if (!instanceId || !paymentEnabled) {
+  if (!sessionId || !paymentEnabled) {
     return (
       <Button
         type="button"
@@ -79,7 +79,7 @@ export function DemandeInscriptionButton({
         className={cn("btn-convert", className)}
         onClick={() =>
           toast.error(
-            !instanceId
+            !sessionId
               ? "Cette session n’est pas encore ouverte au paiement en ligne."
               : "Tarif de paiement non configuré pour cette formation.",
           )
@@ -110,7 +110,7 @@ export function DemandeInscriptionButton({
       disabled={pending}
       onClick={() => {
         startTransition(async () => {
-          const result = await startCheckout(instanceId);
+          const result = await startCheckout(sessionId);
           if (!result.ok) {
             if (result.code === "auth") {
               router.push(

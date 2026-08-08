@@ -3,11 +3,9 @@ import { redirect } from "next/navigation";
 
 import { PageHero } from "@/components/sections/PageHero";
 import { Section } from "@/components/ui/Section";
-import {
-  AdminDemandesPanel,
-  type AdminSessionGroup,
-} from "@/features/inscriptions/AdminDemandesPanel";
-import { normalizeInscriptionStatus } from "@/lib/inscription-status";
+import { LesSessionsAdmin } from "@/features/formations/LesSessionsAdmin";
+import { listFormationsForSessionSelect } from "@/features/formations/session-actions";
+import type { AdminSessionGroup } from "@/features/inscriptions/AdminDemandesPanel";
 import { getPayloadClient } from "@/lib/payload";
 import { getSessionProfile } from "@/lib/session-profile";
 
@@ -16,16 +14,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-function isEnrolled(status: string): boolean {
-  const s = normalizeInscriptionStatus(status);
-  return s === "payee" || s === "validee" || s === "inscrit";
-}
-
-async function getSessionsWithInscriptions(): Promise<AdminSessionGroup[]> {
+async function getAllSessions(): Promise<AdminSessionGroup[]> {
   try {
     const payload = await getPayloadClient();
-    const instances = await payload.find({
-      collection: "formation-instances",
+    const sessions = await payload.find({
+      collection: "formation-sessions",
       depth: 1,
       limit: 200,
       sort: "dateDebut",
@@ -34,20 +27,21 @@ async function getSessionsWithInscriptions(): Promise<AdminSessionGroup[]> {
 
     const groups: AdminSessionGroup[] = [];
 
-    for (const inst of instances.docs) {
+    for (const session of sessions.docs) {
       const formation =
-        typeof inst.formation === "object" && inst.formation
-          ? (inst.formation as {
+        typeof session.formation === "object" && session.formation
+          ? (session.formation as {
+              id?: number | string;
               titre?: string;
               titreCourt?: string;
               slug?: string;
             })
           : null;
-      if (!formation?.slug) continue;
+      if (!formation?.slug || formation.id == null) continue;
 
       const inscriptions = await payload.find({
         collection: "inscriptions",
-        where: { instance: { equals: inst.id } },
+        where: { session: { equals: session.id } },
         depth: 1,
         limit: 200,
         sort: "-updatedAt",
@@ -71,20 +65,26 @@ async function getSessionsWithInscriptions(): Promise<AdminSessionGroup[]> {
         });
       }
 
-      if (!trainees.some((t) => isEnrolled(t.status))) continue;
-
       groups.push({
-        instanceId: inst.id,
-        label: inst.label ? String(inst.label) : null,
+        sessionId: session.id,
+        formationId: formation.id,
+        label: session.label ? String(session.label) : null,
         formationTitre: String(
           formation.titre ?? formation.titreCourt ?? formation.slug,
         ),
         formationSlug: String(formation.slug),
-        dateDebut: String(inst.dateDebut),
-        dateFin: String(inst.dateFin),
+        dateDebut: String(session.dateDebut),
+        dateFin: String(session.dateFin),
         placesOffertes:
-          typeof inst.placesOffertes === "number" ? inst.placesOffertes : 0,
-        active: inst.active !== false,
+          typeof session.placesOffertes === "number" ? session.placesOffertes : 0,
+        tarifEuros:
+          typeof session.formation === "object" &&
+          session.formation &&
+          typeof (session.formation as { tarifEuros?: number }).tarifEuros ===
+            "number"
+            ? (session.formation as { tarifEuros: number }).tarifEuros
+            : null,
+        active: session.active !== false,
         trainees,
       });
     }
@@ -104,19 +104,17 @@ export default async function LesSessionsPage() {
     redirect("/");
   }
 
-  const sessions = await getSessionsWithInscriptions();
+  const [sessions, formations] = await Promise.all([
+    getAllSessions(),
+    listFormationsForSessionSelect(),
+  ]);
 
   return (
     <>
       <PageHero eyebrow="Administration" title="Les sessions" />
       <Section>
         <div className="container-page max-w-4xl">
-          <p className="mb-8 text-sm text-muted-text text-pretty">
-            Sessions avec au moins un stagiaire inscrit. Déroulez une session
-            pour voir la liste. Un paiement Stripe confirme la place
-            automatiquement.
-          </p>
-          <AdminDemandesPanel sessions={sessions} />
+          <LesSessionsAdmin sessions={sessions} formations={formations} />
         </div>
       </Section>
     </>

@@ -186,29 +186,35 @@ export const Formations: CollectionConfig = {
       type: "text",
       defaultValue: "Présentiel",
     },
-    { name: "effectifMax", type: "number" },
+    { name: "effectifMax", type: "number", admin: { hidden: true } },
     {
       name: "placesOffertes",
       type: "number",
-      label: "Places offertes (session)",
+      label: "Places offertes (legacy)",
       admin: {
-        description: "Nombre de places pour cette session datée. Requis pour ouvrir les réservations.",
+        description:
+          "Legacy — les places se gèrent sur chaque session (collection Sessions).",
+        hidden: true,
       },
     },
     {
       name: "dateDebut",
       type: "date",
-      label: "Date de début",
+      label: "Date de début (legacy)",
       admin: {
         date: { pickerAppearance: "dayOnly" },
+        description: "Legacy — les dates se gèrent sur chaque session.",
+        hidden: true,
       },
     },
     {
       name: "dateFin",
       type: "date",
-      label: "Date de fin",
+      label: "Date de fin (legacy)",
       admin: {
         date: { pickerAppearance: "dayOnly" },
+        description: "Legacy — les dates se gèrent sur chaque session.",
+        hidden: true,
       },
     },
     { name: "prerequis", type: "textarea" },
@@ -217,17 +223,20 @@ export const Formations: CollectionConfig = {
     {
       name: "tarif",
       type: "text",
+      required: true,
       admin: {
-        description: "Libellé affiché (ex. « 1 400 € »). Laisser vide si tarif à confirmer.",
+        description: "Libellé affiché (ex. « 1 400 € »). Appliqué à toutes les sessions.",
       },
     },
     {
       name: "tarifEuros",
       type: "number",
+      required: true,
+      min: 1,
       label: "Tarif (euros entiers)",
       admin: {
         description:
-          "Montant Stripe en euros entiers (ex. 1400). Requis pour ouvrir le paiement en ligne.",
+          "Montant Stripe en euros entiers (ex. 1400). Hérité par toutes les sessions de cette formation.",
       },
     },
     {

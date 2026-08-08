@@ -13,7 +13,7 @@ import {
 import {
   enforceCapacityKeepOldest,
   formationTarifEuros,
-  getPlacesRestantesForInstance,
+  getPlacesRestantesForSession,
   holdExpiresAtDate,
   releaseExpiredHolds,
   releaseHoldById,
@@ -61,10 +61,11 @@ function revalidateFormationPaths(slug?: string | null) {
 }
 
 /**
- * Réserve une place sur une instance (hold) puis crée Stripe Embedded Checkout.
+ * Réserve une place sur une session (hold) puis crée Stripe Embedded Checkout.
+ * @param sessionId — id technique collection `formation-sessions`
  */
 export async function startCheckout(
-  instanceId: number | string,
+  sessionId: number | string,
 ): Promise<CheckoutActionResult> {
   const auth = await requireAuth();
   if (!auth.ok) return { ok: false, error: auth.error, code: "auth" };
@@ -86,16 +87,16 @@ export async function startCheckout(
     }
 
     const payload = await getPayloadClient();
-    await releaseExpiredHolds({ instanceId });
+    await releaseExpiredHolds({ sessionId: sessionId });
 
-    const instance = await payload.findByID({
-      collection: "formation-instances",
-      id: instanceId,
+    const sessionDoc = await payload.findByID({
+      collection: "formation-sessions",
+      id: sessionId,
       depth: 1,
       overrideAccess: true,
     });
 
-    if (instance.active === false) {
+    if (sessionDoc.active === false) {
       return {
         ok: false,
         error: "Cette session n’est plus ouverte aux inscriptions.",
@@ -104,7 +105,7 @@ export async function startCheckout(
     }
 
     const placesOffertes =
-      typeof instance.placesOffertes === "number" ? instance.placesOffertes : null;
+      typeof sessionDoc.placesOffertes === "number" ? sessionDoc.placesOffertes : null;
     if (placesOffertes == null || placesOffertes <= 0) {
       return {
         ok: false,
@@ -114,8 +115,8 @@ export async function startCheckout(
     }
 
     const formation =
-      typeof instance.formation === "object" && instance.formation
-        ? (instance.formation as {
+      typeof sessionDoc.formation === "object" && sessionDoc.formation
+        ? (sessionDoc.formation as {
             id: number | string;
             titre?: string;
             slug?: string;
@@ -127,15 +128,11 @@ export async function startCheckout(
       return { ok: false, error: "Formation introuvable.", code: "invalid" };
     }
 
-    const amountEuros =
-      (typeof instance.tarifEuros === "number" && instance.tarifEuros > 0
-        ? Math.trunc(instance.tarifEuros)
-        : null) ??
-      resolveAmountEuros({
-        slug: formation.slug,
-        tarifEuros: formation.tarifEuros,
-        tarif: formation.tarif,
-      });
+    const amountEuros = resolveAmountEuros({
+      slug: formation.slug,
+      tarifEuros: formation.tarifEuros,
+      tarif: formation.tarif,
+    });
 
     if (amountEuros == null || amountEuros <= 0) {
       return {
@@ -145,7 +142,7 @@ export async function startCheckout(
       };
     }
 
-    const seats = await getPlacesRestantesForInstance(instance.id);
+    const seats = await getPlacesRestantesForSession(sessionDoc.id);
     if (seats.placesRestantes != null && seats.placesRestantes <= 0) {
       return { ok: false, error: "Plus de place disponible.", code: "full" };
     }
@@ -155,7 +152,7 @@ export async function startCheckout(
       where: {
         and: [
           { user: { equals: user.id } },
-          { instance: { equals: instance.id } },
+          { session: { equals: sessionDoc.id } },
           { status: { in: ACTIVE_DEMANDE_STATUSES } },
         ],
       },
@@ -176,9 +173,9 @@ export async function startCheckout(
             inscriptionId: current.id,
             formationTitre: String(formation.titre ?? "Formation"),
             formationSlug: formation.slug ? String(formation.slug) : null,
-            instanceId: instance.id,
-            dateDebut: String(instance.dateDebut),
-            dateFin: String(instance.dateFin),
+            sessionId: sessionDoc.id,
+            dateDebut: String(sessionDoc.dateDebut),
+            dateFin: String(sessionDoc.dateFin),
             amountEuros:
               typeof current.amountEuros === "number" && current.amountEuros > 0
                 ? current.amountEuros
@@ -205,7 +202,7 @@ export async function startCheckout(
       collection: "inscriptions",
       data: {
         user: user.id,
-        instance: instance.id,
+        session: sessionDoc.id,
         formation: formation.id,
         status: "en_paiement" satisfies InscriptionStatus,
         amountEuros,
@@ -217,7 +214,7 @@ export async function startCheckout(
     holdId = created.id;
 
     const kept = await enforceCapacityKeepOldest(
-      instance.id,
+      sessionDoc.id,
       created.id,
       placesOffertes,
     );
@@ -230,9 +227,9 @@ export async function startCheckout(
       inscriptionId: created.id,
       formationTitre: String(formation.titre ?? "Formation"),
       formationSlug: formation.slug ? String(formation.slug) : null,
-      instanceId: instance.id,
-      dateDebut: String(instance.dateDebut),
-      dateFin: String(instance.dateFin),
+      sessionId: sessionDoc.id,
+      dateDebut: String(sessionDoc.dateDebut),
+      dateFin: String(sessionDoc.dateFin),
       amountEuros,
       customerEmail: user.email ? String(user.email) : undefined,
     });
@@ -262,7 +259,7 @@ async function createEmbeddedSessionForHold(args: {
   inscriptionId: number | string;
   formationTitre: string;
   formationSlug: string | null;
-  instanceId: number | string;
+  sessionId: number | string;
   dateDebut: string;
   dateFin: string;
   amountEuros: number;
@@ -293,7 +290,7 @@ async function createEmbeddedSessionForHold(args: {
     client_reference_id: String(args.inscriptionId),
     metadata: {
       inscriptionId: String(args.inscriptionId),
-      instanceId: String(args.instanceId),
+      sessionId: String(args.sessionId),
       formationSlug: args.formationSlug ?? "",
       dateDebut: args.dateDebut.slice(0, 10),
       dateFin: args.dateFin.slice(0, 10),
@@ -302,7 +299,7 @@ async function createEmbeddedSessionForHold(args: {
       description: paymentDescription,
       metadata: {
         inscriptionId: String(args.inscriptionId),
-        instanceId: String(args.instanceId),
+        sessionId: String(args.sessionId),
         formationSlug: args.formationSlug ?? "",
         dateDebut: args.dateDebut.slice(0, 10),
         dateFin: args.dateFin.slice(0, 10),
@@ -318,7 +315,7 @@ async function createEmbeddedSessionForHold(args: {
             name: args.formationTitre,
             description,
             metadata: {
-              instanceId: String(args.instanceId),
+              sessionId: String(args.sessionId),
               dateDebut: args.dateDebut.slice(0, 10),
               dateFin: args.dateFin.slice(0, 10),
             },
@@ -445,26 +442,21 @@ export async function resumeCheckoutClientSecret(
           })
         : null;
 
-    const instance =
-      typeof doc.instance === "object" && doc.instance
-        ? (doc.instance as {
+    const sessionDoc =
+      typeof doc.session === "object" && doc.session
+        ? (doc.session as {
             id: number | string;
             dateDebut?: string;
             dateFin?: string;
-            tarifEuros?: number;
           })
         : null;
 
     const amountEuros =
       typeof doc.amountEuros === "number" && doc.amountEuros > 0
         ? doc.amountEuros
-        : (typeof instance?.tarifEuros === "number" && instance.tarifEuros > 0
-            ? instance.tarifEuros
-            : null) ??
-          formationTarifEuros(formation ?? {}) ??
-          null;
+        : formationTarifEuros(formation ?? {}) ?? null;
 
-    if (!amountEuros || !formation?.titre || !instance?.id) {
+    if (!amountEuros || !formation?.titre || !sessionDoc?.id) {
       return { ok: false, error: "Données de paiement incomplètes.", code: "invalid" };
     }
 
@@ -472,9 +464,9 @@ export async function resumeCheckoutClientSecret(
       inscriptionId: doc.id,
       formationTitre: String(formation.titre),
       formationSlug: formation.slug ? String(formation.slug) : null,
-      instanceId: instance.id,
-      dateDebut: String(instance.dateDebut ?? ""),
-      dateFin: String(instance.dateFin ?? ""),
+      sessionId: sessionDoc.id,
+      dateDebut: String(sessionDoc.dateDebut ?? ""),
+      dateFin: String(sessionDoc.dateFin ?? ""),
       amountEuros,
       customerEmail: user.email ? String(user.email) : undefined,
     });

@@ -9,7 +9,7 @@ import { InscriptionStatusBadge } from "@/features/inscriptions/InscriptionStatu
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
 import { formationPath } from "@/lib/defaults";
 import {
-  formatFormationDate,
+  formatFormationSessionLabel,
   normalizeInscriptionStatus,
 } from "@/lib/inscription-status";
 import { getPayloadClient } from "@/lib/payload";
@@ -106,8 +106,11 @@ export default async function MesReservationsPage() {
             <ul className="space-y-4">
               {rows.map((row) => {
                 const status = normalizeInscriptionStatus(row.status);
-                const debut = formatFormationDate(row.dateDebut);
-                const fin = formatFormationDate(row.dateFin);
+                const sessionLabel = formatFormationSessionLabel(
+                  row.dateDebut,
+                  row.dateFin,
+                  { month: "long" },
+                );
                 return (
                   <li key={String(row.id)} className="card-stage p-6">
                     <div className="flex flex-wrap items-start justify-between gap-3">
@@ -118,14 +121,8 @@ export default async function MesReservationsPage() {
                         >
                           {row.formationTitre}
                         </Link>
-                        {(debut || fin) && (
-                          <p className="mt-1 text-sm text-muted-text">
-                            {debut && fin
-                              ? `Du ${debut} au ${fin}`
-                              : debut
-                                ? `À partir du ${debut}`
-                                : `Jusqu’au ${fin}`}
-                          </p>
+                        {sessionLabel && (
+                          <p className="mt-1 text-sm text-muted-text">{sessionLabel}</p>
                         )}
                       </div>
                       <InscriptionStatusBadge status={row.status} />

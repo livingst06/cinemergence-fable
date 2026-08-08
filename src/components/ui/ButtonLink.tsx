@@ -11,7 +11,7 @@ type ButtonLinkProps = ComponentProps<typeof Link> &
 function hasCustomSurface(className: ButtonLinkProps["className"]) {
   if (!className) return false;
   const value = typeof className === "string" ? className : String(className);
-  return value.includes("btn-cta") || value.includes("btn-outline-warm");
+  return value.includes("btn-cta") || value.includes("btn-convert") || value.includes("btn-outline-warm");
 }
 
 export function ButtonLink({

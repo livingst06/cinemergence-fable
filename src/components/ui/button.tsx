@@ -49,7 +49,9 @@ function Button({
   const classValue =
     typeof className === "string" ? className : className ? String(className) : "";
   const customSurface =
-    classValue.includes("btn-cta") || classValue.includes("btn-outline-warm");
+    classValue.includes("btn-cta") ||
+    classValue.includes("btn-convert") ||
+    classValue.includes("btn-outline-warm");
 
   return (
     <ButtonPrimitive

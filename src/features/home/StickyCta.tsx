@@ -38,7 +38,7 @@ export function StickyCta() {
             >
               Les formations
             </ButtonLink>
-            <ButtonLink href="/contact" size="sm" className="btn-cta justify-center px-5">
+            <ButtonLink href="/contact" size="sm" className="btn-convert justify-center px-5">
               Je réserve ma place
             </ButtonLink>
           </div>

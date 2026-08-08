@@ -24,7 +24,7 @@ export function CtaFinal({ site }: CtaFinalProps) {
           .
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <ButtonLink href="/contact" size="lg" className="btn-cta px-10">
+          <ButtonLink href="/contact" size="lg" className="btn-convert px-10">
             Je réserve ma place
           </ButtonLink>
           <ButtonLink

@@ -100,7 +100,7 @@ export function ContactForm({
       <Button
         type="submit"
         disabled={pending}
-        className="btn-cta"
+        className={defaultType === "inscription" ? "btn-convert" : "btn-cta"}
       >
         {pending ? "J'envoie..." : "J'envoie ma demande"}
       </Button>

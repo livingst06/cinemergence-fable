@@ -22,6 +22,7 @@ import {
   getSiteSettings,
   getTemoignages,
 } from "@/lib/data";
+import { resolvePlacesRestantesForCard } from "@/lib/defaults";
 import { getPlacesRestantesMap } from "@/lib/places";
 
 export const revalidate = 300;
@@ -108,15 +109,15 @@ export default async function HomePage() {
               ))}
             </ul>
             <div className="mt-10 flex animate-fade-up-delay-3 flex-col gap-4 sm:flex-row">
-              <ButtonLink href="/formations" size="lg" className="btn-cta px-10">
-                Les formations
+              <ButtonLink href="/contact" size="lg" className="btn-convert px-10">
+                Je réserve ma place
               </ButtonLink>
               <ButtonLink
-                href="/contact"
+                href="/formations"
                 size="lg"
                 className="btn-outline-warm rounded-lg px-10 py-2.5 text-sm font-semibold uppercase tracking-wider"
               >
-                Je réserve ma place
+                Les formations
               </ButtonLink>
             </div>
           </div>
@@ -194,9 +195,10 @@ export default async function HomePage() {
               <FormationCard
                 key={f.slug}
                 formation={f}
-                placesRestantes={
-                  f.id != null ? (placesByFormationId[String(f.id)] ?? null) : null
-                }
+                placesRestantes={resolvePlacesRestantesForCard(
+                  f,
+                  placesByFormationId,
+                )}
               />
             ))}
           </div>

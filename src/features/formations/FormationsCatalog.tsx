@@ -12,6 +12,7 @@ import { FormationCard } from "@/features/formations/FormationCard";
 import { FormationCardAdmin } from "@/features/formations/FormationCardAdmin";
 import { deleteFormationAction } from "@/features/formations/admin-actions";
 import type { FormationData } from "@/lib/defaults";
+import { resolvePlacesRestantesForCard } from "@/lib/defaults";
 import { cn } from "@/lib/utils";
 
 type FormationsCatalogProps = {
@@ -128,8 +129,10 @@ export function FormationsCatalog({
       {ordered.length > 0 || isAdminMode ? (
         <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
           {ordered.map((f) => {
-            const placesRestantes =
-              f.id != null ? (placesByFormationId[String(f.id)] ?? null) : null;
+            const placesRestantes = resolvePlacesRestantesForCard(
+              f,
+              placesByFormationId,
+            );
             return isAdminMode ? (
               <FormationCardAdmin
                 key={f.slug}

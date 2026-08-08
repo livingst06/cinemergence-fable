@@ -29,6 +29,12 @@
   --cool-glow: #7a8fa3;
   --cool-mist: rgba(90, 109, 128, 0.12);
 
+  /* Conversion stagiaire : payer / s’inscrire / panier */
+  --convert: #059669;
+  --convert-light: #10b981;
+  --convert-deep: #047857;
+  --convert-glow: rgba(5, 150, 105, 0.4);
+
   --background: var(--noir);
   --foreground: var(--cream);
   --card: #ffffff;
@@ -70,6 +76,11 @@
   --cool: #3d4f61;
   --cool-glow: #6b8299;
   --cool-mist: rgba(61, 79, 97, 0.35);
+
+  --convert: #10b981;
+  --convert-light: #34d399;
+  --convert-deep: #059669;
+  --convert-glow: rgba(16, 185, 129, 0.45);
 
   --background: var(--noir);
   --foreground: var(--cream);
@@ -395,6 +406,43 @@
 
   .btn-cta:active {
     transform: translateY(0);
+  }
+
+  /*
+   * Conversion stagiaire (payer / s’inscrire / panier).
+   * Toujours ce dégradé vert — pas le rouge brand (btn-cta).
+   */
+  .btn-convert {
+    @apply relative overflow-hidden border-0 font-semibold uppercase tracking-wider text-white;
+    background: linear-gradient(
+      135deg,
+      var(--convert-light) 0%,
+      var(--convert) 55%,
+      var(--convert-deep) 100%
+    );
+    box-shadow:
+      0 0 0 1px rgba(52, 211, 153, 0.28) inset,
+      0 4px 24px -4px var(--convert-glow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  }
+
+  .btn-convert:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow:
+      0 0 0 1px rgba(52, 211, 153, 0.4) inset,
+      0 8px 32px -4px var(--convert-glow);
+  }
+
+  .btn-convert:active {
+    transform: translateY(0);
+    filter: none;
+  }
+
+  .btn-convert:disabled {
+    filter: grayscale(0.35) brightness(0.85);
+    transform: none;
+    box-shadow: none;
   }
 
   .btn-outline-warm {

@@ -55,6 +55,8 @@ export type FormationData = {
   lieu?: string;
   delaiAcces?: string;
   tarif: string | null;
+  /** Montant Stripe en euros entiers (ex. 1400). */
+  tarifEuros?: number;
   financements: FinancementKey[];
   methodesPedagogiques?: string[];
   moyensTechniques?: string[];

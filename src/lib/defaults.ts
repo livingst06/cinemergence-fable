@@ -1,5 +1,6 @@
 import type { FormationData, FaqItem, FinancementKey, ProgrammeJour } from "./formation-types";
 import { formationsCatalog } from "./formations-catalog";
+import { parseEurosFromTarifLabel } from "@/lib/inscription-status";
 
 export type { FormationData, FaqItem, FinancementKey, ProgrammeJour } from "./formation-types";
 export { formationPath, formationLivrableLabel } from "./formation-types";
@@ -100,15 +101,16 @@ export const defaultIntervenants: IntervenantData[] = [
 export const defaultFormations: FormationData[] = formationsCatalog.map((f) => {
   const places = placesFromSlug(f.slug);
   const dates = datesFromSlug(f.slug);
+  const tarifEuros = f.tarifEuros ?? parseEurosFromTarifLabel(f.tarif) ?? undefined;
   return {
     ...f,
     placesOffertes: f.placesOffertes ?? places,
     effectifMax: f.effectifMax ?? places,
     dateDebut: f.dateDebut ?? dates.dateDebut,
     dateFin: f.dateFin ?? dates.dateFin,
+    tarifEuros,
   };
 });
-
 /** Places déterministes 6–14 à partir du slug (catalogue hors CMS). */
 export function placesFromSlug(slug: string): number {
   let hash = 0;

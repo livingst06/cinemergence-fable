@@ -5,12 +5,15 @@ import {
 } from "@/lib/inscription-status";
 import { cn } from "@/lib/utils";
 
+/** Tons avec contraste jour/nuit (voir `.status-badge-*` dans globals.css). */
 const toneByStatus: Record<string, string> = {
-  en_instruction: "border-or/30 bg-or/10 text-or-light",
-  validee: "border-emerald-500/30 bg-emerald-500/10 text-emerald-200",
-  refusee: "border-red-500/30 bg-red-500/10 text-red-200",
-  pieces_complementaires: "border-amber-500/30 bg-amber-500/10 text-amber-100",
-  annule: "border-border bg-white/5 text-muted-text",
+  en_instruction: "status-badge-or",
+  en_paiement: "status-badge-amber",
+  payee: "status-badge-success",
+  validee: "status-badge-success",
+  refusee: "status-badge-danger",
+  pieces_complementaires: "status-badge-amber",
+  annule: "status-badge-muted",
 };
 
 export function InscriptionStatusBadge({
@@ -24,7 +27,7 @@ export function InscriptionStatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider",
+        "status-badge",
         toneByStatus[normalized] ?? toneByStatus.en_instruction,
         className,
       )}

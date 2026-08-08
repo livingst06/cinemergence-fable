@@ -14,6 +14,7 @@ import {
 } from "@/lib/inscription-status";
 import { getPayloadClient } from "@/lib/payload";
 import { getSessionProfile } from "@/lib/session-profile";
+import { syncInscriptionIfStripePaid } from "@/lib/stripe-fulfillment";
 
 export const metadata: Metadata = {
   title: "Mes réservations",
@@ -44,8 +45,29 @@ async function getMyReservations(
       overrideAccess: true,
     });
 
+    // Filet : si Stripe a payé mais le webhook a manqué, on resynchronise
+    await Promise.all(
+      result.docs
+        .filter((doc) => doc.status === "en_paiement" && doc.stripeCheckoutSessionId)
+        .map((doc) =>
+          syncInscriptionIfStripePaid(doc.id).catch((err) => {
+            console.error("[mes-reservations] sync", doc.id, err);
+            return false;
+          }),
+        ),
+    );
+
+    const refreshed = await payload.find({
+      collection: "inscriptions",
+      where: { user: { equals: payloadUserId } },
+      depth: 2,
+      limit: 100,
+      sort: "-updatedAt",
+      overrideAccess: true,
+    });
+
     const rows: ReservationRow[] = [];
-    for (const doc of result.docs) {
+    for (const doc of refreshed.docs) {
       const formation = doc.formation;
       if (!formation || typeof formation !== "object") continue;
       const f = formation as {
@@ -56,6 +78,16 @@ async function getMyReservations(
         dateFin?: string;
       };
       if (!f.slug) continue;
+
+      const instance =
+        typeof doc.instance === "object" && doc.instance
+          ? (doc.instance as {
+              dateDebut?: string;
+              dateFin?: string;
+              label?: string | null;
+            })
+          : null;
+
       rows.push({
         id: doc.id,
         status: String(doc.status),
@@ -64,8 +96,16 @@ async function getMyReservations(
           : null,
         formationTitre: String(f.titre ?? f.titreCourt ?? f.slug),
         formationSlug: String(f.slug),
-        dateDebut: f.dateDebut ? String(f.dateDebut) : undefined,
-        dateFin: f.dateFin ? String(f.dateFin) : undefined,
+        dateDebut: instance?.dateDebut
+          ? String(instance.dateDebut)
+          : f.dateDebut
+            ? String(f.dateDebut)
+            : undefined,
+        dateFin: instance?.dateFin
+          ? String(instance.dateFin)
+          : f.dateFin
+            ? String(f.dateFin)
+            : undefined,
       });
     }
     return rows;
@@ -135,7 +175,16 @@ export default async function MesReservationsPage() {
                       </p>
                     ) : null}
 
-                    <div className="mt-4">
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {status === "en_paiement" ? (
+                        <ButtonLink
+                          href={`/paiement/${row.id}`}
+                          size="sm"
+                          className="btn-convert"
+                        >
+                          Finaliser le paiement
+                        </ButtonLink>
+                      ) : null}
                       <ButtonLink
                         href={formationPath(row.formationSlug)}
                         size="sm"

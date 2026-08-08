@@ -1,218 +1,223 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, useTransition } from "react";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { ChevronDown, ChevronUp, Mail } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { InscriptionStatusBadge } from "@/features/inscriptions/InscriptionStatusBadge";
-import { setInscriptionStatus } from "@/features/inscriptions/actions";
 import {
-  normalizeInscriptionStatus,
-  type InscriptionStatus,
-} from "@/lib/inscription-status";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { buttonVariants } from "@/components/ui/button";
+import { InscriptionStatusBadge } from "@/features/inscriptions/InscriptionStatusBadge";
 import { formationPath } from "@/lib/defaults";
+import {
+  formatFormationSessionLabel,
+  normalizeInscriptionStatus,
+} from "@/lib/inscription-status";
 import { cn } from "@/lib/utils";
 
-export type AdminDemandeRow = {
+export type AdminSessionTrainee = {
   id: number | string;
-  status: string;
-  commentaireAdmin?: string | null;
-  message?: string | null;
-  updatedAt?: string;
-  userEmail: string;
   userName: string;
-  formationTitre: string;
-  formationSlug: string;
+  userEmail: string;
+  status: string;
+  amountEuros: number | null;
 };
 
-type FilterKey = "a_valider" | "pieces" | "refusees" | "validees" | "toutes";
+export type AdminSessionGroup = {
+  instanceId: number | string;
+  label: string | null;
+  formationTitre: string;
+  formationSlug: string;
+  dateDebut: string;
+  dateFin: string;
+  placesOffertes: number;
+  active: boolean;
+  trainees: AdminSessionTrainee[];
+};
 
-const filters: { key: FilterKey; label: string }[] = [
-  { key: "a_valider", label: "À valider" },
-  { key: "pieces", label: "Pièces complémentaires" },
-  { key: "refusees", label: "Refusées" },
-  { key: "validees", label: "Validées" },
-  { key: "toutes", label: "Toutes" },
-];
-
-function matchesFilter(status: InscriptionStatus, filter: FilterKey): boolean {
-  switch (filter) {
-    case "a_valider":
-      return status === "en_instruction";
-    case "pieces":
-      return status === "pieces_complementaires";
-    case "refusees":
-      return status === "refusee";
-    case "validees":
-      return status === "validee";
-    default:
-      return true;
-  }
+function isEnrolled(status: string): boolean {
+  const s = normalizeInscriptionStatus(status);
+  return s === "payee" || s === "validee" || s === "inscrit";
 }
 
-export function AdminDemandesPanel({ rows }: { rows: AdminDemandeRow[] }) {
-  const router = useRouter();
-  const [filter, setFilter] = useState<FilterKey>("a_valider");
-  const [comments, setComments] = useState<Record<string, string>>({});
-  const [pendingId, setPendingId] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+function participantEmails(trainees: AdminSessionTrainee[]): string[] {
+  const emails = new Set<string>();
+  for (const t of trainees) {
+    if (!isEnrolled(t.status)) continue;
+    const email = t.userEmail.trim();
+    if (!email || email === "—") continue;
+    emails.add(email);
+  }
+  return [...emails];
+}
 
-  const filtered = useMemo(
-    () =>
-      rows.filter((row) =>
-        matchesFilter(normalizeInscriptionStatus(row.status), filter),
-      ),
-    [rows, filter],
+function buildMailto(args: {
+  emails: string[];
+  formationTitre: string;
+  sessionLabel: string | null;
+}): string | null {
+  if (args.emails.length === 0) return null;
+  const subject = encodeURIComponent(
+    args.sessionLabel
+      ? `${args.formationTitre} — ${args.sessionLabel}`
+      : args.formationTitre,
   );
+  const to = args.emails.map((email) => encodeURIComponent(email)).join(",");
+  return `mailto:${to}?subject=${subject}`;
+}
 
-  const runStatus = (
-    id: number | string,
-    status: "validee" | "refusee" | "pieces_complementaires" | "en_instruction",
-  ) => {
-    const key = String(id);
-    const commentaireAdmin = comments[key]?.trim() || null;
-    setPendingId(key);
-    startTransition(async () => {
-      const result = await setInscriptionStatus({ id, status, commentaireAdmin });
-      setPendingId(null);
-      if (!result.ok) {
-        toast.error(result.error);
-        return;
-      }
-      toast.success(result.message);
-      router.refresh();
-    });
-  };
+export function AdminDemandesPanel({
+  sessions,
+}: {
+  sessions: AdminSessionGroup[];
+}) {
+  if (sessions.length === 0) {
+    return (
+      <p className="text-sm text-muted-text">
+        Aucune session avec stagiaire inscrit pour le moment.
+      </p>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap gap-2">
-        {filters.map((f) => (
-          <button
-            key={f.key}
-            type="button"
-            onClick={() => setFilter(f.key)}
-            className={cn(
-              "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
-              filter === f.key
-                ? "border-or/40 bg-or/15 text-or-light"
-                : "border-border text-cream/70 hover:border-or/25 hover:text-cream",
-            )}
+    <Accordion className="w-full space-y-3">
+      {sessions.map((session) => {
+        const sessionLabel = formatFormationSessionLabel(
+          session.dateDebut,
+          session.dateFin,
+          { month: "long" },
+        );
+        const enrolledCount = session.trainees.filter((t) =>
+          isEnrolled(t.status),
+        ).length;
+        const emails = participantEmails(session.trainees);
+        const mailto = buildMailto({
+          emails,
+          formationTitre: session.formationTitre,
+          sessionLabel,
+        });
+        const value = `session-${session.instanceId}`;
+
+        return (
+          <AccordionItem
+            key={value}
+            value={value}
+            className="overflow-hidden rounded-2xl border border-border bg-noir-tertiary/40 last:border-b"
           >
-            {f.label}
-          </button>
-        ))}
-      </div>
-
-      {filtered.length === 0 ? (
-        <p className="text-sm text-muted-text">Aucune demande dans ce filtre.</p>
-      ) : (
-        <ul className="space-y-4">
-          {filtered.map((row) => {
-            const key = String(row.id);
-            const status = normalizeInscriptionStatus(row.status);
-            const busy = pending && pendingId === key;
-            return (
-              <li
-                key={key}
-                className="rounded-2xl border border-border bg-noir-tertiary/40 p-5"
+            <div className="px-4 pt-4 sm:px-5 sm:pt-5">
+              <AccordionTrigger
+                className={cn(
+                  "items-center gap-4 py-0 hover:no-underline",
+                  "rounded-none border-0 focus-visible:ring-offset-0",
+                  // Masque le petit chevron par défaut du composant Accordion
+                  "**:data-[slot=accordion-trigger-icon]:hidden",
+                )}
               >
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <Link
-                      href={formationPath(row.formationSlug)}
-                      className="font-heading text-xl text-cream hover:text-or-light"
-                    >
-                      {row.formationTitre}
-                    </Link>
-                    <p className="mt-1 text-sm text-muted-text">
-                      {row.userName || "Stagiaire"} · {row.userEmail}
-                    </p>
-                  </div>
-                  <InscriptionStatusBadge status={row.status} />
-                </div>
-
-                {row.message ? (
-                  <p className="mt-3 text-sm text-cream/80 text-pretty">« {row.message} »</p>
-                ) : null}
-
-                {row.commentaireAdmin &&
-                (status === "refusee" || status === "pieces_complementaires") ? (
-                  <p className="mt-3 text-sm text-amber-100/90">
-                    Commentaire : {row.commentaireAdmin}
+                <div className="min-w-0 flex-1 text-left">
+                  <p className="font-heading text-xl leading-snug text-cream sm:text-2xl">
+                    {session.formationTitre}
                   </p>
-                ) : null}
-
-                <div className="mt-4 space-y-2">
-                  <Label htmlFor={`comment-${key}`}>Commentaire admin</Label>
-                  <Textarea
-                    id={`comment-${key}`}
-                    rows={2}
-                    className="border-border bg-noir-secondary/80 text-cream"
-                    value={comments[key] ?? row.commentaireAdmin ?? ""}
-                    onChange={(e) =>
-                      setComments((prev) => ({ ...prev, [key]: e.target.value }))
-                    }
-                    placeholder="Requis pour refus ou pièces complémentaires"
-                  />
+                  {session.label ? (
+                    <p className="mt-0.5 text-xs text-or-light">{session.label}</p>
+                  ) : null}
+                  <p className="mt-1 text-sm text-muted-text">
+                    {sessionLabel ?? "Dates à confirmer"}
+                    {" · "}
+                    {enrolledCount} inscrit
+                    {enrolledCount !== 1 ? "s" : ""}
+                    {session.trainees.length !== enrolledCount
+                      ? ` · ${session.trainees.length} au total`
+                      : ""}
+                    {" · "}
+                    capacité {session.placesOffertes}
+                    {!session.active ? " · fermée" : ""}
+                  </p>
                 </div>
+                <span
+                  aria-hidden
+                  className={cn(
+                    "btn-outline-warm inline-flex size-12 shrink-0 items-center justify-center rounded-xl",
+                    "text-cream transition-colors",
+                    "group-aria-expanded/accordion-trigger:border-or/45 group-aria-expanded/accordion-trigger:bg-or/15 group-aria-expanded/accordion-trigger:text-or-light",
+                  )}
+                >
+                  <ChevronDown className="size-6 group-aria-expanded/accordion-trigger:hidden" />
+                  <ChevronUp className="hidden size-6 group-aria-expanded/accordion-trigger:inline" />
+                </span>
+              </AccordionTrigger>
 
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {status !== "validee" ? (
-                    <Button
-                      type="button"
-                      size="sm"
-                      className="btn-cta"
-                      disabled={busy}
-                      onClick={() => runStatus(row.id, "validee")}
+              <div className="mt-3 pb-4">
+                {mailto ? (
+                  <a
+                    href={mailto}
+                    className={cn(
+                      buttonVariants({ variant: "ghost", size: "sm" }),
+                      "btn-outline-warm inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold uppercase tracking-wider",
+                    )}
+                  >
+                    <Mail className="size-3.5" aria-hidden />
+                    Envoyer un mail aux participants
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    className="btn-outline-warm inline-flex cursor-not-allowed items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold uppercase tracking-wider opacity-50"
+                  >
+                    <Mail className="size-3.5" aria-hidden />
+                    Envoyer un mail aux participants
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <AccordionContent className="border-t border-border/60 px-0 pb-0">
+              {session.trainees.length === 0 ? (
+                <p className="px-5 py-4 text-sm text-muted-text">
+                  Aucun stagiaire sur cette session.
+                </p>
+              ) : (
+                <ul className="divide-y divide-border/60">
+                  {session.trainees.map((t) => (
+                    <li
+                      key={String(t.id)}
+                      className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5"
                     >
-                      Valider
-                    </Button>
-                  ) : null}
-                  {status !== "pieces_complementaires" ? (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="btn-outline-warm"
-                      disabled={busy}
-                      onClick={() => runStatus(row.id, "pieces_complementaires")}
-                    >
-                      Pièces complémentaires
-                    </Button>
-                  ) : null}
-                  {status !== "refusee" ? (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      disabled={busy}
-                      onClick={() => runStatus(row.id, "refusee")}
-                    >
-                      Refuser
-                    </Button>
-                  ) : null}
-                  {status !== "en_instruction" ? (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      disabled={busy}
-                      onClick={() => runStatus(row.id, "en_instruction")}
-                    >
-                      Remettre en instruction
-                    </Button>
-                  ) : null}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-cream">
+                          {t.userName || t.userEmail}
+                        </p>
+                        {t.userName ? (
+                          <p className="truncate text-xs text-muted-text">
+                            {t.userEmail}
+                          </p>
+                        ) : null}
+                        {t.amountEuros != null ? (
+                          <p className="mt-0.5 text-xs text-muted-text">
+                            {t.amountEuros.toLocaleString("fr-FR")} €
+                          </p>
+                        ) : null}
+                      </div>
+                      <InscriptionStatusBadge status={t.status} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="border-t border-border/60 px-5 py-3">
+                <Link
+                  href={formationPath(session.formationSlug)}
+                  className="text-xs font-medium text-or-light underline-offset-2 hover:underline"
+                >
+                  Voir la fiche formation
+                </Link>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        );
+      })}
+    </Accordion>
   );
 }

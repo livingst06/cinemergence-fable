@@ -36,6 +36,7 @@ type FormState = {
   duree: string;
   format: string;
   tarif: string;
+  tarifEuros: string;
   prioritaire: boolean;
   audience: "intermittent" | "entreprise";
   publicCible: string;
@@ -54,6 +55,7 @@ const emptyForm = (): FormState => ({
   duree: "",
   format: "",
   tarif: "",
+  tarifEuros: "",
   prioritaire: false,
   audience: "intermittent",
   publicCible: "",
@@ -80,6 +82,8 @@ function fromFormation(formation: FormationData): FormState {
     duree: formation.duree,
     format: formation.format,
     tarif: formation.tarif ?? "",
+    tarifEuros:
+      formation.tarifEuros != null ? String(formation.tarifEuros) : "",
     prioritaire: formation.prioritaire,
     audience: formation.audience,
     publicCible: formation.publicCible,
@@ -149,6 +153,14 @@ export function AdminFormationDialog({
       return;
     }
 
+    const tarifEurosRaw = form.tarifEuros.trim();
+    const tarifEuros =
+      tarifEurosRaw === "" ? null : Number.parseInt(tarifEurosRaw, 10);
+    if (tarifEurosRaw !== "" && (tarifEuros == null || Number.isNaN(tarifEuros) || tarifEuros < 1)) {
+      toast.error("Tarif euros invalide (entier ≥ 1)");
+      return;
+    }
+
     const payload: FormationAdminInput = {
       slug: form.slug,
       titre: form.titre,
@@ -162,6 +174,7 @@ export function AdminFormationDialog({
       publicCible: form.publicCible,
       livrable: form.livrable,
       tarif: form.tarif.trim() || null,
+      tarifEuros,
       placesOffertes,
       dateDebut: form.dateDebut.trim() || null,
       dateFin: form.dateFin.trim() || null,
@@ -290,13 +303,26 @@ export function AdminFormationDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="f-tarif">Tarif</Label>
+            <Label htmlFor="f-tarif">Tarif (libellé)</Label>
             <Input
               id="f-tarif"
               className={fieldClass}
               value={form.tarif}
               onChange={(e) => setField("tarif", e.target.value)}
-              placeholder="À confirmer"
+              placeholder="1 400 €"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-tarif-euros">Tarif Stripe (euros)</Label>
+            <Input
+              id="f-tarif-euros"
+              type="number"
+              min={1}
+              step={1}
+              className={fieldClass}
+              value={form.tarifEuros}
+              onChange={(e) => setField("tarifEuros", e.target.value)}
+              placeholder="1400"
             />
           </div>
           <div className="space-y-2">

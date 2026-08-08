@@ -218,7 +218,16 @@ export const Formations: CollectionConfig = {
       name: "tarif",
       type: "text",
       admin: {
-        description: "Laisser vide si tarif à confirmer",
+        description: "Libellé affiché (ex. « 1 400 € »). Laisser vide si tarif à confirmer.",
+      },
+    },
+    {
+      name: "tarifEuros",
+      type: "number",
+      label: "Tarif (euros entiers)",
+      admin: {
+        description:
+          "Montant Stripe en euros entiers (ex. 1400). Requis pour ouvrir le paiement en ligne.",
       },
     },
     {

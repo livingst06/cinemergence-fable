@@ -389,7 +389,9 @@
   }
 
   .btn-cta {
-    @apply relative overflow-hidden border-0 font-semibold uppercase tracking-wider text-cream;
+    /* Texte toujours clair : le dégradé rouge est sombre en jour comme en nuit */
+    @apply relative overflow-hidden border-0 font-semibold uppercase tracking-wider;
+    color: #f6f1ea;
     background: linear-gradient(135deg, var(--projector-light) 0%, var(--projector) 55%, #5c1018 100%);
     box-shadow:
       0 0 0 1px rgba(201, 53, 80, 0.25) inset,
@@ -410,10 +412,11 @@
 
   /*
    * Conversion stagiaire (payer / s’inscrire / panier).
-   * Toujours ce dégradé vert — pas le rouge brand (btn-cta).
+   * Texte blanc fixe — contraste sur le dégradé vert en jour et en nuit.
    */
   .btn-convert {
-    @apply relative overflow-hidden border-0 font-semibold uppercase tracking-wider text-white;
+    @apply relative overflow-hidden border-0 font-semibold uppercase tracking-wider;
+    color: #ffffff;
     background: linear-gradient(
       135deg,
       var(--convert-light) 0%,
@@ -445,15 +448,92 @@
     box-shadow: none;
   }
 
+  /* Contour : bordure/texte adaptés jour (fond clair) vs nuit */
   .btn-outline-warm {
-    @apply border border-white/10 bg-white/[0.03] text-cream backdrop-blur-sm;
+    @apply backdrop-blur-sm;
+    border: 1px solid rgba(139, 26, 43, 0.28);
+    background: rgba(255, 255, 255, 0.65);
+    color: var(--cream);
     transition: border-color 0.2s, background 0.2s, color 0.2s;
   }
 
   .btn-outline-warm:hover {
+    border-color: rgba(139, 26, 43, 0.5);
+    background: rgba(139, 26, 43, 0.1);
+    color: var(--or);
+  }
+
+  .dark .btn-outline-warm {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--cream);
+  }
+
+  .dark .btn-outline-warm:hover {
     border-color: rgba(201, 53, 80, 0.45);
     background: rgba(139, 26, 43, 0.12);
     color: var(--or-light);
+  }
+
+  /*
+   * Badges de statut — fond teinté + texte contrasté
+   * Jour : texte foncé · Nuit : texte clair
+   */
+  .status-badge {
+    @apply inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider;
+  }
+
+  .status-badge-or {
+    border-color: rgba(139, 26, 43, 0.35);
+    background: rgba(139, 26, 43, 0.12);
+    color: #5c1018;
+  }
+  .dark .status-badge-or {
+    border-color: rgba(232, 99, 122, 0.4);
+    background: rgba(139, 26, 43, 0.22);
+    color: #f9c4ce;
+  }
+
+  .status-badge-amber {
+    border-color: rgba(180, 83, 9, 0.35);
+    background: rgba(245, 158, 11, 0.18);
+    color: #78350f;
+  }
+  .dark .status-badge-amber {
+    border-color: rgba(251, 191, 36, 0.35);
+    background: rgba(245, 158, 11, 0.18);
+    color: #fde68a;
+  }
+
+  .status-badge-success {
+    border-color: rgba(4, 120, 87, 0.35);
+    background: rgba(16, 185, 129, 0.18);
+    color: #064e3b;
+  }
+  .dark .status-badge-success {
+    border-color: rgba(52, 211, 153, 0.4);
+    background: rgba(16, 185, 129, 0.2);
+    color: #a7f3d0;
+  }
+
+  .status-badge-danger {
+    border-color: rgba(185, 28, 28, 0.35);
+    background: rgba(239, 68, 68, 0.12);
+    color: #7f1d1d;
+  }
+  .dark .status-badge-danger {
+    border-color: rgba(248, 113, 113, 0.4);
+    background: rgba(239, 68, 68, 0.18);
+    color: #fecaca;
+  }
+
+  .status-badge-muted {
+    border-color: var(--border);
+    background: rgba(18, 16, 14, 0.04);
+    color: var(--muted-text);
+  }
+  .dark .status-badge-muted {
+    background: rgba(255, 255, 255, 0.05);
   }
 
   .catalogue-scroll {

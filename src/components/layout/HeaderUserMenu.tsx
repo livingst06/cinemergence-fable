@@ -1,19 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { SignOutButton, useAuth, useUser } from "@clerk/nextjs";
+import { SignOutButton, useUser } from "@clerk/nextjs";
 import { ChevronDown } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 
 import { useAdminUi } from "@/features/admin/AdminUiContext";
-import { ButtonLink } from "@/components/ui/ButtonLink";
 import { cn } from "@/lib/utils";
 
 const triggerClass =
-  "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-border/70 bg-noir-tertiary/80 px-3.5 text-xs font-medium text-cream/90 shadow-sm backdrop-blur-md transition-colors duration-200 hover:border-or/35 hover:bg-noir-tertiary hover:text-or-light";
+  "relative inline-flex h-11 min-h-[44px] shrink-0 items-center gap-1.5 rounded-full border border-border/70 bg-noir-tertiary/80 px-3.5 text-xs font-medium text-cream/90 shadow-sm transition-colors duration-200 hover:border-or/35 hover:bg-noir-tertiary hover:text-or-light select-none [-webkit-tap-highlight-color:transparent]";
 
 const menuItemClass =
-  "flex w-full items-center rounded-lg px-3 py-2 text-left text-sm text-cream/90 transition-colors hover:bg-noir-tertiary/60 hover:text-or-light";
+  "flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm text-cream/90 transition-colors hover:bg-noir-tertiary/60 hover:text-or-light";
 
 function displayFirstName(user: {
   firstName?: string | null;
@@ -27,11 +26,10 @@ function displayFirstName(user: {
   return "Compte";
 }
 
-/** Bouton compte : prénom + menu (pattern GitHub / Linear / Notion). */
+/** Bouton compte : Login cliquable immédiatement (pas de squelette Clerk). */
 export function HeaderUserMenu() {
-  const { isSignedIn } = useAuth();
   const { user, isLoaded } = useUser();
-  const { isAdminEligible } = useAdminUi();
+  const { isSignedIn, isAdminEligible } = useAdminUi();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
@@ -39,7 +37,7 @@ export function HeaderUserMenu() {
   useEffect(() => {
     if (!open) return;
 
-    const onPointerDown = (event: MouseEvent) => {
+    const onPointerDown = (event: MouseEvent | TouchEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) {
         setOpen(false);
       }
@@ -49,26 +47,26 @@ export function HeaderUserMenu() {
     };
 
     document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("touchstart", onPointerDown, { passive: true });
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("touchstart", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
 
-  if (!isLoaded) {
-    return <div className="h-8 w-20 shrink-0 rounded-full border border-border/40 bg-noir-tertiary/40" aria-hidden />;
-  }
-
-  if (!isSignedIn || !user) {
+  // Ne pas attendre Clerk isLoaded : sinon pastille morte si Clerk JS tarde / bloque sur iOS.
+  if (!isSignedIn) {
     return (
-      <ButtonLink href="/sign-in" variant="ghost" className={triggerClass}>
+      <a href="/sign-in" className={triggerClass}>
         Login
-      </ButtonLink>
+      </a>
     );
   }
 
-  const prenom = displayFirstName(user);
+  // Attendre le profil Clerk pour le libellé — évite le flash email → prénom.
+  const prenom = isLoaded && user ? displayFirstName(user) : null;
 
   return (
     <div ref={rootRef} className="relative shrink-0">
@@ -78,9 +76,17 @@ export function HeaderUserMenu() {
         aria-expanded={open}
         aria-haspopup="menu"
         aria-controls={menuId}
+        aria-label={prenom ? `Menu compte — ${prenom}` : "Menu compte"}
         onClick={() => setOpen((prev) => !prev)}
       >
-        <span className="max-w-[8rem] truncate">{prenom}</span>
+        <span className="max-w-[8rem] truncate">
+          {prenom ?? (
+            <span
+              className="inline-block h-3 w-14 rounded-sm bg-cream/20 align-middle"
+              aria-hidden
+            />
+          )}
+        </span>
         <ChevronDown
           className={cn(
             "size-3.5 shrink-0 opacity-70 transition-transform duration-200",

@@ -371,7 +371,8 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   }
 
   .mobile-nav-trigger,
-  .mobile-nav-backdrop {
+  .mobile-nav-backdrop,
+  .theme-icon-toggle {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
   }
@@ -404,6 +405,20 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     -webkit-appearance: none;
     appearance: none;
     touch-action: manipulation;
+  }
+
+  /* Icônes thème via html.dark (pas de React) */
+  .theme-icon-toggle .theme-icon-sun {
+    display: none;
+  }
+  .theme-icon-toggle .theme-icon-moon {
+    display: block;
+  }
+  html.dark .theme-icon-toggle .theme-icon-sun {
+    display: block;
+  }
+  html.dark .theme-icon-toggle .theme-icon-moon {
+    display: none;
   }
 
   h1,

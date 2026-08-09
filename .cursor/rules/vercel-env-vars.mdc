@@ -1,0 +1,60 @@
+---
+description: Livrer les variables d'environnement Vercel avec le code déployé
+alwaysApply: true
+---
+
+# Variables d'environnement Vercel
+
+Quand tu pousses ou déploies du code qui **dépend d'une nouvelle variable d'env** (ou d'une clé absente sur Vercel), tu dois aussi la **livrer sur Vercel** dans les environnements concernés — ne pas attendre que l'utilisateur le fasse.
+
+## Quand c'est nécessaire
+
+- Nouvelle feature qui lit `process.env.*` / `NEXT_PUBLIC_*`
+- Une var est dans `.env.local` / `.env.example` mais absente de Vercel
+- Un bug preview/prod vient d'une clé manquante (ex. Stripe, Clerk, webhooks)
+
+## Où livrer
+
+- **Preview + Production** pour tout ce qui doit marcher sur les URLs `*.vercel.app` de branche et en prod (défaut pour secrets app : Stripe, Clerk, DB, mail, storage)
+- **Production seul** seulement si c'est explicitement prod-only
+- **Development** rarement (CLI local) — seulement si demandé
+
+## Stripe (important)
+
+### Maintenant (phase actuelle)
+
+- Preview **et** Production du front pointent sur le **même compte Stripe en mode test** (`pk_test_` / `sk_test_`).
+- Mêmes clés API publiques et secrètes sur Preview et Production.
+- `STRIPE_WEBHOOK_SECRET` : un `whsec_` **par endpoint URL** (Preview ≠ Production), même compte test — c’est normal côté Stripe.
+
+### Plus tard (à ne pas oublier)
+
+Quand on bascule en vrai paiement :
+
+- **Preview (préprod front)** → reste sur le **compte Stripe test** (`pk_test_` / `sk_test_` + webhook test).
+- **Production (front)** → **compte Stripe live / production** (`pk_live_` / `sk_live_` + endpoint webhook prod + `whsec_` live).
+- Ne jamais mettre des clés live sur Preview, ni des clés test sur Production une fois le split fait.
+
+## Base de données (important)
+
+### Maintenant (phase actuelle)
+
+- **localhost** et **Preview** Vercel partagent la **même BDD** (`DATABASE_URI` de dev / preview).
+- Le site de prod `cinemergence.vercel.app` peut encore pointer sur cette BDD partagée tant que la BDD prod n’existe pas.
+
+### Plus tard (checklist avant go-live)
+
+- Provisionner une **BDD production dédiée** (n’existe pas encore).
+- Sur Vercel **Production uniquement** : `DATABASE_URI` (et secrets liés Payload si besoin) → cette BDD prod.
+- **localhost + Preview** restent sur la BDD de dev/preview (ne jamais pointer Preview sur la BDD prod).
+- Migrer / seeder la BDD prod, vérifier Payload, puis basculer `cinemergence.vercel.app` (et plus tard `cinemergence.fr`).
+
+## Comment
+
+1. Comparer les vars requises par le code / `.env.example` avec `vercel env ls`
+2. Ajouter les manquantes depuis `.env.local` (sans afficher les valeurs) via `vercel env add <NAME> <environment>`
+3. Un **redeploy** est requis pour que Preview/Production prennent les nouvelles vars (push vide, redeploy dashboard, ou `vercel redeploy`)
+
+## Après ajout
+
+Prévenir l'utilisateur qu'un redeploy preview est nécessaire, et le proposer / le lancer si le flux de déploiement est en cours.

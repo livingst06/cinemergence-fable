@@ -23,6 +23,15 @@ export const Intervenants: CollectionConfig = {
       required: true,
     },
     {
+      name: "email",
+      type: "email",
+      label: "Email",
+      admin: {
+        description:
+          "Utilisé pour les mails groupés depuis Les sessions (formateurs / intervenants).",
+      },
+    },
+    {
       name: "parrain",
       type: "checkbox",
       defaultValue: false,

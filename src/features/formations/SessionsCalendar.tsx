@@ -69,6 +69,36 @@ function enrolledTrainees(trainees: AdminSessionTrainee[]): AdminSessionTrainee[
   return trainees.filter((t) => isEnrolled(t.status));
 }
 
+function TipPeopleSection({
+  title,
+  people,
+  emptyLabel,
+}: {
+  title: string;
+  people: { id: string | number; name: string }[];
+  emptyLabel: string;
+}) {
+  return (
+    <div className="mt-2 border-t border-border/70 pt-2">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-text">
+        {title}
+        {people.length > 0 ? ` · ${people.length}` : ""}
+      </p>
+      {people.length === 0 ? (
+        <p className="mt-1.5 text-xs text-muted-text">{emptyLabel}</p>
+      ) : (
+        <ul className="mt-1.5 space-y-0.5">
+          {people.map((p) => (
+            <li key={String(p.id)} className="truncate text-xs font-medium text-cream">
+              {p.name}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function DayHeaderLabel({ d }: { d: Date }) {
   return (
     <>
@@ -145,7 +175,7 @@ function BandChip({
     if (!el) return;
     const rect = el.getBoundingClientRect();
     const tipWidth = Math.min(260, window.innerWidth - 24);
-    const tipHeight = 220;
+    const tipHeight = 320;
     const left = Math.min(
       Math.max(12, rect.left + rect.width / 2 - tipWidth / 2),
       window.innerWidth - tipWidth - 12,
@@ -290,32 +320,28 @@ function BandChip({
                 {enrolled.length}/{session.placesOffertes} places · {fillPct}&nbsp;%
                 {full ? " · complet" : ""}
               </p>
-              <div className="mt-2 border-t border-border/70 pt-2">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-text">
-                  Stagiaires inscrits
-                  {enrolled.length > 0 ? ` · ${enrolled.length}` : ""}
-                </p>
-                {enrolled.length === 0 ? (
-                  <p className="mt-1.5 text-xs text-muted-text">
-                    Aucun inscrit pour le moment.
-                  </p>
-                ) : (
-                  <ul className="mt-1.5 max-h-40 space-y-1 overflow-y-auto">
-                    {enrolled.map((t) => (
-                      <li key={String(t.id)} className="min-w-0">
-                        <p className="truncate text-xs font-medium text-cream">
-                          {t.userName || t.userEmail}
-                        </p>
-                        {t.userName ? (
-                          <p className="truncate text-[11px] text-muted-text">
-                            {t.userEmail}
-                          </p>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+              <TipPeopleSection
+                title="Stagiaires"
+                people={enrolled.map((t) => ({
+                  id: t.id,
+                  name: t.userName || t.userEmail,
+                }))}
+                emptyLabel="Aucun inscrit pour le moment."
+              />
+              <TipPeopleSection
+                title="Formateurs"
+                people={session.formateurs
+                  .filter((f) => f.nom)
+                  .map((f) => ({ id: f.id, name: f.nom }))}
+                emptyLabel="Aucun formateur."
+              />
+              <TipPeopleSection
+                title="Intervenants"
+                people={session.intervenants
+                  .filter((i) => i.nom)
+                  .map((i) => ({ id: i.id, name: i.nom }))}
+                emptyLabel="Aucun intervenant."
+              />
             </div>,
             document.body,
           )

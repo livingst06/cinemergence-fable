@@ -14,6 +14,7 @@ import {
   type IntervenantOption,
 } from "@/features/formations/session-actions";
 import type { AdminSessionGroup } from "@/features/inscriptions/AdminDemandesPanel";
+import { normalizeInscriptionStatus } from "@/lib/inscription-status";
 
 const fieldClass =
   "border-border bg-noir-tertiary/60 text-cream placeholder:text-muted-text";
@@ -21,6 +22,14 @@ const fieldClass =
 function toDateInputValue(value: string | undefined | null): string {
   if (!value) return "";
   return String(value).slice(0, 10);
+}
+
+function countEnrolledTrainees(editing: AdminSessionGroup | null): number {
+  if (!editing) return 0;
+  return editing.trainees.filter((t) => {
+    const s = normalizeInscriptionStatus(t.status);
+    return s === "payee" || s === "validee" || s === "inscrit";
+  }).length;
 }
 
 type AdminSessionDialogProps = {
@@ -152,6 +161,9 @@ export function AdminSessionDialog({
         : null)
     : null;
 
+  const enrolledMinPlaces = countEnrolledTrainees(editing);
+  const placesMin = Math.max(1, enrolledMinPlaces);
+
   if (!open) return null;
 
   const submit = () => {
@@ -168,6 +180,12 @@ export function AdminSessionDialog({
     const places = Number.parseInt(placesOffertes, 10);
     if (Number.isNaN(places) || places < 1) {
       toast.error("Nombre de places invalide");
+      return;
+    }
+    if (isEdit && places < enrolledMinPlaces) {
+      toast.error(
+        `La capacité ne peut pas être inférieure aux ${enrolledMinPlaces} stagiaire${enrolledMinPlaces > 1 ? "s" : ""} déjà inscrit${enrolledMinPlaces > 1 ? "s" : ""}.`,
+      );
       return;
     }
 
@@ -283,11 +301,19 @@ export function AdminSessionDialog({
             <Input
               id="s-places"
               type="number"
-              min={1}
+              min={placesMin}
               className={fieldClass}
               value={placesOffertes}
               onChange={(e) => setPlacesOffertes(e.target.value)}
             />
+            {isEdit && enrolledMinPlaces > 0 ? (
+              <p className="text-xs text-muted-text">
+                Minimum {enrolledMinPlaces} (stagiaire
+                {enrolledMinPlaces > 1 ? "s" : ""} déjà inscrit
+                {enrolledMinPlaces > 1 ? "s" : ""}). À {enrolledMinPlaces}, la
+                session sera complète.
+              </p>
+            ) : null}
           </div>
 
           <div className="space-y-2">

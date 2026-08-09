@@ -1,5 +1,7 @@
 import { CalendarDays } from "lucide-react";
 
+import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
+
 type FormationSessionBannerProps = {
   sessionLabel?: string | null;
   placesRestantes?: number | null;
@@ -11,12 +13,13 @@ export function FormationSessionBanner({
 }: FormationSessionBannerProps) {
   if (!sessionLabel && placesRestantes == null) return null;
 
+  const full = placesRestantes != null && placesRestantes <= 0;
   const placesText =
     placesRestantes == null
       ? null
       : placesRestantes > 0
         ? `Il reste ${placesRestantes} place${placesRestantes > 1 ? "s" : ""}`
-        : "Complet — plus de place disponible";
+        : null;
 
   return (
     <aside
@@ -28,9 +31,12 @@ export function FormationSessionBanner({
           <CalendarDays className="size-5" aria-hidden strokeWidth={2.2} />
         </span>
         <div className="min-w-0">
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-projector-light">
-            Session à venir
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-projector-light">
+              Session à venir
+            </p>
+            {full ? <SessionCompletBadge tone="public" /> : null}
+          </div>
           {sessionLabel ? (
             <p className="mt-1.5 font-heading text-xl leading-snug text-cream sm:text-2xl">
               {sessionLabel}
@@ -39,13 +45,7 @@ export function FormationSessionBanner({
             <p className="mt-1.5 text-sm text-muted-text">Dates à confirmer</p>
           )}
           {placesText ? (
-            <p
-              className={
-                placesRestantes != null && placesRestantes > 0
-                  ? "mt-2 text-base font-semibold text-emerald-700 dark:text-emerald-400 sm:text-lg"
-                  : "mt-2 text-base font-semibold text-muted-text sm:text-lg"
-              }
-            >
+            <p className="mt-2 text-base font-semibold text-emerald-700 dark:text-emerald-400 sm:text-lg">
               {placesText}
             </p>
           ) : null}

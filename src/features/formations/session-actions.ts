@@ -43,6 +43,13 @@ async function sessionHasEnrolledTrainee(
   payload: Payload,
   sessionId: number | string,
 ): Promise<boolean> {
+  return (await countEnrolledForSession(payload, sessionId)) > 0;
+}
+
+async function countEnrolledForSession(
+  payload: Payload,
+  sessionId: number | string,
+): Promise<number> {
   const result = await payload.find({
     collection: "inscriptions",
     where: {
@@ -55,7 +62,7 @@ async function sessionHasEnrolledTrainee(
     depth: 0,
     overrideAccess: true,
   });
-  return result.totalDocs > 0;
+  return result.totalDocs;
 }
 
 function revalidateSessionPaths(formationSlug?: string | null) {
@@ -148,11 +155,15 @@ export async function updateFormationSession(
 
   try {
     const payload = await getPayloadClient();
-    if (await sessionHasEnrolledTrainee(payload, sessionId)) {
+    const enrolledCount = await countEnrolledForSession(payload, sessionId);
+
+    if (parsed.data.placesOffertes < enrolledCount) {
       return {
         ok: false,
         error:
-          "Impossible de modifier une session qui a déjà au moins un stagiaire inscrit.",
+          enrolledCount === 0
+            ? "Nombre de places invalide"
+            : `La capacité ne peut pas être inférieure aux ${enrolledCount} stagiaire${enrolledCount > 1 ? "s" : ""} déjà inscrit${enrolledCount > 1 ? "s" : ""}.`,
       };
     }
 

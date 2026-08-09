@@ -306,6 +306,14 @@ export function sessionOccupancyRatio(
   return Math.min(1, Math.max(0, enrolledCount / placesOffertes));
 }
 
+/** True si la capacité est atteinte ou dépassée (places restantes = 0). */
+export function isSessionFull(
+  enrolledCount: number,
+  placesOffertes: number,
+): boolean {
+  return placesOffertes > 0 && enrolledCount >= placesOffertes;
+}
+
 /**
  * Portion de jauge visible dans un segment (continuité gauche→droite sur toute la session).
  * Retourne left/width en % du segment, ou null si rien à peindre.

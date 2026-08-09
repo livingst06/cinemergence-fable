@@ -123,7 +123,7 @@ export default async function FormationDetailPage({ params }: Props) {
         <header className="max-w-4xl">
           <p className="eyebrow mb-4">{formation.pole}</p>
           <h1 className="display-title max-w-5xl text-cream">{formation.titre}</h1>
-          <p className="mt-5 text-base leading-relaxed text-muted-text md:text-lg">
+          <p className="mt-5 whitespace-pre-line text-base leading-relaxed text-muted-text md:text-lg">
             {formation.sousTitre ?? formation.accroche}
           </p>
           <div className="mt-6 flex flex-col items-start gap-3">

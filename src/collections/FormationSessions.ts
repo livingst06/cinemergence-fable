@@ -80,11 +80,8 @@ export const FormationSessions: CollectionConfig = {
         if (data && "tarifEuros" in data) {
           delete data.tarifEuros;
         }
-        if (data?.dateDebut && data?.dateFin && !data.label) {
-          const d1 = String(data.dateDebut).slice(0, 10);
-          const d2 = String(data.dateFin).slice(0, 10);
-          data.label = `Session ${d1} → ${d2}`;
-        }
+        // Pas de label ISO auto (« Session 2026-09-18 → … ») : l’UI affiche
+        // « Session du … » via formatFormationSessionLabel. Label libre optionnel.
         return data;
       },
     ],

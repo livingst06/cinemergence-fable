@@ -88,3 +88,23 @@ export function formationLivrableLabel(formation: Pick<FormationData, "livrable"
   }
   return formation.livrable;
 }
+
+/** « 63 heures sur 9 jours » pour les cards (fallback parse du libellé duree). */
+export function formationDureeCardLabel(
+  formation: Pick<FormationData, "duree" | "dureeHeures" | "dureeJours">,
+): string | null {
+  let heures = formation.dureeHeures;
+  let jours = formation.dureeJours;
+  if ((heures == null || jours == null) && formation.duree) {
+    const h = formation.duree.match(/(\d+)\s*heures?/i);
+    const j = formation.duree.match(/(\d+)\s*(?:journ[eé]es?|jours?)/i);
+    if (heures == null && h) heures = Number(h[1]);
+    if (jours == null && j) jours = Number(j[1]);
+  }
+  if (heures == null && jours == null) return null;
+  if (heures != null && jours != null) {
+    return `${heures} heure${heures > 1 ? "s" : ""} sur ${jours} jour${jours > 1 ? "s" : ""}`;
+  }
+  if (heures != null) return `${heures} heure${heures > 1 ? "s" : ""}`;
+  return `${jours} jour${jours! > 1 ? "s" : ""}`;
+}

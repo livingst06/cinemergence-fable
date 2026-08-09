@@ -8,7 +8,10 @@ import {
 } from "@/components/ui/accordion";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { DemandeInscriptionButton } from "@/features/inscriptions/DemandeInscriptionButton";
-import { formatFormationSessionLabel } from "@/lib/inscription-status";
+import {
+  formatFormationSessionLabel,
+  isGeneratedSessionLabel,
+} from "@/lib/inscription-status";
 import type { FormationSessionView } from "@/lib/places";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -67,13 +70,13 @@ export function FormationSessionsSection({
                     )}
                   >
                     <div className="min-w-0 flex-1 text-left">
-                      {session.label ? (
+                      {session.label && !isGeneratedSessionLabel(session.label) ? (
                         <p className="text-xs font-medium text-or-light">
                           {session.label}
                         </p>
                       ) : null}
                       <p className="font-heading text-xl leading-snug text-cream sm:text-2xl">
-                        {sessionLabel ?? "Dates à confirmer"}
+                        {sessionLabel ?? "Session — dates à confirmer"}
                       </p>
                       <p
                         className={

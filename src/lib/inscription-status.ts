@@ -141,20 +141,32 @@ export function formatFormationSessionRange(
   return `${prefix} ${day(start)} ${monthName(start)} ${start.getFullYear()} au ${day(end)} ${monthName(end)} ${end.getFullYear()}`;
 }
 
-/** Libellé session : plage intelligente, ou date de début/fin seule. */
+/**
+ * Libellé session unique pour l’UI : « Session du 18 au 21 septembre 2026 ».
+ * Ne pas afficher en parallèle un `label` ISO du type « Session 2026-09-18 → … ».
+ */
 export function formatFormationSessionLabel(
   dateDebut?: string,
   dateFin?: string,
   options?: SessionRangeOptions,
 ): string | null {
-  const range = formatFormationSessionRange(dateDebut, dateFin, options);
-  if (range) return range;
+  const range = formatFormationSessionRange(dateDebut, dateFin, {
+    ...options,
+    capitalize: false,
+  });
+  if (range) return `Session ${range}`;
 
   const debut = formatFormationDate(dateDebut);
-  if (debut) return `Début le ${debut}`;
+  if (debut) return `Session à partir du ${debut}`;
 
   const fin = formatFormationDate(dateFin);
-  if (fin) return `Jusqu’au ${fin}`;
+  if (fin) return `Session jusqu’au ${fin}`;
 
   return null;
+}
+
+/** Label auto Payload « Session 2026-09-18 → 2026-09-21 » (redondant avec le libellé FR). */
+export function isGeneratedSessionLabel(label: string | null | undefined): boolean {
+  if (!label) return false;
+  return /^Session\s+\d{4}-\d{2}-\d{2}\s*→\s*\d{4}-\d{2}-\d{2}$/i.test(label.trim());
 }

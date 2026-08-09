@@ -6,6 +6,7 @@ import { parseEurosFromTarifLabel } from "@/lib/inscription-status";
 export type { FormationData, FaqItem, FinancementKey, ProgrammeJour } from "./formation-types";
 export {
   canonicalFormationSlug,
+  formationDureeCardLabel,
   formationPath,
   formationLivrableLabel,
   isFormationActive,

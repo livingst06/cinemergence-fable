@@ -7,7 +7,7 @@ import {
   ACTIVE_DEMANDE_STATUSES,
   HOLD_TTL_MINUTES,
   type InscriptionStatus,
-  formatFormationSessionRange,
+  formatFormationSessionLabel,
   parseEurosFromTarifLabel,
 } from "@/lib/inscription-status";
 import {
@@ -271,10 +271,9 @@ async function createEmbeddedSessionForHold(args: {
   const expiresAtUnix = Math.floor(Date.now() / 1000) + HOLD_TTL_MINUTES * 60;
 
   const sessionLabel =
-    formatFormationSessionRange(args.dateDebut, args.dateFin, {
+    formatFormationSessionLabel(args.dateDebut, args.dateFin, {
       month: "long",
-      capitalize: true,
-    }) ?? `${args.dateDebut.slice(0, 10)} → ${args.dateFin.slice(0, 10)}`;
+    }) ?? `Session ${args.dateDebut.slice(0, 10)} → ${args.dateFin.slice(0, 10)}`;
 
   const description = sessionLabel;
 

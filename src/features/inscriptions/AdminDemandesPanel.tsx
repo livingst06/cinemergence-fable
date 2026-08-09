@@ -15,6 +15,7 @@ import { InscriptionStatusBadge } from "@/features/inscriptions/InscriptionStatu
 import { formationPath } from "@/lib/defaults";
 import {
   formatFormationSessionLabel,
+  isGeneratedSessionLabel,
   normalizeInscriptionStatus,
 } from "@/lib/inscription-status";
 import { cn } from "@/lib/utils";
@@ -133,11 +134,11 @@ export function AdminDemandesPanel({
                   <p className="font-heading text-xl leading-snug text-cream sm:text-2xl">
                     {session.formationTitre}
                   </p>
-                  {session.label ? (
+                  {session.label && !isGeneratedSessionLabel(session.label) ? (
                     <p className="mt-0.5 text-xs text-or-light">{session.label}</p>
                   ) : null}
                   <p className="mt-1 text-sm text-muted-text">
-                    {sessionLabel ?? "Dates à confirmer"}
+                    {sessionLabel ?? "Session — dates à confirmer"}
                     {" · "}
                     {enrolledCount} inscrit
                     {enrolledCount !== 1 ? "s" : ""}

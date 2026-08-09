@@ -34,6 +34,8 @@ type FormState = {
   pole: string;
   accroche: string;
   duree: string;
+  dureeHeures: string;
+  dureeJours: string;
   format: string;
   tarif: string;
   tarifEuros: string;
@@ -50,6 +52,8 @@ const emptyForm = (): FormState => ({
   pole: "Jeu",
   accroche: "",
   duree: "",
+  dureeHeures: "",
+  dureeJours: "",
   format: "",
   tarif: "",
   tarifEuros: "",
@@ -67,6 +71,10 @@ function fromFormation(formation: FormationData): FormState {
     pole: formation.pole,
     accroche: formation.accroche,
     duree: formation.duree,
+    dureeHeures:
+      formation.dureeHeures != null ? String(formation.dureeHeures) : "",
+    dureeJours:
+      formation.dureeJours != null ? String(formation.dureeJours) : "",
     format: formation.format,
     tarif: formation.tarif ?? "",
     tarifEuros:
@@ -134,6 +142,16 @@ export function AdminFormationDialog({
       toast.error("Tarif euros requis (entier ≥ 1)");
       return;
     }
+    const dureeHeures = Number.parseInt(form.dureeHeures.trim(), 10);
+    const dureeJours = Number.parseInt(form.dureeJours.trim(), 10);
+    if (Number.isNaN(dureeHeures) || dureeHeures < 1) {
+      toast.error("Nb heures requis (entier ≥ 1)");
+      return;
+    }
+    if (Number.isNaN(dureeJours) || dureeJours < 1) {
+      toast.error("Nb jours requis (entier ≥ 1)");
+      return;
+    }
 
     const payload: FormationAdminInput = {
       slug: form.slug,
@@ -142,6 +160,8 @@ export function AdminFormationDialog({
       pole: form.pole,
       accroche: form.accroche,
       duree: form.duree,
+      dureeHeures,
+      dureeJours,
       format: form.format,
       prioritaire: form.prioritaire,
       audience: form.audience,
@@ -256,13 +276,41 @@ export function AdminFormationDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="f-duree">Durée</Label>
+            <Label htmlFor="f-duree">Durée (libellé)</Label>
             <Input
               id="f-duree"
               className={fieldClass}
               value={form.duree}
               onChange={(e) => setField("duree", e.target.value)}
               placeholder="35 heures — 5 journées"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-duree-heures">Nb heures</Label>
+            <Input
+              id="f-duree-heures"
+              type="number"
+              min={1}
+              step={1}
+              className={fieldClass}
+              value={form.dureeHeures}
+              onChange={(e) => setField("dureeHeures", e.target.value)}
+              placeholder="35"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="f-duree-jours">Nb jours</Label>
+            <Input
+              id="f-duree-jours"
+              type="number"
+              min={1}
+              step={1}
+              className={fieldClass}
+              value={form.dureeJours}
+              onChange={(e) => setField("dureeJours", e.target.value)}
+              placeholder="5"
+              required
             />
           </div>
           <div className="space-y-2">

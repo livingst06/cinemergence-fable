@@ -133,7 +133,7 @@ export default async function FormationDetailPage({ params }: Props) {
       <div className="container-page space-y-10 py-8 md:space-y-20 md:py-16 lg:py-20">
         <header className="max-w-4xl">
           <h1 className="display-title da-rule max-w-5xl">{formation.titre}</h1>
-          <p className="mt-5 text-lg leading-relaxed text-muted-text">
+          <p className="mt-5 whitespace-pre-line text-lg leading-relaxed text-muted-text">
             {formation.sousTitre ?? formation.accroche}
           </p>
           <div className="mt-6 flex flex-col items-start gap-3">

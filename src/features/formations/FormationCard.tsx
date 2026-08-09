@@ -4,7 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { MediaFrame } from "@/components/ui/MediaFrame";
 import { FormationCardSessionsBanner } from "@/features/formations/FormationCardSessionsBanner";
 import type { FormationData } from "@/lib/defaults";
-import { formationLivrableLabel, formationPath } from "@/lib/defaults";
+import {
+  formationDureeCardLabel,
+  formationLivrableLabel,
+  formationPath,
+} from "@/lib/defaults";
 import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +22,7 @@ export function FormationCard({ formation }: FormationCardProps) {
   const coverSrc = resolveFormationCoverUrl(formation.slug, formation.coverImageUrl);
   const href = formationPath(formation.slug);
   const sessionsHref = `${href}#sessions`;
+  const dureeLabel = formationDureeCardLabel(formation);
 
   return (
     <article
@@ -49,13 +54,23 @@ export function FormationCard({ formation }: FormationCardProps) {
         </div>
 
         <div className="flex shrink-0 flex-col gap-3 p-5 md:gap-3.5 md:p-6">
-          <Badge variant="outline" className="w-fit shrink-0 border-or/25 bg-or/5 text-or-light">
-            {formation.pole}
-          </Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="outline" className="w-fit shrink-0 border-or/25 bg-or/5 text-or-light">
+              {formation.pole}
+            </Badge>
+            {dureeLabel ? (
+              <Badge
+                variant="outline"
+                className="w-fit shrink-0 border-cream/20 bg-cream/[0.06] font-medium text-cream"
+              >
+                {dureeLabel}
+              </Badge>
+            ) : null}
+          </div>
           <h3 className="line-clamp-2 font-heading text-base font-semibold leading-snug text-cream md:text-lg">
             {formation.titre}
           </h3>
-          <p className="line-clamp-2 text-base leading-relaxed text-muted-text">
+          <p className="line-clamp-3 whitespace-pre-line text-base leading-relaxed text-muted-text">
             {formation.accroche}
           </p>
           <p className="line-clamp-2 border-t border-white/[0.06] pt-3 text-sm font-medium leading-relaxed text-or-light">

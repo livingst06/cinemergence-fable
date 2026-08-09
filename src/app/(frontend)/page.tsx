@@ -44,8 +44,8 @@ const schoolBenefits = [
 
 const founderHighlights = [
   "Prix Orange Beaumarchais & Canal+ Talents",
-  "Sacré Cœur — Grand Prix d'Oujda, Prix du public (New York Film Festival)",
-  "Le Tombeau des Anges — prix à Los Angeles, Dubaï et Cannes",
+  "Sacré Cœur\nGrand Prix d'Oujda, Prix du public (New York Film Festival)",
+  "Le Tombeau des Anges\nprix à Los Angeles, Dubaï et Cannes",
   "Producteur avec Bakelite Films (dont Rose, Hassan Zahi)",
 ];
 
@@ -261,7 +261,9 @@ export default async function HomePage() {
                     className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-or shadow-[0_0_6px_var(--or-glow)]"
                     aria-hidden
                   />
-                  <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
+                  <p className="min-w-0 flex-1 whitespace-pre-line text-justify leading-relaxed">
+                    {item}
+                  </p>
                 </li>
               ))}
             </ul>

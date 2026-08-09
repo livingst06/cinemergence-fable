@@ -17,7 +17,7 @@ import { FormationDetailGallery } from "@/features/formations/FormationDetailGal
 import { FormationSessionsSection } from "@/features/formations/FormationSessionsSection";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
-import { defaultFinancement, formationPath } from "@/lib/defaults";
+import { formationPath } from "@/lib/defaults";
 import { formatFormationSessionLabel } from "@/lib/inscription-status";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
 import {
@@ -97,10 +97,6 @@ export default async function FormationDetailPage({ params }: Props) {
   const linkedIntervenants = allIntervenants.filter(
     (i) => formation.intervenants.includes(i.slug) && i.slug !== "karina-testa",
   );
-
-  const financementLabels = defaultFinancement
-    .filter((d) => formation.financements.includes(d.key))
-    .map((d) => d.titre);
 
   const livrables =
     formation.livrables && formation.livrables.length > 0
@@ -190,11 +186,15 @@ export default async function FormationDetailPage({ params }: Props) {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
           <div className="card-stage p-5 md:p-6">
             <p className="eyebrow">Durée</p>
-            <p className="mt-2 font-heading text-2xl text-cream">{formation.duree}</p>
+            <p className="mt-2 whitespace-pre-line font-heading text-2xl text-cream">
+              {formation.duree}
+            </p>
           </div>
           <div className="card-stage p-5 md:p-6">
             <p className="eyebrow">Format</p>
-            <p className="mt-2 font-heading text-2xl text-cream">{formation.format}</p>
+            <p className="mt-2 whitespace-pre-line font-heading text-2xl text-cream">
+              {formation.format}
+            </p>
           </div>
           <div className="card-stage p-5 md:p-6">
             <p className="eyebrow">Tarif</p>
@@ -214,20 +214,26 @@ export default async function FormationDetailPage({ params }: Props) {
             <p className="mt-4 text-muted-text">{formation.pourQui}</p>
             {formation.prerequis && (
               <p className="mt-6 text-sm text-muted-text">
-                <span className="font-semibold text-or-light">Prérequis — </span>
-                {formation.prerequis}
+                <span className="font-semibold text-or-light">Prérequis</span>
+                <span className="mt-1 block whitespace-pre-line">
+                  {formation.prerequis}
+                </span>
               </p>
             )}
             {formation.effectifMax != null && (
               <p className="mt-3 text-sm text-muted-text">
-                <span className="font-semibold text-or-light">Places — </span>
-                {formation.effectifMax} places max par session
+                <span className="font-semibold text-or-light">Places</span>
+                <span className="mt-1 block">
+                  {formation.effectifMax} places max par session
+                </span>
               </p>
             )}
             {formation.lieu && (
               <p className="mt-3 text-sm text-muted-text">
-                <span className="font-semibold text-or-light">Lieu — </span>
-                {formation.lieu}
+                <span className="font-semibold text-or-light">Lieu</span>
+                <span className="mt-1 block whitespace-pre-line">
+                  {formation.lieu}
+                </span>
               </p>
             )}
           </div>
@@ -402,52 +408,6 @@ export default async function FormationDetailPage({ params }: Props) {
           />
         )}
 
-        <div className="max-w-3xl">
-          <SectionHeader
-            eyebrow="Financement & accès"
-            title="Comment s'inscrire"
-            align="left"
-            className="mb-6 md:mb-8"
-          />
-          {financementLabels.length > 0 && (
-            <p className="text-sm text-muted-text">
-              Financements éligibles :{" "}
-              <span className="text-or-light">{financementLabels.join(" · ")}</span>
-            </p>
-          )}
-          {formation.modalitesAccesFinancement && (
-            <p className="mt-4 leading-relaxed text-muted-text">
-              {formation.modalitesAccesFinancement}
-            </p>
-          )}
-          {formation.delaiAcces && (
-            <p className="mt-4 text-sm text-muted-text">
-              <span className="font-semibold text-or-light">Délai d&apos;accès — </span>
-              {formation.delaiAcces}
-            </p>
-          )}
-          {formation.evaluation && (
-            <p className="mt-4 text-sm text-muted-text">
-              <span className="font-semibold text-or-light">Évaluation — </span>
-              {formation.evaluation}
-            </p>
-          )}
-          {formation.accessibilite && (
-            <p className="mt-4 text-sm text-muted-text">
-              <span className="font-semibold text-or-light">Accessibilité — </span>
-              {formation.accessibilite}
-            </p>
-          )}
-          <div className="mt-8">
-            <ButtonLink
-              href="/financement"
-              className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
-            >
-              Je vérifie mon financement
-            </ButtonLink>
-          </div>
-        </div>
-
         <FormationSessionsSection
           formationSlug={formation.slug}
           paymentEnabled={paymentEnabled}
@@ -485,15 +445,6 @@ export default async function FormationDetailPage({ params }: Props) {
             </Accordion>
           </div>
         )}
-
-        <div className="border-t border-white/[0.06] pt-12 md:pt-16">
-          <div className="mx-auto flex w-full max-w-2xl flex-col items-center gap-4 text-center">
-            <h2 className="section-title text-cream">Prêt à te lancer ?</h2>
-            <ButtonLink href="#sessions" size="lg" className="btn-convert min-w-[14rem] px-8">
-              Voir toutes les sessions
-            </ButtonLink>
-          </div>
-        </div>
       </div>
     </>
   );

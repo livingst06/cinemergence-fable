@@ -89,6 +89,17 @@ export function formationLivrableLabel(formation: Pick<FormationData, "livrable"
   return formation.livrable;
 }
 
+/**
+ * Remplace les tirets cadratin / demi-cadratin par des retours à la ligne
+ * (ex. « 35 heures — 5 journées » → deux lignes).
+ */
+export function emDashToNewlines(value: string): string {
+  return value
+    .replace(/\s*[—–]\s*/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 /** « 63 heures sur 9 jours » pour les cards (fallback parse du libellé duree). */
 export function formationDureeCardLabel(
   formation: Pick<FormationData, "duree" | "dureeHeures" | "dureeJours">,

@@ -3,7 +3,7 @@ import { formationsCatalog } from "./formations-catalog";
 import { parseEurosFromTarifLabel } from "@/lib/inscription-status";
 
 export type { FormationData, FaqItem, FinancementKey, ProgrammeJour } from "./formation-types";
-export { formationPath, formationLivrableLabel, formationDureeCardLabel } from "./formation-types";
+export { formationPath, formationLivrableLabel, formationDureeCardLabel, emDashToNewlines } from "./formation-types";
 
 /** @deprecated Use ProgrammeJour — kept for seed/CMS compatibility aliases. */
 export type Module = ProgrammeJour;

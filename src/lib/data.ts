@@ -1,4 +1,5 @@
 import { sanitizeEncadrement, sanitizePedagogyList } from "./formation-format";
+import { emDashToNewlines } from "./formation-types";
 import {
   defaultFinancement,
   defaultFormations,
@@ -222,13 +223,15 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     pole: String(doc.pole),
     titre: String(doc.titre),
     titreCourt: String(doc.titreCourt),
-    sousTitre: doc.sousTitre ? String(doc.sousTitre) : undefined,
+    sousTitre: doc.sousTitre
+      ? emDashToNewlines(String(doc.sousTitre))
+      : undefined,
     prioritaire: Boolean(doc.prioritaire),
     audience:
       doc.audience === "entreprise" || doc.audience === "intermittent"
         ? doc.audience
         : "intermittent",
-    accroche: String(doc.accroche),
+    accroche: emDashToNewlines(String(doc.accroche)),
     publicCible: String(doc.publicCible),
     livrable: String(doc.livrable),
     livrables: mapStringArray(doc.livrables),
@@ -238,10 +241,10 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     objectifs: mapStringArray(doc.objectifs),
     competences: mapStringArray(doc.competences),
     programme: mapProgramme(doc.programme),
-    duree: String(doc.duree),
+    duree: emDashToNewlines(String(doc.duree)),
     dureeHeures: typeof doc.dureeHeures === "number" ? doc.dureeHeures : undefined,
     dureeJours: typeof doc.dureeJours === "number" ? doc.dureeJours : undefined,
-    format: String(doc.format),
+    format: emDashToNewlines(String(doc.format)),
     modalite: doc.modalite ? String(doc.modalite) : undefined,
     effectifMax: typeof doc.effectifMax === "number" ? doc.effectifMax : undefined,
     placesOffertes:
@@ -253,7 +256,7 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     dateDebut: doc.dateDebut ? String(doc.dateDebut) : undefined,
     dateFin: doc.dateFin ? String(doc.dateFin) : undefined,
     prerequis: doc.prerequis ? String(doc.prerequis) : undefined,
-    lieu: doc.lieu ? String(doc.lieu) : undefined,
+    lieu: doc.lieu ? emDashToNewlines(String(doc.lieu)) : undefined,
     delaiAcces: doc.delaiAcces ? String(doc.delaiAcces) : undefined,
     tarif: doc.tarif
       ? String(doc.tarif)
@@ -284,6 +287,25 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
   };
 }
 
+function withCoverFallback(f: FormationData): FormationData {
+  return normalizeFormationDisplayFields({
+    ...f,
+    coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
+  });
+}
+
+/** Affichage : tirets cadratin → retours à la ligne sur les libellés structurés. */
+function normalizeFormationDisplayFields(f: FormationData): FormationData {
+  return {
+    ...f,
+    accroche: emDashToNewlines(f.accroche),
+    sousTitre: f.sousTitre ? emDashToNewlines(f.sousTitre) : f.sousTitre,
+    duree: emDashToNewlines(f.duree),
+    format: emDashToNewlines(f.format),
+    lieu: f.lieu ? emDashToNewlines(f.lieu) : f.lieu,
+  };
+}
+
 export async function getFormations(): Promise<FormationData[]> {
   try {
     const payload = await getPayloadClient();
@@ -303,24 +325,15 @@ export async function getFormations(): Promise<FormationData[]> {
     // (seed partiel), sans masquer les formations créées en admin.
     const fromStatic = defaultFormations
       .filter((f) => !cmsSlugs.has(f.slug))
-      .map((f) => ({
-        ...f,
-        coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
-      }));
+      .map(withCoverFallback);
 
     if (fromCms.length === 0 && fromStatic.length === 0) {
-      return defaultFormations.map((f) => ({
-        ...f,
-        coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
-      }));
+      return defaultFormations.map(withCoverFallback);
     }
 
     return [...fromCms, ...fromStatic];
   } catch {
-    return defaultFormations.map((f) => ({
-      ...f,
-      coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
-    }));
+    return defaultFormations.map(withCoverFallback);
   }
 }
 

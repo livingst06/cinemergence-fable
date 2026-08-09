@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { PageHero } from "@/components/sections/PageHero";
-import { Section } from "@/components/ui/Section";
 import { LesSessionsAdmin } from "@/features/formations/LesSessionsAdmin";
 import { listFormationsForSessionSelect } from "@/features/formations/session-actions";
 import type { AdminSessionGroup } from "@/features/inscriptions/AdminDemandesPanel";
@@ -109,14 +107,5 @@ export default async function LesSessionsPage() {
     listFormationsForSessionSelect(),
   ]);
 
-  return (
-    <>
-      <PageHero eyebrow="Administration" title="Les sessions" />
-      <Section>
-        <div className="container-page max-w-4xl">
-          <LesSessionsAdmin sessions={sessions} formations={formations} />
-        </div>
-      </Section>
-    </>
-  );
+  return <LesSessionsAdmin sessions={sessions} formations={formations} />;
 }

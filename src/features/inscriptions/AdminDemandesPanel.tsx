@@ -78,11 +78,16 @@ export function AdminDemandesPanel({
   isAdminMode = false,
   onEdit,
   onDelete,
+  expandedSessionId = null,
+  onExpandedSessionIdChange,
 }: {
   sessions: AdminSessionGroup[];
   isAdminMode?: boolean;
   onEdit?: (session: AdminSessionGroup) => void;
   onDelete?: (session: AdminSessionGroup) => void;
+  /** Si défini, contrôle l’item ouvert (`session-{id}`). */
+  expandedSessionId?: number | string | null;
+  onExpandedSessionIdChange?: (sessionId: number | string | null) => void;
 }) {
   if (sessions.length === 0) {
     return (
@@ -92,8 +97,27 @@ export function AdminDemandesPanel({
     );
   }
 
+  const accordionValue =
+    expandedSessionId != null ? [`session-${expandedSessionId}`] : [];
+
   return (
-    <Accordion className="w-full space-y-3 overflow-visible pt-3 pr-3">
+    <Accordion
+      className="w-full space-y-3 overflow-visible pt-3 pr-3"
+      value={onExpandedSessionIdChange ? accordionValue : undefined}
+      onValueChange={
+        onExpandedSessionIdChange
+          ? (next) => {
+              const raw = next[0];
+              if (!raw || typeof raw !== "string") {
+                onExpandedSessionIdChange(null);
+                return;
+              }
+              const id = raw.replace(/^session-/, "");
+              onExpandedSessionIdChange(id);
+            }
+          : undefined
+      }
+    >
       {sessions.map((session) => {
         const sessionLabel = formatFormationSessionLabel(
           session.dateDebut,
@@ -116,6 +140,7 @@ export function AdminDemandesPanel({
           <AccordionItem
             key={value}
             value={value}
+            id={value}
             className="relative overflow-visible rounded-2xl border border-border bg-noir-tertiary/40 last:border-b"
           >
             {isAdminMode ? (

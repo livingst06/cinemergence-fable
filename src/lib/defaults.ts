@@ -21,14 +21,20 @@ export {
 export type Module = ProgrammeJour;
 
 export type IntervenantData = {
+  /** Présent uniquement pour les docs CMS (édition / suppression admin). */
+  id?: number | string;
   slug: string;
   nom: string;
   role: string;
   parrain: boolean;
   /** Guest / intervenant pro vs formateur pédagogique. */
   categorie?: "professionnel" | "formateur";
+  /** Email CMS — mails groupés / formulaire admin (pas affiché sur la card publique). */
+  email?: string | null;
   bio: string;
   filmographie: string[];
+  /** ID media Payload si portrait CMS (édition admin). */
+  photoId?: number | string | null;
   photoUrl?: string;
   photoMimeType?: string;
 };

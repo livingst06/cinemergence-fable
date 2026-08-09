@@ -425,15 +425,27 @@ function mapIntervenant(doc: Record<string, unknown>): IntervenantData {
       ? doc.categorie
       : "professionnel";
   const committedPhoto = committedIntervenantPhotos[slug];
+  const email =
+    typeof doc.email === "string" && doc.email.trim() ? doc.email.trim() : null;
+  const photo = doc.photo;
+  let photoId: number | string | null = null;
+  if (typeof photo === "number" || typeof photo === "string") {
+    photoId = photo;
+  } else if (photo && typeof photo === "object" && "id" in photo) {
+    photoId = (photo as { id: number | string }).id;
+  }
   return {
+    id: doc.id as number | string | undefined,
     slug,
     nom: String(doc.nom),
     role: String(doc.role),
     parrain: Boolean(doc.parrain),
     categorie,
+    email,
     bio: String(doc.bio),
     filmographie:
       (doc.filmographie as { titre: string }[] | undefined)?.map((f) => f.titre) ?? [],
+    photoId,
     photoUrl: committedPhoto ?? resolveDisplayMediaUrl(doc.photo, staticIntervenantPhoto(slug)),
     photoMimeType: committedPhoto ? "image/webp" : resolveMediaMimeType(doc.photo),
   };
@@ -446,7 +458,12 @@ function withParrainsFirst(list: IntervenantData[]) {
 export async function getIntervenants(): Promise<IntervenantData[]> {
   try {
     const payload = await getPayloadClient();
-    const result = await payload.find({ collection: "intervenants", limit: 50, depth: 1 });
+    const result = await payload.find({
+      collection: "intervenants",
+      limit: 200,
+      depth: 1,
+      sort: "nom",
+    });
     if (result.docs.length === 0) {
       return withParrainsFirst(
         defaultIntervenants.map((i) => ({

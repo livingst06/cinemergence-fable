@@ -48,6 +48,17 @@ export const defaultSite = {
 
 export const defaultIntervenants: IntervenantData[] = [
   {
+    slug: "choukri-roua",
+    nom: "Choukri Rouha",
+    role: "Réalisateur & fondateur",
+    parrain: false,
+    categorie: "formateur",
+    bio: "Formé au Cours Florent, Choukri Rouha débute comme acteur, puis s'impose à l'écriture et à la réalisation. Il a fondé Cinémergence pour offrir un cadre pro, du matériel cinéma et un résultat concret à chaque stagiaire.",
+    filmographie: [],
+    photoUrl: "/images/site/founder/choukri-roua.jpg",
+    photoMimeType: "image/jpeg",
+  },
+  {
     slug: "bibi-naceri",
     nom: "Bibi Naceri",
     role: "Acteur, réalisateur & scénariste",

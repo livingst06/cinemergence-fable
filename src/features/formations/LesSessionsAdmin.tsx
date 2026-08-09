@@ -13,7 +13,10 @@ import {
   SessionsCalendar,
   type CalendarMode,
 } from "@/features/formations/SessionsCalendar";
-import type { FormationOption } from "@/features/formations/session-actions";
+import type {
+  FormationOption,
+  IntervenantOption,
+} from "@/features/formations/session-actions";
 import { deleteFormationSession } from "@/features/formations/session-actions";
 import {
   AdminDemandesPanel,
@@ -25,6 +28,7 @@ import { cn } from "@/lib/utils";
 type LesSessionsAdminProps = {
   sessions: AdminSessionGroup[];
   formations: FormationOption[];
+  intervenants: IntervenantOption[];
 };
 
 type ViewMode = "list" | "calendar";
@@ -32,6 +36,7 @@ type ViewMode = "list" | "calendar";
 export function LesSessionsAdmin({
   sessions,
   formations,
+  intervenants,
 }: LesSessionsAdminProps) {
   const { isAdminMode } = useAdminUi();
   const router = useRouter();
@@ -160,6 +165,7 @@ export function LesSessionsAdmin({
             <AdminSessionDialog
               open={editorOpen}
               formations={formations}
+              intervenants={intervenants}
               editing={editing}
               onClose={closeEditor}
             />

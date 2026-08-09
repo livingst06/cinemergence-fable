@@ -72,6 +72,34 @@ export const FormationSessions: CollectionConfig = {
       defaultValue: true,
       label: "Ouverte aux inscriptions",
     },
+    {
+      name: "formateurs",
+      type: "relationship",
+      relationTo: "intervenants",
+      hasMany: true,
+      label: "Formateurs",
+      admin: {
+        description:
+          "Formateurs pédagogiques présents sur cette session (catégorie formateur).",
+      },
+      filterOptions: {
+        categorie: { equals: "formateur" },
+      },
+    },
+    {
+      name: "intervenants",
+      type: "relationship",
+      relationTo: "intervenants",
+      hasMany: true,
+      label: "Intervenants",
+      admin: {
+        description:
+          "Intervenants professionnels présents sur cette session (catégorie professionnel).",
+      },
+      filterOptions: {
+        categorie: { equals: "professionnel" },
+      },
+    },
   ],
   hooks: {
     beforeChange: [

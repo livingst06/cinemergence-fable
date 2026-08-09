@@ -17,6 +17,14 @@ const sessionFieldsSchema = z
     placesOffertes: z.number().int().min(1, "Au moins 1 place"),
     label: z.string().trim().optional().nullable(),
     active: z.boolean().optional().default(true),
+    formateurIds: z
+      .array(z.union([z.string(), z.number()]))
+      .optional()
+      .default([]),
+    intervenantIds: z
+      .array(z.union([z.string(), z.number()]))
+      .optional()
+      .default([]),
   })
   .refine(
     (d) => new Date(d.dateFin).getTime() >= new Date(d.dateDebut).getTime(),
@@ -59,6 +67,17 @@ function revalidateSessionPaths(formationSlug?: string | null) {
   revalidatePath("/");
 }
 
+/** Payload + Postgres refusent les IDs relation en string (« 5 ») — il faut des numbers. */
+function toRelationIds(
+  ids: Array<string | number>,
+): Array<number | string> {
+  return ids.map((id) => {
+    if (typeof id === "number" && Number.isFinite(id)) return id;
+    const n = Number(id);
+    return Number.isInteger(n) ? n : id;
+  });
+}
+
 export async function createFormationSession(
   raw: SessionFieldsInput,
 ): Promise<SessionActionResult> {
@@ -91,6 +110,8 @@ export async function createFormationSession(
         placesOffertes: parsed.data.placesOffertes,
         label: parsed.data.label?.trim() || undefined,
         active: parsed.data.active !== false,
+        formateurs: toRelationIds(parsed.data.formateurIds),
+        intervenants: toRelationIds(parsed.data.intervenantIds),
       },
       overrideAccess: true,
     });
@@ -135,9 +156,28 @@ export async function updateFormationSession(
       };
     }
 
+    const existing = await payload.findByID({
+      collection: "formation-sessions",
+      id: sessionId,
+      depth: 0,
+      overrideAccess: true,
+    });
+
+    const lockedFormationId =
+      typeof existing.formation === "object" && existing.formation
+        ? String((existing.formation as { id: number | string }).id)
+        : String(existing.formation);
+
+    if (String(parsed.data.formationId) !== lockedFormationId) {
+      return {
+        ok: false,
+        error: "La formation d’une session ne peut pas être modifiée.",
+      };
+    }
+
     const formation = await payload.findByID({
       collection: "formations",
-      id: parsed.data.formationId,
+      id: lockedFormationId,
       depth: 0,
       overrideAccess: true,
     });
@@ -146,12 +186,13 @@ export async function updateFormationSession(
       collection: "formation-sessions",
       id: sessionId,
       data: {
-        formation: formation.id,
         dateDebut: parsed.data.dateDebut.slice(0, 10),
         dateFin: parsed.data.dateFin.slice(0, 10),
         placesOffertes: parsed.data.placesOffertes,
         label: parsed.data.label?.trim() || null,
         active: parsed.data.active !== false,
+        formateurs: toRelationIds(parsed.data.formateurIds),
+        intervenants: toRelationIds(parsed.data.intervenantIds),
       },
       overrideAccess: true,
     });
@@ -234,6 +275,14 @@ export type FormationOption = {
   tarif: string | null;
 };
 
+export type IntervenantOption = {
+  id: number | string;
+  nom: string;
+  role: string;
+  slug: string;
+  categorie: "formateur" | "professionnel";
+};
+
 export async function listFormationsForSessionSelect(): Promise<
   FormationOption[]
 > {
@@ -259,6 +308,41 @@ export async function listFormationsForSessionSelect(): Promise<
           : null,
       tarif: doc.tarif ? String(doc.tarif) : null,
     }));
+  } catch {
+    return [];
+  }
+}
+
+export async function listIntervenantsForSessionSelect(): Promise<
+  IntervenantOption[]
+> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return [];
+
+  try {
+    const payload = await getPayloadClient();
+    const result = await payload.find({
+      collection: "intervenants",
+      limit: 200,
+      sort: "nom",
+      depth: 0,
+      overrideAccess: true,
+    });
+    return result.docs
+      .map((doc) => {
+        const categorie =
+          doc.categorie === "formateur" || doc.categorie === "professionnel"
+            ? doc.categorie
+            : "professionnel";
+        return {
+          id: doc.id,
+          nom: String(doc.nom ?? ""),
+          role: String(doc.role ?? ""),
+          slug: String(doc.slug ?? ""),
+          categorie,
+        };
+      })
+      .filter((i) => i.nom && i.slug);
   } catch {
     return [];
   }

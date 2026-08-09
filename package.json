@@ -23,6 +23,7 @@
     "seed:places": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/seed-places-offertes.ts",
     "seed:dates": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/seed-formation-dates.ts",
     "seed:tarif-euros": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/seed-tarif-euros.ts",
+    "seed:choukri-formateur": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/seed-choukri-formateur.ts",
     "cleanup:inscriptions": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/cleanup-inscriptions.ts",
     "migrate:sessions": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/migrate-formation-sessions.ts",
     "migrate:rename-sessions": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/migrate-rename-instance-to-session.ts",

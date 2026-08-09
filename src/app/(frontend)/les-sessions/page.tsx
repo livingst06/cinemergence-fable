@@ -2,8 +2,14 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { LesSessionsAdmin } from "@/features/formations/LesSessionsAdmin";
-import { listFormationsForSessionSelect } from "@/features/formations/session-actions";
-import type { AdminSessionGroup } from "@/features/inscriptions/AdminDemandesPanel";
+import {
+  listFormationsForSessionSelect,
+  listIntervenantsForSessionSelect,
+} from "@/features/formations/session-actions";
+import type {
+  AdminSessionGroup,
+  AdminSessionStaff,
+} from "@/features/inscriptions/AdminDemandesPanel";
 import { getPayloadClient } from "@/lib/payload";
 import { getSessionProfile } from "@/lib/session-profile";
 
@@ -11,6 +17,32 @@ export const metadata: Metadata = {
   title: "Les sessions",
   robots: { index: false, follow: false },
 };
+
+function mapStaff(raw: unknown): AdminSessionStaff[] {
+  if (!Array.isArray(raw)) return [];
+  const out: AdminSessionStaff[] = [];
+  for (const item of raw) {
+    if (typeof item === "object" && item && "id" in item) {
+      const doc = item as {
+        id: number | string;
+        nom?: string;
+        role?: string;
+        slug?: string;
+      };
+      out.push({
+        id: doc.id,
+        nom: String(doc.nom ?? ""),
+        role: String(doc.role ?? ""),
+        slug: String(doc.slug ?? ""),
+      });
+      continue;
+    }
+    if (typeof item === "number" || typeof item === "string") {
+      out.push({ id: item, nom: "", role: "", slug: "" });
+    }
+  }
+  return out.filter((p) => p.nom || p.slug);
+}
 
 async function getAllSessions(): Promise<AdminSessionGroup[]> {
   try {
@@ -84,6 +116,12 @@ async function getAllSessions(): Promise<AdminSessionGroup[]> {
             : null,
         active: session.active !== false,
         trainees,
+        formateurs: mapStaff(
+          (session as { formateurs?: unknown }).formateurs,
+        ),
+        intervenants: mapStaff(
+          (session as { intervenants?: unknown }).intervenants,
+        ),
       });
     }
 
@@ -102,10 +140,17 @@ export default async function LesSessionsPage() {
     redirect("/");
   }
 
-  const [sessions, formations] = await Promise.all([
+  const [sessions, formations, intervenants] = await Promise.all([
     getAllSessions(),
     listFormationsForSessionSelect(),
+    listIntervenantsForSessionSelect(),
   ]);
 
-  return <LesSessionsAdmin sessions={sessions} formations={formations} />;
+  return (
+    <LesSessionsAdmin
+      sessions={sessions}
+      formations={formations}
+      intervenants={intervenants}
+    />
+  );
 }

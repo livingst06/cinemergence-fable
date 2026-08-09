@@ -33,6 +33,13 @@ export type AdminSessionTrainee = {
   amountEuros: number | null;
 };
 
+export type AdminSessionStaff = {
+  id: number | string;
+  nom: string;
+  role: string;
+  slug: string;
+};
+
 export type AdminSessionGroup = {
   sessionId: number | string;
   formationId: number | string;
@@ -45,6 +52,8 @@ export type AdminSessionGroup = {
   tarifEuros: number | null;
   active: boolean;
   trainees: AdminSessionTrainee[];
+  formateurs: AdminSessionStaff[];
+  intervenants: AdminSessionStaff[];
 };
 
 function isEnrolled(status: string): boolean {
@@ -76,6 +85,37 @@ function buildMailto(args: {
   );
   const to = args.emails.map((email) => encodeURIComponent(email)).join(",");
   return `mailto:${to}?subject=${subject}`;
+}
+
+function SessionStaffSection({
+  title,
+  emptyLabel,
+  people,
+}: {
+  title: string;
+  emptyLabel: string;
+  people: AdminSessionStaff[];
+}) {
+  return (
+    <div>
+      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-text">
+        {title}
+      </p>
+      {people.length === 0 ? (
+        <p className="mt-1.5 text-sm text-muted-text">{emptyLabel}</p>
+      ) : (
+        <ul className="mt-2.5 flex flex-wrap gap-2">
+          {people.map((p) => (
+            <li key={String(p.id)}>
+              <span className="inline-flex items-center rounded-full border border-or/30 bg-or/10 px-3 py-1 text-sm font-medium text-or-light">
+                {p.nom}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 export function AdminDemandesPanel({
@@ -277,44 +317,59 @@ export function AdminDemandesPanel({
                 </div>
 
                 <AccordionContent className="border-t border-border/60 px-0 pb-0">
-                  {session.trainees.length === 0 ? (
-                    <p className="px-5 py-4 text-sm text-muted-text">
-                      Aucun stagiaire sur cette session.
-                    </p>
-                  ) : (
-                    <ul className="divide-y divide-border/60">
-                      {session.trainees.map((t) => (
-                        <li
-                          key={String(t.id)}
-                          className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5"
-                        >
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-medium text-cream">
-                              {t.userName || t.userEmail}
-                            </p>
-                            {t.userName ? (
-                              <p className="truncate text-xs text-muted-text">
-                                {t.userEmail}
+                  <div className="space-y-5 px-5 py-4">
+                    <SessionStaffSection
+                      title="Les formateurs lors de cette session"
+                      emptyLabel="Aucun formateur"
+                      people={session.formateurs}
+                    />
+                    <SessionStaffSection
+                      title="Les intervenants pendant la session"
+                      emptyLabel="Aucun intervenant"
+                      people={session.intervenants}
+                    />
+                  </div>
+
+                  <div className="border-t border-border/60">
+                    {session.trainees.length === 0 ? (
+                      <p className="px-5 py-4 text-sm text-muted-text">
+                        Aucun stagiaire sur cette session.
+                      </p>
+                    ) : (
+                      <ul className="divide-y divide-border/60">
+                        {session.trainees.map((t) => (
+                          <li
+                            key={String(t.id)}
+                            className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5"
+                          >
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-medium text-cream">
+                                {t.userName || t.userEmail}
                               </p>
-                            ) : null}
-                            {t.amountEuros != null ? (
-                              <p className="mt-0.5 text-xs text-muted-text">
-                                {t.amountEuros.toLocaleString("fr-FR")} €
-                              </p>
-                            ) : null}
-                          </div>
-                          <InscriptionStatusBadge status={t.status} />
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  <div className="border-t border-border/60 px-5 py-3">
-                    <Link
-                      href={formationPath(session.formationSlug)}
-                      className="text-xs font-medium text-or-light underline-offset-2 hover:underline"
-                    >
-                      Voir la fiche formation
-                    </Link>
+                              {t.userName ? (
+                                <p className="truncate text-xs text-muted-text">
+                                  {t.userEmail}
+                                </p>
+                              ) : null}
+                              {t.amountEuros != null ? (
+                                <p className="mt-0.5 text-xs text-muted-text">
+                                  {t.amountEuros.toLocaleString("fr-FR")} €
+                                </p>
+                              ) : null}
+                            </div>
+                            <InscriptionStatusBadge status={t.status} />
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <div className="border-t border-border/60 px-5 py-3">
+                      <Link
+                        href={formationPath(session.formationSlug)}
+                        className="text-xs font-medium text-or-light underline-offset-2 hover:underline"
+                      >
+                        Voir la fiche formation
+                      </Link>
+                    </div>
                   </div>
                 </AccordionContent>
               </div>

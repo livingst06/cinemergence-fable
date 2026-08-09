@@ -11,6 +11,7 @@ import {
   createFormationSession,
   updateFormationSession,
   type FormationOption,
+  type IntervenantOption,
 } from "@/features/formations/session-actions";
 import type { AdminSessionGroup } from "@/features/inscriptions/AdminDemandesPanel";
 
@@ -25,13 +26,73 @@ function toDateInputValue(value: string | undefined | null): string {
 type AdminSessionDialogProps = {
   open: boolean;
   formations: FormationOption[];
+  intervenants: IntervenantOption[];
   editing: AdminSessionGroup | null;
   onClose: () => void;
 };
 
+function toggleId(
+  list: string[],
+  id: string,
+  checked: boolean,
+): string[] {
+  if (checked) {
+    return list.includes(id) ? list : [...list, id];
+  }
+  return list.filter((x) => x !== id);
+}
+
+function StaffChecklist({
+  title,
+  options,
+  selectedIds,
+  onChange,
+  emptyHint,
+}: {
+  title: string;
+  options: IntervenantOption[];
+  selectedIds: string[];
+  onChange: (next: string[]) => void;
+  emptyHint: string;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label>{title}</Label>
+      {options.length === 0 ? (
+        <p className="text-xs text-muted-text">{emptyHint}</p>
+      ) : (
+        <ul className="max-h-40 space-y-2 overflow-y-auto rounded-xl border border-border/70 bg-noir-tertiary/30 p-3">
+          {options.map((opt) => {
+            const id = String(opt.id);
+            const checked = selectedIds.includes(id);
+            return (
+              <li key={id}>
+                <label className="flex cursor-pointer items-start gap-2.5 text-sm text-cream">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={(e) =>
+                      onChange(toggleId(selectedIds, id, e.target.checked))
+                    }
+                    className="mt-0.5 size-4 shrink-0 rounded border-border"
+                  />
+                  <span className="min-w-0">
+                    <span className="block font-medium">{opt.nom}</span>
+                  </span>
+                </label>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export function AdminSessionDialog({
   open,
   formations,
+  intervenants,
   editing,
   onClose,
 }: AdminSessionDialogProps) {
@@ -44,6 +105,17 @@ export function AdminSessionDialog({
   const [placesOffertes, setPlacesOffertes] = useState("8");
   const [label, setLabel] = useState("");
   const [active, setActive] = useState(true);
+  const [formateurIds, setFormateurIds] = useState<string[]>([]);
+  const [intervenantIds, setIntervenantIds] = useState<string[]>([]);
+
+  const formateurOptions = useMemo(
+    () => intervenants.filter((i) => i.categorie === "formateur"),
+    [intervenants],
+  );
+  const intervenantOptions = useMemo(
+    () => intervenants.filter((i) => i.categorie === "professionnel"),
+    [intervenants],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -54,6 +126,8 @@ export function AdminSessionDialog({
       setPlacesOffertes(String(editing.placesOffertes || 8));
       setLabel(editing.label ?? "");
       setActive(editing.active);
+      setFormateurIds(editing.formateurs.map((f) => String(f.id)));
+      setIntervenantIds(editing.intervenants.map((i) => String(i.id)));
       return;
     }
     setFormationId(formations[0] ? String(formations[0].id) : "");
@@ -62,6 +136,8 @@ export function AdminSessionDialog({
     setPlacesOffertes("8");
     setLabel("");
     setActive(true);
+    setFormateurIds([]);
+    setIntervenantIds([]);
   }, [open, formations, editing]);
 
   const selectedFormation = useMemo(
@@ -102,6 +178,8 @@ export function AdminSessionDialog({
       placesOffertes: places,
       label: label.trim() || null,
       active,
+      formateurIds,
+      intervenantIds,
     };
 
     startTransition(async () => {
@@ -132,8 +210,8 @@ export function AdminSessionDialog({
         </h2>
         <p className="mt-2 text-sm text-muted-text">
           {isEdit
-            ? "Mettez à jour les dates et places. Le tarif est celui de la formation."
-            : "Choisissez la formation, puis renseignez les dates et le nombre de places. Le tarif est hérité de la formation."}
+            ? "Mettez à jour les dates, places, formateurs et intervenants."
+            : "Choisissez la formation, les dates, les places, puis cochez les formateurs et intervenants."}
         </p>
 
         <div className="mt-6 grid gap-4">
@@ -141,10 +219,10 @@ export function AdminSessionDialog({
             <Label htmlFor="s-formation">Formation</Label>
             <select
               id="s-formation"
-              className={`flex h-9 w-full rounded-lg border px-3 text-sm ${fieldClass}`}
+              className={`flex h-9 w-full rounded-lg border px-3 text-sm ${fieldClass} disabled:cursor-not-allowed disabled:opacity-60`}
               value={formationId}
               onChange={(e) => setFormationId(e.target.value)}
-              disabled={formations.length === 0}
+              disabled={isEdit || formations.length === 0}
             >
               {formations.length === 0 ? (
                 <option value="">Aucune formation</option>
@@ -156,6 +234,11 @@ export function AdminSessionDialog({
                 ))
               )}
             </select>
+            {isEdit ? (
+              <p className="text-xs text-muted-text">
+                Non modifiable — la session reste liée à cette formation.
+              </p>
+            ) : null}
           </div>
 
           <div className="rounded-xl border border-border/70 bg-noir-tertiary/40 px-4 py-3">
@@ -217,6 +300,22 @@ export function AdminSessionDialog({
               placeholder="Ex. Session automne 2026"
             />
           </div>
+
+          <StaffChecklist
+            title="Formateurs"
+            options={formateurOptions}
+            selectedIds={formateurIds}
+            onChange={setFormateurIds}
+            emptyHint="Aucun formateur en base. Ajoutez-en dans Intervenants (catégorie formateur)."
+          />
+
+          <StaffChecklist
+            title="Intervenants"
+            options={intervenantOptions}
+            selectedIds={intervenantIds}
+            onChange={setIntervenantIds}
+            emptyHint="Aucun intervenant professionnel en base."
+          />
 
           <label className="flex items-center gap-2 text-sm text-cream">
             <input

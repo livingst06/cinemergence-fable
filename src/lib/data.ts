@@ -349,15 +349,27 @@ function mapIntervenant(doc: Record<string, unknown>): IntervenantData {
     doc.categorie === "formateur" || doc.categorie === "professionnel"
       ? doc.categorie
       : "professionnel";
+  const email =
+    typeof doc.email === "string" && doc.email.trim() ? doc.email.trim() : null;
+  const photo = doc.photo;
+  let photoId: number | string | null = null;
+  if (typeof photo === "number" || typeof photo === "string") {
+    photoId = photo;
+  } else if (photo && typeof photo === "object" && "id" in photo) {
+    photoId = (photo as { id: number | string }).id;
+  }
   return {
+    id: doc.id as number | string | undefined,
     slug: String(doc.slug),
     nom: String(doc.nom),
     role: String(doc.role),
     parrain: Boolean(doc.parrain),
     categorie,
+    email,
     bio: String(doc.bio),
     filmographie:
       (doc.filmographie as { titre: string }[] | undefined)?.map((f) => f.titre) ?? [],
+    photoId,
     photoUrl: resolveDisplayMediaUrl(doc.photo, staticIntervenantPhoto(String(doc.slug))),
     photoMimeType: resolveMediaMimeType(doc.photo),
   };
@@ -366,7 +378,12 @@ function mapIntervenant(doc: Record<string, unknown>): IntervenantData {
 export async function getIntervenants(): Promise<IntervenantData[]> {
   try {
     const payload = await getPayloadClient();
-    const result = await payload.find({ collection: "intervenants", limit: 20, depth: 1 });
+    const result = await payload.find({
+      collection: "intervenants",
+      limit: 200,
+      depth: 1,
+      sort: "nom",
+    });
     if (result.docs.length === 0) {
       return defaultIntervenants.map((i) => ({
         ...i,

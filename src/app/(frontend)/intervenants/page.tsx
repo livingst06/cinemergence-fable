@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-import { Section, SectionHeader } from "@/components/ui/Section";
+import { Section } from "@/components/ui/Section";
 import { PageHero } from "@/components/sections/PageHero";
-import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
+import { IntervenantsAdmin } from "@/features/intervenants/IntervenantsAdmin";
 import { getIntervenants, getSiteSettings } from "@/lib/data";
 
 export const revalidate = 300;
@@ -18,10 +18,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function IntervenantsPage() {
   const intervenants = await getIntervenants();
-  const professionnels = intervenants.filter(
-    (i) => (i.categorie ?? "professionnel") === "professionnel" && i.slug !== "karina-testa",
-  );
-  const formateurs = intervenants.filter((i) => i.categorie === "formateur");
 
   return (
     <>
@@ -42,47 +38,7 @@ export default async function IntervenantsPage() {
         }
       />
       <Section className="pt-10 md:pt-12">
-        <div className="container-page space-y-16 md:space-y-20">
-          <div>
-            <SectionHeader
-              eyebrow="Guests"
-              title={"Nos intervenants\u00a0professionnels"}
-              description={
-                <>
-                  <p>Des talents du cinéma qui interviennent en masterclass et sur le plateau</p>
-                  <p className="mt-1">pour un retour pro&nbsp;direct.</p>
-                </>
-              }
-              className="mb-8 md:mb-10"
-            />
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {professionnels.map((i) => (
-                <IntervenantCard key={i.slug} intervenant={i} />
-              ))}
-            </div>
-          </div>
-
-          {formateurs.length > 0 && (
-            <div>
-              <SectionHeader
-                eyebrow="Pédagogie"
-                title={"Nos formateurs\u00a0pédagogiques"}
-                description={
-                  <>
-                    <p>L&apos;équipe qui encadre la progression au quotidien,</p>
-                    <p className="mt-1">avec des retours concrets et&nbsp;suivis.</p>
-                  </>
-                }
-                className="mb-8 md:mb-10"
-              />
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {formateurs.map((i) => (
-                  <IntervenantCard key={i.slug} intervenant={i} />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+        <IntervenantsAdmin intervenants={intervenants} />
       </Section>
     </>
   );

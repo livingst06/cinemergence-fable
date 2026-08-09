@@ -40,6 +40,7 @@ export type AdminSessionStaff = {
   nom: string;
   role: string;
   slug: string;
+  email: string | null;
 };
 
 export type AdminSessionGroup = {
@@ -69,12 +70,22 @@ function isActiveTrainee(status: string): boolean {
   return s !== "annule" && s !== "refusee";
 }
 
-function participantEmails(trainees: AdminSessionTrainee[]): string[] {
+function traineeEmails(trainees: AdminSessionTrainee[]): string[] {
   const emails = new Set<string>();
   for (const t of trainees) {
     if (!isEnrolled(t.status)) continue;
     const email = t.userEmail.trim();
     if (!email || email === "—") continue;
+    emails.add(email);
+  }
+  return [...emails];
+}
+
+function staffEmails(people: AdminSessionStaff[]): string[] {
+  const emails = new Set<string>();
+  for (const p of people) {
+    const email = p.email?.trim();
+    if (!email) continue;
     emails.add(email);
   }
   return [...emails];
@@ -93,6 +104,38 @@ function buildMailto(args: {
   );
   const to = args.emails.map((email) => encodeURIComponent(email)).join(",");
   return `mailto:${to}?subject=${subject}`;
+}
+
+function SessionMailtoButton({
+  href,
+  label,
+  disabledReason,
+}: {
+  href: string | null;
+  label: string;
+  disabledReason: string;
+}) {
+  const className = cn(
+    "btn-outline-warm inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold uppercase tracking-wider",
+    !href && "cursor-not-allowed opacity-50",
+  );
+  if (href) {
+    return (
+      <a
+        href={href}
+        className={cn(buttonVariants({ variant: "ghost", size: "sm" }), className)}
+      >
+        <Mail className="size-3.5 shrink-0" aria-hidden />
+        {label}
+      </a>
+    );
+  }
+  return (
+    <button type="button" disabled title={disabledReason} className={className}>
+      <Mail className="size-3.5 shrink-0" aria-hidden />
+      {label}
+    </button>
+  );
 }
 
 function SessionStaffSection({
@@ -191,11 +234,21 @@ export function AdminDemandesPanel({
         const full = isSessionFull(enrolledCount, session.placesOffertes);
         const pastel = pastelForId(session.formationId);
         const canDelete = isAdminMode && enrolledCount === 0;
-        const emails = participantEmails(session.trainees);
-        const mailto = buildMailto({
-          emails,
+        const mailtoArgs = {
           formationTitre: session.formationTitre,
           sessionLabel,
+        };
+        const mailtoStagiaires = buildMailto({
+          emails: traineeEmails(session.trainees),
+          ...mailtoArgs,
+        });
+        const mailtoFormateurs = buildMailto({
+          emails: staffEmails(session.formateurs),
+          ...mailtoArgs,
+        });
+        const mailtoIntervenants = buildMailto({
+          emails: staffEmails(session.intervenants),
+          ...mailtoArgs,
         });
         const value = `session-${session.sessionId}`;
 
@@ -304,28 +357,22 @@ export function AdminDemandesPanel({
                     </AccordionTrigger>
                   </div>
 
-                  <div className="mt-3 pb-4">
-                    {mailto ? (
-                      <a
-                        href={mailto}
-                        className={cn(
-                          buttonVariants({ variant: "ghost", size: "sm" }),
-                          "btn-outline-warm inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold uppercase tracking-wider",
-                        )}
-                      >
-                        <Mail className="size-3.5" aria-hidden />
-                        Envoyer un mail aux participants
-                      </a>
-                    ) : (
-                      <button
-                        type="button"
-                        disabled
-                        className="btn-outline-warm inline-flex cursor-not-allowed items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold uppercase tracking-wider opacity-50"
-                      >
-                        <Mail className="size-3.5" aria-hidden />
-                        Envoyer un mail aux participants
-                      </button>
-                    )}
+                  <div className="mt-3 flex flex-wrap gap-2 pb-4">
+                    <SessionMailtoButton
+                      href={mailtoStagiaires}
+                      label="Envoyer un mail aux stagiaires"
+                      disabledReason="Aucun stagiaire inscrit avec un email"
+                    />
+                    <SessionMailtoButton
+                      href={mailtoFormateurs}
+                      label="Envoyer un mail aux formateurs"
+                      disabledReason="Aucun formateur avec un email sur cette session"
+                    />
+                    <SessionMailtoButton
+                      href={mailtoIntervenants}
+                      label="Envoyer un mail aux intervenants"
+                      disabledReason="Aucun intervenant avec un email sur cette session"
+                    />
                   </div>
                 </div>
 

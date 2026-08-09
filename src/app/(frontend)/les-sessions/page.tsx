@@ -28,17 +28,23 @@ function mapStaff(raw: unknown): AdminSessionStaff[] {
         nom?: string;
         role?: string;
         slug?: string;
+        email?: string | null;
       };
+      const email =
+        typeof doc.email === "string" && doc.email.trim()
+          ? doc.email.trim()
+          : null;
       out.push({
         id: doc.id,
         nom: String(doc.nom ?? ""),
         role: String(doc.role ?? ""),
         slug: String(doc.slug ?? ""),
+        email,
       });
       continue;
     }
     if (typeof item === "number" || typeof item === "string") {
-      out.push({ id: item, nom: "", role: "", slug: "" });
+      out.push({ id: item, nom: "", role: "", slug: "", email: null });
     }
   }
   return out.filter((p) => p.nom || p.slug);

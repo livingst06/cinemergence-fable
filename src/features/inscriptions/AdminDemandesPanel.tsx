@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/accordion";
 import { buttonVariants } from "@/components/ui/button";
 import { AdminDeleteButton, AdminEditButton } from "@/features/admin/AdminMutationButtons";
+import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
 import { InscriptionStatusBadge } from "@/features/inscriptions/InscriptionStatusBadge";
 import { formationPath } from "@/lib/defaults";
 import {
@@ -20,6 +21,7 @@ import {
   normalizeInscriptionStatus,
 } from "@/lib/inscription-status";
 import {
+  isSessionFull,
   pastelForId,
   sessionOccupancyRatio,
 } from "@/lib/session-calendar";
@@ -59,6 +61,12 @@ export type AdminSessionGroup = {
 function isEnrolled(status: string): boolean {
   const s = normalizeInscriptionStatus(status);
   return s === "payee" || s === "validee" || s === "inscrit";
+}
+
+/** Exclut annulations / refus du décompte « au total » (plus de place ni de demande active). */
+function isActiveTrainee(status: string): boolean {
+  const s = normalizeInscriptionStatus(status);
+  return s !== "annule" && s !== "refusee";
 }
 
 function participantEmails(trainees: AdminSessionTrainee[]): string[] {
@@ -172,13 +180,17 @@ export function AdminDemandesPanel({
         const enrolledCount = session.trainees.filter((t) =>
           isEnrolled(t.status),
         ).length;
+        const activeTraineeCount = session.trainees.filter((t) =>
+          isActiveTrainee(t.status),
+        ).length;
         const fillRatio = sessionOccupancyRatio(
           enrolledCount,
           session.placesOffertes,
         );
         const fillPct = Math.round(fillRatio * 100);
+        const full = isSessionFull(enrolledCount, session.placesOffertes);
         const pastel = pastelForId(session.formationId);
-        const canMutate = isAdminMode && enrolledCount === 0;
+        const canDelete = isAdminMode && enrolledCount === 0;
         const emails = participantEmails(session.trainees);
         const mailto = buildMailto({
           emails,
@@ -198,7 +210,7 @@ export function AdminDemandesPanel({
               <AdminDeleteButton
                 className="absolute -top-3 -right-3 z-30"
                 label={`Supprimer ${session.formationTitre}`}
-                disabled={!canMutate}
+                disabled={!canDelete}
                 disabledReason="Impossible : au moins un stagiaire est inscrit"
                 onClick={() => onDelete?.(session)}
               />
@@ -231,9 +243,12 @@ export function AdminDemandesPanel({
                 <div className="px-4 pt-4 sm:px-5 sm:pt-5">
                   <div className="flex w-full items-center gap-3 sm:gap-4">
                     <div className="min-w-0 flex-1">
-                      <p className="font-heading text-xl leading-snug text-cream sm:text-2xl">
-                        {session.formationTitre}
-                      </p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-heading text-xl leading-snug text-cream sm:text-2xl">
+                          {session.formationTitre}
+                        </p>
+                        {full ? <SessionCompletBadge tone="admin" /> : null}
+                      </div>
                       {session.label && !isGeneratedSessionLabel(session.label) ? (
                         <p className="mt-0.5 text-xs text-or-light">
                           {session.label}
@@ -244,8 +259,8 @@ export function AdminDemandesPanel({
                         {" · "}
                         {enrolledCount} inscrit
                         {enrolledCount !== 1 ? "s" : ""}
-                        {session.trainees.length !== enrolledCount
-                          ? ` · ${session.trainees.length} au total`
+                        {activeTraineeCount !== enrolledCount
+                          ? ` · ${activeTraineeCount} au total`
                           : ""}
                         {" · "}
                         capacité {session.placesOffertes}
@@ -258,8 +273,6 @@ export function AdminDemandesPanel({
                       <AdminEditButton
                         className="shrink-0"
                         label={`Modifier ${session.formationTitre}`}
-                        disabled={!canMutate}
-                        disabledReason="Impossible : au moins un stagiaire est inscrit"
                         onClick={() => onEdit?.(session)}
                       />
                     ) : null}

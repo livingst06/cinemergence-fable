@@ -16,6 +16,7 @@ import type {
   AdminSessionGroup,
   AdminSessionTrainee,
 } from "@/features/inscriptions/AdminDemandesPanel";
+import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
 import {
   formatFormationSessionLabel,
   normalizeInscriptionStatus,
@@ -27,6 +28,7 @@ import {
   formatWeekPeriodLabelCompact,
   isSameDay,
   isSameMonth,
+  isSessionFull,
   layoutMonthBands,
   layoutWeekBands,
   monthGrid,
@@ -110,6 +112,7 @@ function BandChip({
     session.placesOffertes,
   );
   const fillPct = Math.round(fillRatio * 100);
+  const full = isSessionFull(enrolled.length, session.placesOffertes);
   const pastel = pastelForId(session.formationId);
   const battery = segmentBatteryFill({
     fillRatio,
@@ -201,7 +204,7 @@ function BandChip({
         ref={bandRef}
         role="button"
         aria-expanded={open}
-        aria-label={`${session.formationTitre}, ${enrolled.length} place${enrolled.length !== 1 ? "s" : ""} sur ${session.placesOffertes}, ${fillPct} % remplies`}
+        aria-label={`${session.formationTitre}, ${enrolled.length} place${enrolled.length !== 1 ? "s" : ""} sur ${session.placesOffertes}, ${fillPct} % remplies${full ? ", complet" : ""}`}
         aria-describedby={open ? tipId : undefined}
         onMouseEnter={show}
         onMouseLeave={hideSoon}
@@ -248,8 +251,14 @@ function BandChip({
             }}
           />
         ) : null}
-        <span className="relative z-10 block truncate px-1.5 leading-6 dark:text-[var(--band-text-dark)] sm:px-2.5 sm:leading-7">
-          {session.formationTitre}
+        <span className="relative z-10 flex min-w-0 items-center gap-1 px-1.5 leading-6 dark:text-[var(--band-text-dark)] sm:gap-1.5 sm:px-2.5 sm:leading-7">
+          <span className="min-w-0 truncate">{session.formationTitre}</span>
+          {full ? (
+            <SessionCompletBadge
+              tone="admin"
+              className="shrink-0 px-1.5 py-0 text-[9px] leading-4 tracking-wide sm:px-2 sm:text-[10px] sm:leading-5"
+            />
+          ) : null}
         </span>
       </div>
 
@@ -268,8 +277,9 @@ function BandChip({
                 width: coords.width,
               }}
             >
-              <p className="truncate text-xs font-semibold text-cream">
-                {session.formationTitre}
+              <p className="flex flex-wrap items-center gap-2 truncate text-xs font-semibold text-cream">
+                <span className="min-w-0 truncate">{session.formationTitre}</span>
+                {full ? <SessionCompletBadge tone="admin" /> : null}
               </p>
               {sessionLabel ? (
                 <p className="mt-0.5 text-[11px] leading-snug text-muted-text">
@@ -278,6 +288,7 @@ function BandChip({
               ) : null}
               <p className="mt-1.5 text-[11px] text-muted-text">
                 {enrolled.length}/{session.placesOffertes} places · {fillPct}&nbsp;%
+                {full ? " · complet" : ""}
               </p>
               <div className="mt-2 border-t border-border/70 pt-2">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-text">

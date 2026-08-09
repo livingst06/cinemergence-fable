@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
 import { DemandeInscriptionButton } from "@/features/inscriptions/DemandeInscriptionButton";
 import {
   formatFormationSessionLabel,
@@ -54,6 +55,8 @@ export function FormationSessionsSection({
             );
             const value = `session-${session.id}`;
             const canPay = paymentEnabled || session.tarifEuros != null;
+            const full =
+              session.placesRestantes != null && session.placesRestantes <= 0;
 
             return (
               <AccordionItem
@@ -75,23 +78,26 @@ export function FormationSessionsSection({
                           {session.label}
                         </p>
                       ) : null}
-                      <p className="font-heading text-xl leading-snug text-cream sm:text-2xl">
-                        {sessionLabel ?? "Session — dates à confirmer"}
-                      </p>
-                      <p
-                        className={
-                          session.placesRestantes != null &&
-                          session.placesRestantes > 0
-                            ? "mt-1 text-sm font-semibold text-emerald-800 dark:text-emerald-300"
-                            : "mt-1 text-sm font-semibold text-muted-text"
-                        }
-                      >
-                        {session.placesRestantes == null
-                          ? "Places à confirmer"
-                          : session.placesRestantes > 0
-                            ? `Il reste ${session.placesRestantes} place${session.placesRestantes > 1 ? "s" : ""}`
-                            : "Complet"}
-                      </p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-heading text-xl leading-snug text-cream sm:text-2xl">
+                          {sessionLabel ?? "Session — dates à confirmer"}
+                        </p>
+                        {full ? <SessionCompletBadge tone="public" /> : null}
+                      </div>
+                      {!full ? (
+                        <p
+                          className={
+                            session.placesRestantes != null &&
+                            session.placesRestantes > 0
+                              ? "mt-1 text-sm font-semibold text-emerald-800 dark:text-emerald-300"
+                              : "mt-1 text-sm font-semibold text-muted-text"
+                          }
+                        >
+                          {session.placesRestantes == null
+                            ? "Places à confirmer"
+                            : `Il reste ${session.placesRestantes} place${session.placesRestantes > 1 ? "s" : ""}`}
+                        </p>
+                      ) : null}
                     </div>
                     <span
                       aria-hidden

@@ -282,7 +282,7 @@ export function AdminFormationDialog({
               className={fieldClass}
               value={form.duree}
               onChange={(e) => setField("duree", e.target.value)}
-              placeholder="35 heures — 5 journées"
+              placeholder={"35 heures\n5 journées"}
             />
           </div>
           <div className="space-y-2">

@@ -35,10 +35,6 @@ export function FormationSessionsSection({
       <div className="max-w-3xl">
         <p className="eyebrow mb-3">Sessions</p>
         <h2 className="section-title text-cream">Toutes les sessions</h2>
-        <p className="mt-3 text-sm text-muted-text md:text-base">
-          Tu t’inscris à une session datée, pas à la formation entière. Choisis
-          tes dates puis réserve ta place.
-        </p>
       </div>
 
       {activeSessions.length === 0 ? (

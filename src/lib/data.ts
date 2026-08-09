@@ -4,6 +4,7 @@ import {
   sanitizePedagogyList,
   stripUnlistedFinanceurMentions,
 } from "./formation-format";
+import { emDashToNewlines } from "./formation-types";
 import {
   defaultFinancement,
   defaultFormations,
@@ -275,9 +276,11 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     id: doc.id as number | string | undefined,
     slug: String(doc.slug),
     pole: String(doc.pole),
-    titre: sanitizePublicText(String(doc.titre)),
-    titreCourt: sanitizePublicText(String(doc.titreCourt)),
-    sousTitre: sanitizeOptionalText(doc.sousTitre ? String(doc.sousTitre) : undefined),
+    titre: sanitizePublicText(emDashToNewlines(String(doc.titre))),
+    titreCourt: sanitizePublicText(emDashToNewlines(String(doc.titreCourt))),
+    sousTitre: sanitizeOptionalText(
+      doc.sousTitre ? emDashToNewlines(String(doc.sousTitre)) : undefined,
+    ),
     prioritaire: Boolean(doc.prioritaire),
     active:
       typeof doc.active === "boolean" ? doc.active : isFormationActive(String(doc.slug)),
@@ -285,7 +288,7 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
       doc.audience === "entreprise" || doc.audience === "intermittent"
         ? doc.audience
         : "intermittent",
-    accroche: sanitizePublicText(String(doc.accroche)),
+    accroche: sanitizePublicText(emDashToNewlines(String(doc.accroche))),
     publicCible: String(doc.publicCible),
     livrable: String(doc.livrable),
     livrables: mapStringArray(doc.livrables),
@@ -297,10 +300,10 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     objectifs: mapStringArray(doc.objectifs),
     competences: mapStringArray(doc.competences),
     programme: mapProgramme(doc.programme),
-    duree: String(doc.duree),
+    duree: emDashToNewlines(String(doc.duree)),
     dureeHeures: typeof doc.dureeHeures === "number" ? doc.dureeHeures : undefined,
     dureeJours: typeof doc.dureeJours === "number" ? doc.dureeJours : undefined,
-    format: String(doc.format),
+    format: emDashToNewlines(String(doc.format)),
     modalite: doc.modalite ? String(doc.modalite) : undefined,
     effectifMax: typeof doc.effectifMax === "number" ? doc.effectifMax : undefined,
     placesOffertes:
@@ -312,8 +315,10 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     dateDebut: doc.dateDebut ? String(doc.dateDebut) : undefined,
     dateFin: doc.dateFin ? String(doc.dateFin) : undefined,
     prerequis: doc.prerequis ? String(doc.prerequis) : undefined,
-    lieu: doc.lieu ? String(doc.lieu) : undefined,
-    delaiAcces: sanitizeOptionalText(doc.delaiAcces ? String(doc.delaiAcces) : undefined),
+    lieu: doc.lieu ? emDashToNewlines(String(doc.lieu)) : undefined,
+    delaiAcces: sanitizeOptionalText(
+      doc.delaiAcces ? emDashToNewlines(String(doc.delaiAcces)) : undefined,
+    ),
     tarif: doc.tarif
       ? String(doc.tarif)
       : (catalogBySlug.get(String(doc.slug))?.tarif ?? null),
@@ -351,6 +356,27 @@ function publicFormations(list: FormationData[]): FormationData[] {
   return list.filter((f) => f.active);
 }
 
+/** Affichage : tirets cadratin → retours à la ligne sur les libellés structurés. */
+function normalizeFormationDisplayFields(f: FormationData): FormationData {
+  return {
+    ...f,
+    accroche: emDashToNewlines(f.accroche),
+    sousTitre: f.sousTitre ? emDashToNewlines(f.sousTitre) : f.sousTitre,
+    duree: emDashToNewlines(f.duree),
+    format: emDashToNewlines(f.format),
+    lieu: f.lieu ? emDashToNewlines(f.lieu) : f.lieu,
+  };
+}
+
+function withCoverFallback(f: FormationData): FormationData {
+  return normalizeFormationDisplayFields(
+    sanitizeFormationCopy({
+      ...f,
+      coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
+    }),
+  );
+}
+
 export async function getFormations(): Promise<FormationData[]> {
   try {
     const payload = await getPayloadClient();
@@ -367,34 +393,15 @@ export async function getFormations(): Promise<FormationData[]> {
 
     const fromStatic = defaultFormations
       .filter((f) => !cmsSlugs.has(f.slug))
-      .map((f) =>
-        sanitizeFormationCopy({
-          ...f,
-          coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
-        }),
-      );
+      .map(withCoverFallback);
 
     if (fromCms.length === 0 && fromStatic.length === 0) {
-      return publicFormations(
-        defaultFormations.map((f) =>
-          sanitizeFormationCopy({
-            ...f,
-            coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
-          }),
-        ),
-      );
+      return publicFormations(defaultFormations.map(withCoverFallback));
     }
 
     return publicFormations([...fromCms, ...fromStatic]);
   } catch {
-    return publicFormations(
-      defaultFormations.map((f) =>
-        sanitizeFormationCopy({
-          ...f,
-          coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
-        }),
-      ),
-    );
+    return publicFormations(defaultFormations.map(withCoverFallback));
   }
 }
 

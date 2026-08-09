@@ -216,7 +216,9 @@ export default async function FormationDetailPage({ params }: Props) {
             </div>
             <div className="card-stage p-5 md:p-6">
               <p className="eyebrow">Format</p>
-              <p className="mt-2 text-left font-sans text-2xl text-cream">{formation.format}</p>
+              <p className="mt-2 whitespace-pre-line text-left font-sans text-2xl text-cream">
+                {formation.format}
+              </p>
             </div>
             {formation.effectifMax != null && (
               <div className="card-stage p-5 md:p-6">
@@ -240,14 +242,18 @@ export default async function FormationDetailPage({ params }: Props) {
             <p className="mt-4 text-muted-text">{formation.pourQui}</p>
             {formation.prerequis && (
               <p className="mt-6 text-sm text-muted-text">
-                <span className="font-semibold text-or-light">Prérequis — </span>
-                {formation.prerequis}
+                <span className="font-semibold text-or-light">Prérequis</span>
+                <span className="mt-1 block whitespace-pre-line">
+                  {formation.prerequis}
+                </span>
               </p>
             )}
             {formation.lieu && (
               <p className="mt-3 text-sm text-muted-text">
-                <span className="font-semibold text-or-light">Lieu — </span>
-                {formation.lieu}
+                <span className="font-semibold text-or-light">Lieu</span>
+                <span className="mt-1 block whitespace-pre-line">
+                  {formation.lieu}
+                </span>
               </p>
             )}
           </div>
@@ -487,15 +493,6 @@ export default async function FormationDetailPage({ params }: Props) {
             </Accordion>
           </div>
         )}
-
-        <div className="border-t border-white/[0.06] pt-12 md:pt-16">
-          <div className="mx-auto flex w-full max-w-2xl flex-col items-center gap-4 text-center">
-            <h2 className="section-title text-cream">Prêt à te lancer ?</h2>
-            <ButtonLink href="#sessions" size="lg" className="btn-convert min-w-[14rem] px-8">
-              Voir toutes les sessions
-            </ButtonLink>
-          </div>
-        </div>
       </div>
     </>
   );

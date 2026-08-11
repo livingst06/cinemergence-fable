@@ -1,19 +1,12 @@
 import { NextResponse } from "next/server";
 
+import { isMigrateStorageAuthorized } from "@/lib/env-guards";
 import { getPayloadClient } from "@/lib/payload";
 import { assertS3StorageConfigured } from "@/lib/storage-env";
 import { prepareHeroAssets, seedMediaContent } from "@/seed/media-lib";
 
-function isAuthorized(request: Request): boolean {
-  const secret = process.env.MIGRATE_MEDIA_SECRET;
-  if (!secret) return process.env.NODE_ENV !== "production";
-
-  const header = request.headers.get("authorization");
-  return header === `Bearer ${secret}`;
-}
-
 export async function POST(request: Request) {
-  if (!isAuthorized(request)) {
+  if (!isMigrateStorageAuthorized(request)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

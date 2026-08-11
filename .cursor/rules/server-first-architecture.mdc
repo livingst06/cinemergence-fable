@@ -1,0 +1,32 @@
+---
+description: Server-first Next.js architecture, auth gates, and clean layer boundaries
+alwaysApply: true
+---
+
+# Server-first architecture (cinemergence-fable)
+
+## Layers
+
+- **Pages / RSC** (`src/app/(frontend)/**`) — compose UI, fetch via `src/lib/**` only.
+- **Features** (`src/features/**`) — domain UI + server actions; may import `lib`, not Payload collections directly from client files.
+- **Lib** (`src/lib/**`) — data access, auth, validations, pure helpers. Own `getPayloadClient` usage.
+- **Collections / Payload** (`src/collections/**`, `src/payload.config.ts`) — schema only; no UI.
+
+Dependency direction: `app` → `features` → `lib` → Payload. Never invert.
+
+## Server vs client
+
+- Prefer Server Components. Add `"use client"` only for interactivity (forms, dialogs, calendars, admin toggles).
+- Never import `payload`, `getPayloadClient`, or `formations-catalog` from a `"use client"` file.
+- Heavy admin panels: load with `next/dynamic` when useful.
+
+## Auth
+
+- Mutations (server actions + admin API routes): always `requireAdmin()` or `requireAuth()` from `@/lib/session-profile`.
+- Do not rely on UI-only admin toggles for security.
+
+## Clean code
+
+- Prefer extracting shared admin primitives over copy-pasting dialogs/upload helpers.
+- Keep DTOs thin across the RSC → client boundary.
+- No new barrel files that re-export large modules into the client bundle.

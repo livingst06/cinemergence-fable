@@ -354,13 +354,9 @@ const TRACK_H_MOBILE = 24;
 const TRACK_H_DESKTOP = 28;
 const TRACK_GAP = 4;
 
-/** Grille calendrier scrollable horizontalement sous sm. */
-function CalendarScroll({ children }: { children: ReactNode }) {
-  return (
-    <div className="-mx-1 overflow-x-auto overscroll-x-contain px-1 pb-1 [-webkit-overflow-scrolling:touch] sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
-      <div className="min-w-[34rem] sm:min-w-0">{children}</div>
-    </div>
-  );
+/** Conteneur calendrier : toujours dans la largeur viewport (pas de scroll horizontal). */
+function CalendarFrame({ children }: { children: ReactNode }) {
+  return <div className="w-full min-w-0 max-w-full">{children}</div>;
 }
 
 export function SessionsCalendar({
@@ -389,8 +385,8 @@ export function SessionsCalendar({
   };
 
   return (
-    <div className="space-y-4 sm:space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+    <div className="w-full min-w-0 max-w-full space-y-4 sm:space-y-5">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="flex min-w-0 flex-wrap items-center gap-1">
           <button
             type="button"
@@ -497,13 +493,13 @@ function WeekView({
   const lanesHeight = Math.max(trackCount, 1) * (trackH + TRACK_GAP) + 8;
 
   return (
-    <CalendarScroll>
-      <div className="overflow-visible rounded-2xl border border-border bg-card">
+    <CalendarFrame>
+      <div className="w-full min-w-0 overflow-hidden rounded-2xl border border-border bg-card">
         <div className="grid grid-cols-7 border-b border-border">
           {days.map((d) => (
             <div
               key={toKey(d)}
-              className="border-r border-border px-0.5 py-2 text-center last:border-r-0 sm:px-2 sm:py-3"
+              className="min-w-0 border-r border-border px-0.5 py-2 text-center last:border-r-0 sm:px-2 sm:py-3"
             >
               <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-text sm:tracking-[0.14em]">
                 <DayHeaderLabel d={d} />
@@ -568,7 +564,7 @@ function WeekView({
           </div>
         </div>
       </div>
-    </CalendarScroll>
+    </CalendarFrame>
   );
 }
 
@@ -587,13 +583,13 @@ function MonthView({
   const trackH = useTrackHeight();
 
   return (
-    <CalendarScroll>
-      <div className="overflow-visible rounded-2xl border border-border bg-card">
+    <CalendarFrame>
+      <div className="w-full min-w-0 overflow-hidden rounded-2xl border border-border bg-card">
         <div className="grid grid-cols-7 border-b border-border">
           {headerDays.map((d) => (
             <div
               key={`h-${weekdayShortLabel(d)}`}
-              className="border-r border-border px-0.5 py-2 text-center last:border-r-0 sm:px-1 sm:py-2.5"
+              className="min-w-0 border-r border-border px-0.5 py-2 text-center last:border-r-0 sm:px-1 sm:py-2.5"
             >
               <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-text sm:tracking-[0.14em]">
                 <DayHeaderLabel d={d} />
@@ -629,7 +625,7 @@ function MonthView({
                       <div
                         key={toKey(d)}
                         className={cn(
-                          "border-r border-border/60 px-0.5 pt-1 last:border-r-0 sm:px-1.5 sm:pt-1.5",
+                          "min-w-0 border-r border-border/60 px-0.5 pt-1 last:border-r-0 sm:px-1.5 sm:pt-1.5",
                           !inMonth && "bg-noir-tertiary/20",
                         )}
                         style={{ minHeight: rowMinHeight }}
@@ -691,7 +687,7 @@ function MonthView({
           })}
         </div>
       </div>
-    </CalendarScroll>
+    </CalendarFrame>
   );
 }
 

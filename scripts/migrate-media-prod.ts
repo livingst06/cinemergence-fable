@@ -29,8 +29,9 @@ Object.assign(process.env, {
 });
 
 async function seedContentIfEmpty(payload: Awaited<ReturnType<typeof import("../src/lib/payload").getPayloadClient>>) {
-  const { defaultFormations, defaultIntervenants, defaultSite, defaultTemoignages } =
+  const { defaultIntervenants, defaultSite, defaultTemoignages } =
     await import("../src/lib/defaults");
+  const { defaultFormations } = await import("../src/lib/formations-defaults");
 
   const formations = await payload.find({ collection: "formations", limit: 1 });
   if (formations.totalDocs > 0) return;

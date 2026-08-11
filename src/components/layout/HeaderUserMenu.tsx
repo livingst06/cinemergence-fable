@@ -59,9 +59,9 @@ export function HeaderUserMenu() {
   // Ne pas attendre Clerk isLoaded : sinon pastille morte si Clerk JS tarde / bloque sur iOS.
   if (!isSignedIn) {
     return (
-      <a href="/sign-in" className={triggerClass}>
+      <Link href="/sign-in" className={triggerClass}>
         Login
-      </a>
+      </Link>
     );
   }
 

@@ -7,7 +7,6 @@ import {
 import { emDashToNewlines } from "./formation-types";
 import {
   defaultFinancement,
-  defaultFormations,
   defaultIntervenants,
   defaultSite,
   defaultTemoignages,
@@ -15,6 +14,7 @@ import {
   type IntervenantData,
   type TemoignageData,
 } from "./defaults";
+import { defaultFormations } from "./formations-defaults";
 import {
   isImageMimeType,
   resolveDisplayMediaUrl,

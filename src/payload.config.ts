@@ -14,6 +14,7 @@ import { Temoignages } from "./collections/Temoignages";
 import { Users } from "./collections/Users";
 import { LegalPages } from "./globals/LegalPages";
 import { SiteSettings } from "./globals/SiteSettings";
+import { resolvePayloadSecret } from "./lib/env-guards";
 import { getStoragePlugins } from "./payload/storage";
 
 const filename = fileURLToPath(import.meta.url);
@@ -55,7 +56,7 @@ export default buildConfig({
       });
     },
   }),
-  secret: process.env.PAYLOAD_SECRET || "dev-secret-change-in-production-min-32",
+  secret: resolvePayloadSecret(),
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },

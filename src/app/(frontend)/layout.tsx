@@ -74,6 +74,12 @@ export default async function FrontendLayout({
       signUpUrl="/sign-up"
       signInFallbackRedirectUrl="/"
       signUpFallbackRedirectUrl="/"
+      allowedRedirectOrigins={[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://192.168.1.21:3000",
+        "http://192.168.1.139:3000",
+      ]}
     >
       <html
         lang="fr"

@@ -7,112 +7,18 @@ import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Section } from "@/components/ui/Section";
 import { InscriptionStatusBadge } from "@/features/inscriptions/InscriptionStatusBadge";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
-import { formationPath } from "@/lib/defaults";
+import { formationPath } from "@/lib/formation-types";
 import {
   formatFormationSessionLabel,
   normalizeInscriptionStatus,
 } from "@/lib/inscription-status";
-import { getPayloadClient } from "@/lib/payload";
+import { listReservationsForUser } from "@/lib/reservations";
 import { getSessionProfile } from "@/lib/session-profile";
-import { syncInscriptionIfStripePaid } from "@/lib/stripe-fulfillment";
 
 export const metadata: Metadata = {
   title: "Mes réservations",
   robots: { index: false, follow: false },
 };
-
-type ReservationRow = {
-  id: number | string;
-  status: string;
-  commentaireAdmin?: string | null;
-  formationTitre: string;
-  formationSlug: string;
-  dateDebut?: string;
-  dateFin?: string;
-};
-
-async function getMyReservations(
-  payloadUserId: number | string,
-): Promise<ReservationRow[]> {
-  try {
-    const payload = await getPayloadClient();
-    const result = await payload.find({
-      collection: "inscriptions",
-      where: { user: { equals: payloadUserId } },
-      depth: 1,
-      limit: 100,
-      sort: "-updatedAt",
-      overrideAccess: true,
-    });
-
-    // Filet : si Stripe a payé mais le webhook a manqué, on resynchronise
-    await Promise.all(
-      result.docs
-        .filter((doc) => doc.status === "en_paiement" && doc.stripeCheckoutSessionId)
-        .map((doc) =>
-          syncInscriptionIfStripePaid(doc.id).catch((err) => {
-            console.error("[mes-reservations] sync", doc.id, err);
-            return false;
-          }),
-        ),
-    );
-
-    const refreshed = await payload.find({
-      collection: "inscriptions",
-      where: { user: { equals: payloadUserId } },
-      depth: 2,
-      limit: 100,
-      sort: "-updatedAt",
-      overrideAccess: true,
-    });
-
-    const rows: ReservationRow[] = [];
-    for (const doc of refreshed.docs) {
-      const formation = doc.formation;
-      if (!formation || typeof formation !== "object") continue;
-      const f = formation as {
-        titre?: string;
-        titreCourt?: string;
-        slug?: string;
-        dateDebut?: string;
-        dateFin?: string;
-      };
-      if (!f.slug) continue;
-
-      const sessionDoc =
-        typeof doc.session === "object" && doc.session
-          ? (doc.session as {
-              dateDebut?: string;
-              dateFin?: string;
-              label?: string | null;
-            })
-          : null;
-
-      rows.push({
-        id: doc.id,
-        status: String(doc.status),
-        commentaireAdmin: doc.commentaireAdmin
-          ? String(doc.commentaireAdmin)
-          : null,
-        formationTitre: String(f.titre ?? f.titreCourt ?? f.slug),
-        formationSlug: String(f.slug),
-        dateDebut: sessionDoc?.dateDebut
-          ? String(sessionDoc.dateDebut)
-          : f.dateDebut
-            ? String(f.dateDebut)
-            : undefined,
-        dateFin: sessionDoc?.dateFin
-          ? String(sessionDoc.dateFin)
-          : f.dateFin
-            ? String(f.dateFin)
-            : undefined,
-      });
-    }
-    return rows;
-  } catch {
-    return [];
-  }
-}
 
 export default async function MesReservationsPage() {
   const profile = await getSessionProfile();
@@ -126,7 +32,7 @@ export default async function MesReservationsPage() {
     payloadUserId = user?.id ?? null;
   }
 
-  const rows = payloadUserId ? await getMyReservations(payloadUserId) : [];
+  const rows = payloadUserId ? await listReservationsForUser(payloadUserId) : [];
 
   return (
     <>

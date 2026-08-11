@@ -22,7 +22,7 @@ import { getPayloadClient } from "@/lib/payload";
 import { requireAuth } from "@/lib/session-profile";
 import { getPublicSiteUrl } from "@/lib/site-url";
 import { eurosToStripeAmount, getStripe } from "@/lib/stripe";
-import { defaultFormations } from "@/lib/defaults";
+import { defaultFormations } from "@/lib/formations-defaults";
 
 const catalogBySlug = new Map(defaultFormations.map((f) => [f.slug, f]));
 

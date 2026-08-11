@@ -4,7 +4,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // iPhone / LAN : sans ça, Next bloque les assets de dev hors localhost
   // et les boutons client (FAQ, etc.) ne réagissent pas au tap.
-  allowedDevOrigins: ["192.168.1.139", "127.0.0.1"],
+  allowedDevOrigins: ["192.168.1.139", "192.168.1.21", "127.0.0.1", "localhost"],
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30,
@@ -19,6 +19,18 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+        ],
+      },
       {
         source: "/videos/:path*.mp4",
         headers: [

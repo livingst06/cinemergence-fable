@@ -123,12 +123,22 @@ Avant un lancement officiel :
 ## Tests
 
 ```bash
-pnpm test        # tests unitaires (Vitest)
-pnpm test:e2e    # tests E2E (Playwright)
+pnpm test          # tests unitaires (Vitest)
+pnpm test:ci       # lint + typecheck + architecture + unitaires
+pnpm test:e2e      # tests E2E (Playwright) — nécessite le serveur / webServer
+# Première fois (ou après update Playwright) :
+pnpm exec playwright install chromium
 pnpm lint
+pnpm typecheck
+pnpm check:arch    # frontières server/client Next.js
 pnpm build
 ```
 
+**Pre-commit (Husky)** : `lint-staged` + `typecheck` + `check:arch` + `vitest` à chaque commit.
+
+**CI (GitHub Actions)** : `.github/workflows/ci.yml` sur push/PR (`test:ci`, build, e2e).
+
+Flux recommandé : tester localement → demander le commit → re-tester après commit.
 ---
 
 ## Évolutivité V2 (anticipée)

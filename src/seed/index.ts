@@ -4,11 +4,11 @@ config({ path: ".env.local" });
 
 async function seed() {
   const {
-    defaultFormations,
     defaultIntervenants,
     defaultSite,
     defaultTemoignages,
   } = await import("../lib/defaults");
+  const { defaultFormations } = await import("../lib/formations-defaults");
   const { getPayloadClient } = await import("../lib/payload");
   const { getPublicSiteUrl } = await import("../lib/site-url");
 

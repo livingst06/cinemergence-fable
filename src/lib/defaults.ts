@@ -19,7 +19,7 @@ export {
 } from "./formation-types";
 
 /** @deprecated Use ProgrammeJour — kept for seed/CMS compatibility aliases. */
-export type Module = ProgrammeJour;
+export type Module = import("./formation-types").ProgrammeJour;
 
 export type IntervenantData = {
   /** Présent uniquement pour les docs CMS (édition / suppression admin). */

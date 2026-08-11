@@ -114,6 +114,8 @@ export function AdminFormationDialog({
 
   useEffect(() => {
     if (!open) return;
+    // Reset controlled form when dialog opens / target changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional form hydrate
     setForm(formation ? fromFormation(formation) : emptyForm());
     setPhotos(photosFromFormation(formation));
     setSlugTouched(Boolean(formation));

@@ -14,7 +14,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { AdminDeleteButton, AdminEditButton } from "@/features/admin/AdminMutationButtons";
 import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
 import { InscriptionStatusBadge } from "@/features/inscriptions/InscriptionStatusBadge";
-import { formationPath } from "@/lib/defaults";
+import { formationPath } from "@/lib/formation-types";
 import {
   formatFormationSessionLabel,
   isGeneratedSessionLabel,
@@ -109,31 +109,45 @@ function buildMailto(args: {
 function SessionMailtoButton({
   href,
   label,
+  shortLabel,
   disabledReason,
 }: {
   href: string | null;
   label: string;
+  shortLabel: string;
   disabledReason: string;
 }) {
   const className = cn(
-    "btn-outline-warm inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold uppercase tracking-wider",
+    "btn-outline-warm inline-flex min-h-10 w-full items-center justify-center gap-1.5 rounded-lg px-2.5 py-2 text-[10px] font-semibold uppercase tracking-wider sm:min-h-0 sm:w-auto sm:justify-start sm:gap-2 sm:px-4 sm:text-xs",
     !href && "cursor-not-allowed opacity-50",
+  );
+  const content = (
+    <>
+      <Mail className="size-3.5 shrink-0" aria-hidden />
+      <span className="sm:hidden">{shortLabel}</span>
+      <span className="hidden sm:inline">{label}</span>
+    </>
   );
   if (href) {
     return (
       <a
         href={href}
+        aria-label={label}
         className={cn(buttonVariants({ variant: "ghost", size: "sm" }), className)}
       >
-        <Mail className="size-3.5 shrink-0" aria-hidden />
-        {label}
+        {content}
       </a>
     );
   }
   return (
-    <button type="button" disabled title={disabledReason} className={className}>
-      <Mail className="size-3.5 shrink-0" aria-hidden />
-      {label}
+    <button
+      type="button"
+      disabled
+      title={disabledReason}
+      aria-label={label}
+      className={className}
+    >
+      {content}
     </button>
   );
 }
@@ -260,13 +274,18 @@ export function AdminDemandesPanel({
             className="relative overflow-visible border-0 bg-transparent last:border-b-0"
           >
             {isAdminMode ? (
-              <AdminDeleteButton
-                className="absolute -top-3 -right-3 z-30"
-                label={`Supprimer ${session.formationTitre}`}
-                disabled={!canDelete}
-                disabledReason="Impossible : au moins un stagiaire est inscrit"
-                onClick={() => onDelete?.(session)}
-              />
+              <div className="absolute -top-3 -right-3 z-30 flex items-center gap-2">
+                <AdminEditButton
+                  label={`Modifier ${session.formationTitre}`}
+                  onClick={() => onEdit?.(session)}
+                />
+                <AdminDeleteButton
+                  label={`Supprimer ${session.formationTitre}`}
+                  disabled={!canDelete}
+                  disabledReason="Impossible : au moins un stagiaire est inscrit"
+                  onClick={() => onDelete?.(session)}
+                />
+              </div>
             ) : null}
 
             <div
@@ -293,11 +312,17 @@ export function AdminDemandesPanel({
               ) : null}
 
               <div className="relative z-10">
-                <div className="px-4 pt-4 sm:px-5 sm:pt-5">
-                  <div className="flex w-full items-center gap-3 sm:gap-4">
+                <div
+                  className={cn(
+                    "px-4 sm:px-5",
+                    // Sous les boutons flottants admin ; sinon padding standard
+                    isAdminMode ? "pt-10 sm:pt-11" : "pt-4 sm:pt-5",
+                  )}
+                >
+                  <div className="flex w-full items-start gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-heading text-xl leading-snug text-cream sm:text-2xl">
+                        <p className="font-heading text-lg leading-snug text-cream sm:text-2xl">
                           {session.formationTitre}
                         </p>
                         {full ? <SessionCompletBadge tone="admin" /> : null}
@@ -307,28 +332,24 @@ export function AdminDemandesPanel({
                           {session.label}
                         </p>
                       ) : null}
-                      <p className="mt-1 text-sm text-muted-text">
-                        {sessionLabel ?? "Session — dates à confirmer"}
-                        {" · "}
-                        {enrolledCount} inscrit
-                        {enrolledCount !== 1 ? "s" : ""}
-                        {activeTraineeCount !== enrolledCount
-                          ? ` · ${activeTraineeCount} au total`
-                          : ""}
-                        {" · "}
-                        capacité {session.placesOffertes}
-                        {fillPct > 0 ? ` · ${fillPct} %` : ""}
-                        {!session.active ? " · fermée" : ""}
+                      <p className="mt-1.5 text-sm leading-relaxed text-muted-text">
+                        <span className="block sm:inline">
+                          {sessionLabel ?? "Session — dates à confirmer"}
+                        </span>
+                        <span className="hidden sm:inline">{" · "}</span>
+                        <span className="mt-0.5 block sm:mt-0 sm:inline">
+                          {enrolledCount} inscrit
+                          {enrolledCount !== 1 ? "s" : ""}
+                          {activeTraineeCount !== enrolledCount
+                            ? ` · ${activeTraineeCount} au total`
+                            : ""}
+                          {" · "}
+                          capacité {session.placesOffertes}
+                          {fillPct > 0 ? ` · ${fillPct} %` : ""}
+                          {!session.active ? " · fermée" : ""}
+                        </span>
                       </p>
                     </div>
-
-                    {isAdminMode ? (
-                      <AdminEditButton
-                        className="shrink-0"
-                        label={`Modifier ${session.formationTitre}`}
-                        onClick={() => onEdit?.(session)}
-                      />
-                    ) : null}
 
                     <AccordionTrigger
                       aria-label={
@@ -338,7 +359,7 @@ export function AdminDemandesPanel({
                       }
                       headerClassName="shrink-0"
                       className={cn(
-                        "size-12 shrink-0 flex-none items-center justify-center p-0 hover:no-underline",
+                        "size-11 shrink-0 flex-none items-center justify-center p-0 hover:no-underline sm:size-12",
                         "rounded-xl border-0 focus-visible:ring-offset-0",
                         "**:data-[slot=accordion-trigger-icon]:hidden",
                       )}
@@ -346,31 +367,34 @@ export function AdminDemandesPanel({
                       <span
                         aria-hidden
                         className={cn(
-                          "btn-outline-warm inline-flex size-12 items-center justify-center rounded-xl",
+                          "btn-outline-warm inline-flex size-11 items-center justify-center rounded-xl sm:size-12",
                           "text-cream transition-colors",
                           "group-aria-expanded/accordion-trigger:border-or/45 group-aria-expanded/accordion-trigger:bg-or/15 group-aria-expanded/accordion-trigger:text-or-light",
                         )}
                       >
-                        <ChevronDown className="size-6 group-aria-expanded/accordion-trigger:hidden" />
-                        <ChevronUp className="hidden size-6 group-aria-expanded/accordion-trigger:inline" />
+                        <ChevronDown className="size-5 group-aria-expanded/accordion-trigger:hidden sm:size-6" />
+                        <ChevronUp className="hidden size-5 group-aria-expanded/accordion-trigger:inline sm:size-6" />
                       </span>
                     </AccordionTrigger>
                   </div>
 
-                  <div className="mt-3 flex flex-wrap gap-2 pb-4">
+                  <div className="mt-3 grid grid-cols-3 gap-1.5 pb-4 sm:flex sm:flex-wrap sm:gap-2">
                     <SessionMailtoButton
                       href={mailtoStagiaires}
                       label="Envoyer un mail aux stagiaires"
+                      shortLabel="Stagiaires"
                       disabledReason="Aucun stagiaire inscrit avec un email"
                     />
                     <SessionMailtoButton
                       href={mailtoFormateurs}
                       label="Envoyer un mail aux formateurs"
+                      shortLabel="Formateurs"
                       disabledReason="Aucun formateur avec un email sur cette session"
                     />
                     <SessionMailtoButton
                       href={mailtoIntervenants}
                       label="Envoyer un mail aux intervenants"
+                      shortLabel="Intervenants"
                       disabledReason="Aucun intervenant avec un email sur cette session"
                     />
                   </div>

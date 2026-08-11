@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "feat/**"]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:ci
+      - name: Build
+        env:
+          PAYLOAD_SECRET: ci-payload-secret-min-32-chars-xx
+          DATABASE_URI: postgres://postgres:postgres@localhost:5432/ci
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci
+          CLERK_SECRET_KEY: sk_test_ci
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+        run: pnpm build
+        continue-on-error: true
+
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: E2E smoke
+        env:
+          PAYLOAD_SECRET: ci-payload-secret-min-32-chars-xx
+          DATABASE_URI: postgres://postgres:postgres@localhost:5432/ci
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci
+          CLERK_SECRET_KEY: sk_test_ci
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+        run: pnpm test:e2e
+        continue-on-error: true

@@ -1,17 +1,18 @@
 import { NextResponse } from "next/server";
 
 import {
-  defaultFormations,
   defaultIntervenants,
   defaultSite,
   defaultTemoignages,
 } from "@/lib/defaults";
+import { defaultFormations } from "@/lib/formations-defaults";
 import { ensureAdminRole } from "@/lib/ensure-admin-role";
+import { isSeedHttpAllowed } from "@/lib/env-guards";
 import { getPublicSiteUrl } from "@/lib/site-url";
 import { getPayloadClient } from "@/lib/payload";
 
 export async function POST() {
-  if (process.env.NODE_ENV === "production") {
+  if (!isSeedHttpAllowed()) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

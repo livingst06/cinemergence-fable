@@ -129,6 +129,7 @@ export function AdminSessionDialog({
   useEffect(() => {
     if (!open) return;
     if (editing) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional form hydrate
       setFormationId(String(editing.formationId));
       setDateDebut(toDateInputValue(editing.dateDebut));
       setDateFin(toDateInputValue(editing.dateFin));

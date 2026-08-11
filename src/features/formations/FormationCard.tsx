@@ -3,12 +3,12 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { MediaFrame } from "@/components/ui/MediaFrame";
 import { FormationCardSessionsBanner } from "@/features/formations/FormationCardSessionsBanner";
-import type { FormationData } from "@/lib/defaults";
+import type { FormationData } from "@/lib/formation-types";
 import {
   formationDureeCardLabel,
   formationLivrableLabel,
   formationPath,
-} from "@/lib/defaults";
+} from "@/lib/formation-types";
 import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { cn } from "@/lib/utils";
 

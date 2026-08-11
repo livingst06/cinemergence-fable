@@ -257,7 +257,7 @@ function BandChip({
         className={cn(
           "absolute overflow-hidden text-left text-[10px] font-medium tracking-tight outline-none sm:text-[11px]",
           "cursor-default touch-manipulation focus-visible:ring-2 focus-visible:ring-or/30",
-          "dark:!bg-[var(--band-empty-dark)]",
+          "ring-1 ring-black/12 dark:!bg-[var(--band-empty-dark)] dark:ring-white/20",
           radiusClass,
           className,
         )}

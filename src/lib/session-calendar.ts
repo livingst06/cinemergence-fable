@@ -216,55 +216,55 @@ export function formatMonthPeriodLabel(cursor: Date): string {
   return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
 
-/** Palette pastel : fond vide (jauge) + remplissage + texte. */
+/** Palette sessions : teintes distinctes, lisibles jour et nuit (fond vide + jauge + texte). */
 export const SESSION_PASTELS = [
   {
-    empty: "rgba(221, 212, 200, 0.35)",
-    fill: "rgba(201, 184, 164, 0.92)",
-    text: "#3f3832",
-    emptyDark: "rgba(92, 83, 74, 0.28)",
-    fillDark: "rgba(140, 124, 108, 0.85)",
-    textDark: "#f0ebe4",
+    empty: "rgba(214, 168, 120, 0.78)",
+    fill: "rgba(196, 132, 72, 0.95)",
+    text: "#3a2a1c",
+    emptyDark: "rgba(214, 168, 120, 0.55)",
+    fillDark: "rgba(232, 180, 120, 0.92)",
+    textDark: "#fff4e8",
   },
   {
-    empty: "rgba(212, 221, 214, 0.35)",
-    fill: "rgba(168, 186, 172, 0.92)",
-    text: "#354038",
-    emptyDark: "rgba(74, 86, 78, 0.28)",
-    fillDark: "rgba(110, 130, 116, 0.85)",
-    textDark: "#e8efe9",
+    empty: "rgba(126, 178, 148, 0.78)",
+    fill: "rgba(72, 148, 108, 0.95)",
+    text: "#1c3226",
+    emptyDark: "rgba(126, 186, 152, 0.55)",
+    fillDark: "rgba(150, 210, 172, 0.92)",
+    textDark: "#e8f8ee",
   },
   {
-    empty: "rgba(217, 210, 218, 0.35)",
-    fill: "rgba(186, 170, 190, 0.92)",
-    text: "#3a343c",
-    emptyDark: "rgba(84, 74, 86, 0.28)",
-    fillDark: "rgba(130, 114, 134, 0.85)",
-    textDark: "#efe8f0",
+    empty: "rgba(186, 142, 188, 0.78)",
+    fill: "rgba(156, 96, 168, 0.95)",
+    text: "#321c34",
+    emptyDark: "rgba(198, 152, 204, 0.55)",
+    fillDark: "rgba(220, 176, 226, 0.92)",
+    textDark: "#f8eef8",
   },
   {
-    empty: "rgba(214, 218, 224, 0.35)",
-    fill: "rgba(170, 180, 196, 0.92)",
-    text: "#343840",
-    emptyDark: "rgba(74, 80, 88, 0.28)",
-    fillDark: "rgba(112, 122, 138, 0.85)",
-    textDark: "#e8ecf2",
+    empty: "rgba(130, 162, 210, 0.78)",
+    fill: "rgba(72, 118, 188, 0.95)",
+    text: "#1c2838",
+    emptyDark: "rgba(138, 172, 220, 0.55)",
+    fillDark: "rgba(164, 196, 236, 0.92)",
+    textDark: "#eaf2fc",
   },
   {
-    empty: "rgba(221, 216, 208, 0.35)",
-    fill: "rgba(198, 186, 168, 0.92)",
-    text: "#403a34",
-    emptyDark: "rgba(86, 78, 70, 0.28)",
-    fillDark: "rgba(138, 124, 108, 0.85)",
-    textDark: "#f2ebe4",
+    empty: "rgba(220, 148, 132, 0.78)",
+    fill: "rgba(196, 96, 80, 0.95)",
+    text: "#3a201c",
+    emptyDark: "rgba(228, 156, 140, 0.55)",
+    fillDark: "rgba(240, 176, 160, 0.92)",
+    textDark: "#fff0ec",
   },
   {
-    empty: "rgba(216, 221, 212, 0.35)",
-    fill: "rgba(176, 190, 168, 0.92)",
-    text: "#383e36",
-    emptyDark: "rgba(78, 86, 74, 0.28)",
-    fillDark: "rgba(118, 134, 112, 0.85)",
-    textDark: "#ecf0e8",
+    empty: "rgba(148, 186, 120, 0.78)",
+    fill: "rgba(96, 152, 64, 0.95)",
+    text: "#24301c",
+    emptyDark: "rgba(156, 198, 128, 0.55)",
+    fillDark: "rgba(180, 220, 148, 0.92)",
+    textDark: "#f0f8e8",
   },
 ] as const;
 
@@ -287,12 +287,12 @@ export function pastelForId(id: number | string): SessionPastel {
 export function pastelClassForId(id: number | string): string {
   const i = hashId(id) % SESSION_PASTELS.length;
   const legacy = [
-    "bg-[#ddd4c8]/80 text-[#3f3832] dark:bg-[#5c534a]/45 dark:text-[#f0ebe4]",
-    "bg-[#d4ddd6]/80 text-[#354038] dark:bg-[#4a564e]/45 dark:text-[#e8efe9]",
-    "bg-[#d9d2da]/80 text-[#3a343c] dark:bg-[#544a56]/45 dark:text-[#efe8f0]",
-    "bg-[#d6dae0]/80 text-[#343840] dark:bg-[#4a5058]/45 dark:text-[#e8ecf2]",
-    "bg-[#ddd8d0]/80 text-[#403a34] dark:bg-[#564e46]/45 dark:text-[#f2ebe4]",
-    "bg-[#d8ddd4]/80 text-[#383e36] dark:bg-[#4e564a]/45 dark:text-[#ecf0e8]",
+    "bg-[#d6a878]/80 text-[#3a2a1c] dark:bg-[#d6a878]/55 dark:text-[#fff4e8]",
+    "bg-[#7eb294]/80 text-[#1c3226] dark:bg-[#7eba98]/55 dark:text-[#e8f8ee]",
+    "bg-[#ba8ebc]/80 text-[#321c34] dark:bg-[#c698cc]/55 dark:text-[#f8eef8]",
+    "bg-[#82a2d2]/80 text-[#1c2838] dark:bg-[#8aacdc]/55 dark:text-[#eaf2fc]",
+    "bg-[#dc9484]/80 text-[#3a201c] dark:bg-[#e49c8c]/55 dark:text-[#fff0ec]",
+    "bg-[#94ba78]/80 text-[#24301c] dark:bg-[#9cc680]/55 dark:text-[#f0f8e8]",
   ] as const;
   return legacy[i]!;
 }

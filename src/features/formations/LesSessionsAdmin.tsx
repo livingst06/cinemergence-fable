@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar } from "lucide-react";
+import { Calendar, List } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAdminUi } from "@/features/admin/AdminUiContext";
@@ -41,7 +41,7 @@ export function LesSessionsAdmin({
   const { isAdminMode } = useAdminUi();
   const router = useRouter();
   const [view, setView] = useState<ViewMode>("list");
-  const [calendarMode, setCalendarMode] = useState<CalendarMode>("week");
+  const [calendarMode, setCalendarMode] = useState<CalendarMode>("month");
   const [cursor, setCursor] = useState(() => new Date());
   const [expandedSessionId, setExpandedSessionId] = useState<
     number | string | null
@@ -99,10 +99,9 @@ export function LesSessionsAdmin({
 
   return (
     <>
-      <header className="relative overflow-hidden bg-noir pt-10 pb-8 md:pt-16 md:pb-14">
+      <header className="relative overflow-hidden bg-noir pt-6 pb-5 sm:pt-8 sm:pb-6 md:pt-10 md:pb-8">
         <div className="container-page">
-          <p className="eyebrow mb-3 md:mb-4">Administration</p>
-          <div className="flex items-start justify-between gap-3 sm:gap-4">
+          <div className="flex items-center justify-between gap-3 sm:gap-4">
             <h1 className="display-title min-w-0 flex-1 text-cream">
               Les sessions
             </h1>
@@ -118,26 +117,28 @@ export function LesSessionsAdmin({
                 setView((v) => (v === "list" ? "calendar" : "list"))
               }
               className={cn(
-                "mt-0.5 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border transition-colors touch-manipulation sm:mt-1 sm:size-10",
-                view === "calendar"
-                  ? "border-or/40 bg-or/15 text-or-light"
-                  : "border-border bg-card text-cream hover:border-or/30 hover:bg-noir-tertiary/50",
+                "inline-flex size-12 shrink-0 items-center justify-center rounded-xl border transition-colors touch-manipulation sm:size-14",
+                "border-border bg-card text-cream hover:border-or/30 hover:bg-noir-tertiary/50",
               )}
             >
-              <Calendar className="size-5" aria-hidden />
+              {view === "calendar" ? (
+                <List className="size-6 sm:size-7" aria-hidden strokeWidth={2.25} />
+              ) : (
+                <Calendar className="size-6 sm:size-7" aria-hidden strokeWidth={2.25} />
+              )}
             </button>
           </div>
         </div>
       </header>
 
-      <section className="py-10 md:py-20 lg:py-28">
+      <section className="py-5 sm:py-6 md:py-8">
         <div
           className={cn(
             "container-page min-w-0",
             view === "calendar" ? "max-w-6xl" : "max-w-4xl",
           )}
         >
-          <div className="min-w-0 space-y-6">
+          <div className="min-w-0 space-y-4 sm:space-y-5">
             {view === "list" ? (
               <>
                 <AdminDemandesPanel

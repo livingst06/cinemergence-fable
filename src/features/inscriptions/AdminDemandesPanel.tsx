@@ -325,7 +325,12 @@ export function AdminDemandesPanel({
                         <p className="font-heading text-lg leading-snug text-cream sm:text-2xl">
                           {session.formationTitre}
                         </p>
-                        {full ? <SessionCompletBadge tone="admin" /> : null}
+                        {full ? (
+                          <SessionCompletBadge
+                            tone="admin"
+                            className="px-3.5 py-1.5 text-xs tracking-[0.12em] sm:px-4 sm:py-2 sm:text-sm"
+                          />
+                        ) : null}
                       </div>
                       {session.label && !isGeneratedSessionLabel(session.label) ? (
                         <p className="mt-0.5 text-xs text-or-light">

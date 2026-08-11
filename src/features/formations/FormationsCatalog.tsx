@@ -122,7 +122,7 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
       </div>
 
       {ordered.length > 0 || isAdminMode ? (
-        <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+        <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 sm:gap-4 md:gap-5 lg:grid-cols-3 lg:gap-5">
           {ordered.map((f) =>
             isAdminMode ? (
               <FormationCardAdmin

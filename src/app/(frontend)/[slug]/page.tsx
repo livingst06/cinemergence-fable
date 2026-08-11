@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { getFormationBySlug, getFormations } from "@/lib/data";
-import { formationPath } from "@/lib/defaults";
+import { formationPath } from "@/lib/formation-types";
 
 type Props = {
   params: Promise<{ slug: string }>;

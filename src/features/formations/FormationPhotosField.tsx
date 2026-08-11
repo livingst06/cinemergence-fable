@@ -19,7 +19,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ImagePlus, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Label } from "@/components/ui/label";
@@ -108,7 +108,10 @@ export function FormationPhotosField({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const suppressClickRef = useRef(false);
   const photosRef = useRef(photos);
-  photosRef.current = photos;
+
+  useEffect(() => {
+    photosRef.current = photos;
+  }, [photos]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),

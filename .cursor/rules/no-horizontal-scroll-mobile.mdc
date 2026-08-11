@@ -1,0 +1,15 @@
+---
+description: No horizontal page scroll on mobile — layouts must fit viewport width
+globs: src/**/*.{tsx,css}
+alwaysApply: false
+---
+
+# Mobile: no horizontal scroll
+
+On viewports below `md` (~768px):
+
+- Never force page-level horizontal scrolling to see content.
+- Avoid fixed `min-width` wider than the viewport (e.g. `min-w-[34rem]`) on page layouts.
+- Prefer `w-full min-w-0 max-w-full`, fluid grids (`grid-cols-7` that shrink), and `truncate` for dense labels.
+- `overflow-x-auto` is allowed only inside a clearly bounded widget if absolutely necessary — default is fit-to-width.
+- Global guard: `html`/`body` use `overflow-x: clip`.

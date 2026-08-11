@@ -153,10 +153,14 @@
     -webkit-text-size-adjust: 100%;
     hyphens: none;
     -webkit-hyphens: none;
+    max-width: 100%;
+    overflow-x: clip;
   }
 
   body {
     @apply bg-noir text-cream font-sans antialiased;
+    max-width: 100%;
+    overflow-x: clip;
   }
 
   p,
@@ -168,7 +172,7 @@
     text-justify: inter-word;
     hyphens: none;
     -webkit-hyphens: none;
-    overflow-wrap: normal;
+    overflow-wrap: anywhere;
     word-break: normal;
   }
 
@@ -299,7 +303,7 @@
 
 @layer utilities {
   .container-page {
-    @apply mx-auto w-full max-w-6xl px-5 md:px-8;
+    @apply mx-auto w-full max-w-6xl min-w-0 px-4 sm:px-5 md:px-8;
   }
 
   .eyebrow {

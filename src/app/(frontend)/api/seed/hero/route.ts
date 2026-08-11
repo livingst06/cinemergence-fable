@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 
+import { isSeedHttpAllowed } from "@/lib/env-guards";
 import { prepareHeroAssets } from "@/seed/media-lib";
 
 export async function POST() {
-  if (process.env.NODE_ENV === "production") {
+  if (!isSeedHttpAllowed()) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

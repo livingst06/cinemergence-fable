@@ -115,7 +115,7 @@ export function IntervenantsAdmin({ intervenants }: IntervenantsAdminProps) {
             }
             className="mb-8 md:mb-10"
           />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
             {professionnels.map(renderCard)}
             {isAdminMode ? (
               <AdminAddIntervenantCard
@@ -139,7 +139,7 @@ export function IntervenantsAdmin({ intervenants }: IntervenantsAdminProps) {
               }
               className="mb-8 md:mb-10"
             />
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
               {formateurs.map(renderCard)}
               {isAdminMode ? (
                 <AdminAddIntervenantCard

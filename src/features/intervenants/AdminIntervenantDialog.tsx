@@ -96,6 +96,7 @@ export function AdminIntervenantDialog({
   useEffect(() => {
     if (!open) return;
     if (editing) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional form hydrate
       setForm(fromIntervenant(editing));
       setPhoto(photoFromIntervenant(editing));
       setSlugTouched(true);

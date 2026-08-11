@@ -4,35 +4,12 @@ import os from "os";
 import path from "path";
 import { NextResponse } from "next/server";
 
-import { requireAdmin } from "@/lib/session-profile";
-import { getPayloadClient } from "@/lib/payload";
+import { extForImageMime, validateAdminImageFile } from "@/lib/admin-image-upload";
 import { resolveDisplayMediaUrl } from "@/lib/media-utils";
+import { getPayloadClient } from "@/lib/payload";
+import { requireAdmin } from "@/lib/session-profile";
 
 export const runtime = "nodejs";
-
-const MAX_BYTES = 8 * 1024 * 1024;
-const ALLOWED = new Set([
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-  "image/heic",
-  "image/heif",
-]);
-
-function extForMime(mime: string): string {
-  switch (mime) {
-    case "image/png":
-      return ".png";
-    case "image/webp":
-      return ".webp";
-    case "image/heic":
-    case "image/heif":
-      return ".heic";
-    default:
-      return ".jpg";
-  }
-}
 
 export async function POST(request: Request) {
   const auth = await requireAdmin();
@@ -47,20 +24,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Fichier manquant" }, { status: 400 });
     }
 
-    if (file.size <= 0 || file.size > MAX_BYTES) {
-      return NextResponse.json(
-        { error: "Fichier trop volumineux (max 8 Mo)" },
-        { status: 400 },
-      );
-    }
-
-    const mime = (file.type || "application/octet-stream").toLowerCase();
-    if (!ALLOWED.has(mime) && !mime.startsWith("image/")) {
-      return NextResponse.json({ error: "Type d'image non supporté" }, { status: 400 });
+    const validation = validateAdminImageFile(file);
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const ext = extForMime(mime);
+    const ext = extForImageMime(validation.mime);
     const tmpPath = path.join(os.tmpdir(), `cinemergence-formation-${randomUUID()}${ext}`);
     fs.writeFileSync(tmpPath, buffer);
 

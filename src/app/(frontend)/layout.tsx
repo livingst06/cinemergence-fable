@@ -66,8 +66,20 @@ export default async function FrontendLayout({
   const jsonLd = organizationJsonLd(site);
 
   return (
-    <ClerkProvider appearance={clerkAppearance}>
-      <html lang="fr" className={`${bebas.variable} ${jakarta.variable} dark h-full`} suppressHydrationWarning>
+    <ClerkProvider
+      appearance={clerkAppearance}
+      allowedRedirectOrigins={[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://192.168.1.21:3000",
+      ]}
+    >
+      <html
+        lang="fr"
+        className={`${bebas.variable} ${jakarta.variable} dark h-full`}
+        data-scroll-behavior="smooth"
+        suppressHydrationWarning
+      >
         <body className="min-h-full flex flex-col">
           <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
           <script

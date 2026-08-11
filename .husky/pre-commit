@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+set -e
+pnpm exec lint-staged
+pnpm typecheck
+pnpm check:arch
+pnpm test

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Reveal } from "@/components/ui/Reveal";
 import { Section, SectionHeader } from "@/components/ui/Section";
-import type { FinancementDispositif } from "@/lib/defaults";
+import type { FinancementDispositif } from "@/lib/financement-content";
 
 type FinancementSectionProps = {
   dispositifs: FinancementDispositif[];

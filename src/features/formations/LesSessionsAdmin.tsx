@@ -133,11 +133,11 @@ export function LesSessionsAdmin({
       <section className="py-10 md:py-20 lg:py-28">
         <div
           className={cn(
-            "container-page",
+            "container-page min-w-0",
             view === "calendar" ? "max-w-6xl" : "max-w-4xl",
           )}
         >
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-6">
             {view === "list" ? (
               <>
                 <AdminDemandesPanel

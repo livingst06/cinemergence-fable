@@ -9,10 +9,10 @@ import {
   formatEurosLabel,
   formatFormationSessionLabel,
 } from "@/lib/inscription-status";
-import { getPayloadClient } from "@/lib/payload";
+import { formationPath } from "@/lib/formation-types";
+import { findInscriptionById } from "@/lib/inscriptions-query";
 import { releaseExpiredHolds } from "@/lib/places";
 import { getSessionProfile } from "@/lib/session-profile";
-import { formationPath } from "@/lib/defaults";
 import { syncInscriptionIfStripePaid } from "@/lib/stripe-fulfillment";
 
 type Props = { params: Promise<{ inscriptionId: string }> };
@@ -40,15 +40,9 @@ export default async function PaiementPage({ params }: Props) {
     );
   }
 
-  const payload = await getPayloadClient();
   let doc;
   try {
-    doc = await payload.findByID({
-      collection: "inscriptions",
-      id: inscriptionId,
-      depth: 2,
-      overrideAccess: true,
-    });
+    doc = await findInscriptionById(inscriptionId);
   } catch {
     notFound();
   }
@@ -88,7 +82,10 @@ export default async function PaiementPage({ params }: Props) {
   }
 
   const expires = doc.holdExpiresAt ? new Date(String(doc.holdExpiresAt)) : null;
-  if (!expires || expires.getTime() <= Date.now()) {
+  // Hold window is wall-clock — intentional for checkout UX.
+  // eslint-disable-next-line react-hooks/purity -- server page hold expiry check
+  const nowMs = Date.now();
+  if (!expires || expires.getTime() <= nowMs) {
     return (
       <div className="container-page py-16 md:py-24">
         <div className="mx-auto max-w-lg space-y-6 text-center">
@@ -152,7 +149,7 @@ export default async function PaiementPage({ params }: Props) {
   );
   const minutesLeft = Math.max(
     1,
-    Math.ceil((expires.getTime() - Date.now()) / 60_000),
+    Math.ceil((expires.getTime() - nowMs) / 60_000),
   );
 
   return (

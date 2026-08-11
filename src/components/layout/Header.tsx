@@ -9,8 +9,8 @@ import { AdminModeToggle } from "@/features/admin/AdminModeToggle";
 import { HeaderUserMenu } from "@/components/layout/HeaderUserMenu";
 import { Logo } from "@/components/layout/Logo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import type { FormationData } from "@/lib/defaults";
-import { formationPath } from "@/lib/defaults";
+import type { FormationData } from "@/lib/formation-types";
+import { formationPath } from "@/lib/formation-types";
 import { cn } from "@/lib/utils";
 
 type HeaderProps = {
@@ -71,10 +71,10 @@ export function Header({ formations }: HeaderProps) {
   return (
     <>
       <header className="site-header fixed inset-x-0 top-0 z-[99999] border-b border-border bg-noir-secondary/95 pt-[env(safe-area-inset-top,0px)] backdrop-blur-md">
-        <div className="container-page flex h-16 items-center gap-3 md:h-[4.5rem]">
+        <div className="container-page flex h-16 min-w-0 items-center gap-2 md:h-[4.5rem] md:gap-3">
           <Logo />
 
-          <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2 md:gap-3">
             <nav
               className="mr-1 hidden items-center gap-5 xl:gap-6 lg:flex"
               aria-label="Navigation principale"

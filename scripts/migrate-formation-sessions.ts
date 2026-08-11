@@ -29,7 +29,7 @@ loadEnvFile(path.resolve(".env"));
 
 async function main() {
   const { getPayloadClient } = await import("../src/lib/payload");
-  const { datesFromSlug, placesFromSlug } = await import("../src/lib/defaults");
+  const { datesFromSlug, placesFromSlug } = await import("../src/lib/formations-defaults");
   const payload = await getPayloadClient();
 
   const formations = await payload.find({

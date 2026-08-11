@@ -7,7 +7,7 @@ import { ButtonLink } from "@/components/ui/ButtonLink";
 import {
   defaultFinancement,
   financementGuide,
-} from "@/lib/defaults";
+} from "@/lib/financement-content";
 
 const profils = [
   { id: "debutant", label: "Je débute dans le cinéma" },

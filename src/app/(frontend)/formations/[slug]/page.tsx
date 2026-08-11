@@ -17,7 +17,7 @@ import { FormationDetailGallery } from "@/features/formations/FormationDetailGal
 import { FormationSessionsSection } from "@/features/formations/FormationSessionsSection";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
-import { formationPath } from "@/lib/defaults";
+import { formationPath } from "@/lib/formation-types";
 import { formatFormationSessionLabel } from "@/lib/inscription-status";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
 import {

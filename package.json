@@ -2,7 +2,7 @@
   "name": "cinemergence-fable",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@10.12.1",
+  "packageManager": "pnpm@10.32.1",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -104,5 +104,12 @@
     "src/**/*.{ts,tsx}": [
       "eslint --max-warnings=0"
     ]
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "volta": {
+    "node": "24.19.0",
+    "pnpm": "10.32.1"
   }
 }

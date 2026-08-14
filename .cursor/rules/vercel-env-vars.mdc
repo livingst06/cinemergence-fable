@@ -29,11 +29,18 @@ Quand tu pousses ou déploies du code qui **dépend d'une nouvelle variable d'en
 
 ### Plus tard (à ne pas oublier)
 
-Quand on bascule en vrai paiement :
+Quand on bascule en vrai paiement **ou** qu’on merge Stripe sur `main` / `cinemergence.vercel.app` :
 
 - **Preview (préprod front)** → reste sur le **compte Stripe test** (`pk_test_` / `sk_test_` + webhook test).
 - **Production (front)** → **compte Stripe live / production** (`pk_live_` / `sk_live_` + endpoint webhook prod + `whsec_` live).
 - Ne jamais mettre des clés live sur Preview, ni des clés test sur Production une fois le split fait.
+
+**Rappel (12 août 2026)** : l’endpoint webhook prod `https://cinemergence.vercel.app/api/stripe/webhook` a été **désactivé** (404 tant que la route n’est pas sur `main`). Au passage en production / merge Stripe :
+
+1. Vérifier que la route `/api/stripe/webhook` est bien déployée sur prod
+2. **Recréer / réactiver** l’endpoint Stripe (Dashboard → Développeurs → Webhooks) vers cette URL
+3. Mettre le nouveau `whsec_` dans `STRIPE_WEBHOOK_SECRET` Vercel **Production**
+4. Redeployer la prod, puis envoyer un événement test depuis Stripe
 
 ## Base de données (important)
 

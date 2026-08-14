@@ -29,7 +29,7 @@ describe("landing Kheiron, places restantes", () => {
     const html = landing("early");
     expect(html).toContain("Dès la 6");
     expect(html).toContain("e</sup> place, le tarif passe à");
-    expect(html).toContain("330");
+    expect(html).toContain("890");
     expect(html).toContain("990");
     expect(landing("standard")).not.toContain("Dès la 6");
   });

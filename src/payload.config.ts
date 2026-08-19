@@ -59,6 +59,8 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || "",
     },
+    // Shared DB with feat branches: never auto-drop their tables from main.
+    push: false,
   }),
   plugins: getStoragePlugins(),
 });

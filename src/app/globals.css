@@ -6,7 +6,7 @@
 
 /*
  * Direction B — Plateau vivant
- * Mode jour (:root) · Mode nuit (.dark) · rouge velours cinéma
+ * Mode jour (:root) · Mode nuit (.dark) · gris-bleu acier
  */
 :root {
   --noir: #f5f1eb;
@@ -18,16 +18,23 @@
   --cream-soft: #2a2420;
   --muted-text: #6b635c;
 
-  --projector: #8b1a2b;
-  --projector-light: #a91e34;
-  --projector-glow: rgba(139, 26, 43, 0.35);
+  --projector: #5a6d80;
+  --projector-light: #7a8fa3;
+  --projector-glow: rgba(90, 109, 128, 0.35);
 
-  --or: #6b1220;
-  --or-light: #8b1a2b;
+  --or: #3d4f61;
+  --or-light: #5a6d80;
+  --or-glow: rgba(90, 109, 128, 0.4);
 
   --cool: #5a6d80;
   --cool-glow: #7a8fa3;
   --cool-mist: rgba(90, 109, 128, 0.12);
+
+  /* Conversion : bleu flashy */
+  --convert: #0077ff;
+  --convert-light: #4dabff;
+  --convert-deep: #0055d4;
+  --convert-glow: rgba(0, 119, 255, 0.55);
 
   --background: var(--noir);
   --foreground: var(--cream);
@@ -44,10 +51,13 @@
   --accent: var(--noir-tertiary);
   --accent-foreground: var(--or-light);
   --destructive: #dc2626;
-  --border: rgba(139, 26, 43, 0.14);
+  --border: rgba(90, 109, 128, 0.18);
   --input: rgba(18, 16, 14, 0.06);
   --ring: var(--or-light);
   --radius: 0.5rem;
+  --site-notice-h: 3.5rem;
+  --font-apple: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .dark {
@@ -60,16 +70,22 @@
   --cream-soft: #ebe4da;
   --muted-text: #9a9288;
 
-  --projector: #8b1a2b;
-  --projector-light: #c93550;
-  --projector-glow: rgba(139, 26, 43, 0.5);
+  --projector: #5a738c;
+  --projector-light: #8aa0b5;
+  --projector-glow: rgba(107, 130, 153, 0.5);
 
-  --or: #6b1220;
-  --or-light: #e8637a;
+  --or: #3d4f61;
+  --or-light: #8aa0b5;
+  --or-glow: rgba(107, 130, 153, 0.45);
 
   --cool: #3d4f61;
   --cool-glow: #6b8299;
   --cool-mist: rgba(61, 79, 97, 0.35);
+
+  --convert: #1a8cff;
+  --convert-light: #5cb8ff;
+  --convert-deep: #0077ff;
+  --convert-glow: rgba(26, 140, 255, 0.55);
 
   --background: var(--noir);
   --foreground: var(--cream);
@@ -85,8 +101,14 @@
   --muted-foreground: var(--muted-text);
   --accent: var(--noir-tertiary);
   --accent-foreground: var(--or-light);
-  --border: rgba(201, 53, 80, 0.14);
+  --border: rgba(107, 130, 153, 0.18);
   --input: rgba(246, 241, 234, 0.06);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --site-notice-h: 2.75rem;
+  }
 }
 
 @theme inline {
@@ -105,8 +127,11 @@
   --color-muted-text: var(--muted-text);
   --color-cool: var(--cool);
   --color-cool-glow: var(--cool-glow);
-  --font-sans: var(--font-jakarta);
-  --font-heading: var(--font-bebas);
+  --color-convert: var(--convert);
+  --color-convert-light: var(--convert-light);
+  --color-convert-deep: var(--convert-deep);
+  --font-sans: var(--font-apple);
+  --font-heading: var(--font-apple);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -211,10 +236,10 @@
         135deg,
         var(--projector-light) 0%,
         var(--projector) 55%,
-        #5c1018 100%
+        #2a3540 100%
       );
       box-shadow:
-        0 0 0 1px rgba(201, 53, 80, 0.25) inset,
+        0 0 0 1px rgba(138, 160, 181, 0.25) inset,
         0 4px 16px -4px var(--projector-glow);
     }
 
@@ -263,18 +288,18 @@
   h2,
   h3,
   h4 {
-    @apply font-heading uppercase tracking-[0.04em];
+    @apply font-heading font-semibold uppercase tracking-tight;
   }
 
   ::selection {
-    background: rgba(139, 26, 43, 0.4);
+    background: rgba(90, 109, 128, 0.4);
     color: var(--cream);
   }
 }
 
 @layer utilities {
   .container-page {
-    @apply mx-auto w-full max-w-6xl px-5 md:px-8;
+    @apply mx-auto w-full max-w-[1760px] px-4 md:px-6 lg:px-8;
   }
 
   .eyebrow {
@@ -292,16 +317,15 @@
   }
 
   .display-title {
-    /* Un cran plus doux pour limiter les orphelins sur titres longs */
-    @apply font-heading text-[clamp(2.4rem,6.5vw,4.5rem)] leading-[0.95] tracking-[0.02em] text-balance;
+    @apply font-heading text-[clamp(2.4rem,6.5vw,4.5rem)] font-semibold leading-[0.95] tracking-tight text-balance;
   }
 
   .section-title {
-    @apply font-heading text-[clamp(1.85rem,4.4vw,2.85rem)] leading-[1.05] tracking-[0.03em] text-balance;
+    @apply font-heading text-[clamp(1.85rem,4.4vw,2.85rem)] font-semibold leading-[1.05] tracking-tight text-balance;
   }
 
   .text-tungsten {
-    background: linear-gradient(135deg, var(--projector-light) 0%, #f0a0ad 100%);
+    background: linear-gradient(135deg, var(--projector-light) 0%, #b8c5d1 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -318,7 +342,7 @@
     inset: 0;
     z-index: 0;
     background:
-      radial-gradient(ellipse 90% 70% at 15% -5%, rgba(139, 26, 43, 0.18), transparent 55%),
+      radial-gradient(ellipse 90% 70% at 15% -5%, rgba(90, 109, 128, 0.18), transparent 55%),
       radial-gradient(ellipse 70% 60% at 95% 10%, var(--cool-mist), transparent 50%),
       linear-gradient(180deg, transparent 60%, rgba(5, 5, 4, 0.8) 100%);
     pointer-events: none;
@@ -372,29 +396,57 @@
   .plateau-glow,
   .gold-glow {
     box-shadow:
-      0 0 0 1px rgba(139, 26, 43, 0.15),
-      0 8px 40px -8px rgba(139, 26, 43, 0.3),
+      0 0 0 1px rgba(90, 109, 128, 0.15),
+      0 8px 40px -8px rgba(90, 109, 128, 0.3),
       0 24px 64px -32px rgba(61, 79, 97, 0.2);
   }
 
-  .btn-cta {
-    @apply relative overflow-hidden border-0 font-semibold uppercase tracking-wider text-cream;
-    background: linear-gradient(135deg, var(--projector-light) 0%, var(--projector) 55%, #5c1018 100%);
+  .btn-cta,
+  .btn-convert {
+    @apply relative overflow-hidden border-0 font-semibold uppercase tracking-wider;
+    color: #ffffff;
+    background: linear-gradient(
+      135deg,
+      var(--convert-deep) 0%,
+      var(--convert) 55%,
+      var(--convert-light) 100%
+    );
     box-shadow:
-      0 0 0 1px rgba(201, 53, 80, 0.25) inset,
-      0 4px 24px -4px var(--projector-glow);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+      0 0 0 1px rgba(77, 171, 255, 0.4) inset,
+      0 4px 24px -4px var(--convert-glow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
   }
 
-  .btn-cta:hover {
+  .btn-cta:hover,
+  .btn-convert:hover {
     transform: translateY(-1px);
+    filter: brightness(1.05);
     box-shadow:
-      0 0 0 1px rgba(201, 53, 80, 0.4) inset,
-      0 8px 32px -4px var(--projector-glow);
+      0 0 0 1px rgba(77, 171, 255, 0.55) inset,
+      0 8px 32px -4px var(--convert-glow);
   }
 
-  .btn-cta:active {
+  .btn-cta:active,
+  .btn-convert:active {
     transform: translateY(0);
+    filter: none;
+  }
+
+  .btn-cta:disabled,
+  .btn-convert:disabled {
+    filter: grayscale(0.35) brightness(0.85);
+    transform: none;
+    box-shadow: none;
+  }
+
+  .site-notice-banner {
+    color: #ffffff;
+    background: linear-gradient(
+      135deg,
+      var(--convert-deep) 0%,
+      var(--convert) 55%,
+      var(--convert-light) 100%
+    );
   }
 
   .btn-outline-warm {
@@ -403,9 +455,9 @@
   }
 
   .btn-outline-warm:hover {
-    border-color: rgba(201, 53, 80, 0.45);
-    background: rgba(139, 26, 43, 0.12);
-    color: var(--or-light);
+    border-color: rgba(0, 119, 255, 0.55);
+    background: rgba(0, 119, 255, 0.16);
+    color: var(--convert-light);
   }
 
   .catalogue-scroll {
@@ -452,7 +504,7 @@
 
   .truth-card-vrai {
     @apply mt-4 font-heading text-xl leading-snug md:text-2xl;
-    background: linear-gradient(135deg, var(--projector-light) 0%, #f0a0ad 100%);
+    background: linear-gradient(135deg, var(--projector-light) 0%, #b8c5d1 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -470,7 +522,7 @@
       left: 10%;
       right: 10%;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(201, 53, 80, 0.3), transparent);
+      background: linear-gradient(90deg, transparent, rgba(138, 160, 181, 0.3), transparent);
     }
   }
 

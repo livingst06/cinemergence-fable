@@ -8,7 +8,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/80",
+        default: "bg-convert text-white hover:bg-convert-light",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
@@ -49,7 +49,9 @@ function Button({
   const classValue =
     typeof className === "string" ? className : className ? String(className) : "";
   const customSurface =
-    classValue.includes("btn-cta") || classValue.includes("btn-outline-warm");
+    classValue.includes("btn-cta") ||
+    classValue.includes("btn-convert") ||
+    classValue.includes("btn-outline-warm");
 
   return (
     <ButtonPrimitive

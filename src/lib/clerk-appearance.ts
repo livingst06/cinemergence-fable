@@ -1,6 +1,6 @@
 /**
  * Thème Clerk aligné sur la direction artistique « Plateau vivant » du site
- * (rouge velours cinéma, fond noir profond, typographies Bebas Neue / Plus Jakarta Sans).
+ * (rouge velours cinéma, fond noir profond, typographie San Francisco / system-ui).
  * Les valeurs pointent vers les variables CSS définies dans src/app/globals.css
  * afin de suivre automatiquement le mode clair/sombre du site.
  */
@@ -14,7 +14,7 @@ export const clerkAppearance = {
     colorInputText: "var(--foreground)",
     colorDanger: "var(--destructive)",
     colorNeutral: "var(--muted-foreground)",
-    fontFamily: "var(--font-jakarta)",
+    fontFamily: "var(--font-apple)",
     borderRadius: "var(--radius)",
   },
   elements: {

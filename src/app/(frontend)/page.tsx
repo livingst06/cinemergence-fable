@@ -2,35 +2,24 @@ import type { Metadata } from "next";
 
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { HeroVideoBackground } from "@/components/sections/HeroVideoBackground";
-import { MediaFrame } from "@/components/ui/MediaFrame";
-import { Reveal } from "@/components/ui/Reveal";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { CtaFinal } from "@/features/home/CtaFinal";
-import { CredibilityBar } from "@/features/home/CredibilityBar";
-import { PlateauCarousel } from "@/features/home/PlateauCarousel";
+import { FormationsCarousel } from "@/features/home/FormationsCarousel";
 import { StickyCta } from "@/features/home/StickyCta";
 import { Temoignages } from "@/features/home/Temoignages";
 import { FinancementSection } from "@/features/financement/FinancementSection";
-import { FormationCard } from "@/features/formations/FormationCard";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { NewsletterForm } from "@/features/contact/NewsletterForm";
 import {
-  getCarouselMedia,
   getFinancementDispositifs,
   getFormations,
   getIntervenants,
   getSiteSettings,
   getTemoignages,
 } from "@/lib/data";
+import { resolveFormationCoverUrl } from "@/lib/site-media";
 
 export const revalidate = 300;
-
-const heroPoints = [
-  "Réalisateur primé",
-  "Caméras RED / ARRI",
-  "Invités & intervenants pro",
-  "Livrables prêts pour castings",
-];
 
 const schoolBenefits = [
   "Conditions réelles de plateau",
@@ -39,13 +28,6 @@ const schoolBenefits = [
   "Livrable concret par formation",
   "Montage / post-prod selon parcours",
   "Finançable AFDAS · OPCO · CPF · France Travail",
-];
-
-const founderHighlights = [
-  "Prix Orange Beaumarchais & Canal+ Talents",
-  "Sacré Cœur — Grand Prix d'Oujda, Prix du public (New York Film Festival)",
-  "Le Tombeau des Anges — prix à Los Angeles, Dubaï et Cannes",
-  "Producteur avec Bakelite Films (dont Rose, Hassan Zahi)",
 ];
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -58,40 +40,51 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [site, formations, intervenants, temoignages, financement, carouselPhotos] =
-    await Promise.all([
-      getSiteSettings(),
-      getFormations(),
-      getIntervenants(),
-      getTemoignages(),
-      getFinancementDispositifs(),
-      getCarouselMedia(),
-    ]);
+  const [site, formations, intervenants, temoignages, financement] = await Promise.all([
+    getSiteSettings(),
+    getFormations(),
+    getIntervenants(),
+    getTemoignages(),
+    getFinancementDispositifs(),
+  ]);
 
-  const prioritaires = formations.filter((f) => f.prioritaire);
-  const apercu = prioritaires.length > 0 ? prioritaires : formations.slice(0, 2);
-  const autresApercu = formations.filter((f) => !apercu.some((p) => p.slug === f.slug)).slice(0, 4);
+  const formationSlides = [...formations]
+    .sort((a, b) => Number(b.prioritaire) - Number(a.prioritaire))
+    .map((f) => ({
+      slug: f.slug,
+      titre: f.titre,
+      src: resolveFormationCoverUrl(f.slug, f.coverImageUrl),
+      alt: f.titre,
+    }));
+
+  const heroQualifications = [
+    site.qualiopiLabel || "Organisme certifié Qualiopi",
+    `NDA ${site.nda}`,
+    "Finançable AFDAS · OPCO · CPF · France Travail",
+  ];
 
   return (
     <>
-      <section className="cinematic-grain hero-slash relative min-h-[70vh] overflow-hidden bg-noir md:min-h-[75vh]">
+      <section className="cinematic-grain hero-slash relative min-h-[49vh] overflow-hidden bg-noir md:min-h-[52.5vh]">
         <HeroVideoBackground />
-        <div className="container-page relative z-10 flex min-h-[70vh] flex-col justify-center py-16 md:min-h-[75vh] md:py-20 lg:py-24">
-          <div className="max-w-3xl">
-            <p className="eyebrow animate-fade-up">École de formation cinéma · Paris</p>
-            <h1 className="display-title mt-6 animate-fade-up-delay-1 text-cream">
+        <div className="container-page relative z-10 flex min-h-[49vh] flex-col justify-start pt-8 pb-16 md:min-h-[52.5vh] md:pt-10 md:pb-20 lg:pt-12 lg:pb-24">
+          <div className="w-full lg:w-3/4">
+            <p className="eyebrow animate-fade-up">Paris · Marseille · Montpellier</p>
+            <h1 className="display-title mt-6 animate-fade-up-delay-1 text-[clamp(2.8rem,7.5vw,6.25rem)] text-cream">
               Cinémergence
             </h1>
-            <p className="mt-4 animate-fade-up-delay-1 text-xl font-heading uppercase tracking-wide text-tungsten md:text-2xl">
+            <p className="mt-4 animate-fade-up-delay-1 text-lg font-heading uppercase tracking-wide text-cool-glow md:text-xl">
               Le cinéma, en conditions réelles.
             </p>
-            <p className="mt-6 max-w-3xl animate-fade-up-delay-2 text-base leading-relaxed text-cream/85 md:text-lg">
-              Une immersion totale sur de vrais&nbsp;plateaux
-              <br />
-              avec un livrable concret pour chaque&nbsp;parcours.
-            </p>
+          </div>
+          <p className="mt-6 w-full animate-fade-up-delay-2 text-4xl leading-snug text-cream/85 md:text-[2.5rem] lg:text-5xl">
+            Une immersion totale sur de vrais&nbsp;plateaux
+            <br />
+            avec un livrable concret pour chaque&nbsp;parcours.
+          </p>
+          <div className="w-full lg:w-3/4">
             <ul className="mt-8 flex animate-fade-up-delay-2 flex-wrap gap-x-5 gap-y-2">
-              {heroPoints.map((point) => (
+              {heroQualifications.map((point) => (
                 <li
                   key={point}
                   className="flex items-center gap-2 whitespace-nowrap text-xs font-semibold uppercase tracking-[0.14em] text-cream/80 md:text-[11px]"
@@ -106,7 +99,7 @@ export default async function HomePage() {
             </ul>
             <div className="mt-10 flex animate-fade-up-delay-3 flex-col gap-4 sm:flex-row">
               <ButtonLink href="/formations" size="lg" className="btn-cta px-10">
-                Je vois les formations
+                Voir les formations
               </ButtonLink>
               <ButtonLink
                 href="/contact"
@@ -120,25 +113,35 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <CredibilityBar site={site} />
-
-      {carouselPhotos.length > 0 && (
-        <Section id="plateau">
-          <div className="container-page">
-            <SectionHeader
-              eyebrow="Résultats"
-              title="Sur le plateau"
-              description={
-                <>
-                  <p>Répétitions, tournages et mises en situation filmées</p>
-                  <p className="mt-1">ce que tu vis avant d&apos;expliquer le reste.</p>
-                </>
-              }
-            />
-            <PlateauCarousel slides={carouselPhotos} />
+      <Section>
+        <div className="container-page">
+          <SectionHeader
+            eyebrow="Intervenants"
+            title="Nos intervenants"
+            description="Des professionnels en activité qui transmettent leur exigence sur le plateau."
+          />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {intervenants
+              .filter(
+                (i) =>
+                  (i.categorie ?? "professionnel") === "professionnel" &&
+                  i.slug !== "karina-testa",
+              )
+              .map((i) => (
+                <IntervenantCard key={i.slug} intervenant={i} />
+              ))}
           </div>
-        </Section>
-      )}
+          <div className="mt-10 text-center">
+            <ButtonLink
+              variant="outline"
+              href="/intervenants"
+              className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
+            >
+              Je vois toutes les fiches
+            </ButtonLink>
+          </div>
+        </div>
+      </Section>
 
       <Section id="apropos">
         <div className="container-page">
@@ -186,118 +189,12 @@ export default async function HomePage() {
               </>
             }
           />
-          <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
-            {[...apercu, ...autresApercu].map((f) => (
-              <FormationCard key={f.slug} formation={f} />
-            ))}
-          </div>
+          <FormationsCarousel slides={formationSlides} />
           <div className="mt-10 text-center">
-            <ButtonLink href="/formations" className="btn-cta">
-              Je vois toutes les formations
+            <ButtonLink href="/formations" size="lg" className="btn-cta px-10">
+              Voir toutes les formations
             </ButtonLink>
           </div>
-        </div>
-      </Section>
-
-      <Section>
-        <div className="container-page">
-          <SectionHeader
-            eyebrow="Intervenants"
-            title="Nos intervenants"
-            description="Des professionnels en activité qui transmettent leur exigence sur le plateau."
-          />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {intervenants
-              .filter(
-                (i) =>
-                  (i.categorie ?? "professionnel") === "professionnel" &&
-                  i.slug !== "karina-testa",
-              )
-              .map((i) => (
-              <IntervenantCard key={i.slug} intervenant={i} />
-            ))}
-          </div>
-          <div className="mt-10 text-center">
-            <ButtonLink
-              variant="outline"
-              href="/intervenants"
-              className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
-            >
-              Je vois toutes les fiches
-            </ButtonLink>
-          </div>
-        </div>
-      </Section>
-
-      <Section>
-        <div className="container-page grid gap-12 lg:grid-cols-5 lg:items-center">
-          <Reveal className="lg:col-span-2">
-            <MediaFrame
-              src={site.founderPhotoUrl}
-              mimeType={site.founderPhotoMimeType}
-              alt="Choukri Rouha sur le plateau de tournage"
-              aspect="portrait"
-              className="card-stage overflow-hidden rounded-lg border border-white/[0.06]"
-            />
-          </Reveal>
-          <div className="space-y-8 lg:col-span-3">
-            <SectionHeader
-              eyebrow="Fondateur"
-              title="Choukri Rouha"
-              description="Réalisateur & fondateur de Cinémergence"
-              align="left"
-            />
-            <p className="text-sm leading-relaxed text-muted-text">
-              Formé au Cours Florent, Choukri Rouha débute comme acteur, puis s&apos;impose à
-              l&apos;écriture et à la réalisation. Il a fondé Cinémergence pour offrir un cadre
-              pro, du matériel cinéma et un résultat concret à chaque stagiaire.
-            </p>
-            <ul className="space-y-3">
-              {founderHighlights.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-cream/90">
-                  <span
-                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-or shadow-[0_0_6px_var(--or-glow)]"
-                    aria-hidden
-                  />
-                  <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </Section>
-
-      <Section>
-        <div className="container-page">
-          <SectionHeader eyebrow="Pourquoi Cinémergence ?" title="Le mot du fondateur" />
-          <Reveal>
-            <blockquote className="card-stage mx-auto max-w-4xl p-8 md:p-12">
-              <p className="text-base leading-relaxed text-cream/90 md:text-lg">
-                &ldquo; J&apos;ai commencé comme beaucoup : sans contact, sans moyens, juste avec
-                l&apos;envie de jouer et d&apos;apprendre. À l&apos;époque, faire une bande démo
-                coûtait une fortune, et rares étaient ceux qui pouvaient se payer un vrai
-                tournage.
-              </p>
-              <p className="mt-4 text-base leading-relaxed text-cream/90 md:text-lg">
-                Mon expérience m&apos;a appris que le talent seul ne suffit pas si tu n&apos;as
-                pas les bons outils pour te montrer. J&apos;ai imaginé cette école de formation
-                pour changer ça.
-              </p>
-              <p className="mt-4 text-base leading-relaxed text-cream/90 md:text-lg">
-                Offrir à chaque stagiaire un cadre pro, du matériel cinéma, une direction
-                exigeante et surtout un résultat concret — des images et des compétences
-                exploitables.
-              </p>
-              <p className="mt-4 text-base leading-relaxed text-cream/90 md:text-lg">
-                Mon objectif est de donner une vraie chance à chacun. Parce
-                qu&apos;aujourd&apos;hui, ce qui compte, c&apos;est ce que tu montres à
-                l&apos;écran. &rdquo;
-              </p>
-              <footer className="mt-8 text-sm font-semibold text-or-light">
-                — Choukri Rouha, fondateur
-              </footer>
-            </blockquote>
-          </Reveal>
         </div>
       </Section>
 

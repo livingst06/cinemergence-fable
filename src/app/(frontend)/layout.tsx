@@ -1,30 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Bebas_Neue, Plus_Jakarta_Sans } from "next/font/google";
 
 import { Analytics } from "@/components/Analytics";
 import { CookieBanner } from "@/components/CookieBanner";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { SiteNoticeBanner } from "@/components/layout/SiteNoticeBanner";
 import { Toaster } from "@/components/ui/sonner";
 import { getFormations, getSiteSettings } from "@/lib/data";
 import { clerkAppearance } from "@/lib/clerk-appearance";
 import { organizationJsonLd } from "@/lib/seo";
 
 import "../globals.css";
-
-const bebas = Bebas_Neue({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-bebas",
-  display: "swap",
-});
-
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-jakarta",
-  display: "swap",
-});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -61,13 +48,14 @@ export default async function FrontendLayout({
 
   return (
     <ClerkProvider appearance={clerkAppearance}>
-      <html lang="fr" className={`${bebas.variable} ${jakarta.variable} dark h-full`} suppressHydrationWarning>
+      <html lang="fr" className="dark h-full" suppressHydrationWarning>
         <body className="min-h-full flex flex-col">
           <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
+          <SiteNoticeBanner nda={site.nda} />
           <Header
             formations={formations.map((f) => ({
               slug: f.slug,
@@ -75,7 +63,7 @@ export default async function FrontendLayout({
               prioritaire: f.prioritaire,
             }))}
           />
-          <main className="flex-1 overflow-x-clip pt-16 md:pt-[4.5rem]">{children}</main>
+          <main className="flex-1 overflow-x-clip pt-[calc(var(--site-notice-h)+4rem+env(safe-area-inset-top,0px))] md:pt-[calc(var(--site-notice-h)+4.5rem+env(safe-area-inset-top,0px))]">{children}</main>
           <Footer
             site={site}
             formations={formations.map((f) => ({

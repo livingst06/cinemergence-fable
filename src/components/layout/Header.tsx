@@ -69,7 +69,7 @@ export function Header({ formations }: HeaderProps) {
 
   return (
     <>
-      <header className="site-header fixed inset-x-0 top-0 z-[99999] border-b border-border bg-noir-secondary/95 pt-[env(safe-area-inset-top,0px)] backdrop-blur-md">
+      <header className="site-header fixed inset-x-0 top-[calc(var(--site-notice-h)+env(safe-area-inset-top,0px))] z-[99999] border-b border-border bg-noir-secondary/95 backdrop-blur-md">
         <div className="container-page flex h-16 items-center justify-between gap-3 md:h-[4.5rem]">
           <Logo className="min-w-0 max-w-[55%] shrink" />
 
@@ -175,7 +175,7 @@ export function Header({ formations }: HeaderProps) {
           aria-label="Fermer le menu"
         />
         <nav
-          className="mobile-nav-drawer absolute left-0 right-0 top-16 max-h-[calc(100dvh-4rem-env(safe-area-inset-top))] overflow-y-auto border-b border-border bg-noir-secondary shadow-2xl md:top-[4.5rem]"
+          className="mobile-nav-drawer absolute left-0 right-0 top-[calc(var(--site-notice-h)+4rem+env(safe-area-inset-top,0px))] max-h-[calc(100dvh-var(--site-notice-h)-4rem-env(safe-area-inset-top))] overflow-y-auto border-b border-border bg-noir-secondary shadow-2xl md:top-[calc(var(--site-notice-h)+4.5rem+env(safe-area-inset-top,0px))] md:max-h-[calc(100dvh-var(--site-notice-h)-4.5rem-env(safe-area-inset-top))]"
           aria-label="Navigation mobile"
         >
           <div className="container-page flex flex-col gap-1 py-4 pb-8">

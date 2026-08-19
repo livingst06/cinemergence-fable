@@ -5,18 +5,23 @@ import { Placeholder } from "@/components/ui/Placeholder";
 import { Section } from "@/components/ui/Section";
 import { PageHero } from "@/components/sections/PageHero";
 import { getGalleryMedia } from "@/lib/data";
+import { isImageMimeType } from "@/lib/media-utils";
+import { staticInterviewVideos } from "@/lib/site-media";
 
 export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Galerie — Tournages et livrables",
   description:
-    "Photos et vidéos des formations Cinémergence : plateaux de tournage et livrables des élèves.",
+    "Interviews d'élèves, photos et extraits des formations Cinémergence : plateaux de tournage et livrables.",
   alternates: { canonical: "/galerie" },
 };
 
 export default async function GaleriePage() {
   const media = await getGalleryMedia();
+  const plateau = media.filter(
+    (item) => item.url && isImageMimeType(item.mimeType, item.url),
+  );
 
   const placeholders = [
     "Plateau de tournage — Formation",
@@ -30,7 +35,19 @@ export default async function GaleriePage() {
   return (
     <>
       <PageHero
-        eyebrow="Médias"
+        title="Les interviews"
+        description={
+          <p className="text-pretty text-xl leading-relaxed md:text-2xl">
+            Paroles d&apos;élèves, filmées pendant les formations
+          </p>
+        }
+      >
+        <div className="mt-8 max-w-4xl md:mt-10">
+          <GalleryGrid items={staticInterviewVideos} compact />
+        </div>
+      </PageHero>
+      <PageHero
+        headingAs="h2"
         title="Sur le plateau"
         description={
           <p className="text-pretty text-xl leading-relaxed md:text-2xl">
@@ -40,9 +57,9 @@ export default async function GaleriePage() {
       />
       <Section className="pt-8 pb-20 md:pt-10 md:pb-28">
         <div className="container-page">
-          {media.length > 0 ? (
+          {plateau.length > 0 ? (
             <GalleryGrid
-              items={media.flatMap((item) =>
+              items={plateau.flatMap((item) =>
                 item.url
                   ? [
                       {

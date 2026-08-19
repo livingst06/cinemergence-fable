@@ -113,15 +113,6 @@ export default async function HomePage() {
                 <IntervenantCard key={i.slug} intervenant={i} />
               ))}
           </div>
-          <div className="mt-10 text-center">
-            <ButtonLink
-              variant="outline"
-              href="/intervenants"
-              className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
-            >
-              Je vois toutes les fiches
-            </ButtonLink>
-          </div>
         </div>
       </Section>
 

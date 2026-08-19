@@ -1,11 +1,12 @@
 "use client";
 
 import { Dialog } from "@base-ui/react/dialog";
-import { X } from "lucide-react";
+import { Play, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { MediaFrame } from "@/components/ui/MediaFrame";
 import { isVideoMimeType } from "@/lib/media-utils";
+import { cn } from "@/lib/utils";
 
 export type GalleryGridItem = {
   id: string;
@@ -16,13 +17,15 @@ export type GalleryGridItem = {
 
 type GalleryGridProps = {
   items: GalleryGridItem[];
+  /** Grille plus dense — interviews / extraits courts. */
+  compact?: boolean;
 };
 
 function isVideo(item: GalleryGridItem) {
   return isVideoMimeType(item.mimeType) || /\.(mp4|webm|mov)(\?|$)/i.test(item.url);
 }
 
-export function GalleryGrid({ items }: GalleryGridProps) {
+export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
   const [openId, setOpenId] = useState<string | null>(null);
   const active = useMemo(
     () => items.find((item) => item.id === openId) ?? null,
@@ -31,7 +34,14 @@ export function GalleryGrid({ items }: GalleryGridProps) {
 
   return (
     <>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        className={cn(
+          "grid",
+          compact
+            ? "grid-cols-2 gap-3 sm:grid-cols-3"
+            : "gap-4 sm:grid-cols-2 lg:grid-cols-3",
+        )}
+      >
         {items.map((item) => (
           <article
             key={item.id}
@@ -44,6 +54,11 @@ export function GalleryGrid({ items }: GalleryGridProps) {
               aspect="video"
               className="h-full w-full rounded-none border-0"
             />
+            {isVideo(item) && (
+              <span className="pointer-events-none absolute bottom-3 left-3 z-[1] flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-noir-deep/75 text-cream backdrop-blur-sm">
+                <Play className="size-3.5 fill-cream" />
+              </span>
+            )}
             <button
               type="button"
               className="absolute inset-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-convert-light focus-visible:ring-inset"

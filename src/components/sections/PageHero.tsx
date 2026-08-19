@@ -5,13 +5,19 @@ type PageHeroProps = {
   title: ReactNode;
   description?: ReactNode;
   children?: React.ReactNode;
+  headingAs?: "h1" | "h2";
 };
 
-export function PageHero({ title, description, children }: PageHeroProps) {
+export function PageHero({
+  title,
+  description,
+  children,
+  headingAs: Heading = "h1",
+}: PageHeroProps) {
   return (
     <section className="relative overflow-hidden bg-noir pt-12 pb-10 md:pt-16 md:pb-14">
       <div className="container-page">
-        <h1 className="display-title max-w-5xl text-cream">{title}</h1>
+        <Heading className="display-title max-w-5xl text-cream">{title}</Heading>
         {description && (
           <div className="mt-5 max-w-4xl text-justify text-base leading-relaxed text-muted-text">
             {typeof description === "string" ? (

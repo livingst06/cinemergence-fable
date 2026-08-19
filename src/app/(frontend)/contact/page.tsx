@@ -39,8 +39,8 @@ export default async function ContactPage({ searchParams }: Props) {
         }
       />
       <Section>
-        <div className="container-page grid gap-12 lg:grid-cols-5">
-          <div className="lg:col-span-3">
+        <div className="container-page grid gap-12 xl:grid-cols-5">
+          <div className="xl:col-span-3">
             <SectionHeader
               eyebrow="Formulaire"
               title="Envoie ta demande"
@@ -56,7 +56,7 @@ export default async function ContactPage({ searchParams }: Props) {
               defaultType={defaultType}
             />
           </div>
-          <aside className="lg:col-span-2 space-y-6">
+          <aside className="xl:col-span-2 space-y-6">
             <div className="card-stage p-6">
               <h3 className="font-heading text-xl text-cream">Coordonnées</h3>
               <ul className="mt-4 space-y-3 text-sm text-muted-text">

@@ -72,7 +72,7 @@ export default async function AssociationPage() {
                         className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-or shadow-[0_0_6px_var(--or-glow)]"
                         aria-hidden
                       />
-                      <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
+                      <p className="min-w-0 flex-1 text-left md:text-justify leading-relaxed">{item}</p>
                     </li>
                   ))}
                 </ul>

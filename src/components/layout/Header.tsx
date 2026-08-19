@@ -73,7 +73,7 @@ export function Header({ formations }: HeaderProps) {
         <div className="container-page flex h-16 items-center justify-between gap-3 md:h-[4.5rem]">
           <Logo className="min-w-0 max-w-[55%] shrink" />
 
-          <nav className="hidden items-center gap-5 xl:gap-6 lg:flex" aria-label="Navigation principale">
+          <nav className="hidden items-center gap-5 xl:flex xl:gap-6" aria-label="Navigation principale">
             <Link href="/" className={navLinkClass(pathname === "/")} aria-current={pathname === "/" ? "page" : undefined}>
               Accueil
             </Link>
@@ -149,14 +149,14 @@ export function Header({ formations }: HeaderProps) {
             </ButtonLink>
           </nav>
 
-          <div className="relative z-[1] flex shrink-0 items-center gap-3 lg:hidden">
+          <div className="relative z-[1] flex shrink-0 items-center gap-3 xl:hidden">
             <ThemeToggle />
             <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary transition-[background-color,border-color,color,box-shadow] duration-200">
               <input
                 ref={navToggleRef}
                 type="checkbox"
                 id="mobile-nav-toggle"
-                className="native-touch-control lg:hidden"
+                className="native-touch-control xl:hidden"
               />
               <span className="pointer-events-none relative z-0 flex items-center justify-center" aria-hidden>
                 <Menu className="mobile-nav-icon-open h-6 w-6" />
@@ -168,7 +168,7 @@ export function Header({ formations }: HeaderProps) {
         </div>
       </header>
 
-      <div className="mobile-nav-panel fixed inset-0 z-[99998] lg:hidden">
+      <div className="mobile-nav-panel fixed inset-0 z-[99998] xl:hidden">
         <label
           htmlFor="mobile-nav-toggle"
           className="mobile-nav-backdrop absolute inset-0 cursor-pointer bg-noir/75"

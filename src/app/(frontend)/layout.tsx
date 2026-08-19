@@ -16,8 +16,6 @@ import "../globals.css";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: "cover",
 };
 
@@ -48,8 +46,8 @@ export default async function FrontendLayout({
 
   return (
     <ClerkProvider appearance={clerkAppearance}>
-      <html lang="fr" className="dark h-full" suppressHydrationWarning>
-        <body className="min-h-full flex flex-col">
+      <html lang="fr" className="dark min-h-dvh" suppressHydrationWarning>
+        <body className="flex min-h-dvh flex-col overflow-x-clip">
           <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
           <script
             type="application/ld+json"
@@ -63,7 +61,9 @@ export default async function FrontendLayout({
               prioritaire: f.prioritaire,
             }))}
           />
-          <main className="flex-1 overflow-x-clip pt-[calc(var(--site-notice-h)+4rem+env(safe-area-inset-top,0px))] md:pt-[calc(var(--site-notice-h)+4.5rem+env(safe-area-inset-top,0px))]">{children}</main>
+          <main className="flex-1 overflow-x-clip pt-[calc(var(--site-notice-h)+4rem+env(safe-area-inset-top,0px))] md:pt-[calc(var(--site-notice-h)+4.5rem+env(safe-area-inset-top,0px))]">
+            {children}
+          </main>
           <Footer
             site={site}
             formations={formations.map((f) => ({

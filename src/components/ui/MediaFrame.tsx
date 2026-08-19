@@ -1,4 +1,7 @@
+"use client";
+
 import { Placeholder } from "@/components/ui/Placeholder";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { isVideoMimeType } from "@/lib/media-utils";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +29,8 @@ export function MediaFrame({
   className,
   variant = "default",
 }: MediaFrameProps) {
+  const reducedMotion = useReducedMotion();
+
   if (!src) {
     return (
       <Placeholder
@@ -55,7 +60,7 @@ export function MediaFrame({
           muted
           loop
           playsInline
-          autoPlay
+          autoPlay={!reducedMotion}
           preload="metadata"
           aria-label={alt}
         />

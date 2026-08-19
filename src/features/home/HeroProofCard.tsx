@@ -13,11 +13,11 @@ export function HeroProofCard({ nda }: HeroProofCardProps) {
         aria-hidden
       />
       <div className="relative z-10">
-        <div className="p-5 md:p-6">
+        <div className="p-4 md:p-6">
           <QualiopiMark size="sm" />
           <p className="mt-3 text-[11px] tracking-wide text-cream/50">NDA {nda}</p>
         </div>
-        <div className="border-t border-white/10 px-5 py-4 md:px-6">
+        <div className="border-t border-white/10 px-4 py-3 md:px-6 md:py-4">
           <FinanceurLogos />
         </div>
       </div>

@@ -15,11 +15,11 @@ export function PageHero({
   headingAs: Heading = "h1",
 }: PageHeroProps) {
   return (
-    <section className="relative overflow-hidden bg-noir pt-12 pb-10 md:pt-16 md:pb-14">
+    <section className="relative overflow-hidden bg-noir pt-8 pb-8 md:pt-16 md:pb-14">
       <div className="container-page">
         <Heading className="display-title max-w-5xl text-cream">{title}</Heading>
         {description && (
-          <div className="mt-5 max-w-4xl text-justify text-base leading-relaxed text-muted-text">
+          <div className="mt-4 max-w-4xl text-left text-base leading-relaxed text-muted-text md:mt-5 md:text-justify">
             {typeof description === "string" ? (
               <p className="text-pretty">{description}</p>
             ) : (

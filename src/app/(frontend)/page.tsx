@@ -60,36 +60,36 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="cinematic-grain hero-slash relative min-h-[49vh] overflow-hidden bg-noir md:min-h-[52.5vh]">
+      <section className="cinematic-grain hero-slash relative overflow-hidden bg-noir md:min-h-[52.5vh]">
         <HeroVideoBackground />
-        <div className="container-page relative z-10 flex min-h-[49vh] flex-col justify-start pt-8 pb-16 md:min-h-[52.5vh] md:pt-10 md:pb-20 lg:pt-12 lg:pb-24">
+        <div className="container-page relative z-10 flex flex-col justify-start pt-6 pb-10 md:min-h-[52.5vh] md:pt-10 md:pb-20 lg:pt-12 lg:pb-24">
           <div className="w-full lg:w-3/4">
             <p className="eyebrow animate-fade-up">Paris · Marseille · Montpellier</p>
-            <h1 className="display-title mt-6 animate-fade-up-delay-1 text-[clamp(2.8rem,7.5vw,6.25rem)] text-cream">
+            <h1 className="display-title mt-3 animate-fade-up-delay-1 text-[clamp(1.9rem,11vw,6.25rem)] text-cream md:mt-6">
               Cinémergence
             </h1>
-            <p className="mt-4 animate-fade-up-delay-1 text-lg font-heading text-cool-glow md:text-xl">
+            <p className="mt-3 animate-fade-up-delay-1 text-base font-heading text-cool-glow md:mt-4 md:text-xl">
               Le cinéma, en conditions réelles.
             </p>
           </div>
-          <p className="mt-6 w-full animate-fade-up-delay-2 text-4xl leading-snug text-cream/85 md:text-[2.5rem] lg:text-5xl">
-            Une immersion totale sur de vrais&nbsp;plateaux
-            <br />
-            avec un livrable concret pour chaque&nbsp;parcours.
+          <p className="mt-4 w-full max-w-5xl animate-fade-up-delay-2 text-pretty text-[clamp(1.15rem,4.2vw,3rem)] leading-snug text-cream/85 md:mt-6">
+            Une immersion totale sur de vrais plateaux avec un livrable concret pour chaque parcours.
           </p>
-          <div className="mt-8 w-full max-w-xl animate-fade-up-delay-2">
-            <HeroProofCard nda={site.nda} />
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <ButtonLink href="/formations" size="lg" className="btn-cta px-10">
+          <div className="mt-6 w-full max-w-xl animate-fade-up-delay-2 md:mt-8">
+            <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center">
+              <ButtonLink href="/formations" size="lg" className="btn-cta min-h-12 w-full px-8 sm:w-auto sm:px-10">
                 Voir les formations
               </ButtonLink>
               <ButtonLink
                 href="/contact"
                 size="lg"
-                className="btn-outline-warm rounded-lg px-10 py-2.5 text-sm font-semibold uppercase tracking-wider"
+                className="btn-outline-warm min-h-12 w-full rounded-lg px-8 py-2.5 text-sm font-semibold uppercase tracking-wider sm:w-auto sm:px-10"
               >
                 Je réserve ma place
               </ButtonLink>
+            </div>
+            <div className="mt-6 md:mt-10">
+              <HeroProofCard nda={site.nda} />
             </div>
           </div>
         </div>
@@ -102,7 +102,7 @@ export default async function HomePage() {
             title="Nos intervenants"
             description="Des professionnels en activité qui transmettent leur exigence sur le plateau."
           />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {intervenants
               .filter(
                 (i) =>
@@ -143,7 +143,7 @@ export default async function HomePage() {
                   className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]"
                   aria-hidden
                 />
-                <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
+                <p className="min-w-0 flex-1 text-left leading-relaxed md:text-justify">{item}</p>
               </li>
             ))}
             <li className="flex items-center sm:col-span-2 lg:col-span-1">

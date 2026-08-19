@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { cn } from "@/lib/utils";
 
 export type HomePhotoSlide = {
@@ -27,6 +28,7 @@ export function HomePhotoCarousel({
 }: HomePhotoCarouselProps) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const reducedMotion = useReducedMotion();
 
   const count = slides.length;
   const current = slides[index];
@@ -40,10 +42,10 @@ export function HomePhotoCarousel({
   );
 
   useEffect(() => {
-    if (count <= 1 || paused) return;
+    if (count <= 1 || paused || reducedMotion) return;
     const timer = window.setInterval(() => goTo(index + 1), intervalMs);
     return () => window.clearInterval(timer);
-  }, [count, goTo, index, intervalMs, paused]);
+  }, [count, goTo, index, intervalMs, paused, reducedMotion]);
 
   if (count === 0 || !current) return null;
 
@@ -78,7 +80,7 @@ export function HomePhotoCarousel({
               <button
                 type="button"
                 onClick={() => goTo(index - 1)}
-                className="absolute left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-noir-deep/70 text-cream backdrop-blur-sm transition hover:border-projector/40 hover:bg-noir-deep/90"
+                className="absolute left-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-noir-deep/70 text-cream backdrop-blur-sm transition hover:border-projector/40 hover:bg-noir-deep/90 md:left-3"
                 aria-label={previousLabel}
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -86,7 +88,7 @@ export function HomePhotoCarousel({
               <button
                 type="button"
                 onClick={() => goTo(index + 1)}
-                className="absolute right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-noir-deep/70 text-cream backdrop-blur-sm transition hover:border-projector/40 hover:bg-noir-deep/90"
+                className="absolute right-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-noir-deep/70 text-cream backdrop-blur-sm transition hover:border-projector/40 hover:bg-noir-deep/90 md:right-3"
                 aria-label={nextLabel}
               >
                 <ChevronRight className="h-5 w-5" />
@@ -106,18 +108,22 @@ export function HomePhotoCarousel({
       </div>
 
       {count > 1 && (
-        <div className="mt-4 flex justify-center gap-2">
+        <div className="mt-4 flex justify-center gap-1">
           {slides.map((slide, i) => (
             <button
               key={slide.slug}
               type="button"
               onClick={() => setIndex(i)}
-              className={cn(
-                "h-2 rounded-full transition-all",
-                i === index ? "w-8 bg-projector" : "w-2 bg-white/20 hover:bg-white/40",
-              )}
+              className="flex h-11 w-11 items-center justify-center"
               aria-label={`Aller à ${slide.titre}`}
-            />
+            >
+              <span
+                className={cn(
+                  "rounded-full transition-all",
+                  i === index ? "h-2 w-8 bg-projector" : "h-2 w-2 bg-white/20",
+                )}
+              />
+            </button>
           ))}
         </div>
       )}

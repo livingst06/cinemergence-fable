@@ -26,10 +26,10 @@ export function IntervenantCard({ intervenant }: IntervenantCardProps) {
         aspect="portrait"
         className="rounded-none border-0 border-b border-white/[0.06]"
       />
-      <div className="p-6">
-        <h3 className="font-heading text-2xl leading-none text-cream">{intervenant.nom}</h3>
+      <div className="p-4 md:p-6">
+        <h3 className="font-heading text-xl leading-none text-cream md:text-2xl">{intervenant.nom}</h3>
         <p className="mt-2 text-sm font-medium text-or-light">{intervenant.role}</p>
-        <p className="mt-4 text-justify text-sm leading-relaxed text-muted-text">{intervenant.bio}</p>
+        <p className="mt-3 text-left text-sm leading-relaxed text-muted-text md:mt-4 md:text-justify">{intervenant.bio}</p>
         {intervenant.filmographie.length > 0 && (
           <p className="mt-4 text-xs leading-relaxed text-cool-glow">
             {intervenant.filmographie.join(" · ")}

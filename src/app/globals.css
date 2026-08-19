@@ -55,7 +55,7 @@
   --input: rgba(18, 16, 14, 0.06);
   --ring: var(--or-light);
   --radius: 0.5rem;
-  --site-notice-h: 3.5rem;
+  --site-notice-h: 4rem;
   --font-apple: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
     "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -164,10 +164,31 @@
     -webkit-text-size-adjust: 100%;
     hyphens: none;
     -webkit-hyphens: none;
+    overflow-x: clip;
+  }
+
+  :root {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
   }
 
   body {
     @apply bg-noir text-cream font-sans antialiased;
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+
+  a,
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea,
+  label {
+    touch-action: manipulation;
   }
 
   p,
@@ -175,12 +196,24 @@
   blockquote,
   dd,
   figcaption {
-    text-align: justify;
-    text-justify: inter-word;
+    text-align: start;
+    text-justify: auto;
     hyphens: none;
     -webkit-hyphens: none;
-    overflow-wrap: normal;
+    overflow-wrap: break-word;
     word-break: normal;
+  }
+
+  @media (min-width: 768px) {
+    p,
+    li,
+    blockquote,
+    dd,
+    figcaption {
+      text-align: justify;
+      text-justify: inter-word;
+      overflow-wrap: normal;
+    }
   }
 
   /* Les blocs explicitement centrés gardent leur alignement */
@@ -210,61 +243,66 @@
     color: var(--or-light);
   }
 
-  @media (max-width: 767px) {
-    main {
-      overflow-x: clip;
-    }
+  /* Mobile-first : overlay menu par défaut, désactivé à partir de xl */
+  html:has(#mobile-nav-toggle:checked),
+  html:has(#mobile-nav-toggle:checked) body {
+    overflow: hidden;
   }
 
-  @media (max-width: 1023px) {
-    /* Menu mobile — checkbox dans le label + panneau via :has() (CSS pur, fiable iOS) */
+  header:has(#mobile-nav-toggle:checked) ~ .mobile-nav-panel {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mobile-nav-trigger:has(#mobile-nav-toggle:checked) {
+    border-color: transparent;
+    color: var(--primary-foreground);
+    background: linear-gradient(
+      135deg,
+      var(--projector-light) 0%,
+      var(--projector) 55%,
+      #2a3540 100%
+    );
+    box-shadow:
+      0 0 0 1px rgba(138, 160, 181, 0.25) inset,
+      0 4px 16px -4px var(--projector-glow);
+  }
+
+  .mobile-nav-trigger:has(#mobile-nav-toggle:checked) svg {
+    color: var(--primary-foreground);
+  }
+
+  .mobile-nav-trigger:has(#mobile-nav-toggle:checked) .mobile-nav-icon-open {
+    display: none;
+  }
+
+  .mobile-nav-trigger:has(#mobile-nav-toggle:checked) .mobile-nav-icon-close {
+    display: block;
+  }
+
+  .site-header {
+    isolation: isolate;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  .mobile-nav-trigger,
+  .mobile-nav-backdrop {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  @media (min-width: 1280px) {
     html:has(#mobile-nav-toggle:checked),
     html:has(#mobile-nav-toggle:checked) body {
-      overflow: hidden;
+      overflow: unset;
     }
 
     header:has(#mobile-nav-toggle:checked) ~ .mobile-nav-panel {
-      visibility: visible;
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .mobile-nav-trigger:has(#mobile-nav-toggle:checked) {
-      border-color: transparent;
-      color: var(--primary-foreground);
-      background: linear-gradient(
-        135deg,
-        var(--projector-light) 0%,
-        var(--projector) 55%,
-        #2a3540 100%
-      );
-      box-shadow:
-        0 0 0 1px rgba(138, 160, 181, 0.25) inset,
-        0 4px 16px -4px var(--projector-glow);
-    }
-
-    .mobile-nav-trigger:has(#mobile-nav-toggle:checked) svg {
-      color: var(--primary-foreground);
-    }
-
-    .mobile-nav-trigger:has(#mobile-nav-toggle:checked) .mobile-nav-icon-open {
-      display: none;
-    }
-
-    .mobile-nav-trigger:has(#mobile-nav-toggle:checked) .mobile-nav-icon-close {
-      display: block;
-    }
-
-    .site-header {
-      isolation: isolate;
-      -webkit-transform: translate3d(0, 0, 0);
-      transform: translate3d(0, 0, 0);
-    }
-
-    .mobile-nav-trigger,
-    .mobile-nav-backdrop {
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
     }
   }
 
@@ -299,7 +337,27 @@
 
 @layer utilities {
   .container-page {
-    @apply mx-auto w-full max-w-[1760px] px-4 md:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-[1760px];
+    padding-left: max(1rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1rem, env(safe-area-inset-right, 0px));
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-left: max(1.5rem, env(safe-area-inset-left, 0px));
+      padding-right: max(1.5rem, env(safe-area-inset-right, 0px));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-page {
+      padding-left: max(2rem, env(safe-area-inset-left, 0px));
+      padding-right: max(2rem, env(safe-area-inset-right, 0px));
+    }
+  }
+
+  .display-title {
+    @apply font-heading text-[clamp(1.85rem,7.2vw,4.5rem)] font-semibold leading-[0.95] tracking-tight text-balance;
   }
 
   /* Blanc opaque iOS : Safari ignore bg-color des enfants d’un backdrop-filter. */
@@ -317,10 +375,6 @@
 
   .eyebrow {
     @apply text-[11px] font-semibold uppercase tracking-[0.28em] text-or-light;
-  }
-
-  .display-title {
-    @apply font-heading text-[clamp(2.4rem,6.5vw,4.5rem)] font-semibold leading-[0.95] tracking-tight text-balance;
   }
 
   .section-title {
@@ -543,6 +597,29 @@
 
   .animate-fade-up-delay-3 {
     animation: slideUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.21s both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    .animate-fade-up,
+    .animate-fade-up-delay-1,
+    .animate-fade-up-delay-2,
+    .animate-fade-up-delay-3 {
+      animation: none;
+    }
+  }
+}
+
+body:has([data-sticky-cta]) footer {
+  padding-bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 768px) {
+  body:has([data-sticky-cta]) footer {
+    padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
   }
 }
 

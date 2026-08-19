@@ -82,7 +82,7 @@ export default async function FormationDetailPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="container-page space-y-16 py-12 md:space-y-20 md:py-16 lg:py-20">
+      <div className="container-page space-y-10 py-8 md:space-y-20 md:py-16 lg:py-20">
         <header className="max-w-4xl">
           <h1 className="display-title max-w-5xl text-cream">{formation.titre}</h1>
           <p className="mt-5 text-base leading-relaxed text-muted-text md:text-lg">
@@ -138,8 +138,8 @@ export default async function FormationDetailPage({ params }: Props) {
           <div
             className={
               formation.effectifMax != null
-                ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-5"
-                : "grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5"
+                ? "grid gap-4 sm:grid-cols-2 xl:grid-cols-5 xl:gap-5"
+                : "grid gap-4 sm:grid-cols-2 xl:grid-cols-4 xl:gap-5"
             }
           >
             <div className="card-stage p-5 md:p-6">
@@ -229,7 +229,7 @@ export default async function FormationDetailPage({ params }: Props) {
                 className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
               >
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]" />
-                <p className="min-w-0 flex-1 text-justify leading-relaxed">{obj}</p>
+                <p className="min-w-0 flex-1 text-left md:text-justify leading-relaxed">{obj}</p>
               </li>
             ))}
           </ul>
@@ -285,7 +285,7 @@ export default async function FormationDetailPage({ params }: Props) {
                             )}
                           </div>
                           {seq.detail && (
-                            <p className="mt-1 text-justify text-xs leading-relaxed text-muted-text">
+                            <p className="mt-1 text-left md:text-justify text-xs leading-relaxed text-muted-text">
                               {seq.detail}
                             </p>
                           )}
@@ -323,7 +323,7 @@ export default async function FormationDetailPage({ params }: Props) {
                   className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
                 >
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]" />
-                  <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
+                  <p className="min-w-0 flex-1 text-left md:text-justify leading-relaxed">{item}</p>
                 </li>
               ))}
           </ul>
@@ -338,7 +338,7 @@ export default async function FormationDetailPage({ params }: Props) {
                 className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
               >
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-or shadow-[0_0_6px_var(--or-glow)]" />
-                <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
+                <p className="min-w-0 flex-1 text-left md:text-justify leading-relaxed">{item}</p>
               </li>
             ))}
           </ul>

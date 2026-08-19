@@ -37,12 +37,12 @@ export default async function GaleriePage() {
       <PageHero
         title="Les interviews"
         description={
-          <p className="text-pretty text-xl leading-relaxed md:text-2xl">
+          <p className="text-pretty text-base leading-relaxed md:text-xl md:leading-relaxed">
             Paroles d&apos;élèves, filmées pendant les formations
           </p>
         }
       >
-        <div className="mt-8 max-w-4xl md:mt-10">
+        <div className="mt-6 max-w-4xl md:mt-10">
           <GalleryGrid items={staticInterviewVideos} compact />
         </div>
       </PageHero>
@@ -50,12 +50,12 @@ export default async function GaleriePage() {
         headingAs="h2"
         title="Sur le plateau"
         description={
-          <p className="text-pretty text-xl leading-relaxed md:text-2xl">
+          <p className="text-pretty text-base leading-relaxed md:text-xl md:leading-relaxed">
             Moments capturés pendant nos sessions de formation
           </p>
         }
       />
-      <Section className="pt-8 pb-20 md:pt-10 md:pb-28">
+      <Section className="pt-6 pb-16 md:pt-10 md:pb-28">
         <div className="container-page">
           {plateau.length > 0 ? (
             <GalleryGrid
@@ -73,7 +73,7 @@ export default async function GaleriePage() {
               )}
             />
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
               {placeholders.map((label) => (
                 <Placeholder key={label} label={label} aspect="video" hideLabel />
               ))}

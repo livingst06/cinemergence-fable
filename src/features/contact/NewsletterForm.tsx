@@ -22,16 +22,17 @@ export function NewsletterForm() {
           name="email"
           type="email"
           required
-          placeholder="Ton email"
-          className="border-or/20 bg-noir-tertiary"
+          autoComplete="email"
+          placeholder="Ton email…"
+          className="min-h-11 border-or/20 bg-noir-tertiary"
         />
       </div>
       <Button
         type="submit"
         disabled={pending}
-        className="btn-cta"
+        className="btn-cta min-h-11"
       >
-        {pending ? "..." : "Je m'informe"}
+        {pending ? "Envoi…" : "Je m'informe"}
       </Button>
       <FormFeedbackMessage state={state} className="w-full" />
     </form>

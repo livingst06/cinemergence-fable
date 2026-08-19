@@ -18,13 +18,12 @@ export default async function FormationsIndexPage() {
   const formations = await getFormations();
 
   return (
-    <div className="container-page py-12 md:py-16 lg:py-20">
-      <header className="mb-10 max-w-4xl md:mb-12">
+    <div className="container-page py-8 md:py-16 lg:py-20">
+      <header className="mb-8 max-w-4xl md:mb-12">
         <h1 className="display-title text-cream">Nos formations</h1>
         <p className="mt-5 text-base leading-relaxed text-muted-text md:text-lg">
-          Parcours professionnalisants pour comédiens, techniciens et entreprises
-          <br />
-          chacun avec un livrable clair pour l'élève.
+          Parcours professionnalisants pour comédiens, techniciens et entreprises, chacun avec un
+          livrable clair pour l&apos;élève.
         </p>
       </header>
 

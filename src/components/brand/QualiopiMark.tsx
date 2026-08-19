@@ -20,7 +20,7 @@ export function QualiopiMark({
   const logoHeight = size === "sm" ? "h-14" : "h-16";
 
   return (
-    <figure className={cn("flex items-start gap-4 text-left", className)}>
+    <figure className={cn("flex flex-col items-start gap-3 text-left sm:flex-row sm:gap-4", className)}>
       <div className="logo-plate flex shrink-0 items-center justify-center rounded-xl p-2">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

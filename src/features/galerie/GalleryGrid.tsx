@@ -38,14 +38,14 @@ export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
         className={cn(
           "grid",
           compact
-            ? "grid-cols-2 gap-3 sm:grid-cols-3"
-            : "gap-4 sm:grid-cols-2 lg:grid-cols-3",
+            ? "grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3"
+            : "grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3",
         )}
       >
         {items.map((item) => (
           <article
             key={item.id}
-            className="group relative overflow-hidden rounded-2xl border border-white/[0.08]"
+            className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/[0.08]"
           >
             <MediaFrame
               src={item.url}
@@ -78,7 +78,7 @@ export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
         <Dialog.Portal>
           <Dialog.Backdrop className="fixed inset-0 z-[100010] bg-noir-deep/90 backdrop-blur-sm transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0" />
           <Dialog.Popup
-            className="fixed inset-0 z-[100011] flex items-center justify-center p-4 outline-none transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0"
+            className="fixed inset-0 z-[100011] flex items-center justify-center overflow-auto overscroll-contain p-4 pt-[max(1rem,env(safe-area-inset-top,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))] pb-[max(1rem,env(safe-area-inset-bottom,0px))] pl-[max(1rem,env(safe-area-inset-left,0px))] outline-none transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0"
             onClick={(event) => {
               if (event.target === event.currentTarget) setOpenId(null);
             }}
@@ -87,7 +87,7 @@ export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
               <>
                 <Dialog.Title className="sr-only">{active.alt}</Dialog.Title>
                 <Dialog.Close
-                  className="absolute top-4 right-4 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-noir-deep/80 text-cream backdrop-blur-sm transition-colors hover:bg-noir-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-convert-light"
+                  className="absolute top-[max(1rem,env(safe-area-inset-top,0px))] right-[max(1rem,env(safe-area-inset-right,0px))] z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-noir-deep/80 text-cream backdrop-blur-sm transition-colors hover:bg-noir-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-convert-light"
                   aria-label="Fermer"
                 >
                   <X className="size-5" />
@@ -96,7 +96,7 @@ export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
                   <video
                     key={active.id}
                     src={active.url}
-                    className="max-h-[90vh] max-w-full rounded-lg"
+                    className="max-h-[min(90dvh,90vh)] max-w-full rounded-lg"
                     controls
                     autoPlay
                     playsInline
@@ -108,7 +108,7 @@ export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
                   <img
                     src={active.url}
                     alt={active.alt}
-                    className="max-h-[90vh] max-w-full rounded-lg object-contain"
+                    className="max-h-[min(90dvh,90vh)] max-w-full rounded-lg object-contain"
                     onClick={(event) => event.stopPropagation()}
                   />
                 )}

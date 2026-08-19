@@ -4,7 +4,9 @@ import { ButtonLink } from "@/components/ui/ButtonLink";
 import { HeroVideoBackground } from "@/components/sections/HeroVideoBackground";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { CtaFinal } from "@/features/home/CtaFinal";
+import { FinanceurLogos } from "@/features/home/FinanceurLogos";
 import { FormationsCarousel } from "@/features/home/FormationsCarousel";
+import { HeroProofCard } from "@/features/home/HeroProofCard";
 import { StickyCta } from "@/features/home/StickyCta";
 import { Temoignages } from "@/features/home/Temoignages";
 import { FinancementSection } from "@/features/financement/FinancementSection";
@@ -27,7 +29,6 @@ const schoolBenefits = [
   "Matériel cinéma professionnel",
   "Livrable concret par formation",
   "Montage / post-prod selon parcours",
-  "Finançable AFDAS · OPCO · CPF · France Travail",
 ];
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -57,12 +58,6 @@ export default async function HomePage() {
       alt: f.titre,
     }));
 
-  const heroQualifications = [
-    site.qualiopiLabel || "Organisme certifié Qualiopi",
-    `NDA ${site.nda}`,
-    "Finançable AFDAS · OPCO · CPF · France Travail",
-  ];
-
   return (
     <>
       <section className="cinematic-grain hero-slash relative min-h-[49vh] overflow-hidden bg-noir md:min-h-[52.5vh]">
@@ -73,7 +68,7 @@ export default async function HomePage() {
             <h1 className="display-title mt-6 animate-fade-up-delay-1 text-[clamp(2.8rem,7.5vw,6.25rem)] text-cream">
               Cinémergence
             </h1>
-            <p className="mt-4 animate-fade-up-delay-1 text-lg font-heading uppercase tracking-wide text-cool-glow md:text-xl">
+            <p className="mt-4 animate-fade-up-delay-1 text-lg font-heading text-cool-glow md:text-xl">
               Le cinéma, en conditions réelles.
             </p>
           </div>
@@ -82,22 +77,9 @@ export default async function HomePage() {
             <br />
             avec un livrable concret pour chaque&nbsp;parcours.
           </p>
-          <div className="w-full lg:w-3/4">
-            <ul className="mt-8 flex animate-fade-up-delay-2 flex-wrap gap-x-5 gap-y-2">
-              {heroQualifications.map((point) => (
-                <li
-                  key={point}
-                  className="flex items-center gap-2 whitespace-nowrap text-xs font-semibold uppercase tracking-[0.14em] text-cream/80 md:text-[11px]"
-                >
-                  <span
-                    className="h-1 w-1 shrink-0 rounded-full bg-projector shadow-[0_0_8px_var(--projector-glow)]"
-                    aria-hidden
-                  />
-                  {point}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-10 flex animate-fade-up-delay-3 flex-col gap-4 sm:flex-row">
+          <div className="mt-8 w-full max-w-xl animate-fade-up-delay-2">
+            <HeroProofCard nda={site.nda} />
+            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <ButtonLink href="/formations" size="lg" className="btn-cta px-10">
                 Voir les formations
               </ButtonLink>
@@ -173,6 +155,9 @@ export default async function HomePage() {
                 <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
               </li>
             ))}
+            <li className="flex items-center sm:col-span-2 lg:col-span-1">
+              <FinanceurLogos className="grid w-full grid-cols-2 justify-items-center gap-2" />
+            </li>
           </ul>
         </div>
       </Section>

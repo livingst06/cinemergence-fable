@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { QualiopiMark } from "@/components/brand/QualiopiMark";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { MediaFrame } from "@/components/ui/MediaFrame";
 import { Reveal } from "@/components/ui/Reveal";
@@ -155,8 +156,12 @@ export default async function AssociationPage() {
                 <dd className="text-muted-text">{site.nda}</dd>
               </div>
               <div>
-                <dt className="text-or-light">Qualiopi</dt>
-                <dd className="text-muted-text">Organisme certifié Qualiopi</dd>
+                <dt className="text-or-light">
+                  Organisme de formation certifié jusqu&apos;au 17 août 2029
+                </dt>
+                <dd className="mt-3">
+                  <QualiopiMark size="sm" showTitle={false} />
+                </dd>
               </div>
               <div>
                 <dt className="text-or-light">Partenaire</dt>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { GalleryGrid } from "@/features/galerie/GalleryGrid";
 import { Placeholder } from "@/components/ui/Placeholder";
-import { Section, SectionHeader } from "@/components/ui/Section";
+import { Section } from "@/components/ui/Section";
 import { PageHero } from "@/components/sections/PageHero";
 import { getGalleryMedia } from "@/lib/data";
 
@@ -32,15 +32,14 @@ export default async function GaleriePage() {
       <PageHero
         eyebrow="Médias"
         title="Sur le plateau"
-        description="Tournages et livrables produits par nos élèves."
+        description={
+          <p className="text-pretty text-xl leading-relaxed md:text-2xl">
+            Moments capturés pendant nos sessions de formation
+          </p>
+        }
       />
-      <Section>
+      <Section className="pt-8 pb-20 md:pt-10 md:pb-28">
         <div className="container-page">
-          <SectionHeader
-            eyebrow="Galerie"
-            title="Images des formations"
-            description="Moments capturés sur nos plateaux et livrables produits par les élèves."
-          />
           {media.length > 0 ? (
             <GalleryGrid
               items={media.flatMap((item) =>

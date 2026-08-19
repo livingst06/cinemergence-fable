@@ -30,3 +30,28 @@ export function parseLabeledItem(text: string): { label: string; detail?: string
   if (!match) return { label: cleaned };
   return { label: match[1].trim(), detail: match[2].trim() };
 }
+
+/** Split "21 heures — 3 journées de 7 heures" into title + subtitle. */
+export function splitDuree(
+  duree: string,
+  heures?: number,
+  jours?: number,
+): { title: string; subtitle?: string } {
+  const parsed = parseLabeledItem(duree);
+  if (parsed.detail) return { title: parsed.label, subtitle: parsed.detail };
+
+  const spaced = duree.match(/^(\d+\s*heures?)\s+(.+)$/i);
+  if (spaced) return { title: spaced[1], subtitle: spaced[2] };
+
+  if (heures != null) {
+    return {
+      title: `${heures} heure${heures > 1 ? "s" : ""}`,
+      subtitle:
+        jours != null
+          ? `${jours} journée${jours > 1 ? "s" : ""} de 7 heures`
+          : undefined,
+    };
+  }
+
+  return { title: duree };
+}

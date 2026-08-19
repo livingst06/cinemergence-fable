@@ -7,17 +7,17 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ButtonLink } from "@/components/ui/ButtonLink";
-import { MediaFrame } from "@/components/ui/MediaFrame";
 import { SectionHeader } from "@/components/ui/Section";
 import {
   FormationLabeledGrid,
   FormationPedagogy,
   FormationProse,
 } from "@/features/formations/FormationPedagogy";
+import { FormationSessionGallery } from "@/features/formations/FormationSessionGallery";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { defaultFinancement, formationPath } from "@/lib/defaults";
-import { resolveFormationCoverUrl } from "@/lib/site-media";
+import { splitDuree } from "@/lib/formation-format";
 import { courseJsonLd } from "@/lib/seo";
 
 export const revalidate = 300;
@@ -69,6 +69,11 @@ export default async function FormationDetailPage({ params }: Props) {
   const methodes = formation.methodesPedagogiques ?? [];
   const moyens = formation.moyensTechniques ?? [];
   const jsonLd = courseJsonLd(formation, site);
+  const dureeParts = splitDuree(
+    formation.duree,
+    formation.dureeHeures,
+    formation.dureeJours,
+  );
 
   return (
     <>
@@ -129,57 +134,64 @@ export default async function FormationDetailPage({ params }: Props) {
           </div>
         </header>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
-          <div className="card-stage p-5 md:p-6">
-            <p className="eyebrow">Durée</p>
-            <p className="mt-2 font-heading text-2xl text-cream">{formation.duree}</p>
+        <div>
+          <div
+            className={
+              formation.effectifMax != null
+                ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-5"
+                : "grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5"
+            }
+          >
+            <div className="card-stage p-5 md:p-6">
+              <p className="eyebrow">Durée</p>
+              <p className="mt-2 font-heading text-3xl text-cream">{dureeParts.title}</p>
+              {dureeParts.subtitle && (
+                <p className="mt-1 text-sm leading-relaxed text-muted-text">
+                  {dureeParts.subtitle}
+                </p>
+              )}
+            </div>
+            <div className="card-stage p-5 md:p-6">
+              <p className="eyebrow">Format</p>
+              <p className="mt-2 font-heading text-2xl text-cream">{formation.format}</p>
+            </div>
+            <div className="card-stage p-5 md:p-6">
+              <p className="eyebrow">Tarif</p>
+              <p className="mt-2 font-heading text-2xl text-cream">
+                {formation.tarif ?? "À confirmer"}
+              </p>
+            </div>
+            {formation.effectifMax != null && (
+              <div className="card-stage p-5 md:p-6">
+                <p className="eyebrow">Places</p>
+                <p className="mt-2 font-heading text-2xl text-cream">
+                  {formation.effectifMax} places max par session
+                </p>
+              </div>
+            )}
+            <div className="card-stage p-5 md:p-6">
+              <p className="eyebrow">Public</p>
+              <p className="mt-2 text-sm leading-relaxed text-cream/90">{formation.publicCible}</p>
+            </div>
           </div>
-          <div className="card-stage p-5 md:p-6">
-            <p className="eyebrow">Format</p>
-            <p className="mt-2 font-heading text-2xl text-cream">{formation.format}</p>
-          </div>
-          <div className="card-stage p-5 md:p-6">
-            <p className="eyebrow">Tarif</p>
-            <p className="mt-2 font-heading text-2xl text-cream">
-              {formation.tarif ?? "À confirmer"}
-            </p>
-          </div>
-          <div className="card-stage p-5 md:p-6">
-            <p className="eyebrow">Public</p>
-            <p className="mt-2 text-sm leading-relaxed text-cream/90">{formation.publicCible}</p>
-          </div>
+          <FormationSessionGallery slug={formation.slug} />
         </div>
 
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
-          <div>
-            <h2 className="section-title text-cream">Pour qui ?</h2>
-            <p className="mt-4 text-muted-text">{formation.pourQui}</p>
-            {formation.prerequis && (
-              <p className="mt-6 text-sm text-muted-text">
-                <span className="font-semibold text-or-light">Prérequis — </span>
-                {formation.prerequis}
-              </p>
-            )}
-            {formation.effectifMax != null && (
-              <p className="mt-3 text-sm text-muted-text">
-                <span className="font-semibold text-or-light">Places — </span>
-                {formation.effectifMax} places max par session
-              </p>
-            )}
-            {formation.lieu && (
-              <p className="mt-3 text-sm text-muted-text">
-                <span className="font-semibold text-or-light">Lieu — </span>
-                {formation.lieu}
-              </p>
-            )}
-          </div>
-          <MediaFrame
-            src={resolveFormationCoverUrl(formation.slug, formation.coverImageUrl)}
-            mimeType={formation.coverImageMimeType ?? "image/jpeg"}
-            alt={`Visuel plateau — ${formation.titreCourt}`}
-            aspect="video"
-            className={formation.prioritaire ? "gold-glow" : undefined}
-          />
+        <div className="max-w-3xl">
+          <h2 className="section-title text-cream">Pour qui ?</h2>
+          <p className="mt-4 text-muted-text">{formation.pourQui}</p>
+          {formation.prerequis && (
+            <p className="mt-6 text-sm text-muted-text">
+              <span className="font-semibold text-or-light">Prérequis — </span>
+              {formation.prerequis}
+            </p>
+          )}
+          {formation.lieu && (
+            <p className="mt-3 text-sm text-muted-text">
+              <span className="font-semibold text-or-light">Lieu — </span>
+              {formation.lieu}
+            </p>
+          )}
         </div>
 
         <div className="max-w-3xl">

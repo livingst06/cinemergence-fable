@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Logo } from "@/components/layout/Logo";
+import { QualiopiMark } from "@/components/brand/QualiopiMark";
 import type { SiteConfig } from "@/lib/data";
 
 type FooterProps = {
@@ -20,9 +21,8 @@ export function Footer({ site, formations }: FooterProps) {
             <Logo />
             <p className="mt-4 text-xs text-muted-text">
               NDA {site.nda}
-              <br />
-              Organisme certifié Qualiopi
             </p>
+            <QualiopiMark className="mt-5" size="sm" />
           </div>
 
           <div>

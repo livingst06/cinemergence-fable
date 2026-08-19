@@ -39,7 +39,7 @@ export const defaultSite = {
   city: "Paris, Île-de-France",
   nda: "117 888 658 78",
   qualiopiObtained: true,
-  qualiopiLabel: "Organisme certifié Qualiopi",
+  qualiopiLabel: "Organisme de formation certifié",
   partnerName: "Bakelite Films",
   partnerRole: "Production partenaire",
   instagramUrl: "https://www.instagram.com/cinemergence",

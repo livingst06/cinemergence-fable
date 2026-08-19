@@ -43,6 +43,62 @@ const formationCoverFallbacks = [
   cover("formation-production-film.jpg"),
 ] as const;
 
+/** Photos placeholder (6 visuels plateau) — à remplacer par des clichés par formation. */
+const formationSessionPhotos: StaticGalleryItem[] = [
+  {
+    id: "fs-01",
+    alt: "Session de formation — jeu face caméra",
+    url: "/images/formations/formation-jouer-face-camera.jpg",
+    mimeType: "image/jpeg",
+  },
+  {
+    id: "fs-02",
+    alt: "Session de formation — bande démo",
+    url: "/images/formations/formation-bande-demo.jpg",
+    mimeType: "image/jpeg",
+  },
+  {
+    id: "fs-03",
+    alt: "Session de formation — court métrage",
+    url: "/images/formations/formation-realiser-court-metrage.jpg",
+    mimeType: "image/jpeg",
+  },
+  {
+    id: "fs-04",
+    alt: "Session de formation — écriture de scénario",
+    url: "/images/formations/formation-ecriture-scenario.jpg",
+    mimeType: "image/jpeg",
+  },
+  {
+    id: "fs-05",
+    alt: "Session de formation — lumière et caméra",
+    url: "/images/formations/formation-camera-cinema.jpg",
+    mimeType: "image/jpeg",
+  },
+  {
+    id: "fs-06",
+    alt: "Session de formation — production",
+    url: "/images/formations/formation-production-film.jpg",
+    mimeType: "image/jpeg",
+  },
+];
+
+/** Six photos de session, ordre stable et distinct par slug. */
+export function getFormationPlaceholderGallery(
+  slug: string,
+  count = 6,
+): StaticGalleryItem[] {
+  const start = hashSlug(slug) % formationSessionPhotos.length;
+  const rotated = [
+    ...formationSessionPhotos.slice(start),
+    ...formationSessionPhotos.slice(0, start),
+  ];
+  return rotated.slice(0, count).map((item) => ({
+    ...item,
+    id: `${slug}-${item.id}`,
+  }));
+}
+
 function hashSlug(slug: string): number {
   let h = 0;
   for (let i = 0; i < slug.length; i++) {

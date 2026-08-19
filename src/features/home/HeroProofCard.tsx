@@ -1,0 +1,26 @@
+import { QualiopiMark } from "@/components/brand/QualiopiMark";
+import { FinanceurLogos } from "@/features/home/FinanceurLogos";
+
+type HeroProofCardProps = {
+  nda: string;
+};
+
+export function HeroProofCard({ nda }: HeroProofCardProps) {
+  return (
+    <div className="relative overflow-hidden rounded-[1.25rem] border border-white/10">
+      <div
+        className="pointer-events-none absolute inset-0 bg-[#151b22]/35 backdrop-blur-md"
+        aria-hidden
+      />
+      <div className="relative z-10">
+        <div className="p-5 md:p-6">
+          <QualiopiMark size="sm" />
+          <p className="mt-3 text-[11px] tracking-wide text-cream/50">NDA {nda}</p>
+        </div>
+        <div className="border-t border-white/10 px-5 py-4 md:px-6">
+          <FinanceurLogos />
+        </div>
+      </div>
+    </div>
+  );
+}

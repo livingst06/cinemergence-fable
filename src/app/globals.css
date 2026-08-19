@@ -302,6 +302,19 @@
     @apply mx-auto w-full max-w-[1760px] px-4 md:px-6 lg:px-8;
   }
 
+  /* Blanc opaque iOS : Safari ignore bg-color des enfants d’un backdrop-filter. */
+  .logo-plate {
+    background-color: #ffffff;
+    background-image: linear-gradient(#ffffff, #ffffff);
+    color-scheme: only light;
+    isolation: isolate;
+    forced-color-adjust: none;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
   .eyebrow {
     @apply text-[11px] font-semibold uppercase tracking-[0.28em] text-or-light;
   }

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { Section, SectionHeader } from "@/components/ui/Section";
-import { PageHero } from "@/components/sections/PageHero";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getIntervenants, getSiteSettings } from "@/lib/data";
 
@@ -25,23 +24,8 @@ export default async function IntervenantsPage() {
 
   return (
     <>
-      <PageHero
-        eyebrow="Intervenants"
-        title={"La légitimité\u00a0cinématographique"}
-        description={
-          <>
-            <p>
-              Des professionnels du cinéma qui transmettent leur exigence et leur passion sur le
-              plateau.
-            </p>
-            <p className="mt-1">
-              L&apos;intérêt : bénéficier d&apos;un retour pro direct, immédiat, pour progresser
-              vraiment.
-            </p>
-          </>
-        }
-      />
-      <Section className="pt-10 md:pt-12">
+      <h1 className="sr-only">Intervenants</h1>
+      <Section>
         <div className="container-page space-y-16 md:space-y-20">
           <div>
             <SectionHeader

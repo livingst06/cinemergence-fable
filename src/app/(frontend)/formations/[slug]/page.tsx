@@ -79,7 +79,6 @@ export default async function FormationDetailPage({ params }: Props) {
 
       <div className="container-page space-y-16 py-12 md:space-y-20 md:py-16 lg:py-20">
         <header className="max-w-4xl">
-          <p className="eyebrow mb-4">{formation.pole}</p>
           <h1 className="display-title max-w-5xl text-cream">{formation.titre}</h1>
           <p className="mt-5 text-base leading-relaxed text-muted-text md:text-lg">
             {formation.sousTitre ?? formation.accroche}

@@ -6,7 +6,7 @@
 
 /*
  * Direction B — Plateau vivant
- * Mode jour (:root) · Mode nuit (.dark) · gris-bleu acier
+ * Mode jour (:root) · Mode nuit (.dark) · gris-bleu acier, fond cool pro
  */
 :root {
   --noir: #f5f1eb;
@@ -61,14 +61,14 @@
 }
 
 .dark {
-  --noir: #0a0908;
-  --noir-secondary: #12100e;
-  --noir-tertiary: #1a1714;
-  --noir-deep: #050504;
+  --noir: #0c1014;
+  --noir-secondary: #151b22;
+  --noir-tertiary: #1c2430;
+  --noir-deep: #080b0e;
 
-  --cream: #f6f1ea;
-  --cream-soft: #ebe4da;
-  --muted-text: #9a9288;
+  --cream: #e8eef4;
+  --cream-soft: #c5d0dc;
+  --muted-text: #8b9aab;
 
   --projector: #5a738c;
   --projector-light: #8aa0b5;
@@ -101,8 +101,8 @@
   --muted-foreground: var(--muted-text);
   --accent: var(--noir-tertiary);
   --accent-foreground: var(--or-light);
-  --border: rgba(107, 130, 153, 0.18);
-  --input: rgba(246, 241, 234, 0.06);
+  --border: rgba(138, 160, 181, 0.14);
+  --input: rgba(232, 238, 244, 0.06);
 }
 
 @media (min-width: 768px) {
@@ -303,17 +303,7 @@
   }
 
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-or-light;
-  }
-
-  .eyebrow::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 999px;
-    background: var(--projector-light);
-    box-shadow: 0 0 12px var(--projector-glow);
-    animation: recPulse 2s ease-in-out infinite;
+    @apply text-[11px] font-semibold uppercase tracking-[0.28em] text-or-light;
   }
 
   .display-title {
@@ -344,7 +334,7 @@
     background:
       radial-gradient(ellipse 90% 70% at 15% -5%, rgba(90, 109, 128, 0.18), transparent 55%),
       radial-gradient(ellipse 70% 60% at 95% 10%, var(--cool-mist), transparent 50%),
-      linear-gradient(180deg, transparent 60%, rgba(5, 5, 4, 0.8) 100%);
+      linear-gradient(180deg, transparent 60%, rgba(8, 11, 14, 0.8) 100%);
     pointer-events: none;
   }
 
@@ -354,7 +344,7 @@
     position: absolute;
     inset: 0;
     z-index: 1;
-    opacity: 0.045;
+    opacity: 0.025;
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
@@ -370,7 +360,7 @@
   }
 
   .card-stage {
-    @apply relative overflow-hidden rounded-2xl border border-white/[0.06] bg-noir-secondary/80 backdrop-blur-sm;
+    @apply relative overflow-hidden rounded-2xl border border-white/[0.08] bg-noir-secondary/80 backdrop-blur-sm;
     text-align: justify;
     text-justify: inter-word;
     hyphens: none;
@@ -475,7 +465,7 @@
   }
 
   .truth-card {
-    @apply relative overflow-hidden rounded-2xl border border-white/[0.06] bg-noir-secondary/80 p-6 backdrop-blur-sm md:p-7;
+    @apply relative overflow-hidden rounded-2xl border border-white/[0.08] bg-noir-secondary/80 p-6 backdrop-blur-sm md:p-7;
     text-align: justify;
     text-justify: inter-word;
     hyphens: none;
@@ -551,17 +541,5 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes recPulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.55;
-    transform: scale(0.85);
   }
 }

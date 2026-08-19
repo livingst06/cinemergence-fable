@@ -71,7 +71,6 @@ export function FormationPedagogy({ methodes, moyens, encadrement }: PedagogyPro
       {cleanMethodes.length > 0 && (
         <div>
           <div className="mb-4">
-            <p className="eyebrow mb-2">Pédagogie</p>
             <h3 className="font-heading text-2xl text-cream md:text-3xl">
               Méthodes pédagogiques
             </h3>
@@ -95,7 +94,6 @@ export function FormationPedagogy({ methodes, moyens, encadrement }: PedagogyPro
       {cleanMoyens.length > 0 && (
         <div>
           <div className="mb-4">
-            <p className="eyebrow mb-2">Plateau</p>
             <h3 className="font-heading text-2xl text-cream md:text-3xl">Moyens techniques</h3>
           </div>
           <div className="space-y-3">
@@ -120,7 +118,6 @@ export function FormationPedagogy({ methodes, moyens, encadrement }: PedagogyPro
       {encadrement && (
         <div>
           <div className="mb-4">
-            <p className="eyebrow mb-2">Équipe</p>
             <h3 className="font-heading text-2xl text-cream md:text-3xl">Encadrement</h3>
           </div>
           <div className="rounded-xl border border-or/20 bg-or/[0.06] px-5 py-4 md:px-6 md:py-5">

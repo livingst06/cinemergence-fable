@@ -10,7 +10,6 @@ export function CtaFinal({ site }: CtaFinalProps) {
   return (
     <section className="border-t border-border bg-noir py-24 md:py-32">
       <div className="container-page text-center">
-        <p className="eyebrow mb-5 justify-center">Inscription</p>
         <h2 className="display-title mx-auto max-w-4xl text-cream">
           Prêt à passer
           <br />

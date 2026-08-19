@@ -27,7 +27,6 @@ type SectionHeaderProps = {
 };
 
 export function SectionHeader({
-  eyebrow,
   title,
   description,
   align = "center",
@@ -42,7 +41,6 @@ export function SectionHeader({
         className,
       )}
     >
-      {eyebrow && <p className="eyebrow mb-4">{eyebrow}</p>}
       <h2 className="section-title text-cream">{title}</h2>
       {description && (
         <div

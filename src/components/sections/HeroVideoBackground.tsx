@@ -58,7 +58,7 @@ export function HeroVideoBackground({
 
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-noir via-noir/92 to-noir/25 md:via-noir/78 md:to-transparent" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir via-transparent to-noir/50" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_40%,rgba(139,26,43,0.14),transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_40%,rgba(90,109,128,0.16),transparent_55%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_90%_20%,rgba(61,79,97,0.25),transparent_60%)]" />
     </div>
   );

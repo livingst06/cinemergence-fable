@@ -40,7 +40,7 @@ export const Users: CollectionConfig = {
       required: true,
       options: [
         { label: "Admin", value: "admin" },
-        { label: "Stagiaire", value: "stagiaire" },
+        { label: "Élève", value: "stagiaire" },
       ],
     },
   ],

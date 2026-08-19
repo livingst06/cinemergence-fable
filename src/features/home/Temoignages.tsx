@@ -18,7 +18,7 @@ export function Temoignages({ temoignages }: TemoignagesProps) {
       <div className="container-page">
         <SectionHeader
           eyebrow="Témoignages"
-          title="L'avis de nos stagiaires"
+          title="L'avis de nos élèves"
           description="Six parcours, six retours d'expérience sur nos formations."
         />
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

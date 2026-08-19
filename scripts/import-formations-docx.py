@@ -423,7 +423,7 @@ def extract_tarif_short(tarif_raw: str) -> str | None:
 
 
 def extract_effectif(effectif_raw: str) -> int | None:
-    m = re.search(r"(\d+)\s*stagiaires?", effectif_raw, re.I)
+    m = re.search(r"(\d+)\s*(?:stagiaires?|élèves?)", effectif_raw, re.I)
     return int(m.group(1)) if m else None
 
 

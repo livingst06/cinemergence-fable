@@ -185,7 +185,7 @@ export default async function HomePage() {
             description={
               <>
                 <p>Des parcours professionnalisants,</p>
-                <p className="mt-1">chacun avec un livrable clair pour le&nbsp;stagiaire.</p>
+                <p className="mt-1">chacun avec un livrable clair pour l'élève.</p>
               </>
             }
           />

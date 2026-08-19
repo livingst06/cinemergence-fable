@@ -62,7 +62,7 @@ export default async function AssociationPage() {
                 <p className="text-sm leading-relaxed text-muted-text">
                   Formé au Cours Florent, Choukri Rouha débute comme acteur, puis s&apos;impose à
                   l&apos;écriture et à la réalisation. Il a fondé Cinémergence pour offrir un cadre
-                  pro, du matériel cinéma et un résultat concret à chaque stagiaire.
+                  pro, du matériel cinéma et un résultat concret à chaque élève.
                 </p>
                 <ul className="space-y-3">
                   {founderHighlights.map((item) => (
@@ -98,7 +98,7 @@ export default async function AssociationPage() {
                 pour changer ça.
               </p>
               <p className="mt-4 text-sm leading-relaxed text-cream/90 md:text-base">
-                Offrir à chaque stagiaire un cadre pro, du matériel cinéma, une direction
+                Offrir à chaque élève un cadre pro, du matériel cinéma, une direction
                 exigeante et surtout un résultat concret — des images et des compétences
                 exploitables.
               </p>
@@ -131,7 +131,7 @@ export default async function AssociationPage() {
               </p>
               <p>
                 Notre expérience dans la réalisation, la direction d&apos;acteur et la production
-                nourrit des parcours concrets — chacun avec un livrable pour le stagiaire.
+                nourrit des parcours concrets — chacun avec un livrable pour l'élève.
               </p>
               <p>
                 Organisme de formation déclaré (NDA {site.nda}), nous accompagnons aussi le

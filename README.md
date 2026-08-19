@@ -86,7 +86,7 @@ Toute l'authentification du site — visiteurs publics **et** admin Payload — 
   2. Sinon recherche par email (migration en douceur des comptes historiques) et lie le `clerkId`
   3. Sinon crée un nouveau document avec `role: "stagiaire"` par défaut
 - Seuls les documents `users` avec `role: "admin"` peuvent accéder au panneau `/admin` (`access.admin` dans `src/collections/Users.ts`)
-- Page `/mon-compte` : espace minimal (« Bonjour {prénom} » + déconnexion), point d'extension pour un futur espace stagiaire
+- Page `/mon-compte` : espace minimal (« Bonjour {prénom} » + déconnexion), point d'extension pour un futur espace élève
 
 ### Migrer le compte admin historique
 
@@ -135,7 +135,7 @@ pnpm build
 
 Architecture Payload extensible pour :
 
-- Espace stagiaire complet (suivi de formation, documents, certificats) — s'appuie sur l'authentification Clerk déjà en place
+- Espace élève complet (suivi de formation, documents, certificats) — s'appuie sur l'authentification Clerk déjà en place
 - Webhook Clerk (`/api/webhooks/clerk`) pour synchronisation temps réel / désactivation de comptes
 - Paiement **Stripe** + réservation de créneaux
 - Admin stages / sessions / créneaux horaires

@@ -24,7 +24,7 @@ export default async function FormationsIndexPage() {
         <p className="mt-5 text-base leading-relaxed text-muted-text md:text-lg">
           Parcours professionnalisants pour comédiens, techniciens et entreprises
           <br />
-          chacun avec un livrable clair pour le&nbsp;stagiaire.
+          chacun avec un livrable clair pour l'élève.
         </p>
       </header>
 

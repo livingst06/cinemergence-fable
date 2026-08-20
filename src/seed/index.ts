@@ -35,6 +35,7 @@ async function seed() {
       qualiopiLabel: defaultSite.qualiopiLabel,
       partnerName: defaultSite.partnerName,
       instagramUrl: defaultSite.instagramUrl,
+      youtubeUrl: defaultSite.youtubeUrl,
     },
   });
   console.log("✓ Site settings seeded");

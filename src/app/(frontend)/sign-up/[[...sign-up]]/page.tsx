@@ -19,7 +19,7 @@ export default function SignUpPage() {
       />
       <Section>
         <div className="container-page flex justify-center">
-          <SignUp />
+          <SignUp fallbackRedirectUrl="/" signInUrl="/sign-in" />
         </div>
       </Section>
     </>

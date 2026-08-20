@@ -55,3 +55,49 @@ export function splitDuree(
 
   return { title: duree };
 }
+
+type FormationTilesSource = {
+  duree: string;
+  dureeHeures?: number;
+  dureeJours?: number;
+  format: string;
+  tarif: string | null;
+  effectifMax?: number;
+  publicCible: string;
+};
+
+export type FormationTileBullet = {
+  label: string;
+  value: string;
+};
+
+/** Compact bullets mirroring the 5 stats tiles on a formation detail page. */
+export function summarizeFormationTiles(
+  formation: FormationTilesSource,
+): FormationTileBullet[] {
+  const duree = splitDuree(formation.duree, formation.dureeHeures, formation.dureeJours);
+  const bullets: FormationTileBullet[] = [
+    {
+      label: "Durée",
+      value: duree.subtitle ? `${duree.title} — ${duree.subtitle}` : duree.title,
+    },
+    { label: "Format", value: formation.format },
+    { label: "Tarif", value: formation.tarif ?? "À confirmer" },
+  ];
+  if (formation.effectifMax != null) {
+    bullets.push({
+      label: "Places",
+      value: `${formation.effectifMax} places max par session`,
+    });
+  }
+  bullets.push({ label: "Public", value: summarizePublicCible(formation.publicCible) });
+  return bullets;
+}
+
+function summarizePublicCible(publicCible: string): string {
+  const primary = publicCible.split(";")[0]?.trim() || publicCible.trim();
+  if (primary.length <= 88) return primary;
+  const slice = primary.slice(0, 88);
+  const at = slice.lastIndexOf(" ");
+  return `${(at > 48 ? slice.slice(0, at) : slice).trimEnd()}…`;
+}

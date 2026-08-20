@@ -57,7 +57,9 @@ export type SiteConfig = {
   qualiopiLabel: string;
   partnerName: string;
   partnerRole: string;
+  partnerUrl: string;
   instagramUrl: string;
+  youtubeUrl: string;
   founderPhotoUrl?: string;
   founderPhotoMimeType?: string;
 };
@@ -83,7 +85,15 @@ export async function getSiteSettings(): Promise<SiteConfig> {
       qualiopiLabel: "Organisme de formation certifié",
       partnerName: settings.partnerName ?? defaultSite.partnerName,
       partnerRole: defaultSite.partnerRole,
-      instagramUrl: settings.instagramUrl ?? defaultSite.instagramUrl,
+      partnerUrl: defaultSite.partnerUrl,
+      instagramUrl:
+        typeof settings.instagramUrl === "string"
+          ? settings.instagramUrl
+          : defaultSite.instagramUrl,
+      youtubeUrl:
+        typeof (settings as { youtubeUrl?: unknown }).youtubeUrl === "string"
+          ? (settings as { youtubeUrl: string }).youtubeUrl
+          : defaultSite.youtubeUrl,
       founderPhotoUrl: resolveDisplayMediaUrl(settings.founderPhoto, staticFounder),
       founderPhotoMimeType: resolveMediaMimeType(settings.founderPhoto),
     };

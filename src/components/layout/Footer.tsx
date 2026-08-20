@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { Logo } from "@/components/layout/Logo";
 import { QualiopiMark } from "@/components/brand/QualiopiMark";
+import { InstagramIcon, YoutubeIcon } from "@/components/brand/SocialIcons";
 import type { SiteConfig } from "@/lib/data";
 
 type FooterProps = {
@@ -95,20 +97,49 @@ export function Footer({ site, formations }: FooterProps) {
                 </a>
               </li>
               <li>{site.city}</li>
-              {site.instagramUrl && (
-                <li>
-                  <a
-                    href={site.instagramUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="transition-colors hover:text-or-light"
-                  >
-                    Instagram
-                  </a>
+              {(site.instagramUrl || site.youtubeUrl) && (
+                <li className="flex items-center gap-3 pt-1">
+                  {site.instagramUrl && (
+                    <a
+                      href={site.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram Cinémergence"
+                      className="text-cream/70 transition-colors hover:text-or-light"
+                    >
+                      <InstagramIcon />
+                    </a>
+                  )}
+                  {site.youtubeUrl && (
+                    <a
+                      href={site.youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="YouTube Cinémergence"
+                      className="text-cream/70 transition-colors hover:text-or-light"
+                    >
+                      <YoutubeIcon />
+                    </a>
+                  )}
                 </li>
               )}
-              <li className="pt-2 text-xs text-muted-text">
-                {site.partnerRole}: {site.partnerName}
+              <li className="pt-2">
+                <p className="text-xs text-muted-text">{site.partnerRole}</p>
+                <a
+                  href={site.partnerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${site.partnerName} — site officiel`}
+                  className="logo-plate mt-2 inline-flex items-center justify-center rounded-md px-2 py-1.5 transition hover:opacity-90"
+                >
+                  <Image
+                    src="/images/brand/partners/bakelite-films.png"
+                    alt=""
+                    width={124}
+                    height={175}
+                    className="relative z-[1] h-9 w-auto object-contain"
+                  />
+                </a>
               </li>
             </ul>
           </div>

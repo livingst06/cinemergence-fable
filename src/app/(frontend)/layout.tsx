@@ -45,7 +45,13 @@ export default async function FrontendLayout({
   const jsonLd = organizationJsonLd(site);
 
   return (
-    <ClerkProvider appearance={clerkAppearance}>
+    <ClerkProvider
+      appearance={clerkAppearance}
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+      signInFallbackRedirectUrl="/"
+      signUpFallbackRedirectUrl="/"
+    >
       <html lang="fr" className="dark min-h-dvh" suppressHydrationWarning>
         <body className="flex min-h-dvh flex-col overflow-x-clip">
           <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />

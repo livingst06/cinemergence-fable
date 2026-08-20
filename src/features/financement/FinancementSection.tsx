@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { FinanceurLogo } from "@/components/brand/FinanceurLogo";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Reveal } from "@/components/ui/Reveal";
 import { Section, SectionHeader } from "@/components/ui/Section";
@@ -36,8 +37,9 @@ export function FinancementSection({
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {dispositifs.map((d, i) => (
             <Reveal key={d.key} delay={i * 80}>
-              <div className="card-stage h-full p-6">
-                <h3 className="font-heading text-xl text-or-light">{d.titre}</h3>
+              <div className="card-stage flex h-full flex-col p-6">
+                <FinanceurLogo financeurKey={d.key} />
+                <h3 className="mt-4 font-heading text-xl text-or-light">{d.titre}</h3>
                 <p className="mt-2 text-left text-sm leading-relaxed text-muted-text md:text-justify">{d.description}</p>
                 <p className="mt-4 text-xs font-medium uppercase tracking-wider text-cool-glow">
                   {d.public}

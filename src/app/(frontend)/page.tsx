@@ -5,11 +5,11 @@ import { HeroVideoBackground } from "@/components/sections/HeroVideoBackground";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { CtaFinal } from "@/features/home/CtaFinal";
 import { FinanceurLogos } from "@/features/home/FinanceurLogos";
-import { FormationsCarousel } from "@/features/home/FormationsCarousel";
 import { HeroProofCard } from "@/features/home/HeroProofCard";
 import { StickyCta } from "@/features/home/StickyCta";
 import { Temoignages } from "@/features/home/Temoignages";
 import { FinancementSection } from "@/features/financement/FinancementSection";
+import { FormationMiniCard } from "@/features/formations/FormationMiniCard";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { NewsletterForm } from "@/features/contact/NewsletterForm";
 import {
@@ -19,7 +19,6 @@ import {
   getSiteSettings,
   getTemoignages,
 } from "@/lib/data";
-import { resolveFormationCoverUrl } from "@/lib/site-media";
 
 export const revalidate = 300;
 
@@ -49,14 +48,9 @@ export default async function HomePage() {
     getFinancementDispositifs(),
   ]);
 
-  const formationSlides = [...formations]
-    .sort((a, b) => Number(b.prioritaire) - Number(a.prioritaire))
-    .map((f) => ({
-      slug: f.slug,
-      titre: f.titre,
-      src: resolveFormationCoverUrl(f.slug, f.coverImageUrl),
-      alt: f.titre,
-    }));
+  const orderedFormations = [...formations].sort(
+    (a, b) => Number(b.prioritaire) - Number(a.prioritaire),
+  );
 
   return (
     <>
@@ -165,7 +159,11 @@ export default async function HomePage() {
               </>
             }
           />
-          <FormationsCarousel slides={formationSlides} />
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+            {orderedFormations.map((formation) => (
+              <FormationMiniCard key={formation.slug} formation={formation} />
+            ))}
+          </div>
           <div className="mt-10 text-center">
             <ButtonLink href="/formations" size="lg" className="btn-cta px-10">
               Voir toutes les formations

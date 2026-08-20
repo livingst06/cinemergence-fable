@@ -90,7 +90,7 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
             aria-selected={audience === key}
             onClick={() => setAudience(key)}
             className={cn(
-              "rounded-lg border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
+              "min-h-11 rounded-lg border px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors",
               audience === key
                 ? "border-or/40 bg-or/15 text-cream"
                 : "border-white/10 bg-transparent text-cream/70 hover:border-or/30 hover:text-or-light",
@@ -110,7 +110,7 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
             aria-selected={pole === p}
             onClick={() => setPole(p)}
             className={cn(
-              "rounded-lg border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
+              "min-h-11 rounded-lg border px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors",
               pole === p
                 ? "border-projector/40 bg-projector/15 text-cream"
                 : "border-white/10 bg-transparent text-cream/70 hover:border-or/30 hover:text-or-light",
@@ -122,7 +122,7 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
       </div>
 
       {ordered.length > 0 || isAdminMode ? (
-        <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 sm:gap-4 md:gap-5 lg:grid-cols-3 lg:gap-5">
+        <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3 xl:gap-5">
           {ordered.map((f) =>
             isAdminMode ? (
               <FormationCardAdmin

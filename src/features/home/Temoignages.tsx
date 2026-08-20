@@ -18,17 +18,17 @@ export function Temoignages({ temoignages }: TemoignagesProps) {
       <div className="container-page">
         <SectionHeader
           eyebrow="Témoignages"
-          title="L'avis de nos stagiaires"
+          title="L'avis de nos élèves"
           description="Six parcours, six retours d'expérience sur nos formations."
         />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {temoignages.map((t, i) => (
             <Reveal key={t.auteur} delay={i * 100}>
-              <blockquote className="card-stage flex h-full flex-col p-7 md:p-8">
+              <blockquote className="card-stage flex h-full flex-col p-5 md:p-8">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-or-light">
                   {profilLabels[t.profil]}
                 </p>
-                <p className="mt-5 flex-1 text-base leading-relaxed text-cream md:text-lg">
+                <p className="mt-4 flex-1 text-base leading-relaxed text-cream md:mt-5 md:text-lg">
                   &ldquo;{t.quote}&rdquo;
                 </p>
                 <footer className="mt-6 border-t border-white/[0.06] pt-5">

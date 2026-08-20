@@ -27,11 +27,11 @@ export const galleryAssets: GalleryAsset[] = [
   { file: "photos/DSC07232.jpg", alt: "Comédiens en répétition avant prise", category: "plateau" },
   { file: "photos/DSC07252.jpg", alt: "Plateau lumière cinéma", category: "plateau" },
   { file: "photos/image00007.jpeg", alt: "Ambiance plateau Cinémergence", category: "plateau" },
-  { file: "photos/image00009.jpeg", alt: "Stagiaires sur le tournage", category: "livrable" },
+  { file: "photos/image00009.jpeg", alt: "Élèves sur le tournage", category: "livrable" },
   { file: "photos/Cinémergence 10.JPG", alt: "Master class avec les intervenants", category: "plateau" },
   { file: "videos/VIDEO-2026-02-08-16-46-36.mp4", alt: "Extrait plateau — tournage stage", category: "plateau" },
   { file: "videos/VIDEO-2026-02-08-13-01-36.mp4", alt: "Extrait plateau — mise en scène", category: "plateau" },
-  { file: "videos/WhatsApp Video 2025-12-22 at 14.48.58.mp4", alt: "Livrable stagiaire — scène tournée", category: "livrable" },
+  { file: "videos/WhatsApp Video 2025-12-22 at 14.48.58.mp4", alt: "Livrable élève — scène tournée", category: "livrable" },
 ];
 
 export const formationCovers: Record<string, string> = {

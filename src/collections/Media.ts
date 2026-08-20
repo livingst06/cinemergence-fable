@@ -27,7 +27,7 @@ export const Media: CollectionConfig = {
       type: "select",
       options: [
         { label: "Plateau", value: "plateau" },
-        { label: "Livrable stagiaire", value: "livrable" },
+        { label: "Livrable élève", value: "livrable" },
         { label: "Portrait", value: "portrait" },
         { label: "Formation (cover / galerie fiche)", value: "formation" },
         { label: "Autre", value: "autre" },

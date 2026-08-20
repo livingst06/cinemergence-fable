@@ -38,12 +38,12 @@ export function CookieBanner() {
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-[100] border-t border-or/20 bg-noir-secondary p-4 shadow-2xl md:p-6"
+      className="fixed inset-x-0 bottom-0 z-[100] border-t border-or/20 bg-noir-secondary p-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] shadow-2xl overscroll-contain md:p-6 md:pb-[max(1.5rem,env(safe-area-inset-bottom,0px))]"
       role="dialog"
       aria-label="Consentement cookies"
     >
       <div className="container-page flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <p className="max-w-3xl text-sm text-muted-text">
+        <p className="max-w-3xl text-xs leading-relaxed text-muted-text md:text-sm">
           Ce site utilise des cookies pour mesurer l&apos;audience (Google Analytics) et
           améliorer votre expérience. En continuant, vous acceptez notre{" "}
           <Link href="/confidentialite" className="text-or hover:underline">
@@ -51,15 +51,15 @@ export function CookieBanner() {
           </Link>
           .
         </p>
-        <div className="flex shrink-0 gap-3">
+        <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:flex-row">
           <Button
             variant="outline"
             onClick={reject}
-            className="border-or/30 text-cream hover:bg-or/10"
+            className="min-h-11 border-or/30 text-cream hover:bg-or/10"
           >
             Je refuse
           </Button>
-          <Button onClick={accept} className="btn-cta">
+          <Button onClick={accept} className="btn-cta min-h-11">
             J&apos;accepte
           </Button>
         </div>

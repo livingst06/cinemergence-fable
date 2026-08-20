@@ -96,7 +96,7 @@ export async function getSiteSettings(): Promise<SiteConfig> {
       city: defaultSite.city,
       nda: settings.nda ?? defaultSite.nda,
       qualiopiObtained: true,
-      qualiopiLabel: "Organisme certifié Qualiopi",
+      qualiopiLabel: "Organisme de formation certifié",
       partnerName: settings.partnerName ?? defaultSite.partnerName,
       partnerRole: defaultSite.partnerRole,
       instagramUrl: settings.instagramUrl ?? defaultSite.instagramUrl,

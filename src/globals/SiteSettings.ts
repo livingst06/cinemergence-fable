@@ -47,9 +47,9 @@ export const SiteSettings: GlobalConfig = {
     {
       name: "qualiopiLabel",
       type: "text",
-      defaultValue: "Organisme certifié Qualiopi",
+      defaultValue: "Organisme de formation certifié",
       admin: {
-        description: "Libellé affiché (ex. Organisme certifié Qualiopi)",
+        description: "Libellé institutionnel (le logo Qualiopi et la mention légale sont gérés à part)",
       },
     },
     {

@@ -30,7 +30,13 @@ export function ContactForm({
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="nom">Nom *</Label>
-          <Input id="nom" name="nom" required className="border-or/20 bg-noir-tertiary" />
+          <Input
+            id="nom"
+            name="nom"
+            required
+            autoComplete="name"
+            className="border-or/20 bg-noir-tertiary"
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">Email *</Label>
@@ -39,6 +45,7 @@ export function ContactForm({
             name="email"
             type="email"
             required
+            autoComplete="email"
             className="border-or/20 bg-noir-tertiary"
           />
         </div>
@@ -46,7 +53,14 @@ export function ContactForm({
 
       <div className="space-y-2">
         <Label htmlFor="telephone">Téléphone</Label>
-        <Input id="telephone" name="telephone" className="border-or/20 bg-noir-tertiary" />
+        <Input
+          id="telephone"
+          name="telephone"
+          type="tel"
+          autoComplete="tel"
+          inputMode="tel"
+          className="border-or/20 bg-noir-tertiary"
+        />
       </div>
 
       {defaultType !== "financement" && (
@@ -56,7 +70,7 @@ export function ContactForm({
             id="formationSlug"
             name="formationSlug"
             defaultValue={defaultFormation ?? ""}
-            className="flex h-10 w-full rounded-md border border-or/20 bg-noir-tertiary px-3 py-2 text-sm text-cream"
+            className="flex h-11 min-h-11 w-full rounded-md border border-or/20 bg-noir-tertiary px-3 py-2 text-base text-cream md:text-sm"
           >
             <option value="">Choisir une formation (optionnel)</option>
             {formations.map((f) => (
@@ -78,8 +92,8 @@ export function ContactForm({
           className="border-or/20 bg-noir-tertiary"
           placeholder={
             defaultType === "financement"
-              ? "Décris ta situation (statut, projet, questions sur le financement)..."
-              : "Dis-nous en quoi on peut t'aider..."
+              ? "Décris ta situation (statut, projet, questions sur le financement)…"
+              : "Dis-nous en quoi on peut t'aider…"
           }
         />
       </div>
@@ -100,9 +114,9 @@ export function ContactForm({
       <Button
         type="submit"
         disabled={pending}
-        className={defaultType === "inscription" ? "btn-convert" : "btn-cta"}
+        className={`${defaultType === "inscription" ? "btn-convert" : "btn-cta"} min-h-11`}
       >
-        {pending ? "J'envoie..." : "J'envoie ma demande"}
+        {pending ? "J'envoie…" : "J'envoie ma demande"}
       </Button>
     </form>
   );

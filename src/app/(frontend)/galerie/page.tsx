@@ -1,69 +1,84 @@
 import type { Metadata } from "next";
 
-import { MediaFrame } from "@/components/ui/MediaFrame";
+import { GalleryGrid } from "@/features/galerie/GalleryGrid";
 import { Placeholder } from "@/components/ui/Placeholder";
-import { Section, SectionHeader } from "@/components/ui/Section";
+import { Section } from "@/components/ui/Section";
 import { PageHero } from "@/components/sections/PageHero";
 import { getGalleryMedia } from "@/lib/data";
+import { isImageMimeType } from "@/lib/media-utils";
+import { staticInterviewVideos } from "@/lib/site-media";
 
 export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Galerie — Tournages et livrables",
   description:
-    "Photos et vidéos des formations Cinémergence : plateaux de tournage et livrables des stagiaires.",
+    "Interviews d'élèves, photos et extraits des formations Cinémergence : plateaux de tournage et livrables.",
   alternates: { canonical: "/galerie" },
 };
 
 export default async function GaleriePage() {
   const media = await getGalleryMedia();
+  const plateau = media.filter(
+    (item) => item.url && isImageMimeType(item.mimeType, item.url),
+  );
 
   const placeholders = [
     "Plateau de tournage — Formation",
-    "Livrable stagiaire — Court-métrage",
+    "Livrable élève — Court-métrage",
     "Plateau — Jeu d'acteur face caméra",
-    "Livrable stagiaire — Bande démo",
+    "Livrable élève — Bande démo",
     "Plateau — Caméra cinéma pro",
-    "Livrable stagiaire — Scènes tournées",
+    "Livrable élève — Scènes tournées",
   ];
 
   return (
     <>
       <PageHero
-        eyebrow="Médias"
+        title="Les interviews"
+        description={
+          <p className="text-pretty text-base leading-relaxed md:text-xl md:leading-relaxed">
+            Paroles d&apos;élèves, filmées pendant les formations
+          </p>
+        }
+      >
+        <div className="mt-6 max-w-4xl md:mt-10">
+          <GalleryGrid items={staticInterviewVideos} compact />
+        </div>
+      </PageHero>
+      <PageHero
+        headingAs="h2"
         title="Sur le plateau"
-        description="Tournages et livrables produits par nos stagiaires."
+        description={
+          <p className="text-pretty text-base leading-relaxed md:text-xl md:leading-relaxed">
+            Moments capturés pendant nos sessions de formation
+          </p>
+        }
       />
-      <Section>
+      <Section className="pt-6 pb-16 md:pt-10 md:pb-28">
         <div className="container-page">
-          <SectionHeader
-            eyebrow="Galerie"
-            title="Images des formations"
-            description="Moments capturés sur nos plateaux et livrables produits par les stagiaires."
-          />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {media.length > 0
-              ? media.map((item) => (
-                  <article key={String(item.id)} className="group card-stage overflow-hidden">
-                    <MediaFrame
-                      src={item.url}
-                      mimeType={item.mimeType}
-                      alt={item.alt}
-                      aspect="video"
-                      className="rounded-none border-0"
-                    />
-                    <div className="p-4">
-                      <p className="text-sm font-medium text-cream">{item.alt}</p>
-                      {item.caption && (
-                        <p className="mt-1 text-xs text-muted-text">{item.caption}</p>
-                      )}
-                    </div>
-                  </article>
-                ))
-              : placeholders.map((label) => (
-                  <Placeholder key={label} label={label} aspect="video" />
-                ))}
-          </div>
+          {plateau.length > 0 ? (
+            <GalleryGrid
+              items={plateau.flatMap((item) =>
+                item.url
+                  ? [
+                      {
+                        id: String(item.id),
+                        alt: item.alt,
+                        url: item.url,
+                        mimeType: item.mimeType,
+                      },
+                    ]
+                  : [],
+              )}
+            />
+          ) : (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
+              {placeholders.map((label) => (
+                <Placeholder key={label} label={label} aspect="video" hideLabel />
+              ))}
+            </div>
+          )}
         </div>
       </Section>
     </>

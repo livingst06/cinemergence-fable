@@ -33,12 +33,12 @@ export function FinancementSection({
     <Section variant="secondary">
       <div className="container-page">
         <SectionHeader eyebrow="Financement" title={title} description={descriptionNode} />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {dispositifs.map((d, i) => (
             <Reveal key={d.key} delay={i * 80}>
               <div className="card-stage h-full p-6">
                 <h3 className="font-heading text-xl text-or-light">{d.titre}</h3>
-                <p className="mt-2 text-justify text-sm leading-relaxed text-muted-text">{d.description}</p>
+                <p className="mt-2 text-left text-sm leading-relaxed text-muted-text md:text-justify">{d.description}</p>
                 <p className="mt-4 text-xs font-medium uppercase tracking-wider text-cool-glow">
                   {d.public}
                 </p>

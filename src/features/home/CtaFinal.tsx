@@ -8,13 +8,10 @@ type CtaFinalProps = {
 
 export function CtaFinal({ site }: CtaFinalProps) {
   return (
-    <section className="border-t border-border bg-noir py-24 md:py-32">
+    <section className="border-t border-border bg-noir py-14 md:py-24 lg:py-32">
       <div className="container-page text-center">
-        <p className="eyebrow mb-5 justify-center">Inscription</p>
         <h2 className="display-title mx-auto max-w-4xl text-cream">
-          Prêt à passer
-          <br />
-          <span className="text-tungsten">à l&apos;action&nbsp;?</span>
+          Prêt à passer <span className="text-tungsten">à l&apos;action&nbsp;?</span>
         </h2>
         <p className="mx-auto mt-6 max-w-3xl text-pretty text-base leading-relaxed text-muted-text md:text-lg">
           {site.tagline} Contacte-nous par email ou WhatsApp au{" "}
@@ -23,14 +20,14 @@ export function CtaFinal({ site }: CtaFinalProps) {
           </a>
           .
         </p>
-        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <ButtonLink href="/contact" size="lg" className="btn-convert px-10">
+        <div className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center">
+          <ButtonLink href="/contact" size="lg" className="btn-cta min-h-12 w-full px-8 sm:w-auto sm:px-10">
             Je réserve ma place
           </ButtonLink>
           <ButtonLink
             href={`https://wa.me/${site.phone.replace(/\D/g, "")}`}
             size="lg"
-            className="btn-outline-warm rounded-lg px-10 py-2.5 text-sm font-semibold uppercase tracking-wider"
+            className="btn-outline-warm min-h-12 w-full rounded-lg px-8 py-2.5 text-sm font-semibold uppercase tracking-wider sm:w-auto sm:px-10"
           >
             Je contacte sur WhatsApp
           </ButtonLink>

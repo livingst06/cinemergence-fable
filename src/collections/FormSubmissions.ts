@@ -50,7 +50,7 @@ export const FormSubmissions: CollectionConfig = {
       type: "text",
       label: "Code parrainage",
       admin: {
-        description: "Code saisi par le stagiaire pour rémunérer son parrain",
+        description: "Code saisi par l'élève pour rémunérer son parrain",
       },
     },
     {

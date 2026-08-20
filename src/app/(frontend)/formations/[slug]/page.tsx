@@ -14,10 +14,12 @@ import {
   FormationProse,
 } from "@/features/formations/FormationPedagogy";
 import { FormationDetailGallery } from "@/features/formations/FormationDetailGallery";
+import { FormationSessionGallery } from "@/features/formations/FormationSessionGallery";
 import { FormationSessionsSection } from "@/features/formations/FormationSessionsSection";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { formationPath } from "@/lib/formation-types";
+import { splitDuree } from "@/lib/formation-format";
 import { formatFormationSessionLabel } from "@/lib/inscription-status";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
 import {
@@ -107,6 +109,11 @@ export default async function FormationDetailPage({ params }: Props) {
   const methodes = formation.methodesPedagogiques ?? [];
   const moyens = formation.moyensTechniques ?? [];
   const jsonLd = courseJsonLd(formation, site);
+  const dureeParts = splitDuree(
+    formation.duree,
+    formation.dureeHeures,
+    formation.dureeJours,
+  );
 
   return (
     <>
@@ -115,9 +122,8 @@ export default async function FormationDetailPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="container-page space-y-16 py-12 md:space-y-20 md:py-16 lg:py-20">
+      <div className="container-page space-y-10 py-8 md:space-y-20 md:py-16 lg:py-20">
         <header className="max-w-4xl">
-          <p className="eyebrow mb-4">{formation.pole}</p>
           <h1 className="display-title max-w-5xl text-cream">{formation.titre}</h1>
           <p className="mt-5 whitespace-pre-line text-base leading-relaxed text-muted-text md:text-lg">
             {formation.sousTitre ?? formation.accroche}
@@ -183,29 +189,47 @@ export default async function FormationDetailPage({ params }: Props) {
           </div>
         </header>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
-          <div className="card-stage p-5 md:p-6">
-            <p className="eyebrow">Durée</p>
-            <p className="mt-2 whitespace-pre-line font-heading text-2xl text-cream">
-              {formation.duree}
-            </p>
+        <div>
+          <div
+            className={
+              formation.effectifMax != null
+                ? "grid gap-4 sm:grid-cols-2 xl:grid-cols-5 xl:gap-5"
+                : "grid gap-4 sm:grid-cols-2 xl:grid-cols-4 xl:gap-5"
+            }
+          >
+            <div className="card-stage p-5 md:p-6">
+              <p className="eyebrow">Durée</p>
+              <p className="mt-2 font-heading text-3xl text-cream">{dureeParts.title}</p>
+              {dureeParts.subtitle && (
+                <p className="mt-1 text-sm leading-relaxed text-muted-text">
+                  {dureeParts.subtitle}
+                </p>
+              )}
+            </div>
+            <div className="card-stage p-5 md:p-6">
+              <p className="eyebrow">Format</p>
+              <p className="mt-2 font-heading text-2xl text-cream">{formation.format}</p>
+            </div>
+            <div className="card-stage p-5 md:p-6">
+              <p className="eyebrow">Tarif</p>
+              <p className="mt-2 font-heading text-2xl text-cream">
+                {formation.tarif ?? "À confirmer"}
+              </p>
+            </div>
+            {formation.effectifMax != null && (
+              <div className="card-stage p-5 md:p-6">
+                <p className="eyebrow">Places</p>
+                <p className="mt-2 font-heading text-2xl text-cream">
+                  {formation.effectifMax} places max par session
+                </p>
+              </div>
+            )}
+            <div className="card-stage p-5 md:p-6">
+              <p className="eyebrow">Public</p>
+              <p className="mt-2 text-sm leading-relaxed text-cream/90">{formation.publicCible}</p>
+            </div>
           </div>
-          <div className="card-stage p-5 md:p-6">
-            <p className="eyebrow">Format</p>
-            <p className="mt-2 whitespace-pre-line font-heading text-2xl text-cream">
-              {formation.format}
-            </p>
-          </div>
-          <div className="card-stage p-5 md:p-6">
-            <p className="eyebrow">Tarif</p>
-            <p className="mt-2 font-heading text-2xl text-cream">
-              {formation.tarif ?? "À confirmer"}
-            </p>
-          </div>
-          <div className="card-stage p-5 md:p-6">
-            <p className="eyebrow">Public</p>
-            <p className="mt-2 text-sm leading-relaxed text-cream/90">{formation.publicCible}</p>
-          </div>
+          <FormationSessionGallery slug={formation.slug} />
         </div>
 
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
@@ -217,14 +241,6 @@ export default async function FormationDetailPage({ params }: Props) {
                 <span className="font-semibold text-or-light">Prérequis</span>
                 <span className="mt-1 block whitespace-pre-line">
                   {formation.prerequis}
-                </span>
-              </p>
-            )}
-            {formation.effectifMax != null && (
-              <p className="mt-3 text-sm text-muted-text">
-                <span className="font-semibold text-or-light">Places</span>
-                <span className="mt-1 block">
-                  {formation.effectifMax} places max par session
                 </span>
               </p>
             )}
@@ -285,7 +301,7 @@ export default async function FormationDetailPage({ params }: Props) {
                 className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
               >
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]" />
-                <p className="min-w-0 flex-1 text-justify leading-relaxed">{obj}</p>
+                <p className="min-w-0 flex-1 text-left md:text-justify leading-relaxed">{obj}</p>
               </li>
             ))}
           </ul>
@@ -341,7 +357,7 @@ export default async function FormationDetailPage({ params }: Props) {
                             )}
                           </div>
                           {seq.detail && (
-                            <p className="mt-1 text-justify text-xs leading-relaxed text-muted-text">
+                            <p className="mt-1 text-left md:text-justify text-xs leading-relaxed text-muted-text">
                               {seq.detail}
                             </p>
                           )}
@@ -379,7 +395,7 @@ export default async function FormationDetailPage({ params }: Props) {
                   className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
                 >
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]" />
-                  <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
+                  <p className="min-w-0 flex-1 text-left md:text-justify leading-relaxed">{item}</p>
                 </li>
               ))}
           </ul>
@@ -394,7 +410,7 @@ export default async function FormationDetailPage({ params }: Props) {
                 className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
               >
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-or shadow-[0_0_6px_var(--or-glow)]" />
-                <p className="min-w-0 flex-1 text-justify leading-relaxed">{item}</p>
+                <p className="min-w-0 flex-1 text-left md:text-justify leading-relaxed">{item}</p>
               </li>
             ))}
           </ul>

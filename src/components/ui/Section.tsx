@@ -12,7 +12,7 @@ type SectionProps = {
 
 export function Section({ children, className, id }: SectionProps) {
   return (
-    <section id={id} className={cn("py-14 sm:py-16 md:py-20 lg:py-24", className)}>
+    <section id={id} className={cn("py-10 md:py-16 lg:py-28", className)}>
       {children}
     </section>
   );
@@ -27,7 +27,6 @@ type SectionHeaderProps = {
 };
 
 export function SectionHeader({
-  eyebrow,
   title,
   description,
   align = "center",
@@ -36,19 +35,18 @@ export function SectionHeader({
   return (
     <div
       className={cn(
-        "mb-8 sm:mb-10 md:mb-12",
-        align === "center" && "mx-auto max-w-3xl text-center md:max-w-4xl",
-        align === "left" && "max-w-3xl md:max-w-4xl",
+        "mb-8 md:mb-12 lg:mb-16",
+        align === "center" && "mx-auto max-w-4xl text-center",
+        align === "left" && "max-w-4xl",
         className,
       )}
     >
-      {eyebrow && <p className="eyebrow mb-4">{eyebrow}</p>}
       <h2 className="section-title text-cream">{title}</h2>
       {description && (
         <div
           className={cn(
             "mt-4 text-pretty text-base leading-relaxed text-muted-text md:text-lg",
-            align === "left" && "text-justify",
+            align === "left" && "text-left md:text-justify",
           )}
         >
           {typeof description === "string" ? <p>{description}</p> : description}

@@ -5,6 +5,7 @@ type PlaceholderProps = {
   aspect?: "video" | "square" | "portrait" | "wide";
   className?: string;
   variant?: "default" | "hero";
+  hideLabel?: boolean;
 };
 
 const aspectClasses = {
@@ -14,7 +15,13 @@ const aspectClasses = {
   wide: "aspect-[21/9]",
 };
 
-export function Placeholder({ label, aspect = "video", className, variant = "default" }: PlaceholderProps) {
+export function Placeholder({
+  label,
+  aspect = "video",
+  className,
+  variant = "default",
+  hideLabel = false,
+}: PlaceholderProps) {
   return (
     <div
       className={cn(
@@ -38,9 +45,11 @@ export function Placeholder({ label, aspect = "video", className, variant = "def
         </div>
       )}
 
-      <p className="relative z-10 p-5 text-left text-[11px] font-medium uppercase tracking-[0.18em] text-cream/50">
-        {label}
-      </p>
+      {!hideLabel && (
+        <p className="relative z-10 p-5 text-left text-[11px] font-medium uppercase tracking-[0.18em] text-cream/50">
+          {label}
+        </p>
+      )}
     </div>
   );
 }

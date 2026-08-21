@@ -37,6 +37,7 @@ export function FormationCard({ formation }: FormationCardProps) {
             mimeType={formation.coverImageMimeType ?? "image/jpeg"}
             alt=""
             aspect="video"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="h-full rounded-none border-0 border-b border-white/[0.06] !aspect-auto"
           />
           {formation.prioritaire && (

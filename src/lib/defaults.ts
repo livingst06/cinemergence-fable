@@ -2,7 +2,7 @@ import type { FormationData, FaqItem, FinancementKey, ProgrammeJour } from "./fo
 import { formationsCatalog } from "./formations-catalog";
 
 export type { FormationData, FaqItem, FinancementKey, ProgrammeJour } from "./formation-types";
-export { formationPath, formationLivrableLabel } from "./formation-types";
+export { formationPath, formationLivrableLabel, publicFinancements, PUBLIC_FINANCEMENT_KEYS } from "./formation-types";
 
 /** @deprecated Use ProgrammeJour — kept for seed/CMS compatibility aliases. */
 export type Module = ProgrammeJour;
@@ -154,6 +154,7 @@ export type FinancementDispositif = {
   etapes: string[];
 };
 
+/** Conservé pour réactivation : n'apparaît pas tant que PUBLIC_FINANCEMENT_KEYS est vide. */
 export const defaultFinancement: FinancementDispositif[] = [
   {
     key: "afdas",
@@ -179,13 +180,13 @@ export const defaultFinancement: FinancementDispositif[] = [
   },
   {
     key: "cpf",
-    titre: "CPF — Mon Compte Formation",
-    description: "Utilise tes droits acquis sur Mon Compte Formation.",
-    public: "Toute personne ayant travaillé en France",
+    titre: "CPF",
+    description: "Mon Compte Formation — droits acquis tout au long de ta carrière.",
+    public: "Salariés, demandeurs d'emploi, indépendants",
     etapes: [
-      "Connecte-toi sur moncompteformation.gouv.fr",
-      "Recherche la formation Cinémergence",
-      "Inscris-toi ou contacte-nous pour finaliser",
+      "Vérifier tes droits sur moncompteformation.gouv.fr",
+      "Choisir ta formation Cinémergence",
+      "Valider le dossier avec notre accompagnement",
     ],
   },
   {
@@ -202,10 +203,10 @@ export const defaultFinancement: FinancementDispositif[] = [
 ];
 
 export const financementGuide: Record<string, FinancementKey[]> = {
-  debutant: ["cpf", "france-travail", "opco"],
-  reconversion: ["cpf", "opco", "france-travail"],
-  intermittent: ["afdas", "cpf"],
-  salarie: ["opco", "cpf"],
+  debutant: ["france-travail", "opco"],
+  reconversion: ["opco", "france-travail"],
+  intermittent: ["afdas"],
+  salarie: ["opco"],
 };
 
 export const defaultLegal = {
@@ -236,7 +237,7 @@ Les présentes CGV s'appliquent aux formations proposées par Cinémergence, ass
 
 Inscription : toute inscription est confirmée par email après validation du financement ou du paiement.
 Annulation : conditions d'annulation communiquées lors de l'inscription.
-Financement : les formations peuvent être prises en charge par AFDAS, OPCO, CPF ou France Travail selon éligibilité.
+Financement : les formations peuvent être prises en charge selon éligibilité, après étude de ta situation.
 Réclamations : cinemergence.paris@gmail.com
   `.trim(),
 };

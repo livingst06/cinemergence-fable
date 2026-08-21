@@ -1,5 +1,19 @@
 export type FinancementKey = "afdas" | "opco" | "cpf" | "france-travail";
 
+/**
+ * Organismes visibles sur le site public.
+ * Vide tant que Cinémergence n'est pas référencée (AFDAS, OPCO, CPF, France Travail).
+ * Pour réactiver un logo / une mention, ajouter la clé ici — le reste du code est déjà en place.
+ */
+export const PUBLIC_FINANCEMENT_KEYS: FinancementKey[] = [];
+
+export function publicFinancements(keys: unknown): FinancementKey[] {
+  if (!Array.isArray(keys)) return [];
+  return keys.filter((k): k is FinancementKey =>
+    PUBLIC_FINANCEMENT_KEYS.includes(k as FinancementKey),
+  );
+}
+
 export type FaqItem = { q: string; r: string };
 
 export type ProgrammeSequence = {

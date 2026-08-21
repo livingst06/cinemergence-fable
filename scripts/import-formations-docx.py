@@ -434,8 +434,6 @@ def detect_financements(text: str, audience: str) -> list[str]:
         fins.append("afdas")
     if "opco" in t:
         fins.append("opco")
-    if re.search(r"\bcpf\b", t):
-        fins.append("cpf")
     if "france travail" in t:
         fins.append("france-travail")
     if not fins:
@@ -557,7 +555,6 @@ def parse_fiche(path: Path) -> dict:
         labels = {
             "afdas": "AFDAS",
             "opco": "OPCO",
-            "cpf": "CPF",
             "france-travail": "France Travail",
         }
         faq.append(

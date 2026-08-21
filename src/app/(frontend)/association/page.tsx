@@ -50,6 +50,7 @@ export default async function AssociationPage() {
                 mimeType={site.founderPhotoMimeType}
                 alt="Choukri Rouha sur le plateau de tournage"
                 aspect="portrait"
+                sizes="(max-width: 1024px) 100vw, 28rem"
                 className="card-stage max-w-md overflow-hidden rounded-lg border border-white/[0.06]"
               />
               <div className="space-y-6">
@@ -135,8 +136,8 @@ export default async function AssociationPage() {
                 nourrit des parcours concrets — chacun avec un livrable pour l'élève.
               </p>
               <p>
-                Organisme de formation déclaré (NDA {site.nda}), nous accompagnons aussi le
-                financement des formations (AFDAS, OPCO, CPF, France Travail).
+                Organisme de formation déclaré (NDA {site.nda}), nous accompagnons aussi
+                le financement des formations.
               </p>
             </div>
           </div>

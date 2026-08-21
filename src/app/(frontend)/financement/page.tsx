@@ -20,7 +20,7 @@ const faq = [
   },
   {
     q: "Combien de temps pour monter un dossier ?",
-    r: "Compte 2 à 6 semaines selon le financeur. On t'accompagne dans les démarches.",
+    r: "Compte 2 à 6 semaines selon ta situation. On t'accompagne dans les démarches.",
   },
   {
     q: "Puis-je cumuler plusieurs financements ?",
@@ -30,9 +30,9 @@ const faq = [
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Financement formation cinéma — AFDAS, OPCO, CPF",
+    title: "Financement formation cinéma — Cinémergence",
     description:
-      "Finance ta formation cinéma à Paris : AFDAS, OPCO, CPF, France Travail. Guide par profil et accompagnement Cinémergence.",
+      "Finance ta formation cinéma à Paris. Accompagnement Cinémergence pour monter ton dossier.",
     alternates: { canonical: "/financement" },
   };
 }
@@ -49,13 +49,10 @@ export default async function FinancementPage() {
         eyebrow="Financement"
         title={"Ton projet peut être pris en\u00a0charge"}
         description={
-          <div className="space-y-1">
-            <p>AFDAS, OPCO, CPF, France Travail</p>
-            <p>
-              on t&apos;explique simplement comment{" "}
-              <span className="whitespace-nowrap">financer ta formation.</span>
-            </p>
-          </div>
+          <p>
+            On t&apos;explique simplement comment{" "}
+            <span className="whitespace-nowrap">financer ta formation.</span>
+          </p>
         }
       />
       <Section>
@@ -63,12 +60,14 @@ export default async function FinancementPage() {
           <FinancementGuide />
         </div>
       </Section>
-      <FinancementSection
-        dispositifs={dispositifs}
-        title="Les dispositifs"
-        description="Ce que chaque financeur peut prendre en charge."
-        showCta={false}
-      />
+      {dispositifs.length > 0 && (
+        <FinancementSection
+          dispositifs={dispositifs}
+          title="Les dispositifs"
+          description="On t'aide à y voir clair selon ta situation."
+          showCta={false}
+        />
+      )}
       <Section variant="secondary">
         <div className="container-page max-w-3xl">
           <SectionHeader eyebrow="FAQ" title="Les vraies questions" align="left" />

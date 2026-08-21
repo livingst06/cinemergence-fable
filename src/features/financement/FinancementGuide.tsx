@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/ButtonLink";
 import {
   defaultFinancement,
   financementGuide,
+  PUBLIC_FINANCEMENT_KEYS,
 } from "@/lib/defaults";
 
 const profils = [
@@ -19,7 +20,9 @@ const profils = [
 export function FinancementGuide() {
   const [profil, setProfil] = useState<string>("debutant");
   const keys = financementGuide[profil] ?? [];
-  const matches = defaultFinancement.filter((d) => keys.includes(d.key));
+  const matches = defaultFinancement.filter(
+    (d) => PUBLIC_FINANCEMENT_KEYS.includes(d.key) && keys.includes(d.key),
+  );
 
   return (
     <div className="card-stage p-6 md:p-8">
@@ -27,41 +30,51 @@ export function FinancementGuide() {
         Quel financement pour mon&nbsp;profil&nbsp;?
       </h3>
       <p className="mt-2 text-sm text-muted-text">
-        Sélectionne ta situation pour voir les dispositifs adaptés.
+        Chaque situation est différente. On étudie avec toi les possibilités de prise en
+        charge.
       </p>
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        {profils.map((p) => (
-          <button
-            key={p.id}
-            type="button"
-            onClick={() => setProfil(p.id)}
-            className={`rounded-full border px-4 py-2 text-sm transition-colors ${
-              profil === p.id
-                ? "border-projector/40 bg-projector/10 text-or-light"
-                : "border-white/10 text-muted-text hover:border-white/20 hover:text-cream"
-            }`}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
+      {PUBLIC_FINANCEMENT_KEYS.length > 0 && (
+        <div className="mt-6 flex flex-wrap gap-2">
+          {profils.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => setProfil(p.id)}
+              className={`rounded-full border px-4 py-2 text-sm transition-colors ${
+                profil === p.id
+                  ? "border-projector/40 bg-projector/10 text-or-light"
+                  : "border-white/10 text-muted-text hover:border-white/20 hover:text-cream"
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      )}
 
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        {matches.map((d) => (
-          <div key={d.key} className="card-stage p-5">
-            <Badge className="mb-3 bg-projector text-cream">{d.titre}</Badge>
-            <p className="text-sm text-muted-text">{d.description}</p>
-            <ol className="mt-4 space-y-2 text-sm text-cream/80">
-              {d.etapes.map((e, i) => (
-                <li key={e}>
-                  {i + 1}. {e}
-                </li>
-              ))}
-            </ol>
-          </div>
-        ))}
-      </div>
+      {matches.length > 0 ? (
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          {matches.map((d) => (
+            <div key={d.key} className="card-stage p-5">
+              <Badge className="mb-3 bg-projector text-cream">{d.titre}</Badge>
+              <p className="text-sm text-muted-text">{d.description}</p>
+              <ol className="mt-4 space-y-2 text-sm text-cream/80">
+                {d.etapes.map((e, i) => (
+                  <li key={e}>
+                    {i + 1}. {e}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-6 text-sm leading-relaxed text-muted-text">
+          Écris-nous : on te dit concrètement comment financer ta formation, selon ton statut
+          et ton projet.
+        </p>
+      )}
 
       <div className="mt-8">
         <ButtonLink href="/contact?type=financement" className="btn-cta">

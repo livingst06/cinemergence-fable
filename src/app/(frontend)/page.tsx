@@ -1,4 +1,7 @@
+import { statSync } from "node:fs";
+import path from "node:path";
 import type { Metadata } from "next";
+import { preload } from "react-dom";
 
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { HeroVideoBackground } from "@/components/sections/HeroVideoBackground";
@@ -19,8 +22,19 @@ import {
   getSiteSettings,
   getTemoignages,
 } from "@/lib/data";
+import { PUBLIC_FINANCEMENT_KEYS } from "@/lib/formation-types";
 
 export const revalidate = 300;
+
+function heroPublicAsset(filename: string) {
+  const href = `/videos/${filename}`;
+  try {
+    const mtime = statSync(path.join(process.cwd(), "public", "videos", filename)).mtimeMs;
+    return `${href}?v=${Math.round(mtime)}`;
+  } catch {
+    return href;
+  }
+}
 
 const schoolBenefits = [
   "Conditions réelles de plateau",
@@ -40,6 +54,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
+  const heroPoster = heroPublicAsset("hero-plateau-poster.jpg");
+  preload(heroPoster, { as: "image" });
+
   const [site, formations, intervenants, temoignages, financement] = await Promise.all([
     getSiteSettings(),
     getFormations(),
@@ -55,7 +72,11 @@ export default async function HomePage() {
   return (
     <>
       <section className="cinematic-grain hero-slash relative overflow-hidden bg-noir md:min-h-[52.5vh]">
-        <HeroVideoBackground />
+        <HeroVideoBackground
+          src={heroPublicAsset("hero-plateau-travel.mp4")}
+          srcMobile={heroPublicAsset("hero-plateau-travel-mobile.mp4")}
+          poster={heroPoster}
+        />
         <div className="container-page relative z-10 flex flex-col justify-start pt-6 pb-10 md:min-h-[52.5vh] md:pt-10 md:pb-20 lg:pt-12 lg:pb-24">
           <div className="w-full lg:w-3/4">
             <p className="eyebrow animate-fade-up">Paris · Marseille · Montpellier</p>
@@ -140,9 +161,11 @@ export default async function HomePage() {
                 <p className="min-w-0 flex-1 text-left leading-relaxed md:text-justify">{item}</p>
               </li>
             ))}
-            <li className="flex items-center sm:col-span-2 lg:col-span-1">
-              <FinanceurLogos className="grid w-full grid-cols-2 justify-items-center gap-2" />
-            </li>
+            {PUBLIC_FINANCEMENT_KEYS.length > 0 && (
+              <li className="flex items-center sm:col-span-2 lg:col-span-1">
+                <FinanceurLogos className="grid w-full grid-cols-3 justify-items-center gap-2" />
+              </li>
+            )}
           </ul>
         </div>
       </Section>

@@ -1,4 +1,5 @@
-import { FinanceurLogo, FINANCEUR_LOGOS } from "@/components/brand/FinanceurLogo";
+import { FinanceurLogo } from "@/components/brand/FinanceurLogo";
+import { PUBLIC_FINANCEMENT_KEYS } from "@/lib/formation-types";
 import { cn } from "@/lib/utils";
 
 type FinanceurLogosProps = {
@@ -6,12 +7,14 @@ type FinanceurLogosProps = {
 };
 
 export function FinanceurLogos({ className }: FinanceurLogosProps) {
+  if (PUBLIC_FINANCEMENT_KEYS.length === 0) return null;
+
   return (
     <ul
       className={cn("flex flex-wrap items-center justify-center gap-2", className)}
-      aria-label="Finançable AFDAS, OPCO, CPF, France Travail"
+      aria-label="Organismes financeurs"
     >
-      {(Object.keys(FINANCEUR_LOGOS) as Array<keyof typeof FINANCEUR_LOGOS>).map((key) => (
+      {PUBLIC_FINANCEMENT_KEYS.map((key) => (
         <li key={key}>
           <FinanceurLogo financeurKey={key} size="sm" className="w-full" />
         </li>

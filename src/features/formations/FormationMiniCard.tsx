@@ -46,6 +46,7 @@ export function FormationMiniCard({ formation }: FormationMiniCardProps) {
                 mimeType={formation.coverImageMimeType ?? "image/jpeg"}
                 alt=""
                 aspect="video"
+                sizes="(max-width: 1023px) 50vw, 25vw"
                 className="h-full rounded-none border-0 !aspect-auto"
               />
             </div>

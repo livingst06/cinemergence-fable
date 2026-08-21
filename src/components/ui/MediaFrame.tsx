@@ -1,7 +1,6 @@
-"use client";
+import Image from "next/image";
 
 import { Placeholder } from "@/components/ui/Placeholder";
-import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { isVideoMimeType } from "@/lib/media-utils";
 import { cn } from "@/lib/utils";
 
@@ -9,9 +8,14 @@ type MediaFrameProps = {
   src?: string;
   alt: string;
   mimeType?: string;
+  poster?: string;
   aspect?: "video" | "square" | "portrait" | "wide";
   className?: string;
   variant?: "default" | "hero";
+  sizes?: string;
+  priority?: boolean;
+  /** Load and autoplay the video file. Default off — show poster/image instead. */
+  autoPlay?: boolean;
 };
 
 const aspectClasses = {
@@ -21,16 +25,22 @@ const aspectClasses = {
   wide: "aspect-[21/9]",
 };
 
+function isVideoSrc(src: string, mimeType?: string) {
+  return isVideoMimeType(mimeType) || /\.(mp4|webm|mov)(\?|$)/i.test(src);
+}
+
 export function MediaFrame({
   src,
   alt,
   mimeType,
+  poster,
   aspect = "video",
   className,
   variant = "default",
+  sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+  priority = false,
+  autoPlay = false,
 }: MediaFrameProps) {
-  const reducedMotion = useReducedMotion();
-
   if (!src) {
     return (
       <Placeholder
@@ -42,7 +52,8 @@ export function MediaFrame({
     );
   }
 
-  const isVideo = isVideoMimeType(mimeType) || /\.(mp4|webm|mov)(\?|$)/i.test(src);
+  const video = isVideoSrc(src, mimeType);
+  const imageSrc = video ? poster : src;
 
   return (
     <div
@@ -53,25 +64,30 @@ export function MediaFrame({
         className,
       )}
     >
-      {isVideo ? (
+      {video && autoPlay ? (
         <video
           src={src}
+          poster={poster}
           className="h-full w-full object-cover"
           muted
           loop
           playsInline
-          autoPlay={!reducedMotion}
-          preload="metadata"
+          autoPlay
+          preload="none"
           aria-label={alt}
         />
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={src}
+      ) : imageSrc ? (
+        <Image
+          src={imageSrc}
           alt={alt}
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-          loading="lazy"
+          fill
+          sizes={sizes}
+          quality={70}
+          priority={priority}
+          className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
         />
+      ) : (
+        <Placeholder label={alt} aspect={aspect} className="h-full w-full" hideLabel />
       )}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir-deep/50 via-transparent to-transparent" />
     </div>

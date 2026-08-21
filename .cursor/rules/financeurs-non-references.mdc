@@ -1,0 +1,19 @@
+---
+description: Ne pas afficher CPF, AFDAS, OPCO, France Travail tant que Cinémergence n'est pas référencée
+alwaysApply: true
+---
+
+# Financeurs non encore autorisés
+
+Cinémergence n'a pas (encore) les droits pour travailler avec :
+
+- CPF / Mon Compte Formation
+- AFDAS
+- OPCO
+- France Travail
+
+Ne jamais les nommer, logoer ou promettre sur le site public (pages, SEO, fiches formation, CGV, FAQ).
+
+Le code, les logos et les textes restent de côté. Pour réactiver un organisme plus tard, ajouter sa clé dans `PUBLIC_FINANCEMENT_KEYS` (`src/lib/formation-types.ts`) — ne pas réécrire les mentions à la main dans l'UI.
+
+Ne pas les réintroduire « pour aider » tant que l'utilisateur n'a pas confirmé le référencement.

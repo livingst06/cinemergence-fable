@@ -24,6 +24,7 @@ export function IntervenantCard({ intervenant }: IntervenantCardProps) {
         mimeType={intervenant.photoMimeType}
         alt={`Portrait — ${intervenant.nom}`}
         aspect="portrait"
+        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
         className="rounded-none border-0 border-b border-white/[0.06]"
       />
       <div className="p-4 md:p-6">

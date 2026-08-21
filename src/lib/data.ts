@@ -1,4 +1,4 @@
-import { sanitizeEncadrement, sanitizePedagogyList } from "./formation-format";
+import { sanitizeEncadrement, sanitizePedagogyList, stripUnlistedFinanceurMentions } from "./formation-format";
 import {
   defaultFinancement,
   defaultFormations,
@@ -17,6 +17,7 @@ import {
 import { getPayloadClient } from "./payload";
 import { isLocalMediaStorage } from "./storage-env";
 import { getPublicSiteUrl } from "./site-url";
+import { publicFinancements, PUBLIC_FINANCEMENT_KEYS } from "./formation-types";
 import {
   getStaticCarouselItems,
   resolveFormationCoverUrl,
@@ -160,24 +161,57 @@ function mapProgramme(raw: unknown): FormationData["programme"] {
   });
 }
 
+function sanitizePublicText(value: string): string {
+  return stripUnlistedFinanceurMentions(value);
+}
+
+function sanitizeOptionalText(value: string | undefined | null): string | undefined {
+  if (!value) return undefined;
+  const cleaned = stripUnlistedFinanceurMentions(value);
+  return cleaned || undefined;
+}
+
+function sanitizeFormationCopy(formation: FormationData): FormationData {
+  return {
+    ...formation,
+    titre: sanitizePublicText(formation.titre),
+    titreCourt: sanitizePublicText(formation.titreCourt),
+    sousTitre: sanitizeOptionalText(formation.sousTitre),
+    accroche: sanitizePublicText(formation.accroche),
+    intro: sanitizePublicText(formation.intro),
+    contexteFinalite: sanitizeOptionalText(formation.contexteFinalite),
+    delaiAcces: sanitizeOptionalText(formation.delaiAcces),
+    financements: publicFinancements(formation.financements),
+    modalitesAccesFinancement: sanitizeOptionalText(formation.modalitesAccesFinancement),
+    faq: formation.faq.map((item) => ({
+      q: sanitizePublicText(item.q),
+      r: sanitizePublicText(item.r),
+    })),
+    metaTitle: sanitizePublicText(formation.metaTitle),
+    metaDescription: sanitizePublicText(formation.metaDescription),
+  };
+}
+
 function mapFormation(doc: Record<string, unknown>): FormationData {
   return {
     slug: String(doc.slug),
     pole: String(doc.pole),
-    titre: String(doc.titre),
-    titreCourt: String(doc.titreCourt),
-    sousTitre: doc.sousTitre ? String(doc.sousTitre) : undefined,
+    titre: sanitizePublicText(String(doc.titre)),
+    titreCourt: sanitizePublicText(String(doc.titreCourt)),
+    sousTitre: sanitizeOptionalText(doc.sousTitre ? String(doc.sousTitre) : undefined),
     prioritaire: Boolean(doc.prioritaire),
     audience:
       doc.audience === "entreprise" || doc.audience === "intermittent"
         ? doc.audience
         : "intermittent",
-    accroche: String(doc.accroche),
+    accroche: sanitizePublicText(String(doc.accroche)),
     publicCible: String(doc.publicCible),
     livrable: String(doc.livrable),
     livrables: mapStringArray(doc.livrables),
-    intro: String(doc.intro),
-    contexteFinalite: doc.contexteFinalite ? String(doc.contexteFinalite) : undefined,
+    intro: sanitizePublicText(String(doc.intro)),
+    contexteFinalite: sanitizeOptionalText(
+      doc.contexteFinalite ? String(doc.contexteFinalite) : undefined,
+    ),
     pourQui: String(doc.pourQui),
     objectifs: mapStringArray(doc.objectifs),
     competences: mapStringArray(doc.competences),
@@ -190,9 +224,9 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     effectifMax: typeof doc.effectifMax === "number" ? doc.effectifMax : undefined,
     prerequis: doc.prerequis ? String(doc.prerequis) : undefined,
     lieu: doc.lieu ? String(doc.lieu) : undefined,
-    delaiAcces: doc.delaiAcces ? String(doc.delaiAcces) : undefined,
+    delaiAcces: sanitizeOptionalText(doc.delaiAcces ? String(doc.delaiAcces) : undefined),
     tarif: doc.tarif ? String(doc.tarif) : null,
-    financements: (doc.financements as FormationData["financements"]) ?? [],
+    financements: publicFinancements(doc.financements),
     methodesPedagogiques: sanitizePedagogyList(mapStringArray(doc.methodesPedagogiques)),
     moyensTechniques: sanitizePedagogyList(mapStringArray(doc.moyensTechniques)),
     encadrement: sanitizeEncadrement(
@@ -200,13 +234,16 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     ),
     evaluation: doc.evaluation ? String(doc.evaluation) : undefined,
     accessibilite: doc.accessibilite ? String(doc.accessibilite) : undefined,
-    modalitesAccesFinancement: doc.modalitesAccesFinancement
-      ? String(doc.modalitesAccesFinancement)
-      : undefined,
+    modalitesAccesFinancement: sanitizeOptionalText(
+      doc.modalitesAccesFinancement ? String(doc.modalitesAccesFinancement) : undefined,
+    ),
     intervenants: mapIntervenantSlugs(doc),
-    faq: (doc.faq as { q: string; r: string }[] | undefined) ?? [],
-    metaTitle: String(doc.metaTitle),
-    metaDescription: String(doc.metaDescription),
+    faq: ((doc.faq as { q: string; r: string }[] | undefined) ?? []).map((item) => ({
+      q: sanitizePublicText(item.q),
+      r: sanitizePublicText(item.r),
+    })),
+    metaTitle: sanitizePublicText(String(doc.metaTitle)),
+    metaDescription: sanitizePublicText(String(doc.metaDescription)),
     coverImageUrl: resolveDisplayMediaUrl(
       doc.coverImage,
       staticFormationCover(String(doc.slug)),
@@ -225,17 +262,21 @@ export async function getFormations(): Promise<FormationData[]> {
       depth: 1,
     });
     if (result.docs.length === 0 || result.docs.length < defaultFormations.length) {
-      return defaultFormations.map((f) => ({
-        ...f,
-        coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
-      }));
+      return defaultFormations.map((f) =>
+        sanitizeFormationCopy({
+          ...f,
+          coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
+        }),
+      );
     }
     return result.docs.map((doc) => mapFormation(doc as Record<string, unknown>));
   } catch {
-    return defaultFormations.map((f) => ({
-      ...f,
-      coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
-    }));
+    return defaultFormations.map((f) =>
+      sanitizeFormationCopy({
+        ...f,
+        coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
+      }),
+    );
   }
 }
 
@@ -303,7 +344,7 @@ export async function getTemoignages(): Promise<TemoignageData[]> {
 }
 
 export async function getFinancementDispositifs() {
-  return defaultFinancement;
+  return defaultFinancement.filter((d) => PUBLIC_FINANCEMENT_KEYS.includes(d.key));
 }
 
 export async function getLegalContent() {

@@ -1,10 +1,10 @@
 "use client";
 
 import { Dialog } from "@base-ui/react/dialog";
+import Image from "next/image";
 import { Play, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { MediaFrame } from "@/components/ui/MediaFrame";
 import { isVideoMimeType } from "@/lib/media-utils";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,7 @@ export type GalleryGridItem = {
   alt: string;
   url: string;
   mimeType?: string;
+  poster?: string;
 };
 
 type GalleryGridProps = {
@@ -23,6 +24,11 @@ type GalleryGridProps = {
 
 function isVideo(item: GalleryGridItem) {
   return isVideoMimeType(item.mimeType) || /\.(mp4|webm|mov)(\?|$)/i.test(item.url);
+}
+
+function previewSrc(item: GalleryGridItem) {
+  if (isVideo(item)) return item.poster ?? "/videos/hero-plateau-poster.jpg";
+  return item.url;
 }
 
 export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
@@ -47,13 +53,20 @@ export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
             key={item.id}
             className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/[0.08]"
           >
-            <MediaFrame
-              src={item.url}
-              mimeType={item.mimeType}
-              alt={item.alt}
-              aspect="video"
-              className="h-full w-full rounded-none border-0"
-            />
+            <div className="relative aspect-video bg-noir-tertiary">
+              <Image
+                src={previewSrc(item)}
+                alt={item.alt}
+                fill
+                sizes={
+                  compact
+                    ? "(max-width: 768px) 100vw, 33vw"
+                    : "(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                }
+                quality={70}
+                className="object-cover"
+              />
+            </div>
             {isVideo(item) && (
               <span className="pointer-events-none absolute bottom-3 left-3 z-[1] flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-noir-deep/75 text-cream backdrop-blur-sm">
                 <Play className="size-3.5 fill-cream" />
@@ -100,14 +113,17 @@ export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
                     controls
                     autoPlay
                     playsInline
-                    preload="metadata"
+                    preload="none"
+                    poster={active.poster}
                     onClick={(event) => event.stopPropagation()}
                   />
                 ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={active.url}
                     alt={active.alt}
+                    width={1920}
+                    height={1080}
+                    quality={80}
                     className="max-h-[min(90dvh,90vh)] max-w-full rounded-lg object-contain"
                     onClick={(event) => event.stopPropagation()}
                   />

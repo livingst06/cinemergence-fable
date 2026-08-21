@@ -27,6 +27,7 @@ const sizeClasses = {
 
 export function FinanceurLogo({ financeurKey, className, size = "md" }: FinanceurLogoProps) {
   const logo = FINANCEUR_LOGOS[financeurKey];
+  if (!logo) return null;
   const sizes = sizeClasses[size];
 
   return (

@@ -1,14 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
 
-import { Analytics } from "@/components/Analytics";
-import { CookieBanner } from "@/components/CookieBanner";
+import { DeferredSiteChrome } from "@/components/DeferredSiteChrome";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { SiteNoticeBanner } from "@/components/layout/SiteNoticeBanner";
-import { Toaster } from "@/components/ui/sonner";
 import { getFormations, getSiteSettings } from "@/lib/data";
-import { clerkAppearance } from "@/lib/clerk-appearance";
 import { organizationJsonLd } from "@/lib/seo";
 
 import "../globals.css";
@@ -45,44 +41,34 @@ export default async function FrontendLayout({
   const jsonLd = organizationJsonLd(site);
 
   return (
-    <ClerkProvider
-      appearance={clerkAppearance}
-      signInUrl="/sign-in"
-      signUpUrl="/sign-up"
-      signInFallbackRedirectUrl="/"
-      signUpFallbackRedirectUrl="/"
-    >
-      <html lang="fr" className="dark min-h-dvh" suppressHydrationWarning>
-        <body className="flex min-h-dvh flex-col overflow-x-clip">
-          <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-          />
-          <SiteNoticeBanner nda={site.nda} />
-          <Header
-            formations={formations.map((f) => ({
-              slug: f.slug,
-              titreCourt: f.titreCourt,
-              prioritaire: f.prioritaire,
-            }))}
-          />
-          <main className="flex-1 overflow-x-clip pt-[calc(var(--site-notice-h)+4rem+env(safe-area-inset-top,0px))] md:pt-[calc(var(--site-notice-h)+4.5rem+env(safe-area-inset-top,0px))]">
-            {children}
-          </main>
-          <Footer
-            site={site}
-            formations={formations.map((f) => ({
-              slug: f.slug,
-              titreCourt: f.titreCourt,
-              prioritaire: f.prioritaire,
-            }))}
-          />
-          <CookieBanner />
-          <Analytics />
-          <Toaster />
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="fr" className="dark min-h-dvh" suppressHydrationWarning>
+      <body className="flex min-h-dvh flex-col overflow-x-clip">
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <SiteNoticeBanner nda={site.nda} />
+        <Header
+          formations={formations.map((f) => ({
+            slug: f.slug,
+            titreCourt: f.titreCourt,
+            prioritaire: f.prioritaire,
+          }))}
+        />
+        <main className="flex-1 overflow-x-clip pt-[calc(var(--site-notice-h)+4rem+env(safe-area-inset-top,0px))] md:pt-[calc(var(--site-notice-h)+4.5rem+env(safe-area-inset-top,0px))]">
+          {children}
+        </main>
+        <Footer
+          site={site}
+          formations={formations.map((f) => ({
+            slug: f.slug,
+            titreCourt: f.titreCourt,
+            prioritaire: f.prioritaire,
+          }))}
+        />
+        <DeferredSiteChrome />
+      </body>
+    </html>
   );
 }

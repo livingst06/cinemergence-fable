@@ -1,13 +1,13 @@
 import { statSync } from "node:fs";
 import path from "node:path";
 import type { Metadata } from "next";
+import Image from "next/image";
 import { preload } from "react-dom";
 
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { HeroVideoBackground } from "@/components/sections/HeroVideoBackground";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { CtaFinal } from "@/features/home/CtaFinal";
-import { FinanceurLogos } from "@/features/home/FinanceurLogos";
 import { HeroProofCard } from "@/features/home/HeroProofCard";
 import { StickyCta } from "@/features/home/StickyCta";
 import { Temoignages } from "@/features/home/Temoignages";
@@ -22,9 +22,26 @@ import {
   getSiteSettings,
   getTemoignages,
 } from "@/lib/data";
-import { PUBLIC_FINANCEMENT_KEYS } from "@/lib/formation-types";
 
 export const revalidate = 300;
+
+const materielCinema = [
+  {
+    src: "/images/materiel/arri-camera.webp",
+    alt: "Caméra cinéma ARRI Alexa Mini LF",
+    label: "ARRI Alexa Mini LF",
+  },
+  {
+    src: "/images/materiel/red-camera.webp",
+    alt: "Caméra cinéma RED V-Raptor XL",
+    label: "RED V-Raptor XL",
+  },
+  {
+    src: "/images/materiel/ronin-stabilizer.webp",
+    alt: "Stabilisateur Ronin",
+    label: "Stabilisateur Ronin",
+  },
+] as const;
 
 function heroPublicAsset(filename: string) {
   const href = `/videos/${filename}`;
@@ -35,14 +52,6 @@ function heroPublicAsset(filename: string) {
     return href;
   }
 }
-
-const schoolBenefits = [
-  "Conditions réelles de plateau",
-  "Direction d'acteur & encadrement pro",
-  "Matériel cinéma professionnel",
-  "Livrable concret par formation",
-  "Montage / post-prod selon parcours",
-];
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteSettings();
@@ -80,27 +89,41 @@ export default async function HomePage() {
         <div className="container-page relative z-10 flex flex-col justify-start pt-6 pb-10 md:min-h-[52.5vh] md:pt-10 md:pb-20 lg:pt-12 lg:pb-24">
           <div className="w-full lg:w-3/4">
             <p className="eyebrow animate-fade-up">Paris · Marseille · Montpellier</p>
-            <h1 className="display-title mt-3 animate-fade-up-delay-1 text-[clamp(1.9rem,11vw,6.25rem)] text-cream md:mt-6">
+            <h1 className="display-title mt-3 animate-fade-up-delay-1 text-cream md:mt-6">
               Cinémergence
             </h1>
-            <p className="mt-3 animate-fade-up-delay-1 text-base font-heading text-cool-glow md:mt-4 md:text-xl">
+            <p className="mt-3 animate-fade-up-delay-1 font-heading text-lg leading-snug text-cool-glow md:mt-4 md:text-xl">
               Le cinéma, en conditions réelles.
             </p>
           </div>
-          <p className="mt-4 w-full max-w-5xl animate-fade-up-delay-2 text-pretty text-[clamp(1.15rem,4.2vw,3rem)] leading-snug text-cream/85 md:mt-6">
-            Une immersion totale sur de vrais plateaux avec un livrable concret pour chaque parcours.
-          </p>
+          <ul className="mt-5 w-full max-w-3xl animate-fade-up-delay-2 space-y-2 text-base leading-relaxed text-cream/85 md:mt-6 md:text-lg">
+            {[
+              "Une immersion totale sur de vrais plateaux",
+              "Direction d'acteur et encadrement pro",
+              "Matériel cinéma professionnel",
+              "Un livrable concret pour chaque parcours",
+              "Montage / post-prod selon le parcours",
+            ].map((item) => (
+              <li key={item} className="flex items-center gap-3 md:gap-4">
+                <span
+                  className="h-2 w-2 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]"
+                  aria-hidden
+                />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
           <div className="mt-6 w-full max-w-xl animate-fade-up-delay-2 md:mt-8">
-            <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center">
-              <ButtonLink href="/formations" size="lg" className="btn-cta min-h-12 w-full px-8 sm:w-auto sm:px-10">
-                Voir les formations
+            <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-start">
+              <ButtonLink href="/contact" size="lg" className="btn-cta min-h-12 w-full px-8 sm:w-auto sm:px-10">
+                Je réserve ma place
               </ButtonLink>
               <ButtonLink
-                href="/contact"
+                href="/formations"
                 size="lg"
                 className="btn-outline-warm min-h-12 w-full rounded-lg px-8 py-2.5 text-sm font-semibold uppercase tracking-wider sm:w-auto sm:px-10"
               >
-                Je réserve ma place
+                Voir les formations
               </ButtonLink>
             </div>
             <div className="mt-6 md:mt-10">
@@ -128,45 +151,6 @@ export default async function HomePage() {
                 <IntervenantCard key={i.slug} intervenant={i} />
               ))}
           </div>
-        </div>
-      </Section>
-
-      <Section id="apropos">
-        <div className="container-page">
-          <SectionHeader
-            eyebrow="L'école"
-            title={"Une immersion totale sur un vrai\u00a0plateau"}
-            description={
-              <>
-                <p>
-                  Cinémergence forme comédiens, techniciens et entreprises en conditions
-                  réelles
-                </p>
-                <p className="mt-1">
-                  avec le même niveau d&apos;exigence que sur un&nbsp;tournage.
-                </p>
-              </>
-            }
-          />
-          <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {schoolBenefits.map((item) => (
-              <li
-                key={item}
-                className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
-              >
-                <span
-                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]"
-                  aria-hidden
-                />
-                <p className="min-w-0 flex-1 text-left leading-relaxed md:text-justify">{item}</p>
-              </li>
-            ))}
-            {PUBLIC_FINANCEMENT_KEYS.length > 0 && (
-              <li className="flex items-center sm:col-span-2 lg:col-span-1">
-                <FinanceurLogos className="grid w-full grid-cols-3 justify-items-center gap-2" />
-              </li>
-            )}
-          </ul>
         </div>
       </Section>
 
@@ -204,17 +188,35 @@ export default async function HomePage() {
               align="left"
               className="mb-6"
             />
-            <div className="space-y-4 text-sm leading-relaxed text-muted-text">
+            <div className="body-copy space-y-4">
               <p>
-                Nous tournons avec des caméras RED ou ARRI — le standard du cinéma et des
-                plateformes. Tu travailles avec le même type de matériel que sur les plateaux
-                professionnels.
+                Nous tournons avec des caméras RED ou ARRI, et des stabilisateurs Ronin — le
+                standard du cinéma et des plateformes. Tu travailles avec le même type de
+                matériel que sur les plateaux professionnels.
               </p>
               <p className="font-medium text-cream">
                 Objectif : une image conforme aux exigences du marché, exploitable par agents,
                 directeurs de casting et productions.
               </p>
             </div>
+            <ul className="mt-8 grid grid-cols-3 items-end gap-4 md:gap-6">
+              {materielCinema.map((item) => (
+                <li key={item.src} className="text-center">
+                  <div className="relative mx-auto h-28 w-full md:h-40">
+                    <Image
+                      src={item.src}
+                      alt={item.alt}
+                      fill
+                      sizes="(max-width: 1024px) 30vw, 12vw"
+                      className="object-contain object-bottom"
+                    />
+                  </div>
+                  <p className="caption-copy mt-3 text-cream/70">
+                    {item.label}
+                  </p>
+                </li>
+              ))}
+            </ul>
           </div>
           <div>
             <SectionHeader
@@ -223,7 +225,7 @@ export default async function HomePage() {
               align="left"
               className="mb-6"
             />
-            <div className="space-y-4 text-sm leading-relaxed text-muted-text">
+            <div className="body-copy space-y-4">
               <p>
                 Notre ambition dépasse la salle de formation : créer un lien durable entre
                 formation et production, avec Bakelite Films, notre société partenaire.

@@ -181,11 +181,11 @@ export default async function AssociationPage() {
             Écris-nous ou appelle-nous au {site.phone} — on te répond rapidement.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <ButtonLink href="/formations" className="btn-cta">
-              Voir les formations
+            <ButtonLink href="/contact" className="btn-cta">
+              Je réserve ma place
             </ButtonLink>
-            <ButtonLink href="/contact" className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider">
-              Je vous contacte
+            <ButtonLink href="/formations" className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider">
+              Voir les formations
             </ButtonLink>
           </div>
         </div>

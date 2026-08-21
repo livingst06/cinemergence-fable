@@ -25,15 +25,13 @@ export function Temoignages({ temoignages }: TemoignagesProps) {
           {temoignages.map((t, i) => (
             <Reveal key={t.auteur} delay={i * 100}>
               <blockquote className="card-stage flex h-full flex-col p-5 md:p-8">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-or-light">
-                  {profilLabels[t.profil]}
-                </p>
+                <p className="eyebrow">{profilLabels[t.profil]}</p>
                 <p className="mt-4 flex-1 text-base leading-relaxed text-cream md:mt-5 md:text-lg">
                   &ldquo;{t.quote}&rdquo;
                 </p>
                 <footer className="mt-6 border-t border-white/[0.06] pt-5">
-                  <p className="font-semibold text-cream">{t.auteur}</p>
-                  <p className="mt-1 text-xs text-muted-text">{t.formation}</p>
+                  <p className="text-base font-semibold text-cream">{t.auteur}</p>
+                  <p className="caption-copy mt-1">{t.formation}</p>
                 </footer>
               </blockquote>
             </Reveal>

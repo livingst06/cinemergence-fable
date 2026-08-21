@@ -26,10 +26,10 @@ export function FinancementGuide() {
 
   return (
     <div className="card-stage p-6 md:p-8">
-      <h3 className="font-heading text-2xl text-balance text-cream">
+      <h3 className="font-heading text-3xl leading-tight text-balance text-cream md:text-4xl">
         Quel financement pour mon&nbsp;profil&nbsp;?
       </h3>
-      <p className="mt-2 text-sm text-muted-text">
+      <p className="mt-4 text-lg leading-relaxed text-muted-text md:text-xl">
         Chaque situation est différente. On étudie avec toi les possibilités de prise en
         charge.
       </p>
@@ -41,7 +41,7 @@ export function FinancementGuide() {
               key={p.id}
               type="button"
               onClick={() => setProfil(p.id)}
-              className={`rounded-full border px-4 py-2 text-sm transition-colors ${
+              className={`rounded-full border px-4 py-2.5 text-base transition-colors md:text-lg ${
                 profil === p.id
                   ? "border-projector/40 bg-projector/10 text-or-light"
                   : "border-white/10 text-muted-text hover:border-white/20 hover:text-cream"
@@ -58,8 +58,8 @@ export function FinancementGuide() {
           {matches.map((d) => (
             <div key={d.key} className="card-stage p-5">
               <Badge className="mb-3 bg-projector text-cream">{d.titre}</Badge>
-              <p className="text-sm text-muted-text">{d.description}</p>
-              <ol className="mt-4 space-y-2 text-sm text-cream/80">
+              <p className="text-lg leading-relaxed text-muted-text">{d.description}</p>
+              <ol className="mt-4 space-y-2 text-lg leading-relaxed text-cream/80">
                 {d.etapes.map((e, i) => (
                   <li key={e}>
                     {i + 1}. {e}
@@ -70,7 +70,7 @@ export function FinancementGuide() {
           ))}
         </div>
       ) : (
-        <p className="mt-6 text-sm leading-relaxed text-muted-text">
+        <p className="mt-6 text-lg leading-relaxed text-muted-text md:text-xl">
           Écris-nous : on te dit concrètement comment financer ta formation, selon ton statut
           et ton projet.
         </p>

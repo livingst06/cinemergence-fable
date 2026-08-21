@@ -13,7 +13,7 @@ export function CtaFinal({ site }: CtaFinalProps) {
         <h2 className="display-title mx-auto max-w-4xl text-cream">
           Prêt à passer <span className="text-tungsten">à l&apos;action&nbsp;?</span>
         </h2>
-        <p className="mx-auto mt-6 max-w-3xl text-pretty text-base leading-relaxed text-muted-text md:text-lg">
+        <p className="body-copy mx-auto mt-6 max-w-3xl text-pretty">
           {site.tagline} Contacte-nous par email ou WhatsApp au{" "}
           <a href={`tel:${site.phone.replace(/\s/g, "")}`} className="text-or-light hover:underline">
             {site.phone}
@@ -29,11 +29,11 @@ export function CtaFinal({ site }: CtaFinalProps) {
             size="lg"
             className="btn-outline-warm min-h-12 w-full rounded-lg px-8 py-2.5 text-sm font-semibold uppercase tracking-wider sm:w-auto sm:px-10"
           >
-            Je contacte sur WhatsApp
+            Je vous contacte sur WhatsApp
           </ButtonLink>
         </div>
 
-        <ul className="mx-auto mt-10 flex max-w-3xl flex-col gap-2 text-center text-xs text-muted-text sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2">
+        <ul className="caption-copy mx-auto mt-10 flex max-w-3xl flex-col gap-2 text-center sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2">
           <li>Inscription accompagnée · devis &amp; facture</li>
           <li>Organisme déclaré · NDA {site.nda}</li>
           <li>

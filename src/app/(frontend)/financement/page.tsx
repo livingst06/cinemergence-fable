@@ -49,7 +49,7 @@ export default async function FinancementPage() {
         eyebrow="Financement"
         title={"Ton projet peut être pris en\u00a0charge"}
         description={
-          <p>
+          <p className="text-lg leading-relaxed md:text-xl md:leading-relaxed">
             On t&apos;explique simplement comment{" "}
             <span className="whitespace-nowrap">financer ta formation.</span>
           </p>
@@ -70,19 +70,23 @@ export default async function FinancementPage() {
       )}
       <Section variant="secondary">
         <div className="container-page max-w-3xl">
-          <SectionHeader eyebrow="FAQ" title="Les vraies questions" align="left" />
+          <SectionHeader title="FAQ" align="left" />
           <Accordion className="w-full">
             {faq.map((item, i) => (
               <AccordionItem key={item.q} value={`faq-${i}`} className="border-or/15">
-                <AccordionTrigger className="text-cream hover:text-or">{item.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-text">{item.r}</AccordionContent>
+                <AccordionTrigger className="py-3.5 text-lg font-semibold leading-snug text-cream hover:text-or md:text-xl">
+                  {item.q}
+                </AccordionTrigger>
+                <AccordionContent className="pb-4 text-lg leading-relaxed text-muted-text md:text-xl">
+                  {item.r}
+                </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
         </div>
       </Section>
       <Section>
-        <div className="container-page max-w-2xl">
+        <div className="container-page max-w-2xl text-base md:text-lg [&_input]:text-base [&_label]:text-base [&_textarea]:text-base md:[&_input]:text-lg md:[&_label]:text-lg md:[&_textarea]:text-lg">
           <SectionHeader
             eyebrow="Contact"
             title={"Je vérifie mon\u00a0financement"}

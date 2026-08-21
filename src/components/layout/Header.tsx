@@ -7,7 +7,7 @@ import { Menu, X } from "lucide-react";
 
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Logo } from "@/components/layout/Logo";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { SHOW_THEME_TOGGLE, ThemeToggle } from "@/components/theme/ThemeToggle";
 import type { FormationData } from "@/lib/defaults";
 import { formationPath } from "@/lib/defaults";
 import { cn } from "@/lib/utils";
@@ -150,7 +150,7 @@ export function Header({ formations }: HeaderProps) {
           </nav>
 
           <div className="relative z-[1] flex shrink-0 items-center gap-3 xl:hidden">
-            <ThemeToggle />
+            {SHOW_THEME_TOGGLE && <ThemeToggle />}
             <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary transition-[background-color,border-color,color,box-shadow] duration-200">
               <input
                 ref={navToggleRef}

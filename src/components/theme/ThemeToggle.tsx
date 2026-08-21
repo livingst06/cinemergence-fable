@@ -7,6 +7,9 @@ import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "cinemergence-theme";
 
+/** Bouton jour/nuit masqué : le site reste en mode nuit. Remettre à true pour le réafficher. */
+export const SHOW_THEME_TOGGLE = false;
+
 function subscribeTheme(callback: () => void) {
   const observer = new MutationObserver(callback);
   observer.observe(document.documentElement, {

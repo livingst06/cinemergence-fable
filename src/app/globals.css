@@ -381,6 +381,14 @@
     @apply font-heading text-[clamp(1.85rem,4.4vw,2.85rem)] font-semibold leading-[1.05] tracking-tight text-balance;
   }
 
+  .body-copy {
+    @apply text-base leading-relaxed text-muted-text md:text-lg;
+  }
+
+  .caption-copy {
+    @apply text-xs leading-snug tracking-wide text-muted-text;
+  }
+
   .text-tungsten {
     background: linear-gradient(135deg, var(--projector-light) 0%, #b8c5d1 100%);
     -webkit-background-clip: text;
@@ -448,72 +456,6 @@
     height: 2px;
     background: linear-gradient(90deg, var(--projector), var(--projector-light) 50%, transparent);
     opacity: 0.85;
-  }
-
-  .mini-card-flip {
-    border-radius: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background-color: var(--noir-secondary);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.04) inset,
-      0 24px 48px -24px rgba(0, 0, 0, 0.6);
-  }
-
-  .mini-card-scene {
-    aspect-ratio: 16 / 9;
-    perspective: 1000px;
-  }
-
-  .mini-card-flip-inner {
-    position: relative;
-    height: 100%;
-    transform-style: preserve-3d;
-    -webkit-transform-style: preserve-3d;
-  }
-
-  .mini-card-front,
-  .mini-card-back {
-    height: 100%;
-    border-radius: 1rem 1rem 0 0;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-  }
-
-  .mini-card-front {
-    position: relative;
-    overflow: hidden;
-    transform: rotateY(0deg) translateZ(1px);
-  }
-
-  .mini-card-back {
-    position: absolute;
-    inset: 0;
-    display: none;
-    align-items: center;
-    background-color: var(--noir-secondary);
-    padding: 0.625rem 0.75rem;
-    transform: rotateY(180deg) translateZ(1px);
-  }
-
-  @media (hover: hover) and (min-width: 1024px) {
-    .mini-card-flip-inner {
-      transition: transform 0.6s ease;
-    }
-
-    .mini-card-back {
-      display: flex;
-    }
-
-    .mini-card-flip:hover .mini-card-flip-inner,
-    .mini-card-flip:focus-within .mini-card-flip-inner {
-      transform: rotateY(180deg);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .mini-card-flip-inner {
-      transition: none;
-    }
   }
 
   .plateau-glow,

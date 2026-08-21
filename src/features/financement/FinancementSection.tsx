@@ -38,8 +38,8 @@ export function FinancementSection({
                 <div className="card-stage flex h-full flex-col p-6">
                   <FinanceurLogo financeurKey={d.key} />
                   <h3 className="mt-4 font-heading text-xl text-or-light">{d.titre}</h3>
-                  <p className="mt-2 text-left text-sm leading-relaxed text-muted-text md:text-justify">{d.description}</p>
-                  <p className="mt-4 text-xs font-medium uppercase tracking-wider text-cool-glow">
+                  <p className="body-copy mt-2 text-left md:text-justify">{d.description}</p>
+                  <p className="caption-copy mt-4 font-medium uppercase text-cool-glow">
                     {d.public}
                   </p>
                 </div>

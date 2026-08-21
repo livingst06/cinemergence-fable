@@ -1,5 +1,8 @@
+"use client";
+
+import { useLayoutEffect, useRef } from "react";
+
 import type { TemoignageData } from "@/lib/defaults";
-import { Reveal } from "@/components/ui/Reveal";
 import { Section, SectionHeader } from "@/components/ui/Section";
 
 const profilLabels: Record<TemoignageData["profil"], string> = {
@@ -13,28 +16,65 @@ type TemoignagesProps = {
 };
 
 export function Temoignages({ temoignages }: TemoignagesProps) {
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const root = gridRef.current;
+    if (!root) return;
+
+    const cards = () => [...root.querySelectorAll<HTMLElement>("[data-equal-height]")];
+
+    let observer: ResizeObserver;
+    const apply = () => {
+      const nodes = cards();
+      observer.disconnect();
+      nodes.forEach((card) => {
+        card.style.minHeight = "";
+      });
+      const max = Math.max(0, ...nodes.map((card) => card.offsetHeight));
+      if (max > 0) {
+        nodes.forEach((card) => {
+          card.style.minHeight = `${max}px`;
+        });
+      }
+      observer.observe(root);
+    };
+
+    observer = new ResizeObserver(apply);
+    apply();
+    return () => observer.disconnect();
+  }, [temoignages]);
+
   return (
     <Section>
       <div className="container-page">
         <SectionHeader
           eyebrow="Témoignages"
           title="L'avis de nos élèves"
+          align="left"
           description="Six parcours, six retours d'expérience sur nos formations."
         />
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {temoignages.map((t, i) => (
-            <Reveal key={t.auteur} delay={i * 100}>
-              <blockquote className="card-stage flex h-full flex-col p-5 md:p-8">
-                <p className="eyebrow">{profilLabels[t.profil]}</p>
-                <p className="mt-4 flex-1 text-base leading-relaxed text-cream md:mt-5 md:text-lg">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <footer className="mt-6 border-t border-white/[0.06] pt-5">
-                  <p className="text-base font-semibold text-cream">{t.auteur}</p>
-                  <p className="caption-copy mt-1">{t.formation}</p>
-                </footer>
-              </blockquote>
-            </Reveal>
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2 md:gap-5 xl:grid-cols-3"
+        >
+          {temoignages.map((t) => (
+            <article
+              key={t.auteur}
+              data-equal-height
+              className="card-stage flex h-full flex-col p-4 md:p-5"
+            >
+              <p className="eyebrow">{profilLabels[t.profil]}</p>
+              <p className="mt-3 flex-1 text-base leading-relaxed text-cream md:text-lg">
+                &ldquo;{t.quote.trim()}&rdquo;
+              </p>
+              <div className="mt-3 border-t border-white/[0.06] pt-3">
+                <p className="text-base font-semibold leading-snug text-cream">{t.auteur}</p>
+                {t.formation.trim() ? (
+                  <p className="caption-copy mt-0.5">{t.formation.trim()}</p>
+                ) : null}
+              </div>
+            </article>
           ))}
         </div>
       </div>

@@ -621,12 +621,12 @@
   }
 }
 
-body:has([data-sticky-cta]) footer {
+body:has([data-sticky-cta]) .site-footer {
   padding-bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
 }
 
 @media (min-width: 768px) {
-  body:has([data-sticky-cta]) footer {
+  body:has([data-sticky-cta]) .site-footer {
     padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
   }
 }

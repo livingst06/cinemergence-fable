@@ -16,7 +16,7 @@ export function Footer({ site, formations }: FooterProps) {
   const footerFormations = featured.length > 0 ? featured : formations.slice(0, 3);
 
   return (
-    <footer className="border-t border-border bg-noir-secondary">
+    <footer className="site-footer border-t border-border bg-noir-secondary">
       <div className="container-page py-10 md:py-16">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div>

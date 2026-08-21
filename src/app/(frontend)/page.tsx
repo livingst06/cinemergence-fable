@@ -138,6 +138,7 @@ export default async function HomePage() {
           <SectionHeader
             eyebrow="Intervenants"
             title="Nos intervenants"
+            align="left"
             description="Des professionnels en activité qui transmettent leur exigence sur le plateau."
           />
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
@@ -159,6 +160,7 @@ export default async function HomePage() {
           <SectionHeader
             eyebrow="Catalogue"
             title="Nos formations"
+            align="left"
             description={
               <>
                 <p>Des parcours professionnalisants,</p>
@@ -180,7 +182,7 @@ export default async function HomePage() {
       </Section>
 
       <Section>
-        <div className="container-page grid gap-12 lg:grid-cols-2">
+        <div className="container-page space-y-12 md:space-y-16">
           <div>
             <SectionHeader
               eyebrow="Production"
@@ -207,7 +209,7 @@ export default async function HomePage() {
                       src={item.src}
                       alt={item.alt}
                       fill
-                      sizes="(max-width: 1024px) 30vw, 12vw"
+                      sizes="(max-width: 768px) 30vw, 20vw"
                       className="object-contain object-bottom"
                     />
                   </div>
@@ -243,13 +245,16 @@ export default async function HomePage() {
       <FinancementSection dispositifs={financement} />
 
       <Section>
-        <div className="container-page mx-auto max-w-xl text-center">
+        <div className="container-page">
           <SectionHeader
             eyebrow="Newsletter"
             title="Les prochaines sessions"
+            align="left"
             description="Sois informé·e des dates et des ouvertures de nos formations."
           />
-          <NewsletterForm />
+          <div className="max-w-xl">
+            <NewsletterForm />
+          </div>
         </div>
       </Section>
 

@@ -143,7 +143,7 @@ export function Header({ formations }: HeaderProps) {
                 );
               })}
 
-            <ThemeToggle className="h-9 w-9" />
+            {SHOW_THEME_TOGGLE && <ThemeToggle className="h-9 w-9" />}
             <ButtonLink href="/contact" size="sm" className="btn-cta px-5">
               Je m&apos;inscris
             </ButtonLink>

@@ -80,12 +80,13 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="cinematic-grain hero-slash relative overflow-hidden bg-noir md:min-h-[52.5vh]">
+      <section className="cinematic-grain relative overflow-hidden bg-noir md:min-h-[52.5vh]">
         <HeroVideoBackground
           src={heroPublicAsset("hero-plateau-travel.mp4")}
           srcMobile={heroPublicAsset("hero-plateau-travel-mobile.mp4")}
           poster={heroPoster}
         />
+        <div className="hero-slash-edge" aria-hidden />
         <div className="container-page relative z-10 flex flex-col justify-start pt-6 pb-10 md:min-h-[52.5vh] md:pt-10 md:pb-20 lg:pt-12 lg:pb-24">
           <div className="w-full lg:w-3/4">
             <p className="eyebrow animate-fade-up">Paris · Marseille · Montpellier</p>

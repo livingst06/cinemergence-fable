@@ -107,8 +107,18 @@
 
 @media (min-width: 768px) {
   :root {
-    --site-notice-h: 2.75rem;
+    --site-notice-h: 3.5rem;
   }
+}
+
+html.site-notice-dismissed,
+html:has(#site-notice-dismiss:checked) {
+  --site-notice-h: 0px;
+}
+
+html.site-notice-dismissed .site-notice-banner,
+html:has(#site-notice-dismiss:checked) .site-notice-banner {
+  display: none;
 }
 
 @theme inline {
@@ -226,6 +236,7 @@
   }
 
   .mobile-nav-panel {
+    display: none;
     visibility: hidden;
     opacity: 0;
     pointer-events: none;
@@ -250,6 +261,7 @@
   }
 
   header:has(#mobile-nav-toggle:checked) ~ .mobile-nav-panel {
+    display: block;
     visibility: visible;
     opacity: 1;
     pointer-events: auto;
@@ -283,8 +295,17 @@
 
   .site-header {
     isolation: isolate;
+    pointer-events: none;
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
+  }
+
+  .site-header a,
+  .site-header button,
+  .site-header label,
+  .site-header input,
+  .site-header nav {
+    pointer-events: auto;
   }
 
   .mobile-nav-trigger,
@@ -300,6 +321,7 @@
     }
 
     header:has(#mobile-nav-toggle:checked) ~ .mobile-nav-panel {
+      display: none;
       visibility: hidden;
       opacity: 0;
       pointer-events: none;
@@ -424,13 +446,20 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  .hero-slash {
-    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 3rem), 0 100%);
+  .hero-slash-edge {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 2;
+    height: 3rem;
+    background: var(--noir);
+    clip-path: polygon(0 100%, 100% 0, 100% 100%);
+    pointer-events: none;
   }
 
   @media (min-width: 768px) {
-    .hero-slash {
-      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5rem), 0 100%);
+    .hero-slash-edge {
+      height: 5rem;
     }
   }
 
@@ -505,6 +534,8 @@
   }
 
   .site-notice-banner {
+    isolation: isolate;
+    pointer-events: auto;
     color: #ffffff;
     background: linear-gradient(
       135deg,
@@ -617,6 +648,10 @@
     .animate-fade-up-delay-2,
     .animate-fade-up-delay-3 {
       animation: none;
+    }
+
+    .hero-bg-video {
+      display: none !important;
     }
   }
 }

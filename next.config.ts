@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   // Accès mobile/LAN en local (ex. http://192.168.1.21:3000) — HMR + assets
   allowedDevOrigins: ["192.168.1.21", "127.0.0.1", "localhost"],
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       { protocol: "http", hostname: "localhost" },
       { protocol: "https", hostname: "**.supabase.co", pathname: "/storage/v1/object/public/**" },
@@ -23,6 +25,14 @@ const nextConfig: NextConfig = {
             value: "camera=(), microphone=(), geolocation=()",
           },
         ],
+      },
+      {
+        source: "/videos/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
+        source: "/images/brand/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
     ];
   },

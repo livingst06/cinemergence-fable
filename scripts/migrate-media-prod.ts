@@ -58,6 +58,7 @@ async function seedContentIfEmpty(payload: Awaited<ReturnType<typeof import("../
       qualiopiLabel: defaultSite.qualiopiLabel,
       partnerName: defaultSite.partnerName,
       instagramUrl: defaultSite.instagramUrl,
+      youtubeUrl: defaultSite.youtubeUrl,
     },
   });
 

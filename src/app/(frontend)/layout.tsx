@@ -1,12 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 
-import { Analytics } from "@/components/Analytics";
-import { CookieBanner } from "@/components/CookieBanner";
+import { DeferredSiteChrome } from "@/components/DeferredSiteChrome";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { SiteNoticeBanner } from "@/components/layout/SiteNoticeBanner";
-import { Toaster } from "@/components/ui/sonner";
 import { AdminUiProvider } from "@/features/admin/AdminUiContext";
 import { getFormations, getSiteSettings } from "@/lib/data";
 import { clerkAppearance } from "@/lib/clerk-appearance";
@@ -21,7 +19,7 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const themeInitScript = `(function(){var KEY="cinemergence-theme";var ID="cinemergence-theme-toggle";function apply(theme){document.documentElement.classList.toggle("dark",theme!=="light");try{localStorage.setItem(KEY,theme==="light"?"light":"dark");}catch(e){}var el=document.getElementById(ID);if(el)el.checked=theme!=="light";}try{var t=localStorage.getItem(KEY);apply(t==="light"?"light":"dark");}catch(e){apply("dark");}function syncInput(){var el=document.getElementById(ID);if(el)el.checked=document.documentElement.classList.contains("dark");}document.addEventListener("change",function(e){var t=e.target;if(!t||t.id!==ID)return;apply(t.checked?"dark":"light");},true);if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",syncInput);else syncInput();setTimeout(syncInput,0);setTimeout(syncInput,120);})();`;
+const themeInitScript = `(function(){document.documentElement.classList.add("dark");})();`;
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteSettings();
@@ -89,9 +87,7 @@ export default async function FrontendLayout({
                 prioritaire: f.prioritaire,
               }))}
             />
-            <CookieBanner />
-            <Analytics />
-            <Toaster />
+            <DeferredSiteChrome />
           </AdminUiProvider>
         </body>
       </html>

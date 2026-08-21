@@ -256,6 +256,10 @@ export const Formations: CollectionConfig = {
       type: "select",
       hasMany: true,
       options: financementOptions,
+      admin: {
+        description:
+          "Conservé pour plus tard. Les organismes ne s'affichent sur le site que s'ils sont activés (référencement obtenu).",
+      },
     },
     {
       name: "methodesPedagogiques",

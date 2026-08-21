@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { FinanceurLogo } from "@/components/brand/FinanceurLogo";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Reveal } from "@/components/ui/Reveal";
 import { Section, SectionHeader } from "@/components/ui/Section";
@@ -21,31 +22,31 @@ export function FinancementSection({
   const descriptionNode =
     description ??
     (
-      <div className="space-y-1">
-        <p>AFDAS, OPCO, CPF, France Travail</p>
-        <p>
-          on t&apos;aide à y voir clair.
-        </p>
-      </div>
+      <p>
+        On t&apos;aide à y voir clair et à monter ton dossier.
+      </p>
     );
 
   return (
     <Section variant="secondary">
       <div className="container-page">
         <SectionHeader eyebrow="Financement" title={title} description={descriptionNode} />
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {dispositifs.map((d, i) => (
-            <Reveal key={d.key} delay={i * 80}>
-              <div className="card-stage h-full p-6">
-                <h3 className="font-heading text-xl text-or-light">{d.titre}</h3>
-                <p className="mt-2 text-left text-sm leading-relaxed text-muted-text md:text-justify">{d.description}</p>
-                <p className="mt-4 text-xs font-medium uppercase tracking-wider text-cool-glow">
-                  {d.public}
-                </p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+        {dispositifs.length > 0 && (
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {dispositifs.map((d, i) => (
+              <Reveal key={d.key} delay={i * 80}>
+                <div className="card-stage flex h-full flex-col p-6">
+                  <FinanceurLogo financeurKey={d.key} />
+                  <h3 className="mt-4 font-heading text-xl text-or-light">{d.titre}</h3>
+                  <p className="body-copy mt-2 text-left md:text-justify">{d.description}</p>
+                  <p className="caption-copy mt-4 font-medium uppercase text-cool-glow">
+                    {d.public}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        )}
         {showCta && (
           <div className="mt-10 text-center">
             <ButtonLink

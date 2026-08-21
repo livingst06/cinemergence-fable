@@ -1,7 +1,14 @@
 import type { FormationData } from "./formation-types";
 
 export type { FormationData, FaqItem, FinancementKey, ProgrammeJour } from "./formation-types";
-export { formationPath, formationLivrableLabel, formationDureeCardLabel, emDashToNewlines } from "./formation-types";
+export {
+  formationPath,
+  formationLivrableLabel,
+  formationDureeCardLabel,
+  emDashToNewlines,
+  publicFinancements,
+  PUBLIC_FINANCEMENT_KEYS,
+} from "./formation-types";
 export {
   defaultFinancement,
   financementGuide,
@@ -52,7 +59,9 @@ export const defaultSite = {
   qualiopiLabel: "Organisme de formation certifié",
   partnerName: "Bakelite Films",
   partnerRole: "Production partenaire",
-  instagramUrl: "https://www.instagram.com/cinemergence",
+  partnerUrl: "https://www.bakelitefilms.com",
+  instagramUrl: "https://www.instagram.com/cinemergence/",
+  youtubeUrl: "https://www.youtube.com/@cinemergence",
 } as const;
 
 export const defaultIntervenants: IntervenantData[] = [
@@ -205,7 +214,7 @@ Les présentes CGV s'appliquent aux formations proposées par Cinémergence, ass
 
 Inscription : toute inscription est confirmée par email après validation du financement ou du paiement.
 Annulation : conditions d'annulation communiquées lors de l'inscription.
-Financement : les formations peuvent être prises en charge par AFDAS, OPCO, CPF ou France Travail selon éligibilité.
+Financement : les formations peuvent être prises en charge selon éligibilité, après étude de ta situation.
 Réclamations : cinemergence.paris@gmail.com
   `.trim(),
 };

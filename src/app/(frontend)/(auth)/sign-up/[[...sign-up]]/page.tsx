@@ -1,25 +1,25 @@
 import type { Metadata } from "next";
-import { SignIn } from "@clerk/nextjs";
+import { SignUp } from "@clerk/nextjs";
 
 import { PageHero } from "@/components/sections/PageHero";
 import { Section } from "@/components/ui/Section";
 
 export const metadata: Metadata = {
-  title: "Connexion",
+  title: "Créer un compte",
   robots: { index: false, follow: false },
 };
 
-export default function SignInPage() {
+export default function SignUpPage() {
   return (
     <>
       <PageHero
         eyebrow="Espace membre"
-        title="Connexion"
-        description="Accède à ton espace Cinémergence."
+        title="Créer un compte"
+        description="Rejoins Cinémergence pour suivre tes formations."
       />
       <Section>
         <div className="container-page flex justify-center">
-          <SignIn />
+          <SignUp fallbackRedirectUrl="/" signInUrl="/sign-in" />
         </div>
       </Section>
     </>

@@ -9,6 +9,7 @@ export type StaticGalleryItem = {
   alt: string;
   url: string;
   mimeType: string;
+  poster?: string;
 };
 
 /** Public base URL of the Supabase Storage bucket (no trailing slash). */
@@ -171,9 +172,9 @@ export const staticGalleryItems: StaticGalleryItem[] = [
   { id: "g07", alt: "Ambiance plateau Cinémergence", url: "/images/site/gallery/07.jpg", mimeType: "image/jpeg" },
   { id: "g08", alt: "Élèves sur le tournage", url: "/images/site/gallery/08.jpg", mimeType: "image/jpeg" },
   { id: "g09", alt: "Master class avec les intervenants", url: "/images/site/gallery/09.jpg", mimeType: "image/jpeg" },
-  { id: "g10", alt: "Extrait plateau — tournage stage", url: "/images/site/gallery/10.mp4", mimeType: "video/mp4" },
-  { id: "g11", alt: "Extrait plateau — mise en scène", url: "/images/site/gallery/11.mp4", mimeType: "video/mp4" },
-  { id: "g12", alt: "Livrable élève — scène tournée", url: "/images/site/gallery/12.mp4", mimeType: "video/mp4" },
+  { id: "g10", alt: "Extrait plateau — tournage stage", url: "/images/site/gallery/10.mp4", poster: "/images/site/gallery/10-poster.jpg", mimeType: "video/mp4" },
+  { id: "g11", alt: "Extrait plateau — mise en scène", url: "/images/site/gallery/11.mp4", poster: "/images/site/gallery/11-poster.jpg", mimeType: "video/mp4" },
+  { id: "g12", alt: "Livrable élève — scène tournée", url: "/images/site/gallery/12.mp4", poster: "/images/site/gallery/12-poster.jpg", mimeType: "video/mp4" },
 ];
 
 export function getStaticCarouselItems(limit = 8): StaticGalleryItem[] {

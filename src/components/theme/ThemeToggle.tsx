@@ -6,6 +6,9 @@ import { cn } from "@/lib/utils";
 
 export const THEME_TOGGLE_ID = "cinemergence-theme-toggle";
 
+/** Bouton jour/nuit masqué : le site reste en mode nuit. Remettre à true pour le réafficher. */
+export const SHOW_THEME_TOGGLE = false;
+
 type ThemeToggleProps = {
   className?: string;
 };

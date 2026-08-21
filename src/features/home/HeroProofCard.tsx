@@ -1,5 +1,6 @@
 import { QualiopiMark } from "@/components/brand/QualiopiMark";
 import { FinanceurLogos } from "@/features/home/FinanceurLogos";
+import { PUBLIC_FINANCEMENT_KEYS } from "@/lib/formation-types";
 
 type HeroProofCardProps = {
   nda: string;
@@ -15,11 +16,13 @@ export function HeroProofCard({ nda }: HeroProofCardProps) {
       <div className="relative z-10">
         <div className="p-4 md:p-6">
           <QualiopiMark size="sm" />
-          <p className="mt-3 text-[11px] tracking-wide text-cream/50">NDA {nda}</p>
+          <p className="caption-copy mt-3 font-heading text-cream/50">NDA {nda}</p>
         </div>
-        <div className="border-t border-white/10 px-4 py-3 md:px-6 md:py-4">
-          <FinanceurLogos />
-        </div>
+        {PUBLIC_FINANCEMENT_KEYS.length > 0 && (
+          <div className="border-t border-white/10 px-4 py-3 md:px-6 md:py-4">
+            <FinanceurLogos />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -10,18 +10,18 @@ export function StickyCta() {
         <div className="flex justify-center">
           <div className="flex w-full max-w-3xl flex-row items-stretch justify-center gap-2 sm:gap-4">
             <ButtonLink
-              href="/formations"
-              size="lg"
-              className="btn-outline-warm h-12 min-h-12 flex-1 justify-center rounded-lg px-3 text-center text-[11px] font-semibold uppercase leading-tight tracking-wider sm:h-14 sm:min-h-14 sm:px-8 sm:text-sm md:h-16 md:min-h-16 md:px-10 md:text-base"
-            >
-              Voir les formations
-            </ButtonLink>
-            <ButtonLink
               href="/contact"
               size="lg"
               className="btn-cta h-12 min-h-12 flex-1 justify-center px-3 text-center text-[11px] leading-tight sm:h-14 sm:min-h-14 sm:px-8 sm:text-sm md:h-16 md:min-h-16 md:px-10 md:text-base"
             >
               Je réserve ma place
+            </ButtonLink>
+            <ButtonLink
+              href="/formations"
+              size="lg"
+              className="btn-outline-warm h-12 min-h-12 flex-1 justify-center rounded-lg px-3 text-center text-[11px] font-semibold uppercase leading-tight tracking-wider sm:h-14 sm:min-h-14 sm:px-8 sm:text-sm md:h-16 md:min-h-16 md:px-10 md:text-base"
+            >
+              Voir les formations
             </ButtonLink>
           </div>
         </div>

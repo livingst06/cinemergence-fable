@@ -1,5 +1,5 @@
-import { sanitizeEncadrement, sanitizePedagogyList } from "./formation-format";
-import { emDashToNewlines } from "./formation-types";
+import { sanitizeEncadrement, sanitizePedagogyList, stripUnlistedFinanceurMentions } from "./formation-format";
+import { emDashToNewlines, publicFinancements, PUBLIC_FINANCEMENT_KEYS } from "./formation-types";
 import {
   defaultFinancement,
   defaultIntervenants,
@@ -73,7 +73,9 @@ export type SiteConfig = {
   qualiopiLabel: string;
   partnerName: string;
   partnerRole: string;
+  partnerUrl: string;
   instagramUrl: string;
+  youtubeUrl: string;
   founderPhotoUrl?: string;
   founderPhotoMimeType?: string;
 };
@@ -99,7 +101,15 @@ export async function getSiteSettings(): Promise<SiteConfig> {
       qualiopiLabel: "Organisme de formation certifié",
       partnerName: settings.partnerName ?? defaultSite.partnerName,
       partnerRole: defaultSite.partnerRole,
-      instagramUrl: settings.instagramUrl ?? defaultSite.instagramUrl,
+      partnerUrl: defaultSite.partnerUrl,
+      instagramUrl:
+        typeof settings.instagramUrl === "string"
+          ? settings.instagramUrl
+          : defaultSite.instagramUrl,
+      youtubeUrl:
+        typeof (settings as { youtubeUrl?: unknown }).youtubeUrl === "string"
+          ? (settings as { youtubeUrl: string }).youtubeUrl
+          : defaultSite.youtubeUrl,
       founderPhotoUrl: resolveDisplayMediaUrl(settings.founderPhoto, staticFounder),
       founderPhotoMimeType: resolveMediaMimeType(settings.founderPhoto),
     };
@@ -213,6 +223,37 @@ function mapFormationGallery(doc: Record<string, unknown>): {
   };
 }
 
+function sanitizePublicText(value: string): string {
+  return stripUnlistedFinanceurMentions(value);
+}
+
+function sanitizeOptionalText(value: string | undefined | null): string | undefined {
+  if (!value) return undefined;
+  const cleaned = stripUnlistedFinanceurMentions(value);
+  return cleaned || undefined;
+}
+
+function sanitizeFormationCopy(formation: FormationData): FormationData {
+  return {
+    ...formation,
+    titre: sanitizePublicText(formation.titre),
+    titreCourt: sanitizePublicText(formation.titreCourt),
+    sousTitre: sanitizeOptionalText(formation.sousTitre),
+    accroche: sanitizePublicText(formation.accroche),
+    intro: sanitizePublicText(formation.intro),
+    contexteFinalite: sanitizeOptionalText(formation.contexteFinalite),
+    delaiAcces: sanitizeOptionalText(formation.delaiAcces),
+    financements: publicFinancements(formation.financements),
+    modalitesAccesFinancement: sanitizeOptionalText(formation.modalitesAccesFinancement),
+    faq: formation.faq.map((item) => ({
+      q: sanitizePublicText(item.q),
+      r: sanitizePublicText(item.r),
+    })),
+    metaTitle: sanitizePublicText(formation.metaTitle),
+    metaDescription: sanitizePublicText(formation.metaDescription),
+  };
+}
+
 function mapFormation(doc: Record<string, unknown>): FormationData {
   const gallery = mapFormationGallery(doc);
   const coverFromGallery = gallery.galleryImages[0]?.url;
@@ -221,8 +262,8 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     id: doc.id as number | string | undefined,
     slug: String(doc.slug),
     pole: String(doc.pole),
-    titre: String(doc.titre),
-    titreCourt: String(doc.titreCourt),
+    titre: sanitizePublicText(String(doc.titre)),
+    titreCourt: sanitizePublicText(String(doc.titreCourt)),
     sousTitre: doc.sousTitre
       ? emDashToNewlines(String(doc.sousTitre))
       : undefined,
@@ -231,12 +272,14 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
       doc.audience === "entreprise" || doc.audience === "intermittent"
         ? doc.audience
         : "intermittent",
-    accroche: emDashToNewlines(String(doc.accroche)),
+    accroche: emDashToNewlines(sanitizePublicText(String(doc.accroche))),
     publicCible: String(doc.publicCible),
     livrable: String(doc.livrable),
     livrables: mapStringArray(doc.livrables),
-    intro: String(doc.intro),
-    contexteFinalite: doc.contexteFinalite ? String(doc.contexteFinalite) : undefined,
+    intro: sanitizePublicText(String(doc.intro)),
+    contexteFinalite: sanitizeOptionalText(
+      doc.contexteFinalite ? String(doc.contexteFinalite) : undefined,
+    ),
     pourQui: String(doc.pourQui),
     objectifs: mapStringArray(doc.objectifs),
     competences: mapStringArray(doc.competences),
@@ -257,12 +300,12 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     dateFin: doc.dateFin ? String(doc.dateFin) : undefined,
     prerequis: doc.prerequis ? String(doc.prerequis) : undefined,
     lieu: doc.lieu ? emDashToNewlines(String(doc.lieu)) : undefined,
-    delaiAcces: doc.delaiAcces ? String(doc.delaiAcces) : undefined,
+    delaiAcces: sanitizeOptionalText(doc.delaiAcces ? String(doc.delaiAcces) : undefined),
     tarif: doc.tarif
       ? String(doc.tarif)
       : (catalogBySlug.get(String(doc.slug))?.tarif ?? null),
     tarifEuros: resolveTarifEurosForDoc(doc),
-    financements: (doc.financements as FormationData["financements"]) ?? [],
+    financements: publicFinancements(doc.financements),
     methodesPedagogiques: sanitizePedagogyList(mapStringArray(doc.methodesPedagogiques)),
     moyensTechniques: sanitizePedagogyList(mapStringArray(doc.moyensTechniques)),
     encadrement: sanitizeEncadrement(
@@ -270,13 +313,16 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     ),
     evaluation: doc.evaluation ? String(doc.evaluation) : undefined,
     accessibilite: doc.accessibilite ? String(doc.accessibilite) : undefined,
-    modalitesAccesFinancement: doc.modalitesAccesFinancement
-      ? String(doc.modalitesAccesFinancement)
-      : undefined,
+    modalitesAccesFinancement: sanitizeOptionalText(
+      doc.modalitesAccesFinancement ? String(doc.modalitesAccesFinancement) : undefined,
+    ),
     intervenants: mapIntervenantSlugs(doc),
-    faq: (doc.faq as { q: string; r: string }[] | undefined) ?? [],
-    metaTitle: String(doc.metaTitle),
-    metaDescription: String(doc.metaDescription),
+    faq: ((doc.faq as { q: string; r: string }[] | undefined) ?? []).map((item) => ({
+      q: sanitizePublicText(item.q),
+      r: sanitizePublicText(item.r),
+    })),
+    metaTitle: sanitizePublicText(String(doc.metaTitle)),
+    metaDescription: sanitizePublicText(String(doc.metaDescription)),
     coverImageUrl:
       coverFromGallery ??
       resolveDisplayMediaUrl(doc.coverImage, staticFormationCover(String(doc.slug))),
@@ -288,10 +334,12 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
 }
 
 function withCoverFallback(f: FormationData): FormationData {
-  return normalizeFormationDisplayFields({
-    ...f,
-    coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
-  });
+  return sanitizeFormationCopy(
+    normalizeFormationDisplayFields({
+      ...f,
+      coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
+    }),
+  );
 }
 
 /** Affichage : tirets cadratin → retours à la ligne sur les libellés structurés. */
@@ -317,7 +365,7 @@ export async function getFormations(): Promise<FormationData[]> {
     });
 
     const fromCms = result.docs.map((doc) =>
-      mapFormation(doc as Record<string, unknown>),
+      sanitizeFormationCopy(mapFormation(doc as Record<string, unknown>)),
     );
     const cmsSlugs = new Set(fromCms.map((f) => f.slug));
 
@@ -347,7 +395,7 @@ export async function getFormationBySlug(slug: string): Promise<FormationData | 
       depth: 1,
     });
     if (result.docs[0]) {
-      return mapFormation(result.docs[0] as Record<string, unknown>);
+      return sanitizeFormationCopy(mapFormation(result.docs[0] as Record<string, unknown>));
     }
   } catch {
     // fallback below
@@ -433,7 +481,7 @@ export async function getTemoignages(): Promise<TemoignageData[]> {
 }
 
 export async function getFinancementDispositifs() {
-  return defaultFinancement;
+  return defaultFinancement.filter((d) => PUBLIC_FINANCEMENT_KEYS.includes(d.key));
 }
 
 export async function getLegalContent() {

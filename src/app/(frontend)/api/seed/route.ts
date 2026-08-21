@@ -39,6 +39,7 @@ export async function POST() {
         qualiopiLabel: defaultSite.qualiopiLabel,
         partnerName: defaultSite.partnerName,
         instagramUrl: defaultSite.instagramUrl,
+        youtubeUrl: defaultSite.youtubeUrl,
       },
     });
     logs.push("Site settings updated");

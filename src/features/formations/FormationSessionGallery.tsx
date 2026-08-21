@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
@@ -47,19 +48,29 @@ export function FormationSessionGallery({ slug }: FormationSessionGalleryProps) 
     >
       <div className="card-stage relative overflow-hidden">
         <div className="relative aspect-[16/10] w-full bg-noir-tertiary md:aspect-[21/9]">
-          {slides.map((slide, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={slide.id}
-              src={slide.url}
-              alt={slide.alt}
-              className={cn(
-                "pointer-events-none absolute inset-0 h-full w-full object-cover transition-opacity duration-700",
-                i === index ? "opacity-100" : "opacity-0",
-              )}
-              loading={i === 0 ? "eager" : "lazy"}
-            />
-          ))}
+          {slides.map((slide, i) => {
+            const active = i === index;
+            const nearby =
+              i === index ||
+              i === (index + 1) % count ||
+              i === (index - 1 + count) % count;
+            if (!nearby) return null;
+            return (
+              <Image
+                key={slide.id}
+                src={slide.url}
+                alt={slide.alt}
+                fill
+                sizes="100vw"
+                quality={70}
+                priority={i === 0}
+                className={cn(
+                  "pointer-events-none object-cover transition-opacity duration-700",
+                  active ? "opacity-100" : "opacity-0",
+                )}
+              />
+            );
+          })}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir-deep/50 via-transparent to-noir-deep/20" />
 
           {count > 1 && (

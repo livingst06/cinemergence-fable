@@ -1,40 +1,41 @@
 "use client";
 
-import { useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import Script from "next/script";
 
 const CONSENT_KEY = "cinemergence-cookie-consent";
 
+function subscribeConsent(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener("cookie-consent-accepted", callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener("cookie-consent-accepted", callback);
+  };
+}
+
+function getConsentSnapshot() {
+  return localStorage.getItem(CONSENT_KEY) === "accepted";
+}
+
 export function Analytics() {
   const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const consented = useSyncExternalStore(subscribeConsent, getConsentSnapshot, () => false);
 
-  useEffect(() => {
-    const loadIfConsented = () => {
-      if (localStorage.getItem(CONSENT_KEY) === "accepted" && gaId) {
-        // GA loaded via Script below when consent given
-      }
-    };
-    loadIfConsented();
-    window.addEventListener("cookie-consent-accepted", loadIfConsented);
-    return () => window.removeEventListener("cookie-consent-accepted", loadIfConsented);
-  }, [gaId]);
-
-  if (!gaId) return null;
+  if (!gaId || !consented) return null;
 
   return (
     <>
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
-      <Script id="ga-init" strategy="afterInteractive">
+      <Script id="ga-init" strategy="lazyOnload">
         {`
-          if (localStorage.getItem('${CONSENT_KEY}') === 'accepted') {
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${gaId}');
-          }
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${gaId}', { send_page_view: true });
         `}
       </Script>
     </>

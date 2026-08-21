@@ -34,7 +34,13 @@ export const metadata: Metadata = {
 };
 
 const Layout = ({ children }: Args) => (
-  <ClerkProvider appearance={clerkAppearance}>
+  <ClerkProvider
+    appearance={clerkAppearance}
+    signInUrl="/sign-in"
+    signUpUrl="/sign-up"
+    signInFallbackRedirectUrl="/admin"
+    signUpFallbackRedirectUrl="/admin"
+  >
     <RootLayout config={config} importMap={importMap} serverFunction={serverFunction}>
       {children}
     </RootLayout>

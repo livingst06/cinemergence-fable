@@ -8,7 +8,7 @@ import { Menu, X } from "lucide-react";
 import { AdminModeToggle } from "@/features/admin/AdminModeToggle";
 import { HeaderUserMenu } from "@/components/layout/HeaderUserMenu";
 import { Logo } from "@/components/layout/Logo";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { SHOW_THEME_TOGGLE, ThemeToggle } from "@/components/theme/ThemeToggle";
 import type { FormationData } from "@/lib/formation-types";
 import { formationPath } from "@/lib/formation-types";
 import { cn } from "@/lib/utils";
@@ -144,13 +144,13 @@ export function Header({ formations }: HeaderProps) {
                 );
               })}
 
-            <ThemeToggle className="h-9 w-9" />
+            {SHOW_THEME_TOGGLE && <ThemeToggle className="h-9 w-9" />}
             <AdminModeToggle />
             <HeaderUserMenu />
           </nav>
 
           <div className="relative z-[1] flex shrink-0 items-center gap-2 xl:hidden">
-            <ThemeToggle />
+            {SHOW_THEME_TOGGLE && <ThemeToggle />}
             <AdminModeToggle />
             <HeaderUserMenu />
             <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary transition-[background-color,border-color,color,box-shadow] duration-200">

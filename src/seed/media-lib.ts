@@ -122,20 +122,25 @@ export async function prepareHeroAssets() {
   const { execSync } = await import("child_process");
   const posterTmp = path.join(os.tmpdir(), "cinemergence-hero-poster.jpg");
 
-  execSync(
-    `ffmpeg -y -i "${videoIn}" -vf "scale=1920:-2" -c:v libx264 -crf 28 -preset fast -an -movflags +faststart "${heroVideoOut}"`,
-    { stdio: "pipe" },
-  );
+  const heroMobileOut = path.join(publicVideos, "hero-plateau-travel-mobile.mp4");
 
   execSync(
-    `ffmpeg -y -i "${videoIn}" -ss 00:00:02 -vframes 1 -q:v 2 "${posterTmp}"`,
+    `ffmpeg -y -ss 1 -t 18 -i "${videoIn}" -vf "scale=1280:-2,fps=24" -c:v libx264 -crf 30 -preset medium -an -movflags +faststart "${heroVideoOut}"`,
+    { stdio: "pipe" },
+  );
+  execSync(
+    `ffmpeg -y -ss 1 -t 18 -i "${videoIn}" -vf "scale=854:-2,fps=24" -c:v libx264 -crf 32 -preset medium -an -movflags +faststart "${heroMobileOut}"`,
+    { stdio: "pipe" },
+  );
+  execSync(
+    `ffmpeg -y -ss 00:00:02 -i "${videoIn}" -vframes 1 -q:v 3 "${posterTmp}"`,
     { stdio: "pipe" },
   );
 
   await sharp(posterTmp)
     .rotate()
-    .resize(1920, 1080, { fit: "cover" })
-    .jpeg({ quality: 82, mozjpeg: true })
+    .resize(1280, 720, { fit: "cover" })
+    .jpeg({ quality: 68, mozjpeg: true, progressive: true })
     .toFile(heroPosterOut);
 
   if (fs.existsSync(posterTmp)) {

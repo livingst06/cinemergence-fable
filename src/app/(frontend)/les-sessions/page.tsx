@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { LesSessionsAdmin } from "@/features/formations/LesSessionsAdmin";
 import {
   listFormationsForSessionSelect,
-  listIntervenantsForSessionSelect,
+  listStaffUsersForSessionSelect,
 } from "@/features/formations/session-actions";
 import { listAdminSessionGroups } from "@/lib/admin-sessions";
 import { getSessionProfile } from "@/lib/session-profile";
@@ -23,17 +23,17 @@ export default async function LesSessionsPage() {
     redirect("/");
   }
 
-  const [sessions, formations, intervenants] = await Promise.all([
+  const [sessions, formations, staffUsers] = await Promise.all([
     listAdminSessionGroups(),
     listFormationsForSessionSelect(),
-    listIntervenantsForSessionSelect(),
+    listStaffUsersForSessionSelect(),
   ]);
 
   return (
     <LesSessionsAdmin
       sessions={sessions}
       formations={formations}
-      intervenants={intervenants}
+      staffUsers={staffUsers}
     />
   );
 }

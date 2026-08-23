@@ -40,7 +40,7 @@ export const Users: CollectionConfig = {
       required: true,
       admin: {
         description:
-          "Admin uniquement via ADMIN_LIST. Formateur / intervenant / élève depuis Les utilisateurs.",
+          "Élève par défaut. Formateur / intervenant depuis Les utilisateurs. Admin uniquement via ADMIN_LIST.",
       },
       options: [
         { label: "Admin", value: "admin" },

@@ -16,13 +16,16 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function SessionSalonPage({ params }: Props) {
+export default async function StaffSessionSalonPage({ params }: Props) {
   const { salonId } = await params;
   const profile = await getSessionProfile();
   if (!profile.clerkUser) {
     redirect(
-      `/sign-in?redirect_url=${encodeURIComponent(`/mes-reservations/salon/${salonId}`)}`,
+      `/sign-in?redirect_url=${encodeURIComponent(`/mes-sessions/salon/${salonId}`)}`,
     );
+  }
+  if (!profile.isFormateurEligible && !profile.isIntervenantEligible) {
+    redirect(`/mes-reservations/salon/${salonId}`);
   }
 
   let payloadUserId = profile.payloadUserId;
@@ -47,23 +50,21 @@ export default async function SessionSalonPage({ params }: Props) {
     notFound();
   }
 
-  const staffBack =
-    profile.isFormateurEligible || profile.isIntervenantEligible;
-  const backHref = staffBack ? "/mes-sessions" : "/mes-reservations";
-  const backLabel = staffBack
-    ? "Retour à mes sessions"
-    : "Retour à mes réservations";
-
   if (!result.ok) {
-    return <SalonForbiddenScreen backHref={backHref} backLabel={backLabel} />;
+    return (
+      <SalonForbiddenScreen
+        backHref="/mes-sessions"
+        backLabel="Retour à mes sessions"
+      />
+    );
   }
 
   return (
     <SalonSessionScreen
       salon={result.salon}
       currentUserId={payloadUserId ? String(payloadUserId) : ""}
-      backHref={backHref}
-      backLabel={backLabel}
+      backHref="/mes-sessions"
+      backLabel="Retour à mes sessions"
     />
   );
 }

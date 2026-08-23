@@ -27,8 +27,7 @@ export const Intervenants: CollectionConfig = {
       type: "email",
       label: "Email",
       admin: {
-        description:
-          "Utilisé pour les mails groupés depuis Les sessions (formateurs / intervenants).",
+        description: "Contact éventuel de la fiche publique, pas le rôle du site.",
       },
     },
     {

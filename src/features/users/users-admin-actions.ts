@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { isAdminEmail } from "@/lib/admin-auth";
 import { getPayloadClient } from "@/lib/payload";
 import { requireAdmin } from "@/lib/session-profile";
@@ -39,5 +41,8 @@ export async function updateAssignableUserRole(
     data: { role: role as AssignableRole },
     overrideAccess: true,
   });
+  revalidatePath("/les-sessions");
+  revalidatePath("/les-utilisateurs");
+  revalidatePath("/mes-sessions");
   return { ok: true };
 }

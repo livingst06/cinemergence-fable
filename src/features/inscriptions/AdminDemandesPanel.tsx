@@ -38,8 +38,6 @@ export type AdminSessionTrainee = {
 export type AdminSessionStaff = {
   id: number | string;
   nom: string;
-  role: string;
-  slug: string;
   email: string | null;
 };
 

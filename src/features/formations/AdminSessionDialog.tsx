@@ -11,7 +11,7 @@ import {
   createFormationSession,
   updateFormationSession,
   type FormationOption,
-  type IntervenantOption,
+  type SessionStaffOption,
 } from "@/features/formations/session-actions";
 import type { AdminSessionGroup } from "@/features/inscriptions/AdminDemandesPanel";
 import { normalizeInscriptionStatus } from "@/lib/inscription-status";
@@ -35,7 +35,7 @@ function countEnrolledTrainees(editing: AdminSessionGroup | null): number {
 type AdminSessionDialogProps = {
   open: boolean;
   formations: FormationOption[];
-  intervenants: IntervenantOption[];
+  staffUsers: SessionStaffOption[];
   editing: AdminSessionGroup | null;
   onClose: () => void;
 };
@@ -59,7 +59,7 @@ function StaffChecklist({
   emptyHint,
 }: {
   title: string;
-  options: IntervenantOption[];
+  options: SessionStaffOption[];
   selectedIds: string[];
   onChange: (next: string[]) => void;
   emptyHint: string;
@@ -87,6 +87,9 @@ function StaffChecklist({
                   />
                   <span className="min-w-0">
                     <span className="block font-medium">{opt.nom}</span>
+                    <span className="block text-xs text-muted-text">
+                      {opt.email}
+                    </span>
                   </span>
                 </label>
               </li>
@@ -101,7 +104,7 @@ function StaffChecklist({
 export function AdminSessionDialog({
   open,
   formations,
-  intervenants,
+  staffUsers,
   editing,
   onClose,
 }: AdminSessionDialogProps) {
@@ -118,12 +121,12 @@ export function AdminSessionDialog({
   const [intervenantIds, setIntervenantIds] = useState<string[]>([]);
 
   const formateurOptions = useMemo(
-    () => intervenants.filter((i) => i.categorie === "formateur"),
-    [intervenants],
+    () => staffUsers.filter((user) => user.role === "formateur"),
+    [staffUsers],
   );
   const intervenantOptions = useMemo(
-    () => intervenants.filter((i) => i.categorie === "professionnel"),
-    [intervenants],
+    () => staffUsers.filter((user) => user.role === "intervenant"),
+    [staffUsers],
   );
 
   useEffect(() => {
@@ -333,7 +336,7 @@ export function AdminSessionDialog({
             options={formateurOptions}
             selectedIds={formateurIds}
             onChange={setFormateurIds}
-            emptyHint="Aucun formateur en base. Ajoutez-en dans Intervenants (catégorie formateur)."
+            emptyHint="Aucun formateur. Attribuez le rôle sur Les utilisateurs."
           />
 
           <StaffChecklist
@@ -341,7 +344,7 @@ export function AdminSessionDialog({
             options={intervenantOptions}
             selectedIds={intervenantIds}
             onChange={setIntervenantIds}
-            emptyHint="Aucun intervenant professionnel en base."
+            emptyHint="Aucun intervenant. Attribuez le rôle sur Les utilisateurs."
           />
 
           <label className="flex items-center gap-2 text-sm text-cream">

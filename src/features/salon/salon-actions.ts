@@ -47,11 +47,19 @@ export async function createSalonPost(
     return { status: "error", message: "Connexion requise" };
   }
 
+  const emails = [
+    auth.profile.email,
+    ...(auth.profile.clerkUser?.emailAddresses.map(
+      (entry) => entry.emailAddress,
+    ) ?? []),
+  ].filter((value): value is string => Boolean(value));
+
   const result = await createSalonPostForUser({
     salonId: parsed.data.salonId,
     body: parsed.data.body,
     payloadUserId,
     email: auth.profile.email,
+    emails,
   });
 
   if (!result.ok) {
@@ -59,6 +67,8 @@ export async function createSalonPost(
   }
 
   revalidatePath(`/mes-reservations/salon/${parsed.data.salonId}`);
+  revalidatePath(`/mes-sessions/salon/${parsed.data.salonId}`);
   revalidatePath("/mes-reservations");
+  revalidatePath("/mes-sessions");
   return { status: "success", message: "Message publié" };
 }

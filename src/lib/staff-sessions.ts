@@ -1,9 +1,10 @@
 import "server-only";
 
-import type { AdminSessionGroup } from "@/features/inscriptions/AdminDemandesPanel";
-import { listAdminSessionGroups } from "@/lib/admin-sessions";
 import { getPayloadClient } from "@/lib/payload";
+import { ensureSalonForSession } from "@/lib/session-salon";
+import { ensureSessionStaffUsersRels } from "@/lib/session-staff-schema";
 import {
+  mapStaffPeople,
   sessionMatchesStaff,
   type StaffKind,
 } from "@/lib/staff-session-match";
@@ -11,44 +12,86 @@ import {
 export type { StaffKind };
 export { sessionMatchesStaff };
 
-function normalizeEmail(email: string): string {
-  return email.trim().toLowerCase();
-}
+export type StaffSessionRow = {
+  id: string;
+  formationTitre: string;
+  formationSlug: string;
+  dateDebut: string;
+  dateFin: string;
+  salonId?: string;
+};
 
-async function findIntervenantIdsForEmails(
-  emails: readonly string[],
-): Promise<Set<string>> {
-  const wanted = new Set(
-    emails.map((email) => normalizeEmail(email)).filter(Boolean),
-  );
-  if (wanted.size === 0) return new Set();
-
-  const payload = await getPayloadClient();
-  const found = await payload.find({
-    collection: "intervenants",
-    limit: 200,
-    depth: 0,
-    overrideAccess: true,
-  });
-
-  const ids = new Set<string>();
-  for (const doc of found.docs) {
-    const email = typeof doc.email === "string" ? normalizeEmail(doc.email) : "";
-    if (email && wanted.has(email)) ids.add(String(doc.id));
-  }
-  return ids;
-}
-
-/** Sessions CMS où l’email est assigné comme formateur ou intervenant. */
-export async function listSessionGroupsForStaff(
+/** Sessions où ce compte users est assigné comme formateur ou intervenant. */
+export async function listSessionsForStaff(
+  userId: number | string | null,
   emails: readonly string[],
   kind: StaffKind,
-): Promise<AdminSessionGroup[]> {
-  const [groups, staffIds] = await Promise.all([
-    listAdminSessionGroups(),
-    findIntervenantIdsForEmails(emails),
-  ]);
-  return groups.filter((group) =>
-    sessionMatchesStaff(group, staffIds, emails, kind),
-  );
+): Promise<StaffSessionRow[]> {
+  try {
+    const payload = await getPayloadClient();
+    await ensureSessionStaffUsersRels(payload);
+    const sessions = await payload.find({
+      collection: "formation-sessions",
+      depth: 1,
+      limit: 200,
+      sort: "dateDebut",
+      overrideAccess: true,
+    });
+
+    const staffIds = new Set(
+      userId != null && String(userId).trim() ? [String(userId)] : [],
+    );
+
+    const rows: StaffSessionRow[] = [];
+    for (const session of sessions.docs) {
+      const formateurs = mapStaffPeople(
+        (session as { formateurs?: unknown }).formateurs,
+      );
+      const intervenants = mapStaffPeople(
+        (session as { intervenants?: unknown }).intervenants,
+      );
+      if (
+        !sessionMatchesStaff(
+          { formateurs, intervenants },
+          staffIds,
+          emails,
+          kind,
+        )
+      ) {
+        continue;
+      }
+
+      const formation =
+        typeof session.formation === "object" && session.formation
+          ? (session.formation as {
+              titre?: string;
+              titreCourt?: string;
+              slug?: string;
+            })
+          : null;
+      if (!formation?.slug) continue;
+
+      let salonId: string | undefined;
+      try {
+        const salon = await ensureSalonForSession(payload, session.id);
+        if (salon) salonId = String(salon.id);
+      } catch (error) {
+        console.error("[staff-sessions] salon", session.id, error);
+      }
+
+      rows.push({
+        id: String(session.id),
+        formationTitre: String(
+          formation.titre ?? formation.titreCourt ?? formation.slug,
+        ),
+        formationSlug: String(formation.slug),
+        dateDebut: String(session.dateDebut ?? ""),
+        dateFin: String(session.dateFin ?? ""),
+        salonId,
+      });
+    }
+    return rows;
+  } catch {
+    return [];
+  }
 }

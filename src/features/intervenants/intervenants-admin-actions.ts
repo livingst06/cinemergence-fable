@@ -35,7 +35,6 @@ export type IntervenantAdminActionResult =
 
 function revalidateIntervenantPaths() {
   revalidatePath("/intervenants");
-  revalidatePath("/les-sessions");
   revalidatePath("/");
   revalidatePath("/formations");
 }
@@ -75,32 +74,27 @@ function mediaIdFrom(value: unknown): number | string | null {
   return null;
 }
 
-async function isLinkedToSession(
+async function isLinkedToFormation(
   payload: Payload,
   intervenantId: number | string,
 ): Promise<boolean> {
   const idStr = String(intervenantId);
   const result = await payload.find({
-    collection: "formation-sessions",
+    collection: "formations",
     limit: 500,
     depth: 0,
     overrideAccess: true,
   });
 
-  for (const session of result.docs) {
-    const lists = [
-      (session as { formateurs?: unknown }).formateurs,
-      (session as { intervenants?: unknown }).intervenants,
-    ];
-    for (const list of lists) {
-      if (!Array.isArray(list)) continue;
-      for (const item of list) {
-        const id =
-          typeof item === "object" && item && "id" in item
-            ? String((item as { id: number | string }).id)
-            : String(item);
-        if (id === idStr) return true;
-      }
+  for (const formation of result.docs) {
+    const list = (formation as { intervenants?: unknown }).intervenants;
+    if (!Array.isArray(list)) continue;
+    for (const item of list) {
+      const id =
+        typeof item === "object" && item && "id" in item
+          ? String((item as { id: number | string }).id)
+          : String(item);
+      if (id === idStr) return true;
     }
   }
   return false;
@@ -223,11 +217,11 @@ export async function deleteIntervenantAction(
 
   try {
     const payload = await getPayloadClient();
-    if (await isLinkedToSession(payload, id)) {
+    if (await isLinkedToFormation(payload, id)) {
       return {
         ok: false,
         error:
-          "Impossible de supprimer : ce profil est lié à au moins une session. Retire-le des sessions d’abord.",
+          "Impossible de supprimer : ce profil est lié à au moins une formation. Retire-le des fiches d’abord.",
       };
     }
 

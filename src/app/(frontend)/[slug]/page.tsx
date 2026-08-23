@@ -21,6 +21,7 @@ const RESERVED = new Set([
   "mon-compte",
   "mon-profil",
   "les-utilisateurs",
+  "mes-sessions",
   "mes-sessions-formateur",
   "mes-sessions-intervenant",
   "sign-in",

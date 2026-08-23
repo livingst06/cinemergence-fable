@@ -5,6 +5,16 @@ import type {
   AdminSessionStaff,
 } from "@/features/inscriptions/AdminDemandesPanel";
 import { getPayloadClient } from "@/lib/payload";
+import { ensureSessionStaffUsersRels } from "@/lib/session-staff-schema";
+
+function staffDisplayName(
+  name: string | null | undefined,
+  email: string | null,
+): string {
+  const trimmed = name?.trim() ?? "";
+  if (trimmed) return trimmed;
+  return email?.trim() || "";
+}
 
 function mapStaff(raw: unknown): AdminSessionStaff[] {
   if (!Array.isArray(raw)) return [];
@@ -13,35 +23,34 @@ function mapStaff(raw: unknown): AdminSessionStaff[] {
     if (typeof item === "object" && item && "id" in item) {
       const doc = item as {
         id: number | string;
-        nom?: string;
-        role?: string;
-        slug?: string;
+        name?: string | null;
         email?: string | null;
       };
       const email =
         typeof doc.email === "string" && doc.email.trim()
           ? doc.email.trim()
           : null;
+      const nom = staffDisplayName(doc.name, email);
+      if (!nom && !email) continue;
       out.push({
         id: doc.id,
-        nom: String(doc.nom ?? ""),
-        role: String(doc.role ?? ""),
-        slug: String(doc.slug ?? ""),
+        nom: nom || email || "",
         email,
       });
       continue;
     }
     if (typeof item === "number" || typeof item === "string") {
-      out.push({ id: item, nom: "", role: "", slug: "", email: null });
+      out.push({ id: item, nom: "", email: null });
     }
   }
-  return out.filter((p) => p.nom || p.slug);
+  return out.filter((p) => p.nom || p.email);
 }
 
 /** Admin: toutes les sessions avec élèves + staff. */
 export async function listAdminSessionGroups(): Promise<AdminSessionGroup[]> {
   try {
     const payload = await getPayloadClient();
+    await ensureSessionStaffUsersRels(payload);
     const sessions = await payload.find({
       collection: "formation-sessions",
       depth: 1,

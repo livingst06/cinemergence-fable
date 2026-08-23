@@ -13,7 +13,7 @@ export const SessionSalons: CollectionConfig = {
     useAsTitle: "id",
     defaultColumns: ["session", "createdAt"],
     description:
-      "Un salon par session. Les élèves inscrits (payés) y discutent depuis Mes réservations.",
+      "Un salon par session. Élèves inscrits et formateurs / intervenants assignés.",
   },
   access: {
     read: ({ req }) => req.user?.role === "admin",

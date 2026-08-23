@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
   // iPhone / LAN : sans ça, Next bloque les assets de dev hors localhost
   // et les boutons client (FAQ, etc.) ne réagissent pas au tap.
   allowedDevOrigins: ["192.168.1.139", "192.168.1.21", "127.0.0.1", "localhost"],
+  experimental: {
+    // Photos admin ≤ 8 Mo + multipart. Les vidéos d’interview vont en direct S3.
+    proxyClientMaxBodySize: "20mb",
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30,

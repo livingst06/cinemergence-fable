@@ -11,7 +11,7 @@ import { getIntervenantPhotoPaths } from "./intervenant-photos";
 
 const assetsRoot = path.resolve("_assets-client");
 
-type MediaCategory = "plateau" | "livrable" | "portrait" | "autre";
+type MediaCategory = "plateau" | "livrable" | "interview" | "portrait" | "autre";
 
 type GalleryAsset = {
   file: string;

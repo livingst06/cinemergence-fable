@@ -31,6 +31,8 @@ export function FormationDetailGallery({
         mimeType={mimeType ?? "image/jpeg"}
         alt={alt}
         aspect="video"
+        priority
+        sizes="(max-width: 1024px) 100vw, 50vw"
         className={glow ? "gold-glow" : undefined}
       />
       {gallery.length > 1 ? (

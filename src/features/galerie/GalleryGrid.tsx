@@ -30,6 +30,8 @@ type GalleryGridProps = {
   items: GalleryGridItem[];
   /** Grille plus dense — interviews / extraits courts. */
   compact?: boolean;
+  /** Première vignette au-dessus de la ligne (LCP). */
+  priorityFirst?: boolean;
   admin?: GalleryGridAdmin;
 };
 
@@ -42,7 +44,12 @@ function previewSrc(item: GalleryGridItem) {
   return item.url;
 }
 
-export function GalleryGrid({ items, compact = false, admin }: GalleryGridProps) {
+export function GalleryGrid({
+  items,
+  compact = false,
+  priorityFirst = false,
+  admin,
+}: GalleryGridProps) {
   const [openId, setOpenId] = useState<string | null>(null);
   const active = useMemo(
     () => items.find((item) => item.id === openId) ?? null,
@@ -60,7 +67,7 @@ export function GalleryGrid({ items, compact = false, admin }: GalleryGridProps)
           admin && "pt-3",
         )}
       >
-        {items.map((item) => (
+        {items.map((item, index) => (
           <article
             key={item.id}
             className="group relative min-w-0 overflow-visible rounded-2xl border border-white/[0.08]"
@@ -84,6 +91,7 @@ export function GalleryGrid({ items, compact = false, admin }: GalleryGridProps)
                     : "(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                 }
                 quality={70}
+                priority={priorityFirst && index < (compact ? 1 : 3)}
                 className="object-cover"
               />
             </div>
@@ -153,6 +161,7 @@ export function GalleryGrid({ items, compact = false, admin }: GalleryGridProps)
                     width={1920}
                     height={1080}
                     quality={80}
+                    priority
                     className="max-h-[min(90dvh,90vh)] max-w-full rounded-lg object-contain"
                     onClick={(event) => event.stopPropagation()}
                   />

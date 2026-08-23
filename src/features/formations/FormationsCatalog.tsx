@@ -123,11 +123,12 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
 
       {ordered.length > 0 || isAdminMode ? (
         <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3 xl:gap-5">
-          {ordered.map((f) =>
+          {ordered.map((f, index) =>
             isAdminMode ? (
               <FormationCardAdmin
                 key={f.slug}
                 formation={f}
+                priority={index < 3}
                 onEdit={() => {
                   if (f.id == null) {
                     toast.error("Formation hors CMS — édite-la dans Payload après seed.");
@@ -139,7 +140,7 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
                 onDelete={() => setDeleteTarget(f)}
               />
             ) : (
-              <FormationCard key={f.slug} formation={f} />
+              <FormationCard key={f.slug} formation={f} priority={index < 3} />
             ),
           )}
           {isAdminMode && (

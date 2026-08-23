@@ -20,9 +20,10 @@ type FormationCardProps = {
   formation: FormationData;
   /** Conservé pour compat — toutes les cards ont désormais le même format. */
   featured?: boolean;
+  priority?: boolean;
 };
 
-export function FormationCard({ formation }: FormationCardProps) {
+export function FormationCard({ formation, priority = false }: FormationCardProps) {
   const coverSrc = resolveFormationCoverUrl(formation.slug, formation.coverImageUrl);
   const href = formationPath(formation.slug);
   const sessionsHref = `${href}#sessions`;
@@ -51,6 +52,7 @@ export function FormationCard({ formation }: FormationCardProps) {
             aspect="video"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="h-full rounded-none border-0 border-b border-white/[0.06] !aspect-auto"
+            priority={priority}
           />
           {formation.prioritaire && (
             <span className="absolute right-3 top-3 rounded-full bg-projector px-2.5 py-1 text-xs font-semibold tracking-wide text-cream shadow-lg">

@@ -50,6 +50,7 @@ function formationSlugFromDoc(doc: { formation?: unknown } | null | undefined): 
 function revalidateInscriptionPaths(slug: string | null) {
   revalidatePath("/mes-reservations");
   revalidatePath("/les-sessions");
+  revalidatePath("/les-paiements");
   revalidatePath("/mon-compte");
   if (slug) revalidatePath(`/formations/${slug}`);
 }

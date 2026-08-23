@@ -104,14 +104,24 @@ export function HeaderUserMenu() {
           className="absolute right-0 top-[calc(100%+0.5rem)] z-[100000] min-w-[11.5rem] overflow-hidden rounded-xl border border-border bg-noir-secondary p-1.5 shadow-2xl"
         >
           {isAdminEligible ? (
-            <Link
-              href="/les-sessions"
-              role="menuitem"
-              className={menuItemClass}
-              onClick={() => setOpen(false)}
-            >
-              Les sessions
-            </Link>
+            <>
+              <Link
+                href="/les-sessions"
+                role="menuitem"
+                className={menuItemClass}
+                onClick={() => setOpen(false)}
+              >
+                Les sessions
+              </Link>
+              <Link
+                href="/les-paiements"
+                role="menuitem"
+                className={menuItemClass}
+                onClick={() => setOpen(false)}
+              >
+                Les paiements
+              </Link>
+            </>
           ) : (
             <Link
               href="/mes-reservations"

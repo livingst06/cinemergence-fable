@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Calendar, List } from "lucide-react";
 import { toast } from "sonner";
 
+import { AdminOutilsNav } from "@/features/admin/AdminOutilsNav";
 import { useAdminUi } from "@/features/admin/AdminUiContext";
 import { AdminAddSessionCard } from "@/features/formations/AdminAddSessionCard";
 import { AdminDeleteConfirmDialog } from "@/features/formations/AdminDeleteConfirmDialog";
@@ -100,7 +101,7 @@ export function LesSessionsAdmin({
   return (
     <>
       <header className="relative overflow-hidden bg-noir pt-6 pb-5 sm:pt-8 sm:pb-6 md:pt-10 md:pb-8">
-        <div className="container-page">
+        <div className="container-page space-y-4">
           <div className="flex items-center justify-between gap-3 sm:gap-4">
             <h1 className="display-title min-w-0 flex-1 text-cream">
               Les sessions
@@ -128,6 +129,7 @@ export function LesSessionsAdmin({
               )}
             </button>
           </div>
+          <AdminOutilsNav current="sessions" />
         </div>
       </header>
 

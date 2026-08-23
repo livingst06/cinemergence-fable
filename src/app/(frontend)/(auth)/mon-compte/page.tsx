@@ -48,13 +48,22 @@ export default async function MonComptePage() {
                 Mes réservations
               </ButtonLink>
               {profile.isAdminEligible ? (
-                <ButtonLink
-                  href="/les-sessions"
-                  variant="outline"
-                  className="btn-outline-warm"
-                >
-                  Les sessions
-                </ButtonLink>
+                <>
+                  <ButtonLink
+                    href="/les-sessions"
+                    variant="outline"
+                    className="btn-outline-warm"
+                  >
+                    Les sessions
+                  </ButtonLink>
+                  <ButtonLink
+                    href="/les-paiements"
+                    variant="outline"
+                    className="btn-outline-warm"
+                  >
+                    Les paiements
+                  </ButtonLink>
+                </>
               ) : null}
               <SignOutButton redirectUrl="/">
                 <Button variant="outline" type="button" className="btn-outline-warm">

@@ -1,0 +1,24 @@
+---
+description: Identité, rôles et assignations via tables/attributs, pas via fiches CMS
+alwaysApply: true
+---
+
+# Tables et attributs, pas fiches CMS
+
+Pour le **fonctionnement du site** (qui est qui, qui a quel rôle, qui est sur une session, qui entre dans un salon), la source de vérité est une **table + ses attributs** — aujourd’hui `users.role`, relations `formation-sessions.formateurs` / `intervenants` → `users`.
+
+Les collections CMS (`intervenants`, textes/photos de formations, etc.) servent au **contenu public** (page Intervenants, fiches, portraits). Elles ne pilotent pas les droits ni les listes à cocher admin.
+
+## Faire
+
+- Rôle élève / formateur / intervenant : `users.role` (admin = `ADMIN_LIST`).
+- Assigner un formateur ou un intervenant à une session : cocher un **compte** `users`.
+- Accès salon, mails de session, « Mes sessions » : partir de ces relations et de `users`.
+
+## Ne pas faire
+
+- Recréer une fiche CMS pour « représenter » un compte connecté.
+- Filtrer le staff d’une session sur `intervenants.categorie` ou l’email d’une fiche.
+- Dupliquer un rôle à la fois sur `users` et sur une fiche contenu.
+
+Si un besoin mélange contenu public et compte (ex. portrait d’un formateur connecté), lier explicitement plus tard — ne pas fusionner les deux modèles par défaut.

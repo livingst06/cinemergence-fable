@@ -82,7 +82,7 @@ export function PlateauCarousel({ slides }: PlateauCarouselProps) {
           )}
 
           <div className="absolute bottom-0 left-0 right-0 z-10 p-5 md:p-8">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-or-light">
+            <p className="text-sm font-semibold tabular-nums tracking-wide text-or-light">
               {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
             </p>
             <p className="mt-2 max-w-2xl font-heading text-xl text-cream md:text-2xl">

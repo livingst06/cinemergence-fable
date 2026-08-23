@@ -116,7 +116,7 @@ export function Header({ formations }: HeaderProps) {
                       >
                         <span>{f.titreCourt}</span>
                         {f.prioritaire && (
-                          <span className="rounded-full bg-projector/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-projector-light">
+                          <span className="rounded-full bg-projector/20 px-2 py-0.5 text-xs font-medium tracking-wide text-projector-light">
                             À la une
                           </span>
                         )}

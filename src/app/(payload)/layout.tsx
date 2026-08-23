@@ -7,6 +7,7 @@ import "@payloadcms/next/css";
 import React from "react";
 
 import { clerkAppearance } from "@/lib/clerk-appearance";
+import { clerkAllowedRedirectOrigins } from "@/lib/clerk-origins";
 
 import { importMap } from "./admin/importMap";
 import "./custom.scss";
@@ -36,6 +37,7 @@ export const metadata: Metadata = {
 const Layout = ({ children }: Args) => (
   <ClerkProvider
     appearance={clerkAppearance}
+    allowedRedirectOrigins={clerkAllowedRedirectOrigins}
     signInUrl="/sign-in"
     signUpUrl="/sign-up"
     signInFallbackRedirectUrl="/admin"

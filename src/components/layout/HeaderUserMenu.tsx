@@ -9,7 +9,7 @@ import { useAdminUi } from "@/features/admin/AdminUiContext";
 import { cn } from "@/lib/utils";
 
 const triggerClass =
-  "relative inline-flex h-11 min-h-[44px] shrink-0 items-center gap-1.5 rounded-full border border-border/70 bg-noir-tertiary/80 px-3.5 text-xs font-medium text-cream/90 shadow-sm transition-colors duration-200 hover:border-or/35 hover:bg-noir-tertiary hover:text-or-light select-none [-webkit-tap-highlight-color:transparent]";
+  "relative inline-flex h-11 min-h-[44px] shrink-0 items-center gap-1.5 rounded-full border border-border/70 bg-noir-tertiary/80 px-3.5 text-sm font-medium text-cream/90 shadow-sm transition-colors duration-200 hover:border-or/35 hover:bg-noir-tertiary hover:text-or-light select-none [-webkit-tap-highlight-color:transparent]";
 
 const menuItemClass =
   "flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm text-cream/90 transition-colors hover:bg-noir-tertiary/60 hover:text-or-light";

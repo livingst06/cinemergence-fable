@@ -8,6 +8,7 @@ import { SiteNoticeBanner } from "@/components/layout/SiteNoticeBanner";
 import { AdminUiProvider } from "@/features/admin/AdminUiContext";
 import { getFormations, getSiteSettings } from "@/lib/data";
 import { clerkAppearance } from "@/lib/clerk-appearance";
+import { clerkAllowedRedirectOrigins } from "@/lib/clerk-origins";
 import { getSessionProfile } from "@/lib/session-profile";
 import { organizationJsonLd } from "@/lib/seo";
 
@@ -30,6 +31,13 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${site.name}`,
     },
     description: site.description,
+    // Safari / Chrome iOS transforment le NDA en lien tel: → mismatch d’hydratation.
+    formatDetection: {
+      telephone: false,
+      date: false,
+      email: false,
+      address: false,
+    },
     openGraph: {
       type: "website",
       locale: "fr_FR",
@@ -49,21 +57,23 @@ export default async function FrontendLayout({
   const jsonLd = organizationJsonLd(site);
 
   return (
-    <ClerkProvider
-      appearance={clerkAppearance}
-      allowedRedirectOrigins={[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://192.168.1.21:3000",
-      ]}
-    >
-      <html lang="fr" className="dark min-h-dvh" suppressHydrationWarning>
-        <body className="flex min-h-dvh flex-col overflow-x-clip">
-          <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-          />
+    <html lang="fr" className="dark min-h-dvh" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
+      <body className="flex min-h-dvh flex-col overflow-x-clip">
+        <ClerkProvider
+          appearance={clerkAppearance}
+          allowedRedirectOrigins={clerkAllowedRedirectOrigins}
+          signInUrl="/sign-in"
+          signUpUrl="/sign-up"
+          signInFallbackRedirectUrl="/"
+          signUpFallbackRedirectUrl="/"
+        >
           <AdminUiProvider
             initialUserEmail={profile.email}
             initialIsAdminEligible={profile.isAdminEligible}
@@ -89,8 +99,8 @@ export default async function FrontendLayout({
             />
             <DeferredSiteChrome />
           </AdminUiProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }

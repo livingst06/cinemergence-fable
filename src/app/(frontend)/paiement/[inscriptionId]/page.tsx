@@ -169,7 +169,7 @@ export default async function PaiementPage({ params }: Props) {
               {formatEurosLabel(amountEuros)}
             </p>
           ) : null}
-          <p className="text-xs text-muted-text">
+          <p className="text-sm text-muted-text">
             Place réservée {minutesLeft} min — au-delà, elle sera libérée
             automatiquement.
           </p>

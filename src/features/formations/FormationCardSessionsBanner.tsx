@@ -16,7 +16,7 @@ export function FormationCardSessionsBanner({
     <Link
       href={href}
       className={cn(
-        "mt-auto block w-full shrink-0 bg-convert px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-white transition-colors",
+        "mt-auto block w-full shrink-0 bg-convert px-4 py-3 text-center text-sm font-semibold tracking-wide text-white transition-colors md:text-base",
         "hover:bg-convert-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-convert-light focus-visible:ring-offset-2 focus-visible:ring-offset-noir-secondary",
         className,
       )}

@@ -43,7 +43,7 @@ export function CookieBanner() {
       aria-label="Consentement cookies"
     >
       <div className="container-page flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <p className="max-w-3xl text-xs leading-relaxed text-muted-text md:text-sm">
+        <p className="max-w-3xl text-sm leading-relaxed text-muted-text">
           Ce site utilise des cookies pour mesurer l&apos;audience (Google Analytics) et
           améliorer votre expérience. En continuant, vous acceptez notre{" "}
           <Link href="/confidentialite" className="text-or hover:underline">

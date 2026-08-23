@@ -261,7 +261,7 @@ export function AdminSessionDialog({
           </div>
 
           <div className="rounded-xl border border-border/70 bg-noir-tertiary/40 px-4 py-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-text">
+            <p className="label-copy">
               Tarif (formation)
             </p>
             <p className="mt-1 text-sm font-medium text-cream">

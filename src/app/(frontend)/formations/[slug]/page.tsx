@@ -130,15 +130,15 @@ export default async function FormationDetailPage({ params }: Props) {
           </p>
           <div className="mt-6 flex flex-col items-start gap-3">
             {formation.prioritaire && (
-              <span className="rounded-full bg-projector px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-cream">
+              <span className="rounded-full bg-projector px-3 py-1.5 text-xs font-semibold tracking-wide text-cream">
                 À la une
               </span>
             )}
             <div className="w-full max-w-2xl rounded-xl border border-or/25 bg-or/5 px-4 py-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-or-light">
+              <p className="label-copy text-or-light">
                 Livrable
               </p>
-              <ul className="mt-2 space-y-1.5 text-sm leading-snug text-or-light">
+              <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-or-light md:text-base">
                 {(formation.livrables && formation.livrables.length > 0
                   ? formation.livrables
                   : [formation.livrable]
@@ -327,7 +327,7 @@ export default async function FormationDetailPage({ params }: Props) {
           <div className="grid gap-4 md:grid-cols-2">
             {formation.programme.map((module, i) => (
               <article key={`${module.titre}-${i}`} className="card-stage flex flex-col p-6">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-or-light">
+                <span className="label-copy text-or-light">
                   {module.jour != null
                     ? `Jour ${String(module.jour).padStart(2, "0")}`
                     : `Module ${String(i + 1).padStart(2, "0")}`}
@@ -351,13 +351,13 @@ export default async function FormationDetailPage({ params }: Props) {
                           <div className="flex items-start justify-between gap-3">
                             <p className="text-sm font-medium text-cream/90">{seq.titre}</p>
                             {seq.duree && (
-                              <span className="shrink-0 rounded-md border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-text">
+                              <span className="shrink-0 rounded-md border border-white/10 bg-white/[0.03] px-2 py-0.5 text-xs font-medium text-muted-text">
                                 {seq.duree}
                               </span>
                             )}
                           </div>
                           {seq.detail && (
-                            <p className="mt-1 text-left md:text-justify text-xs leading-relaxed text-muted-text">
+                            <p className="mt-1 text-left text-sm leading-relaxed text-muted-text md:text-justify">
                               {seq.detail}
                             </p>
                           )}
@@ -426,6 +426,7 @@ export default async function FormationDetailPage({ params }: Props) {
 
         <FormationSessionsSection
           formationSlug={formation.slug}
+          formationTitre={formation.titre}
           paymentEnabled={paymentEnabled}
           sessions={sessions}
         />

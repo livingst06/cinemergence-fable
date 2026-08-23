@@ -41,7 +41,7 @@ export function FormationLabeledGrid({ items, columns = "3", tone = "projector" 
           <li key={item} className="card-stage flex items-start gap-3 p-5">
             <Dot tone={tone} />
             <div className="min-w-0">
-              <p className="font-heading text-sm uppercase tracking-wide text-cream">{label}</p>
+              <p className="font-heading text-base tracking-normal text-cream">{label}</p>
               {detail && (
                 <p className="mt-1.5 text-left md:text-justify text-sm leading-relaxed text-muted-text">{detail}</p>
               )}

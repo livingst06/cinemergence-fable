@@ -90,7 +90,7 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
             aria-selected={audience === key}
             onClick={() => setAudience(key)}
             className={cn(
-              "min-h-11 rounded-lg border px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors",
+              "min-h-11 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors",
               audience === key
                 ? "border-or/40 bg-or/15 text-cream"
                 : "border-white/10 bg-transparent text-cream/70 hover:border-or/30 hover:text-or-light",
@@ -110,7 +110,7 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
             aria-selected={pole === p}
             onClick={() => setPole(p)}
             className={cn(
-              "min-h-11 rounded-lg border px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors",
+              "min-h-11 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors",
               pole === p
                 ? "border-projector/40 bg-projector/15 text-cream"
                 : "border-white/10 bg-transparent text-cream/70 hover:border-or/30 hover:text-or-light",

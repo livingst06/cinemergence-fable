@@ -39,14 +39,14 @@ export function Placeholder({
       <div className="absolute inset-0 opacity-[0.07] bg-[repeating-linear-gradient(0deg,rgba(255,255,255,0.5)_0_1px,transparent_1px_3px)]" />
 
       {variant === "hero" && (
-        <div className="absolute right-4 top-4 flex items-center gap-2 rounded-full border border-white/10 bg-noir-deep/80 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-projector-light backdrop-blur-md">
+        <div className="absolute right-4 top-4 flex items-center gap-2 rounded-full border border-white/10 bg-noir-deep/80 px-3 py-1.5 text-xs font-semibold tracking-wide text-projector-light backdrop-blur-md">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-projector" />
           En tournage
         </div>
       )}
 
       {!hideLabel && (
-        <p className="relative z-10 p-5 text-left text-[11px] font-medium uppercase tracking-[0.18em] text-cream/50">
+        <p className="relative z-10 p-5 text-left text-sm font-medium tracking-wide text-cream/50">
           {label}
         </p>
       )}

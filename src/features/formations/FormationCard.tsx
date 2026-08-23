@@ -9,6 +9,10 @@ import {
   formationLivrableLabel,
   formationPath,
 } from "@/lib/formation-types";
+import {
+  FORMATION_TILE_CLASS,
+  formationTileStyle,
+} from "@/lib/formation-pastel";
 import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +34,9 @@ export function FormationCard({ formation }: FormationCardProps) {
         "card-stage flex h-auto w-full flex-col overflow-hidden transition-all duration-500",
         "hover:-translate-y-1 hover:plateau-glow",
         "md:h-full",
+        FORMATION_TILE_CLASS,
       )}
+      style={formationTileStyle(formation.titre)}
     >
       <Link
         href={href}
@@ -47,7 +53,7 @@ export function FormationCard({ formation }: FormationCardProps) {
             className="h-full rounded-none border-0 border-b border-white/[0.06] !aspect-auto"
           />
           {formation.prioritaire && (
-            <span className="absolute right-3 top-3 rounded-full bg-projector px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-cream shadow-lg">
+            <span className="absolute right-3 top-3 rounded-full bg-projector px-2.5 py-1 text-xs font-semibold tracking-wide text-cream shadow-lg">
               À la une
             </span>
           )}
@@ -70,14 +76,14 @@ export function FormationCard({ formation }: FormationCardProps) {
           <h3 className="line-clamp-2 font-heading text-[clamp(1.15rem,3.2vw,1.55rem)] leading-[1.15] text-cream">
             {formation.titre}
           </h3>
-          <p className="line-clamp-3 whitespace-pre-line text-sm leading-snug text-muted-text">
+          <p className="line-clamp-3 whitespace-pre-line text-sm leading-relaxed text-muted-text md:text-base">
             {formation.accroche}
           </p>
           <div className="border-t border-white/[0.06] pt-2.5 text-left">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-or-light md:text-xs">
+            <p className="label-copy text-or-light">
               Livrable
             </p>
-            <p className="mt-1 line-clamp-2 text-sm leading-snug tracking-normal text-or-light">
+            <p className="mt-1 line-clamp-2 text-sm leading-snug tracking-normal text-or-light md:text-base">
               {formationLivrableLabel(formation)}
             </p>
           </div>

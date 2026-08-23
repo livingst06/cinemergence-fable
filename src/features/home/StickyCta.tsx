@@ -12,14 +12,14 @@ export function StickyCta() {
             <ButtonLink
               href="/contact"
               size="lg"
-              className="btn-cta h-12 min-h-12 flex-1 justify-center px-3 text-center text-[11px] leading-tight sm:h-14 sm:min-h-14 sm:px-8 sm:text-sm md:h-16 md:min-h-16 md:px-10 md:text-base"
+              className="btn-cta h-12 min-h-12 flex-1 justify-center px-3 text-center text-sm leading-tight sm:h-14 sm:min-h-14 sm:px-8 md:h-16 md:min-h-16 md:px-10 md:text-base"
             >
               Je réserve ma place
             </ButtonLink>
             <ButtonLink
               href="/formations"
               size="lg"
-              className="btn-outline-warm h-12 min-h-12 flex-1 justify-center rounded-lg px-3 text-center text-[11px] font-semibold uppercase leading-tight tracking-wider sm:h-14 sm:min-h-14 sm:px-8 sm:text-sm md:h-16 md:min-h-16 md:px-10 md:text-base"
+              className="btn-outline-warm h-12 min-h-12 flex-1 justify-center rounded-lg px-3 text-center text-sm font-semibold leading-tight sm:h-14 sm:min-h-14 sm:px-8 md:h-16 md:min-h-16 md:px-10 md:text-base"
             >
               Voir les formations
             </ButtonLink>

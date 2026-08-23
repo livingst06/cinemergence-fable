@@ -175,6 +175,14 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     hyphens: none;
     -webkit-hyphens: none;
     overflow-x: clip;
+    font-size: 100%;
+  }
+
+  /* Apple HIG / Airbnb : corps ~17px sur desktop, pas de texte utile à 10–11px. */
+  @media (min-width: 768px) {
+    html {
+      font-size: 106.25%;
+    }
   }
 
   :root {
@@ -187,6 +195,8 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
 
   body {
     @apply bg-noir text-cream font-sans antialiased;
+    font-size: 1rem;
+    line-height: 1.5;
     min-height: 100dvh;
     overflow-x: clip;
   }
@@ -409,7 +419,7 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   }
 
   .eyebrow {
-    @apply text-[11px] font-semibold uppercase tracking-[0.28em] text-or-light;
+    @apply text-[0.8125rem] font-semibold uppercase tracking-[0.08em] text-or-light md:text-sm md:tracking-[0.1em];
   }
 
   .section-title {
@@ -421,7 +431,12 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   }
 
   .caption-copy {
-    @apply text-xs leading-snug tracking-wide text-muted-text;
+    @apply text-[0.8125rem] leading-snug text-muted-text md:text-sm;
+  }
+
+  /* Libellés de section (formateurs, tableau…) — lisibles, pas du 10px tracked. */
+  .label-copy {
+    @apply text-[0.8125rem] font-semibold tracking-normal text-muted-text md:text-sm;
   }
 
   .text-tungsten {
@@ -500,6 +515,58 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     opacity: 0.85;
   }
 
+  .formation-tile::before {
+    background: linear-gradient(
+      90deg,
+      var(--tile-fill),
+      color-mix(in srgb, var(--tile-fill) 50%, transparent) 55%,
+      transparent
+    );
+    opacity: 1;
+  }
+
+  /**
+   * Encre lisible sur tuile colorée : le gris muted du thème
+   * (sous-titres, emails, montants) passe trop peu sur un fond saturé.
+   */
+  .formation-ink {
+    color: var(--tile-text, var(--cream));
+  }
+
+  .dark .formation-ink {
+    color: var(--tile-text-dark, var(--cream));
+  }
+
+  .formation-ink .text-cream,
+  .formation-ink .text-cream\/90,
+  .formation-ink .text-cream\/80 {
+    color: var(--tile-text, var(--cream));
+  }
+
+  .dark .formation-ink .text-cream,
+  .dark .formation-ink .text-cream\/90,
+  .dark .formation-ink .text-cream\/80 {
+    color: var(--tile-text-dark, var(--cream));
+  }
+
+  .formation-ink .text-muted-text,
+  .formation-ink .text-or-light,
+  .formation-ink .text-muted-foreground {
+    color: var(--tile-muted, var(--cream-soft));
+  }
+
+  .dark .formation-ink .text-muted-text,
+  .dark .formation-ink .text-or-light,
+  .dark .formation-ink .text-muted-foreground {
+    color: var(--tile-muted, var(--cream-soft));
+  }
+
+  .dark .formation-ink .btn-outline-warm {
+    color: var(--tile-text-dark, var(--cream));
+    border-color: color-mix(in oklch, var(--tile-text-dark, white) 32%, transparent);
+    background: color-mix(in oklch, var(--tile-text-dark, white) 12%, transparent);
+  }
+
   .plateau-glow,
   .gold-glow {
     box-shadow:
@@ -570,7 +637,7 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   }
 
   .status-badge {
-    @apply inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider;
+    @apply inline-flex rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide md:text-sm;
   }
 
   .status-badge-or {

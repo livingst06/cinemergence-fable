@@ -16,7 +16,11 @@ export function SiteNoticeBanner({ nda }: SiteNoticeBannerProps) {
         className="absolute inset-0 z-10 cursor-pointer md:hidden"
         aria-hidden
       />
-      <p className="relative z-0 min-w-0 flex-1 overflow-hidden py-2.5 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-2 text-left font-sans text-[11px] font-medium leading-none md:py-5 md:pl-[max(1.5rem,env(safe-area-inset-left,0px))] md:text-sm lg:pl-[max(2rem,env(safe-area-inset-left,0px))]">
+      <p
+        className="relative z-0 min-w-0 flex-1 overflow-hidden py-2.5 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-2 text-left font-sans text-xs font-medium leading-snug md:py-5 md:pl-[max(1.5rem,env(safe-area-inset-left,0px))] md:text-sm lg:pl-[max(2rem,env(safe-area-inset-left,0px))]"
+        // Safari / Chrome iOS : ne pas transformer le NDA en <a href="tel:…">
+        {...{ "x-apple-data-detectors": "false" }}
+      >
         <strong className="font-bold">Cinémergence</strong> est un{" "}
         <strong className="font-bold">organisme de formation professionnelle</strong> déclaré
         sous le numéro{" "}

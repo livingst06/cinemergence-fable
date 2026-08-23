@@ -26,7 +26,7 @@ export function AdminOutilsNav({ current, className }: AdminOutilsNavProps) {
             href={link.href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
+              "inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-sm font-medium transition-colors",
               active
                 ? "border-or/40 bg-or/15 text-or-light"
                 : "border-border bg-noir-tertiary/40 text-cream/75 hover:border-or/30 hover:text-or-light",

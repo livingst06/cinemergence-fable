@@ -2,25 +2,17 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { ButtonLink } from "@/components/ui/ButtonLink";
-import { cancelCheckoutHold } from "@/features/inscriptions/checkout-actions";
 import { getSessionProfile } from "@/lib/session-profile";
-
-type Props = { searchParams: Promise<{ inscriptionId?: string }> };
 
 export const metadata: Metadata = {
   title: "Paiement annulé",
   robots: { index: false, follow: false },
 };
 
-export default async function PaiementAnnulationPage({ searchParams }: Props) {
+export default async function PaiementAnnulationPage() {
   const session = await getSessionProfile();
   if (!session.clerkUser) {
     redirect("/sign-in?redirect_url=/paiement/annulation");
-  }
-
-  const { inscriptionId } = await searchParams;
-  if (inscriptionId) {
-    await cancelCheckoutHold(inscriptionId);
   }
 
   return (

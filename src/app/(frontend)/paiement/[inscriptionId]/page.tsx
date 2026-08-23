@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { CancelHoldButton } from "@/features/inscriptions/CancelHoldButton";
 import { StripeEmbeddedCheckout } from "@/features/inscriptions/StripeEmbeddedCheckout";
 import { resumeCheckoutClientSecret } from "@/features/inscriptions/checkout-actions";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
@@ -188,13 +189,7 @@ export default async function PaiementPage({ params }: Props) {
           >
             Retour à la formation
           </ButtonLink>
-          <ButtonLink
-            href={`/paiement/annulation?inscriptionId=${encodeURIComponent(inscriptionId)}`}
-            size="lg"
-            className="btn-outline-warm w-full justify-center rounded-lg px-6 py-3 text-sm font-semibold uppercase tracking-wider sm:w-auto sm:min-w-[14rem]"
-          >
-            Annuler et libérer ma place
-          </ButtonLink>
+          <CancelHoldButton inscriptionId={inscriptionId} />
         </div>
       </div>
     </div>

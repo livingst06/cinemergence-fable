@@ -80,17 +80,17 @@ Toute l'authentification du site — visiteurs publics **et** admin Payload — 
 
 ### Fonctionnement
 
-- `src/proxy.ts` active la session Clerk ; la protection se fait ressource par ressource (`auth.protect()` sur `/admin`, `requireAuth` / `requireAdmin` et redirections sur les pages stagiaire/admin)
+- `src/proxy.ts` active la session Clerk ; la protection se fait ressource par ressource (`auth.protect()` sur `/admin`, `requireAuth` / `requireAdmin` et redirections sur les pages élève/admin)
 - À la première requête authentifiée sur `/admin`, `src/lib/clerk-strategy.ts` upsert le document `users` correspondant :
   1. Recherche par `clerkId`
   2. Sinon recherche par email (migration en douceur des comptes historiques) et lie le `clerkId`
-  3. Sinon crée un nouveau document avec `role: "stagiaire"` par défaut
+  3. Sinon crée un nouveau document avec `role: "eleve"` par défaut (sauf whitelist)
 - Seuls les documents `users` avec `role: "admin"` peuvent accéder au panneau `/admin` (`access.admin` dans `src/collections/Users.ts`)
 - Page `/mon-compte` : espace minimal (« Bonjour {prénom} » + déconnexion), point d'extension pour un futur espace élève
 
-### Admin via `ADMIN_LIST`
+### Rôles via whitelists
 
-La source de vérité du rôle admin est **`ADMIN_LIST`** (env locale + Vercel, même BDD Supabase). Au login Clerk, [`clerk-strategy`](src/lib/clerk-strategy.ts) synchronise `users.role` (`admin` | `stagiaire`). Pour forcer l'alignement en base :
+La source de vérité des rôles est **`ADMIN_LIST`**, **`FORMATEUR_LIST`** et **`INTERVENANT_LIST`** (env locale + Vercel). Un utilisateur connecté est **élève** par défaut. Au login Clerk, [`clerk-strategy`](src/lib/clerk-strategy.ts) synchronise `users.role` (`admin` | `formateur` | `intervenant` | `eleve`). Si un email est sur plusieurs listes : admin > formateur > intervenant. Pour forcer l'alignement en base :
 
 ```bash
 pnpm migrate:admin-role

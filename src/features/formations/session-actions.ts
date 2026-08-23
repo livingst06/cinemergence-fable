@@ -162,7 +162,7 @@ export async function updateFormationSession(
         error:
           enrolledCount === 0
             ? "Nombre de places invalide"
-            : `La capacité ne peut pas être inférieure aux ${enrolledCount} stagiaire${enrolledCount > 1 ? "s" : ""} déjà inscrit${enrolledCount > 1 ? "s" : ""}.`,
+            : `La capacité ne peut pas être inférieure aux ${enrolledCount} élève${enrolledCount > 1 ? "s" : ""} déjà inscrit${enrolledCount > 1 ? "s" : ""}.`,
       };
     }
 
@@ -230,7 +230,7 @@ export async function deleteFormationSession(
       return {
         ok: false,
         error:
-          "Impossible de supprimer une session qui a déjà au moins un stagiaire inscrit.",
+          "Impossible de supprimer une session qui a déjà au moins un élève inscrit.",
       };
     }
 

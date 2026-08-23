@@ -36,12 +36,22 @@ export const Users: CollectionConfig = {
     {
       name: "role",
       type: "select",
-      defaultValue: "stagiaire",
+      defaultValue: "eleve",
       required: true,
       options: [
         { label: "Admin", value: "admin" },
-        { label: "Élève", value: "stagiaire" },
+        { label: "Formateur", value: "formateur" },
+        { label: "Intervenant", value: "intervenant" },
+        { label: "Élève", value: "eleve" },
       ],
+    },
+    {
+      name: "avatarKey",
+      type: "text",
+      label: "Avatar",
+      admin: {
+        description: "Clé parmi la palette (01–30). Choisi par l’élève sur Mon profil.",
+      },
     },
   ],
 };

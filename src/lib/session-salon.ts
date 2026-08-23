@@ -3,7 +3,12 @@ import "server-only";
 import type { Payload } from "payload";
 
 import { isAdminEmail } from "@/lib/admin-auth";
-import type { SalonPostView } from "@/lib/salon-constants";
+import {
+  salonAuthorRole,
+  splitPersonName,
+  type SalonPostView,
+} from "@/lib/salon-constants";
+import { roleForEmail } from "@/lib/user-roles";
 import {
   formatFormationSessionLabel,
   PAID_ENROLLED_STATUSES,
@@ -99,12 +104,31 @@ export async function ensureSalonForSession(
   }
 }
 
+function authorAvatarKey(author: unknown): string | null {
+  if (author && typeof author === "object") {
+    const key = (author as { avatarKey?: string | null }).avatarKey;
+    if (typeof key === "string" && key.trim()) return key.trim();
+  }
+  return null;
+}
+
 function authorDisplayName(author: unknown): string {
   if (author && typeof author === "object") {
     const name = (author as { name?: string | null }).name;
     if (typeof name === "string" && name.trim()) return name.trim();
   }
   return "Élève";
+}
+
+function authorRole(author: unknown): ReturnType<typeof salonAuthorRole> {
+  if (author && typeof author === "object") {
+    const email = (author as { email?: string | null }).email;
+    if (typeof email === "string" && email.trim()) {
+      return roleForEmail(email);
+    }
+    return salonAuthorRole((author as { role?: unknown }).role);
+  }
+  return "eleve";
 }
 
 export async function listSalonPosts(
@@ -120,13 +144,20 @@ export async function listSalonPosts(
     overrideAccess: true,
   });
 
-  return result.docs.map((doc) => ({
-    id: String(doc.id),
-    body: String(doc.body ?? ""),
-    authorId: String(relationId(doc.author) ?? ""),
-    authorName: authorDisplayName(doc.author),
-    createdAt: String(doc.createdAt ?? ""),
-  }));
+  return result.docs.map((doc) => {
+    const authorName = authorDisplayName(doc.author);
+    const { firstName } = splitPersonName(authorName);
+    return {
+      id: String(doc.id),
+      body: String(doc.body ?? ""),
+      authorId: String(relationId(doc.author) ?? ""),
+      authorName,
+      authorFirstName: firstName || authorName,
+      authorRole: authorRole(doc.author),
+      authorAvatarKey: authorAvatarKey(doc.author),
+      createdAt: String(doc.createdAt ?? ""),
+    };
+  });
 }
 
 export async function getSalonPageForUser(input: {
@@ -233,7 +264,7 @@ export async function createSalonPostForUser(input: {
     sessionId,
   );
   if (!isAdmin && !enrolled) {
-    return { ok: false, error: "Seuls les stagiaires inscrits peuvent écrire ici." };
+    return { ok: false, error: "Seuls les élèves inscrits peuvent écrire ici." };
   }
 
   await payload.create({

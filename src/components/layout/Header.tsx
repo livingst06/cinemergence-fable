@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 
 type HeaderProps = {
   formations: Pick<FormationData, "slug" | "titreCourt" | "prioritaire">[];
+  avatarSrc?: string | null;
 };
 
 const navLinks = [
@@ -33,7 +34,7 @@ function navLinkClass(active: boolean) {
   );
 }
 
-export function Header({ formations }: HeaderProps) {
+export function Header({ formations, avatarSrc = null }: HeaderProps) {
   const pathname = usePathname();
   const [formationsOpen, setFormationsOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -170,7 +171,7 @@ export function Header({ formations }: HeaderProps) {
               <span className="sr-only">Menu</span>
             </label>
             <AdminModeToggle />
-            <HeaderUserMenu />
+            <HeaderUserMenu avatarSrc={avatarSrc} />
             {SHOW_THEME_TOGGLE && <ThemeToggle className="h-9 w-9" />}
           </div>
         </div>

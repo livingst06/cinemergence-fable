@@ -26,10 +26,15 @@ function displayFirstName(user: {
   return "Compte";
 }
 
+type HeaderUserMenuProps = {
+  avatarSrc?: string | null;
+};
+
 /** Bouton compte : Login cliquable immédiatement (pas de squelette Clerk). */
-export function HeaderUserMenu() {
+export function HeaderUserMenu({ avatarSrc = null }: HeaderUserMenuProps) {
   const { user, isLoaded } = useUser();
-  const { isSignedIn, isAdminEligible } = useAdminUi();
+  const { isSignedIn, isAdminEligible, isFormateurEligible, isIntervenantEligible } =
+    useAdminUi();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
@@ -79,6 +84,16 @@ export function HeaderUserMenu() {
         aria-label={prenom ? `Menu compte — ${prenom}` : "Menu compte"}
         onClick={() => setOpen((prev) => !prev)}
       >
+        {avatarSrc ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={avatarSrc}
+            alt=""
+            width={28}
+            height={28}
+            className="size-7 shrink-0 rounded-full object-cover"
+          />
+        ) : null}
         <span className="max-w-[8rem] truncate">
           {prenom ?? (
             <span
@@ -101,8 +116,36 @@ export function HeaderUserMenu() {
           id={menuId}
           role="menu"
           aria-label="Menu compte"
-          className="absolute right-0 top-[calc(100%+0.5rem)] z-[100000] min-w-[11.5rem] overflow-hidden rounded-xl border border-border bg-noir-secondary p-1.5 shadow-2xl"
+          className="absolute right-0 top-[calc(100%+0.5rem)] z-[100000] min-w-[16rem] overflow-hidden rounded-xl border border-border bg-noir-secondary p-1.5 shadow-2xl"
         >
+          <Link
+            href="/mon-profil"
+            role="menuitem"
+            className={menuItemClass}
+            onClick={() => setOpen(false)}
+          >
+            Mon profil
+          </Link>
+          {isFormateurEligible ? (
+            <Link
+              href="/mes-sessions-formateur"
+              role="menuitem"
+              className={menuItemClass}
+              onClick={() => setOpen(false)}
+            >
+              Les sessions pour lesquelles je suis formateur
+            </Link>
+          ) : null}
+          {isIntervenantEligible ? (
+            <Link
+              href="/mes-sessions-intervenant"
+              role="menuitem"
+              className={menuItemClass}
+              onClick={() => setOpen(false)}
+            >
+              Les sessions pour lesquelles je suis intervenant
+            </Link>
+          ) : null}
           {isAdminEligible ? (
             <>
               <Link

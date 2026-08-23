@@ -282,7 +282,7 @@ export function AdminDemandesPanel({
                 <AdminDeleteButton
                   label={`Supprimer ${session.formationTitre}`}
                   disabled={!canDelete}
-                  disabledReason="Impossible : au moins un stagiaire est inscrit"
+                  disabledReason="Impossible : au moins un élève est inscrit"
                   onClick={() => onDelete?.(session)}
                 />
               </div>
@@ -390,9 +390,9 @@ export function AdminDemandesPanel({
                   <div className="mt-3 grid grid-cols-3 gap-1.5 pb-4 sm:flex sm:flex-wrap sm:gap-2">
                     <SessionMailtoButton
                       href={mailtoStagiaires}
-                      label="Envoyer un mail aux stagiaires"
+                      label="Envoyer un mail aux élèves"
                       shortLabel="Stagiaires"
-                      disabledReason="Aucun stagiaire inscrit avec un email"
+                      disabledReason="Aucun élève inscrit avec un email"
                     />
                     <SessionMailtoButton
                       href={mailtoFormateurs}
@@ -426,7 +426,7 @@ export function AdminDemandesPanel({
                   <div className="border-t border-border/60">
                     {session.trainees.length === 0 ? (
                       <p className="px-5 py-4 text-sm text-muted-text">
-                        Aucun stagiaire sur cette session.
+                        Aucun élève sur cette session.
                       </p>
                     ) : (
                       <ul className="divide-y divide-border/60">

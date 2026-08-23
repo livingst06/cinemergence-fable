@@ -38,7 +38,7 @@ function mapStaff(raw: unknown): AdminSessionStaff[] {
   return out.filter((p) => p.nom || p.slug);
 }
 
-/** Admin: toutes les sessions avec stagiaires + staff. */
+/** Admin: toutes les sessions avec élèves + staff. */
 export async function listAdminSessionGroups(): Promise<AdminSessionGroup[]> {
   try {
     const payload = await getPayloadClient();

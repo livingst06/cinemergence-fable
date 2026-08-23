@@ -56,6 +56,7 @@ export type CheckoutActionResult =
 function revalidateFormationPaths(slug?: string | null) {
   revalidatePath("/mes-reservations");
   revalidatePath("/les-sessions");
+  revalidatePath("/les-paiements");
   revalidatePath("/mon-compte");
   if (slug) revalidatePath(`/formations/${slug}`);
 }

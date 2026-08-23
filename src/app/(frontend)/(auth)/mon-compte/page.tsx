@@ -50,22 +50,13 @@ export default async function MonComptePage() {
               <ButtonLink href="/mes-reservations" className="btn-outline-warm">
                 Mes réservations
               </ButtonLink>
-              {profile.isFormateurEligible ? (
+              {profile.isFormateurEligible || profile.isIntervenantEligible ? (
                 <ButtonLink
-                  href="/mes-sessions-formateur"
+                  href="/mes-sessions"
                   variant="outline"
                   className="btn-outline-warm"
                 >
-                  Sessions formateur
-                </ButtonLink>
-              ) : null}
-              {profile.isIntervenantEligible ? (
-                <ButtonLink
-                  href="/mes-sessions-intervenant"
-                  variant="outline"
-                  className="btn-outline-warm"
-                >
-                  Sessions intervenant
+                  Mes sessions
                 </ButtonLink>
               ) : null}
               {profile.isAdminEligible ? (

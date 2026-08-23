@@ -45,20 +45,24 @@ function pickRandom<T>(arr: T[], min: number, max: number): T[] {
 
 async function main() {
   const { getPayloadClient } = await import("../src/lib/payload");
+  const { ensureSessionStaffUsersRels } = await import(
+    "../src/lib/session-staff-schema"
+  );
   const payload = await getPayloadClient();
+  await ensureSessionStaffUsersRels(payload);
 
   const people = await payload.find({
-    collection: "intervenants",
-    limit: 200,
+    collection: "users",
+    limit: 500,
     depth: 0,
     overrideAccess: true,
   });
 
   const formateurs = people.docs
-    .filter((d) => d.categorie === "formateur")
+    .filter((d) => d.role === "formateur")
     .map((d) => d.id);
   const intervenants = people.docs
-    .filter((d) => d.categorie === "professionnel" || !d.categorie)
+    .filter((d) => d.role === "intervenant")
     .map((d) => d.id);
 
   console.log(
@@ -66,7 +70,7 @@ async function main() {
   );
 
   if (formateurs.length === 0 && intervenants.length === 0) {
-    console.log("Rien à assigner — aucun intervenant en base.");
+    console.log("Rien à assigner — aucun compte formateur / intervenant.");
     process.exit(0);
   }
 

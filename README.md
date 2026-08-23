@@ -90,7 +90,7 @@ Toute l'authentification du site — visiteurs publics **et** admin Payload — 
 
 ### Rôles (admin env, staff via Les utilisateurs)
 
-Seul **`ADMIN_LIST`** désigne les admins (env locale + Vercel). Un utilisateur connecté est **élève** par défaut. Formateur et intervenant s’attribuent depuis **Les utilisateurs**. Au login Clerk, [`clerk-strategy`](src/lib/clerk-strategy.ts) aligne uniquement le flag admin ; les rôles staff en base sont conservés. Pour forcer l'alignement admin en base :
+Seul **`ADMIN_LIST`** désigne les admins (env locale + Vercel). Un utilisateur connecté est **élève** par défaut (`users.role`). Formateur et intervenant s’attribuent depuis **Les utilisateurs** ; une session coche ces comptes, pas les fiches CMS Intervenants. Au login Clerk, [`clerk-strategy`](src/lib/clerk-strategy.ts) aligne uniquement le flag admin. Pour forcer l'alignement admin en base :
 
 ```bash
 pnpm migrate:admin-role

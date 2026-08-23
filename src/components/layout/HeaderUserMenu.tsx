@@ -126,24 +126,14 @@ export function HeaderUserMenu({ avatarSrc = null }: HeaderUserMenuProps) {
           >
             Mon profil
           </Link>
-          {isFormateurEligible ? (
+          {isFormateurEligible || isIntervenantEligible ? (
             <Link
-              href="/mes-sessions-formateur"
+              href="/mes-sessions"
               role="menuitem"
               className={menuItemClass}
               onClick={() => setOpen(false)}
             >
-              Les sessions pour lesquelles je suis formateur
-            </Link>
-          ) : null}
-          {isIntervenantEligible ? (
-            <Link
-              href="/mes-sessions-intervenant"
-              role="menuitem"
-              className={menuItemClass}
-              onClick={() => setOpen(false)}
-            >
-              Les sessions pour lesquelles je suis intervenant
+              Mes sessions
             </Link>
           ) : null}
           {isAdminEligible ? (

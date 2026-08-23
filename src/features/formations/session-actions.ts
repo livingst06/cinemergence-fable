@@ -7,6 +7,7 @@ import { z } from "zod";
 import { PAID_ENROLLED_STATUSES } from "@/lib/inscription-status";
 import { getPayloadClient } from "@/lib/payload";
 import { requireAdmin } from "@/lib/session-profile";
+import { ensureSessionStaffUsersRels } from "@/lib/session-staff-schema";
 
 const sessionFieldsSchema = z
   .object({
@@ -100,6 +101,7 @@ export async function createFormationSession(
 
   try {
     const payload = await getPayloadClient();
+    await ensureSessionStaffUsersRels(payload);
     const formation = await payload.findByID({
       collection: "formations",
       id: parsed.data.formationId,
@@ -154,6 +156,7 @@ export async function updateFormationSession(
 
   try {
     const payload = await getPayloadClient();
+    await ensureSessionStaffUsersRels(payload);
     const enrolledCount = await countEnrolledForSession(payload, sessionId);
 
     if (parsed.data.placesOffertes < enrolledCount) {
@@ -285,13 +288,13 @@ export type FormationOption = {
   tarif: string | null;
 };
 
-export type IntervenantOption = {
+export type SessionStaffOption = {
   id: number | string;
   nom: string;
-  role: string;
-  slug: string;
-  categorie: "formateur" | "professionnel";
+  email: string;
+  role: "formateur" | "intervenant";
 };
+
 
 export async function listFormationsForSessionSelect(): Promise<
   FormationOption[]
@@ -323,37 +326,43 @@ export async function listFormationsForSessionSelect(): Promise<
   }
 }
 
-export async function listIntervenantsForSessionSelect(): Promise<
-  IntervenantOption[]
+export async function listStaffUsersForSessionSelect(): Promise<
+  SessionStaffOption[]
 > {
   const auth = await requireAdmin();
   if (!auth.ok) return [];
 
   try {
     const payload = await getPayloadClient();
+    await ensureSessionStaffUsersRels(payload);
     const result = await payload.find({
-      collection: "intervenants",
-      limit: 200,
-      sort: "nom",
+      collection: "users",
+      limit: 500,
+      sort: "email",
       depth: 0,
       overrideAccess: true,
     });
-    return result.docs
-      .map((doc) => {
-        const categorie =
-          doc.categorie === "formateur" || doc.categorie === "professionnel"
-            ? doc.categorie
-            : "professionnel";
-        return {
-          id: doc.id,
-          nom: String(doc.nom ?? ""),
-          role: String(doc.role ?? ""),
-          slug: String(doc.slug ?? ""),
-          categorie,
-        };
-      })
-      .filter((i) => i.nom && i.slug);
+    const rows: SessionStaffOption[] = [];
+    for (const doc of result.docs) {
+      const clerkId = typeof doc.clerkId === "string" ? doc.clerkId.trim() : "";
+      if (!clerkId) continue;
+      const role = doc.role === "formateur" || doc.role === "intervenant"
+        ? doc.role
+        : null;
+      if (!role) continue;
+      const email = typeof doc.email === "string" ? doc.email.trim() : "";
+      if (!email) continue;
+      const nom =
+        typeof doc.name === "string" && doc.name.trim()
+          ? doc.name.trim()
+          : email;
+      rows.push({ id: doc.id, nom, email, role });
+    }
+    return rows.sort((a, b) =>
+      a.nom.localeCompare(b.nom, "fr", { sensitivity: "base" }),
+    );
   } catch {
     return [];
   }
 }
+

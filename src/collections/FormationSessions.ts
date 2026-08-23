@@ -75,29 +75,27 @@ export const FormationSessions: CollectionConfig = {
     {
       name: "formateurs",
       type: "relationship",
-      relationTo: "intervenants",
+      relationTo: "users",
       hasMany: true,
       label: "Formateurs",
       admin: {
-        description:
-          "Formateurs pédagogiques présents sur cette session (catégorie formateur).",
+        description: "Comptes users.role = formateur.",
       },
       filterOptions: {
-        categorie: { equals: "formateur" },
+        role: { equals: "formateur" },
       },
     },
     {
       name: "intervenants",
       type: "relationship",
-      relationTo: "intervenants",
+      relationTo: "users",
       hasMany: true,
       label: "Intervenants",
       admin: {
-        description:
-          "Intervenants professionnels présents sur cette session (catégorie professionnel).",
+        description: "Comptes users.role = intervenant.",
       },
       filterOptions: {
-        categorie: { equals: "professionnel" },
+        role: { equals: "intervenant" },
       },
     },
   ],

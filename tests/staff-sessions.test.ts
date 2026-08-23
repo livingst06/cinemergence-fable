@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { sessionMatchesStaff } from "@/lib/staff-session-match";
+import {
+  sessionHasAssignedUser,
+  sessionMatchesStaff,
+} from "@/lib/staff-session-match";
 
 const group = {
   formateurs: [
@@ -33,5 +36,19 @@ describe("sessionMatchesStaff", () => {
     expect(
       sessionMatchesStaff(group, new Set(), ["eleve@example.com"], "formateur"),
     ).toBe(false);
+  });
+});
+
+describe("sessionHasAssignedUser", () => {
+  it("autorise formateur ou intervenant assigné", () => {
+    expect(sessionHasAssignedUser(group, 10, [])).toBe(true);
+    expect(sessionHasAssignedUser(group, 20, [])).toBe(true);
+    expect(sessionHasAssignedUser(group, 99, ["pro@example.com"])).toBe(true);
+  });
+
+  it("refuse un élève hors staff", () => {
+    expect(sessionHasAssignedUser(group, 99, ["eleve@example.com"])).toBe(
+      false,
+    );
   });
 });

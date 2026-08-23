@@ -12,5 +12,6 @@ On parle d’**élève**, jamais de stagiaire — UI, copies admin, collections 
 - Un utilisateur qui se connecte est **élève** par défaut.
 - **Admin** uniquement via `ADMIN_LIST` (jamais depuis l’UI).
 - **Formateur** et **intervenant** : un admin les attribue sur `/les-utilisateurs`.
+- Les sessions cochent ces comptes `users`, pas les fiches CMS Intervenants.
 
 Helpers : `roleForNewUser`, `syncedRoleForExistingUser`, `isAssignableRole` dans `src/lib/user-roles.ts`.

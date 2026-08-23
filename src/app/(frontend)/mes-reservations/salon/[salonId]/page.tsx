@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
-import { PageHero } from "@/components/sections/PageHero";
-import { ButtonLink } from "@/components/ui/ButtonLink";
-import { Section } from "@/components/ui/Section";
-import { SalonChat } from "@/features/salon/SalonChat";
+import {
+  SalonForbiddenScreen,
+  SalonSessionScreen,
+} from "@/features/salon/SalonSessionScreen";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
 import { getSalonPageForUser } from "@/lib/session-salon";
 import { getSessionProfile } from "@/lib/session-profile";
@@ -31,67 +31,39 @@ export default async function SessionSalonPage({ params }: Props) {
     payloadUserId = user?.id ?? null;
   }
 
+  const emails = [
+    profile.email,
+    ...profile.clerkUser.emailAddresses.map((entry) => entry.emailAddress),
+  ].filter((value): value is string => Boolean(value));
+
   const result = await getSalonPageForUser({
     salonId,
     payloadUserId,
     email: profile.email,
+    emails,
   });
 
   if (!result.ok && result.reason === "not_found") {
     notFound();
   }
 
+  const staffBack =
+    profile.isFormateurEligible || profile.isIntervenantEligible;
+  const backHref = staffBack ? "/mes-sessions" : "/mes-reservations";
+  const backLabel = staffBack
+    ? "Retour à mes sessions"
+    : "Retour à mes réservations";
+
   if (!result.ok) {
-    return (
-      <>
-        <PageHero description="Espace membre" title="Salon de discussion" />
-        <Section>
-          <div className="container-page max-w-3xl space-y-4">
-            <div className="card-stage space-y-4 p-8">
-              <p className="text-sm text-muted-text">
-                Ce salon est réservé aux élèves inscrits à cette session.
-              </p>
-              <ButtonLink href="/mes-reservations" className="btn-outline-warm">
-                Retour à mes réservations
-              </ButtonLink>
-            </div>
-          </div>
-        </Section>
-      </>
-    );
+    return <SalonForbiddenScreen backHref={backHref} backLabel={backLabel} />;
   }
 
-  const { salon } = result;
-
   return (
-    <>
-      <section className="relative overflow-hidden bg-noir pt-6 pb-4 md:pt-10 md:pb-6">
-        <div className="container-page max-w-3xl">
-          <ButtonLink
-            href="/mes-reservations"
-            size="sm"
-            className="btn-outline-warm mb-4"
-          >
-            Retour à mes réservations
-          </ButtonLink>
-          <p className="eyebrow mb-2">Salon de discussion</p>
-          <h1 className="font-heading text-3xl text-cream md:text-4xl">
-            {salon.formationTitre}
-          </h1>
-          {salon.sessionLabel ? (
-            <p className="mt-1 text-sm text-muted-text">{salon.sessionLabel}</p>
-          ) : null}
-        </div>
-      </section>
-      <Section className="pt-0 md:pt-2">
-        <div className="container-page max-w-3xl">
-          <SalonChat
-            salonId={salon.salonId}
-            currentUserId={payloadUserId ? String(payloadUserId) : ""}
-            posts={salon.posts}
-          />
-        </div>
-      </Section>
-    </>
+    <SalonSessionScreen
+      salon={result.salon}
+      currentUserId={payloadUserId ? String(payloadUserId) : ""}
+      backHref={backHref}
+      backLabel={backLabel}
+    />
   );
 }

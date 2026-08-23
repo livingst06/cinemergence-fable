@@ -13,6 +13,10 @@ import {
   PAID_ENROLLED_STATUSES,
 } from "@/lib/inscription-status";
 import { getPayloadClient } from "@/lib/payload";
+import {
+  mapStaffPeople,
+  sessionHasAssignedUser,
+} from "@/lib/staff-session-match";
 
 export type { SalonPostView };
 
@@ -157,10 +161,74 @@ export async function listSalonPosts(
   });
 }
 
+async function userIsStaffOnSession(
+  payload: Payload,
+  sessionId: number | string,
+  userId: number | string | null,
+  emails: readonly string[],
+): Promise<boolean> {
+  try {
+    const session = await payload.findByID({
+      collection: "formation-sessions",
+      id: sessionId,
+      depth: 1,
+      overrideAccess: true,
+    });
+    return sessionHasAssignedUser(
+      {
+        formateurs: mapStaffPeople(
+          (session as { formateurs?: unknown }).formateurs,
+        ),
+        intervenants: mapStaffPeople(
+          (session as { intervenants?: unknown }).intervenants,
+        ),
+      },
+      userId,
+      emails,
+    );
+  } catch {
+    return false;
+  }
+}
+
+async function userCanAccessSalon(
+  payload: Payload,
+  input: {
+    sessionId: number | string;
+    payloadUserId: number | string | null;
+    email: string | null;
+    emails?: readonly string[];
+  },
+): Promise<boolean> {
+  if (isAdminEmail(input.email)) return true;
+  const emails = input.emails?.length
+    ? input.emails
+    : input.email
+      ? [input.email]
+      : [];
+  if (
+    await userIsStaffOnSession(
+      payload,
+      input.sessionId,
+      input.payloadUserId,
+      emails,
+    )
+  ) {
+    return true;
+  }
+  if (input.payloadUserId == null) return false;
+  return userHasPaidSeatOnSession(
+    payload,
+    input.payloadUserId,
+    input.sessionId,
+  );
+}
+
 export async function getSalonPageForUser(input: {
   salonId: string;
   payloadUserId: number | string | null;
   email: string | null;
+  emails?: readonly string[];
 }): Promise<SalonPageResult> {
   const payload = await getPayloadClient();
   const salonId = toPayloadId(input.salonId);
@@ -192,12 +260,13 @@ export async function getSalonPageForUser(input: {
         })
       : null;
 
-  const isAdmin = isAdminEmail(input.email);
-  const enrolled =
-    input.payloadUserId != null
-      ? await userHasPaidSeatOnSession(payload, input.payloadUserId, sessionId)
-      : false;
-  if (!isAdmin && !enrolled) {
+  const allowed = await userCanAccessSalon(payload, {
+    sessionId,
+    payloadUserId: input.payloadUserId,
+    email: input.email,
+    emails: input.emails,
+  });
+  if (!allowed) {
     return { ok: false, reason: "forbidden" };
   }
 
@@ -235,6 +304,7 @@ export async function createSalonPostForUser(input: {
   body: string;
   payloadUserId: number | string;
   email: string | null;
+  emails?: readonly string[];
 }): Promise<{ ok: true } | { ok: false; error: string }> {
   const payload = await getPayloadClient();
   const salonId = toPayloadId(input.salonId);
@@ -254,14 +324,18 @@ export async function createSalonPostForUser(input: {
   const sessionId = relationId(salonDoc.session);
   if (!sessionId) return { ok: false, error: "Salon introuvable" };
 
-  const isAdmin = isAdminEmail(input.email);
-  const enrolled = await userHasPaidSeatOnSession(
-    payload,
-    input.payloadUserId,
+  const allowed = await userCanAccessSalon(payload, {
     sessionId,
-  );
-  if (!isAdmin && !enrolled) {
-    return { ok: false, error: "Seuls les élèves inscrits peuvent écrire ici." };
+    payloadUserId: input.payloadUserId,
+    email: input.email,
+    emails: input.emails,
+  });
+  if (!allowed) {
+    return {
+      ok: false,
+      error:
+        "Seuls les élèves inscrits et le staff de cette session peuvent écrire ici.",
+    };
   }
 
   await payload.create({

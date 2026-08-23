@@ -14,7 +14,7 @@ export const SalonPosts: CollectionConfig = {
   admin: {
     useAsTitle: "id",
     defaultColumns: ["salon", "author", "createdAt"],
-    description: "Messages des élèves inscrits dans le salon d’une session.",
+    description: "Messages du salon : élèves inscrits et staff de la session.",
   },
   access: {
     read: ({ req }) => req.user?.role === "admin",

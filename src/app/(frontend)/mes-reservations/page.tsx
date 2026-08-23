@@ -108,6 +108,16 @@ export default async function MesReservationsPage() {
                       >
                         Voir la fiche
                       </ButtonLink>
+                      {row.salonId ? (
+                        <ButtonLink
+                          href={`/mes-reservations/salon/${row.salonId}`}
+                          size="sm"
+                          variant="outline"
+                          className="btn-outline-warm"
+                        >
+                          Aller dans le salon de discussion
+                        </ButtonLink>
+                      ) : null}
                     </div>
                   </li>
                 );

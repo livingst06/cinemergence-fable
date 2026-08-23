@@ -113,5 +113,63 @@ export const FormationSessions: CollectionConfig = {
         return data;
       },
     ],
+    afterChange: [
+      async ({ doc, operation, req }) => {
+        if (operation !== "create") return doc;
+        try {
+          const existing = await req.payload.find({
+            collection: "session-salons",
+            where: { session: { equals: doc.id } },
+            limit: 1,
+            depth: 0,
+            overrideAccess: true,
+          });
+          if (existing.docs[0]) return doc;
+          await req.payload.create({
+            collection: "session-salons",
+            data: { session: doc.id },
+            overrideAccess: true,
+          });
+        } catch (error) {
+          req.payload.logger.error({
+            err: error,
+            msg: "Création du salon de session impossible",
+            sessionId: doc.id,
+          });
+        }
+        return doc;
+      },
+    ],
+    beforeDelete: [
+      async ({ id, req }) => {
+        try {
+          const salons = await req.payload.find({
+            collection: "session-salons",
+            where: { session: { equals: id } },
+            limit: 20,
+            depth: 0,
+            overrideAccess: true,
+          });
+          for (const salon of salons.docs) {
+            await req.payload.delete({
+              collection: "salon-posts",
+              where: { salon: { equals: salon.id } },
+              overrideAccess: true,
+            });
+            await req.payload.delete({
+              collection: "session-salons",
+              id: salon.id,
+              overrideAccess: true,
+            });
+          }
+        } catch (error) {
+          req.payload.logger.error({
+            err: error,
+            msg: "Suppression du salon de session impossible",
+            sessionId: id,
+          });
+        }
+      },
+    ],
   },
 };

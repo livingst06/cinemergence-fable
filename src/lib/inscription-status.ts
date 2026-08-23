@@ -28,6 +28,21 @@ export const PLACE_TAKING_STATUSES: InscriptionStatus[] = [
   "inscrit",
 ];
 
+/** Place confirmée (payée ou legacy validé) — accès salon, effectif inscrit. */
+export const PAID_ENROLLED_STATUSES: InscriptionStatus[] = [
+  "payee",
+  "validee",
+  "inscrit",
+];
+
+export function isPaidEnrolledStatus(
+  status: string | null | undefined,
+): boolean {
+  return PAID_ENROLLED_STATUSES.includes(
+    String(status) as InscriptionStatus,
+  );
+}
+
 /** Durée du hold paiement (min. Stripe Checkout expires_at = 30 min). */
 export const HOLD_TTL_MINUTES = 30;
 

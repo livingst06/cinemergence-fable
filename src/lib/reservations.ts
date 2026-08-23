@@ -1,6 +1,8 @@
 import "server-only";
 
+import { isPaidEnrolledStatus } from "@/lib/inscription-status";
 import { getPayloadClient } from "@/lib/payload";
+import { ensureSalonForSession, relationId } from "@/lib/session-salon";
 import { syncInscriptionIfStripePaid } from "@/lib/stripe-fulfillment";
 
 export type ReservationRow = {
@@ -11,6 +13,8 @@ export type ReservationRow = {
   formationSlug: string;
   dateDebut?: string;
   dateFin?: string;
+  sessionId?: string;
+  salonId?: string;
 };
 
 export async function listReservationsForUser(
@@ -60,6 +64,7 @@ export async function listReservationsForUser(
       };
       if (!f.slug) continue;
 
+      const sessionId = relationId(doc.session);
       const sessionDoc =
         typeof doc.session === "object" && doc.session
           ? (doc.session as {
@@ -68,6 +73,16 @@ export async function listReservationsForUser(
               label?: string | null;
             })
           : null;
+
+      let salonId: string | undefined;
+      if (sessionId && isPaidEnrolledStatus(String(doc.status))) {
+        try {
+          const salon = await ensureSalonForSession(payload, sessionId);
+          if (salon) salonId = String(salon.id);
+        } catch (err) {
+          console.error("[reservations] salon", sessionId, err);
+        }
+      }
 
       rows.push({
         id: doc.id,
@@ -87,6 +102,8 @@ export async function listReservationsForUser(
           : f.dateFin
             ? String(f.dateFin)
             : undefined,
+        sessionId: sessionId ? String(sessionId) : undefined,
+        salonId,
       });
     }
     return rows;

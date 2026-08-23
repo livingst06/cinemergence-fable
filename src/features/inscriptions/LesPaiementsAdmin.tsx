@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 
@@ -19,6 +20,12 @@ import {
 } from "@/lib/formation-pastel";
 import { formationPath } from "@/lib/formation-types";
 import { formatEurosLabel } from "@/lib/inscription-status";
+import {
+  nextPaiementSort,
+  sortPaiementRows,
+  type PaiementSort,
+  type PaiementSortKey,
+} from "@/lib/paiement-sort";
 import {
   PAIEMENT_STATUS_LABELS,
   type AdminPaiementRow,
@@ -129,6 +136,61 @@ function groupBySession(rows: AdminPaiementRow[]): PaiementGroup[] {
   });
 }
 
+const LIST_COLUMNS: Array<{ key: PaiementSortKey; label: string }> = [
+  { key: "eleve", label: "Élève" },
+  { key: "formation", label: "Formation" },
+  { key: "session", label: "Session" },
+  { key: "montant", label: "Montant" },
+  { key: "date", label: "Date" },
+  { key: "statut", label: "Statut" },
+];
+
+function PaiementSortHeader({
+  column,
+  label,
+  sort,
+  onSort,
+}: {
+  column: PaiementSortKey;
+  label: string;
+  sort: PaiementSort;
+  onSort: (key: PaiementSortKey) => void;
+}) {
+  const active = sort?.key === column;
+  const ariaSort = !active ? "none" : sort.dir === "asc" ? "ascending" : "descending";
+
+  return (
+    <th aria-sort={ariaSort} className="px-4 py-3">
+      <button
+        type="button"
+        onClick={() => onSort(column)}
+        className={cn(
+          "inline-flex min-h-9 items-center gap-1.5 text-left font-semibold transition-colors hover:text-cream",
+          active ? "text-cream" : "text-muted-text",
+        )}
+      >
+        {label}
+        {active ? (
+          sort.dir === "asc" ? (
+            <ArrowUp className="size-3.5 shrink-0" aria-hidden />
+          ) : (
+            <ArrowDown className="size-3.5 shrink-0" aria-hidden />
+          )
+        ) : (
+          <ChevronsUpDown className="size-3.5 shrink-0 opacity-40" aria-hidden />
+        )}
+        <span className="sr-only">
+          {active
+            ? sort.dir === "asc"
+              ? ", tri croissant, activer pour trier en décroissant"
+              : ", tri décroissant, activer pour retirer le tri"
+            : ", activer pour trier"}
+        </span>
+      </button>
+    </th>
+  );
+}
+
 function PaiementCard({
   row,
   className,
@@ -173,10 +235,16 @@ function PaiementCard({
 function PaiementFlatList({
   rows,
   nested = false,
+  sort = null,
+  onSort,
 }: {
   rows: AdminPaiementRow[];
   nested?: boolean;
+  sort?: PaiementSort;
+  onSort?: (key: PaiementSortKey) => void;
 }) {
+  const sortable = Boolean(onSort);
+
   return (
     <>
       <ul className={cn("space-y-3 md:hidden", nested && "px-4 pt-3 pb-4")}>
@@ -196,12 +264,21 @@ function PaiementFlatList({
         <table className="w-full min-w-0 text-left text-sm">
           <thead>
             <tr className="border-b border-border text-sm font-semibold text-muted-text">
-              <th className="px-4 py-3">Élève</th>
-              <th className="px-4 py-3">Formation</th>
-              <th className="px-4 py-3">Session</th>
-              <th className="px-4 py-3">Montant</th>
-              <th className="px-4 py-3">Date</th>
-              <th className="px-4 py-3">Statut</th>
+              {sortable && onSort
+                ? LIST_COLUMNS.map((column) => (
+                    <PaiementSortHeader
+                      key={column.key}
+                      column={column.key}
+                      label={column.label}
+                      sort={sort}
+                      onSort={onSort}
+                    />
+                  ))
+                : LIST_COLUMNS.map((column) => (
+                    <th key={column.key} className="px-4 py-3">
+                      {column.label}
+                    </th>
+                  ))}
             </tr>
           </thead>
           <tbody>
@@ -298,11 +375,17 @@ function PaiementGroupedList({ groups }: { groups: PaiementGroup[] }) {
 export function LesPaiementsAdmin({ paiements }: LesPaiementsAdminProps) {
   const [filter, setFilter] = useState<"tous" | PaiementStatus>("tous");
   const [view, setView] = useState<ViewMode>("liste");
+  const [sort, setSort] = useState<PaiementSort>(null);
 
   const visible = useMemo(() => {
     if (filter === "tous") return paiements;
     return paiements.filter((row) => row.status === filter);
   }, [filter, paiements]);
+
+  const sortedVisible = useMemo(
+    () => sortPaiementRows(visible, view === "liste" ? sort : null),
+    [sort, view, visible],
+  );
 
   const eleveGroups = useMemo(() => groupByEleve(visible), [visible]);
   const sessionGroups = useMemo(() => groupBySession(visible), [visible]);
@@ -399,7 +482,11 @@ export function LesPaiementsAdmin({ paiements }: LesPaiementsAdminProps) {
           ) : view === "session" ? (
             <PaiementGroupedList groups={sessionGroups} />
           ) : (
-            <PaiementFlatList rows={visible} />
+            <PaiementFlatList
+              rows={sortedVisible}
+              sort={sort}
+              onSort={(key) => setSort((current) => nextPaiementSort(current, key))}
+            />
           )}
         </div>
       </section>

@@ -517,7 +517,7 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   }
 
   .section-title {
-    @apply font-sans text-2xl font-semibold text-balance text-cream;
+    @apply max-w-full font-sans text-2xl font-semibold text-balance break-words text-cream;
     letter-spacing: -0.018em;
   }
 

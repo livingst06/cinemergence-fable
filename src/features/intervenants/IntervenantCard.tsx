@@ -41,7 +41,7 @@ export function IntervenantCard({ intervenant }: IntervenantCardProps) {
         className="rounded-none border-0"
       />
       <div className="flex flex-col gap-2.5 px-5 pb-6 pt-5 text-left md:gap-3 md:px-6 md:pb-7 md:pt-6">
-        <h3 className="font-heading text-lg font-semibold leading-snug text-cream md:text-xl">
+        <h3 className="break-words font-heading text-lg font-semibold leading-snug text-cream md:text-xl">
           {intervenant.nom}
         </h3>
         <p className="text-left text-base font-medium leading-snug text-convert md:text-lg">{intervenant.role}</p>

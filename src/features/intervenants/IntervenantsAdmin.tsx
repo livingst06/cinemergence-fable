@@ -45,7 +45,7 @@ export function IntervenantsAdmin({ intervenants }: IntervenantsAdminProps) {
     [intervenants],
   );
 
-  const showFormateursSection = formateurs.length > 0 || isAdminMode;
+  const showFormateursSection = isAdminMode;
 
   const refresh = () => router.refresh();
 
@@ -105,7 +105,13 @@ export function IntervenantsAdmin({ intervenants }: IntervenantsAdminProps) {
       <div className="container-page space-y-16 md:space-y-20">
         <div>
           <SectionHeader
-            title={"Nos intervenants\u00a0professionnels"}
+            title={
+              <>
+                Nos intervenants{" "}
+                <br className="md:hidden" />
+                professionnels
+              </>
+            }
             description={
               <>
                 <p>Des talents du cinéma qui interviennent en masterclass et sur le plateau</p>
@@ -128,7 +134,13 @@ export function IntervenantsAdmin({ intervenants }: IntervenantsAdminProps) {
         {showFormateursSection ? (
           <div>
             <SectionHeader
-              title={"Nos formateurs\u00a0pédagogiques"}
+              title={
+                <>
+                  Nos formateurs{" "}
+                  <br className="md:hidden" />
+                  pédagogiques
+                </>
+              }
               description={
                 <>
                   <p>L&apos;équipe qui encadre la progression au quotidien,</p>

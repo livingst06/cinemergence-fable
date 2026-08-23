@@ -1,13 +1,17 @@
 "use client";
 
+import { useAuth, useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import {
   createContext,
   useEffect,
   useContext,
   useMemo,
+  useRef,
   useSyncExternalStore,
 } from "react";
-import { useAuth } from "@clerk/nextjs";
+
+import { emailMatchesAdminList } from "@/lib/admin-auth";
 
 const ADMIN_MODE_STORAGE_KEY = "cinemergence:admin-mode";
 const ADMIN_MODE_EVENT = "cinemergence:admin-mode-change";
@@ -51,18 +55,43 @@ function writeAdminMode(next: boolean) {
   window.dispatchEvent(new Event(ADMIN_MODE_EVENT));
 }
 
+function liveClerkEmails(
+  user: ReturnType<typeof useUser>["user"],
+  fallbackEmail: string | null,
+): string[] {
+  const emails = [
+    user?.primaryEmailAddress?.emailAddress,
+    ...(user?.emailAddresses.map((entry) => entry.emailAddress) ?? []),
+    fallbackEmail,
+  ].filter((value): value is string => Boolean(value));
+  return [...new Set(emails)];
+}
+
 export function AdminUiProvider({
   initialUserEmail,
   initialIsAdminEligible,
+  adminEmails,
   children,
 }: {
   initialUserEmail: string | null;
   initialIsAdminEligible: boolean;
+  adminEmails: string[];
   children: React.ReactNode;
 }) {
-  const { isSignedIn: clerkSignedIn } = useAuth();
+  const router = useRouter();
+  const { isLoaded, isSignedIn: clerkSignedIn, userId } = useAuth();
+  const { user } = useUser();
+  const prevUserId = useRef<string | null | undefined>(undefined);
+
+  const emails = liveClerkEmails(user, initialUserEmail);
+  const userEmail = emails[0] ?? initialUserEmail;
   const isSignedIn = clerkSignedIn ?? Boolean(initialUserEmail);
-  const isAdminEligible = isSignedIn && initialIsAdminEligible;
+  const fromLiveEmail = emails.some((email) => emailMatchesAdminList(email, adminEmails));
+  const isAdminEligible =
+    isSignedIn &&
+    (fromLiveEmail ||
+      (adminEmails.length === 0 && initialIsAdminEligible));
+
   const isAdminMode = useSyncExternalStore(
     subscribeAdminMode,
     () => readAdminModeSnapshot(isAdminEligible),
@@ -70,14 +99,21 @@ export function AdminUiProvider({
   );
 
   useEffect(() => {
-    if (isAdminEligible) return;
-    writeAdminMode(false);
-  }, [isAdminEligible]);
+    if (!isLoaded) return;
+    const nextId = userId ?? null;
+    if (prevUserId.current === undefined) {
+      prevUserId.current = nextId;
+      return;
+    }
+    if (prevUserId.current === nextId) return;
+    prevUserId.current = nextId;
+    router.refresh();
+  }, [isLoaded, router, userId]);
 
   const value = useMemo<AdminUiContextValue>(
     () => ({
       isSignedIn,
-      userEmail: initialUserEmail,
+      userEmail,
       isAdminEligible,
       isAdminMode,
       setAdminMode: (next) => {
@@ -89,7 +125,7 @@ export function AdminUiProvider({
         writeAdminMode(!isAdminMode);
       },
     }),
-    [initialUserEmail, isAdminEligible, isAdminMode, isSignedIn],
+    [isAdminEligible, isAdminMode, isSignedIn, userEmail],
   );
 
   return <AdminUiContext.Provider value={value}>{children}</AdminUiContext.Provider>;

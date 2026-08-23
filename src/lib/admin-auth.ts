@@ -17,11 +17,24 @@ export function getAdminEmails(): string[] {
   return Array.from(parseAdminList(process.env.ADMIN_LIST));
 }
 
+export function emailMatchesAdminList(
+  email: string | null | undefined,
+  adminEmails: readonly string[],
+): boolean {
+  if (!email || adminEmails.length === 0) return false;
+  const normalized = normalizeEmail(email);
+  return adminEmails.some((candidate) => candidate === normalized);
+}
+
 export function isAdminEmail(email: string | null | undefined): boolean {
-  if (!email) return false;
-  const adminList = parseAdminList(process.env.ADMIN_LIST);
-  if (adminList.size === 0) return false;
-  return adminList.has(normalizeEmail(email));
+  return emailMatchesAdminList(email, getAdminEmails());
+}
+
+export function anyEmailIsAdmin(
+  emails: readonly (string | null | undefined)[],
+): boolean {
+  const adminEmails = getAdminEmails();
+  return emails.some((email) => emailMatchesAdminList(email, adminEmails));
 }
 
 export function roleForEmail(email: string | null | undefined): "admin" | "stagiaire" {

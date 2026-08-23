@@ -29,6 +29,12 @@ export function isSalonStaffRole(
   return role !== "eleve";
 }
 
+export function staffRoleBadgeClass(role: Exclude<UserRole, "eleve">): string {
+  if (role === "admin") return "bg-amber-400/15 text-amber-300";
+  if (role === "formateur") return "bg-convert/15 text-convert-light";
+  return "bg-white/10 text-projector-light";
+}
+
 export function splitPersonName(name: string): {
   firstName: string;
   lastName: string;

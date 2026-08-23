@@ -84,6 +84,13 @@ export default async function MonComptePage() {
                   >
                     Les paiements
                   </ButtonLink>
+                  <ButtonLink
+                    href="/les-utilisateurs"
+                    variant="outline"
+                    className="btn-outline-warm"
+                  >
+                    Les utilisateurs
+                  </ButtonLink>
                 </>
               ) : null}
               <SignOutButton redirectUrl="/">

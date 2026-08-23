@@ -1,5 +1,5 @@
 ---
-description: Vocabulaire élève (jamais stagiaire) et rôles par whitelist email
+description: Vocabulaire élève (jamais stagiaire) et attribution des rôles
 alwaysApply: true
 ---
 
@@ -7,14 +7,10 @@ alwaysApply: true
 
 On parle d’**élève**, jamais de stagiaire — UI, copies admin, collections Payload, commentaires, BDD (`users.role = eleve`).
 
-## Rôles au login
+## Rôles
 
-Un utilisateur qui se connecte est **élève** par défaut. Le rôle vient des whitelists d’emails (jamais hardcodé) :
+- Un utilisateur qui se connecte est **élève** par défaut.
+- **Admin** uniquement via `ADMIN_LIST` (jamais depuis l’UI).
+- **Formateur** et **intervenant** : un admin les attribue sur `/les-utilisateurs`.
 
-- `ADMIN_LIST` → `admin`
-- `FORMATEUR_LIST` → `formateur`
-- `INTERVENANT_LIST` → `intervenant`
-
-Priorité si un email est sur plusieurs listes : admin > formateur > intervenant > élève.
-
-Helpers : `roleForEmail` / `roleForEmails` dans `src/lib/user-roles.ts`.
+Helpers : `roleForNewUser`, `syncedRoleForExistingUser`, `isAssignableRole` dans `src/lib/user-roles.ts`.

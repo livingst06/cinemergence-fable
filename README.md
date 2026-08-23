@@ -88,9 +88,9 @@ Toute l'authentification du site — visiteurs publics **et** admin Payload — 
 - Seuls les documents `users` avec `role: "admin"` peuvent accéder au panneau `/admin` (`access.admin` dans `src/collections/Users.ts`)
 - Page `/mon-compte` : espace minimal (« Bonjour {prénom} » + déconnexion), point d'extension pour un futur espace élève
 
-### Rôles via whitelists
+### Rôles (admin env, staff via Les utilisateurs)
 
-La source de vérité des rôles est **`ADMIN_LIST`**, **`FORMATEUR_LIST`** et **`INTERVENANT_LIST`** (env locale + Vercel). Un utilisateur connecté est **élève** par défaut. Au login Clerk, [`clerk-strategy`](src/lib/clerk-strategy.ts) synchronise `users.role` (`admin` | `formateur` | `intervenant` | `eleve`). Si un email est sur plusieurs listes : admin > formateur > intervenant. Pour forcer l'alignement en base :
+Seul **`ADMIN_LIST`** désigne les admins (env locale + Vercel). Un utilisateur connecté est **élève** par défaut. Formateur et intervenant s’attribuent depuis **Les utilisateurs**. Au login Clerk, [`clerk-strategy`](src/lib/clerk-strategy.ts) aligne uniquement le flag admin ; les rôles staff en base sont conservés. Pour forcer l'alignement admin en base :
 
 ```bash
 pnpm migrate:admin-role

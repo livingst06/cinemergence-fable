@@ -4,14 +4,7 @@ import { currentUser, type User } from "@clerk/nextjs/server";
 
 import { anyEmailIsAdmin, isAdminEmail } from "@/lib/admin-auth";
 import { getPayloadClient } from "@/lib/payload";
-import {
-  anyEmailIsFormateur,
-  anyEmailIsIntervenant,
-  isFormateurEmail,
-  isIntervenantEmail,
-  roleForEmails,
-  type UserRole,
-} from "@/lib/user-roles";
+import { resolveSessionRole, type UserRole } from "@/lib/user-roles";
 
 export type SessionProfile = {
   clerkUser: User | null;
@@ -69,9 +62,6 @@ export async function getSessionProfile(): Promise<SessionProfile> {
   const email = primaryEmail(clerkUser);
   const emails = [email, ...clerkEmails(clerkUser)];
   const isAdminEligible = anyEmailIsAdmin(emails);
-  const isFormateurEligible = anyEmailIsFormateur(emails);
-  const isIntervenantEligible = anyEmailIsIntervenant(emails);
-  const role = roleForEmails(emails);
 
   try {
     const payload = await getPayloadClient();
@@ -91,13 +81,14 @@ export async function getSessionProfile(): Promise<SessionProfile> {
       doc = byEmail.docs[0];
     }
 
+    const role = resolveSessionRole(isAdminEligible, doc?.role);
     return {
       clerkUser,
       email,
       role,
       isAdminEligible,
-      isFormateurEligible,
-      isIntervenantEligible,
+      isFormateurEligible: role === "formateur",
+      isIntervenantEligible: role === "intervenant",
       payloadUserId: doc?.id ?? null,
       avatarKey:
         typeof doc?.avatarKey === "string" && doc.avatarKey.trim()
@@ -105,13 +96,14 @@ export async function getSessionProfile(): Promise<SessionProfile> {
           : null,
     };
   } catch {
+    const role = resolveSessionRole(isAdminEligible, null);
     return {
       clerkUser,
       email,
       role,
       isAdminEligible,
-      isFormateurEligible,
-      isIntervenantEligible,
+      isFormateurEligible: false,
+      isIntervenantEligible: false,
       payloadUserId: null,
       avatarKey: null,
     };
@@ -144,7 +136,7 @@ export async function requireFormateur(): Promise<
   { ok: true; profile: SessionProfile } | { ok: false; error: string }
 > {
   const profile = await getSessionProfile();
-  if (!profile.email || !isFormateurEmail(profile.email)) {
+  if (!profile.isFormateurEligible) {
     return { ok: false, error: "Non autorisé" };
   }
   return { ok: true, profile };
@@ -154,7 +146,7 @@ export async function requireIntervenant(): Promise<
   { ok: true; profile: SessionProfile } | { ok: false; error: string }
 > {
   const profile = await getSessionProfile();
-  if (!profile.email || !isIntervenantEmail(profile.email)) {
+  if (!profile.isIntervenantEligible) {
     return { ok: false, error: "Non autorisé" };
   }
   return { ok: true, profile };

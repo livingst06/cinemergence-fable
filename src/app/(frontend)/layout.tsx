@@ -12,7 +12,6 @@ import { SiteNoticeBanner } from "@/components/layout/SiteNoticeBanner";
 import { Toaster } from "@/components/ui/sonner";
 import { AdminUiProvider } from "@/features/admin/AdminUiContext";
 import { getAdminEmails } from "@/lib/admin-auth";
-import { getFormateurEmails, getIntervenantEmails } from "@/lib/user-roles";
 import { clerkAppearance } from "@/lib/clerk-appearance";
 import { clerkAllowedRedirectOrigins } from "@/lib/clerk-origins";
 import { avatarSrc } from "@/lib/avatars";
@@ -100,8 +99,6 @@ export default async function FrontendLayout({
             initialIsFormateurEligible={profile.isFormateurEligible}
             initialIsIntervenantEligible={profile.isIntervenantEligible}
             adminEmails={getAdminEmails()}
-            formateurEmails={getFormateurEmails()}
-            intervenantEmails={getIntervenantEmails()}
           >
             <SiteNoticeBanner nda={site.nda} />
             <Header

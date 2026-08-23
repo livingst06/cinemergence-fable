@@ -164,6 +164,14 @@ export function HeaderUserMenu({ avatarSrc = null }: HeaderUserMenuProps) {
               >
                 Les paiements
               </Link>
+              <Link
+                href="/les-utilisateurs"
+                role="menuitem"
+                className={menuItemClass}
+                onClick={() => setOpen(false)}
+              >
+                Les utilisateurs
+              </Link>
             </>
           ) : (
             <Link

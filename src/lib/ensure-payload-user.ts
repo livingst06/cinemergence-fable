@@ -2,9 +2,9 @@ import "server-only";
 
 import { currentUser } from "@clerk/nextjs/server";
 
-import { roleForEmail } from "@/lib/admin-auth";
 import { ensureUsersRoleEnum } from "@/lib/ensure-user-roles";
 import { getPayloadClient } from "@/lib/payload";
+import { roleForNewUser, syncedRoleForExistingUser } from "@/lib/user-roles";
 
 /** Crée / lie le doc Payload `users` pour le Clerk courant. */
 export async function ensurePayloadUserForClerk() {
@@ -18,7 +18,6 @@ export async function ensurePayloadUserForClerk() {
 
   const payload = await getPayloadClient();
   await ensureUsersRoleEnum(payload);
-  const role = roleForEmail(email);
   const byClerkId = await payload.find({
     collection: "users",
     where: { clerkId: { equals: clerkUser.id } },
@@ -26,6 +25,7 @@ export async function ensurePayloadUserForClerk() {
   });
   if (byClerkId.docs[0]) {
     const existing = byClerkId.docs[0];
+    const role = syncedRoleForExistingUser(email, existing.role);
     if (existing.role === role) return existing;
     return payload.update({
       collection: "users",
@@ -43,10 +43,14 @@ export async function ensurePayloadUserForClerk() {
     limit: 1,
   });
   if (byEmail.docs[0]) {
+    const existing = byEmail.docs[0];
     return payload.update({
       collection: "users",
-      id: byEmail.docs[0].id,
-      data: { clerkId: clerkUser.id, role },
+      id: existing.id,
+      data: {
+        clerkId: clerkUser.id,
+        role: syncedRoleForExistingUser(email, existing.role),
+      },
       overrideAccess: true,
     });
   }
@@ -57,7 +61,7 @@ export async function ensurePayloadUserForClerk() {
       email,
       name: fullName || undefined,
       clerkId: clerkUser.id,
-      role,
+      role: roleForNewUser(email),
     },
     overrideAccess: true,
   });

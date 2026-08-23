@@ -21,6 +21,7 @@ const RESERVED = new Set([
   "cgv",
   "mon-compte",
   "mon-profil",
+  "les-utilisateurs",
   "mes-sessions-formateur",
   "mes-sessions-intervenant",
   "sign-in",

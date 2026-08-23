@@ -1,13 +1,8 @@
 export const USER_ROLES = ["admin", "formateur", "intervenant", "eleve"] as const;
 export type UserRole = (typeof USER_ROLES)[number];
 
-/** Priorité si un email est sur plusieurs listes. */
-const ROLE_PRIORITY: readonly UserRole[] = [
-  "admin",
-  "formateur",
-  "intervenant",
-  "eleve",
-];
+export const ASSIGNABLE_ROLES = ["eleve", "formateur", "intervenant"] as const;
+export type AssignableRole = (typeof ASSIGNABLE_ROLES)[number];
 
 function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
@@ -32,6 +27,13 @@ export function isUserRole(value: unknown): value is UserRole {
   );
 }
 
+export function isAssignableRole(value: unknown): value is AssignableRole {
+  return (
+    typeof value === "string" &&
+    (ASSIGNABLE_ROLES as readonly string[]).includes(value)
+  );
+}
+
 export function emailMatchesList(
   email: string | null | undefined,
   emails: readonly string[],
@@ -43,14 +45,6 @@ export function emailMatchesList(
 
 export function getAdminEmails(): string[] {
   return parseEmailList(process.env.ADMIN_LIST);
-}
-
-export function getIntervenantEmails(): string[] {
-  return parseEmailList(process.env.INTERVENANT_LIST);
-}
-
-export function getFormateurEmails(): string[] {
-  return parseEmailList(process.env.FORMATEUR_LIST);
 }
 
 export function emailMatchesAdminList(
@@ -71,52 +65,40 @@ export function anyEmailIsAdmin(
   return emails.some((email) => emailMatchesList(email, adminEmails));
 }
 
-export function isFormateurEmail(email: string | null | undefined): boolean {
-  return emailMatchesList(email, getFormateurEmails());
+/** Rôle à la création : admin si whitelist, élève sinon. */
+export function roleForNewUser(email: string | null | undefined): UserRole {
+  return isAdminEmail(email) ? "admin" : "eleve";
 }
 
-export function isIntervenantEmail(email: string | null | undefined): boolean {
-  return emailMatchesList(email, getIntervenantEmails());
-}
-
-export function anyEmailIsFormateur(
-  emails: readonly (string | null | undefined)[],
-): boolean {
-  const list = getFormateurEmails();
-  return emails.some((email) => emailMatchesList(email, list));
-}
-
-export function anyEmailIsIntervenant(
-  emails: readonly (string | null | undefined)[],
-): boolean {
-  const list = getIntervenantEmails();
-  return emails.some((email) => emailMatchesList(email, list));
-}
-
-function firstMatchingRole(
-  emails: readonly (string | null | undefined)[],
-): UserRole {
-  const lists: Record<Exclude<UserRole, "eleve">, string[]> = {
-    admin: getAdminEmails(),
-    formateur: getFormateurEmails(),
-    intervenant: getIntervenantEmails(),
-  };
-  for (const role of ROLE_PRIORITY) {
-    if (role === "eleve") return "eleve";
-    if (emails.some((email) => emailMatchesList(email, lists[role]))) {
-      return role;
-    }
-  }
-  return "eleve";
-}
-
-/** Élève par défaut ; whitelist admin / formateur / intervenant sinon. */
+/** @deprecated préfère `roleForNewUser` — admin ou élève uniquement. */
 export function roleForEmail(email: string | null | undefined): UserRole {
-  return firstMatchingRole([email]);
+  return roleForNewUser(email);
 }
 
 export function roleForEmails(
   emails: readonly (string | null | undefined)[],
 ): UserRole {
-  return firstMatchingRole(emails);
+  return anyEmailIsAdmin(emails) ? "admin" : "eleve";
+}
+
+/**
+ * Sync d’un compte existant : n’aligne que le flag admin.
+ * formateur / intervenant / élève restent tels quels.
+ */
+export function syncedRoleForExistingUser(
+  email: string | null | undefined,
+  currentRole: unknown,
+): UserRole {
+  if (isAdminEmail(email)) return "admin";
+  if (isAssignableRole(currentRole)) return currentRole;
+  return "eleve";
+}
+
+export function resolveSessionRole(
+  isAdminEligible: boolean,
+  dbRole: unknown,
+): UserRole {
+  if (isAdminEligible) return "admin";
+  if (isAssignableRole(dbRole)) return dbRole;
+  return "eleve";
 }

@@ -1,7 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
 
 import { emailMatchesAdminList } from "@/lib/admin-auth";
-import { roleForEmail, roleForEmails } from "@/lib/user-roles";
+import {
+  isAssignableRole,
+  roleForNewUser,
+  syncedRoleForExistingUser,
+} from "@/lib/user-roles";
 
 describe("emailMatchesAdminList", () => {
   const admins = ["tom.mccallaghan@gmail.com"];
@@ -19,61 +23,41 @@ describe("emailMatchesAdminList", () => {
   });
 });
 
-describe("roleForEmail", () => {
-  const envKeys = ["ADMIN_LIST", "FORMATEUR_LIST", "INTERVENANT_LIST"] as const;
-  const previous = Object.fromEntries(
-    envKeys.map((key) => [key, process.env[key]]),
-  );
+describe("rôles admin vs staff", () => {
+  const previous = process.env.ADMIN_LIST;
 
   afterEach(() => {
-    for (const key of envKeys) {
-      const value = previous[key];
-      if (value === undefined) delete process.env[key];
-      else process.env[key] = value;
-    }
+    if (previous === undefined) delete process.env.ADMIN_LIST;
+    else process.env.ADMIN_LIST = previous;
   });
 
-  function setLists(lists: Partial<Record<(typeof envKeys)[number], string>>) {
-    process.env.ADMIN_LIST = lists.ADMIN_LIST ?? "";
-    process.env.FORMATEUR_LIST = lists.FORMATEUR_LIST ?? "";
-    process.env.INTERVENANT_LIST = lists.INTERVENANT_LIST ?? "";
-  }
-
-  it("donne élève par défaut", () => {
-    setLists({});
-    expect(roleForEmail("quelquun@example.com")).toBe("eleve");
+  it("crée un élève hors ADMIN_LIST et un admin s’il y est", () => {
+    process.env.ADMIN_LIST = "admin@example.com";
+    expect(roleForNewUser("quelquun@example.com")).toBe("eleve");
+    expect(roleForNewUser("admin@example.com")).toBe("admin");
   });
 
-  it("assigne admin, formateur ou intervenant selon la whitelist", () => {
-    setLists({
-      ADMIN_LIST: "admin@example.com",
-      FORMATEUR_LIST: "formateur@example.com",
-      INTERVENANT_LIST: "intervenant@example.com",
-    });
-    expect(roleForEmail("admin@example.com")).toBe("admin");
-    expect(roleForEmail("formateur@example.com")).toBe("formateur");
-    expect(roleForEmail("intervenant@example.com")).toBe("intervenant");
-  });
-
-  it("priorise admin puis formateur puis intervenant", () => {
-    setLists({
-      ADMIN_LIST: "mix@example.com",
-      FORMATEUR_LIST: "mix@example.com",
-      INTERVENANT_LIST: "mix@example.com",
-    });
-    expect(roleForEmail("mix@example.com")).toBe("admin");
-
-    setLists({
-      FORMATEUR_LIST: "mix@example.com",
-      INTERVENANT_LIST: "mix@example.com",
-    });
-    expect(roleForEmail("mix@example.com")).toBe("formateur");
-  });
-
-  it("regarde toutes les adresses Clerk", () => {
-    setLists({ INTERVENANT_LIST: "pro@example.com" });
-    expect(roleForEmails(["perso@example.com", "pro@example.com"])).toBe(
+  it("ne rétrograde pas un formateur ou un intervenant", () => {
+    process.env.ADMIN_LIST = "admin@example.com";
+    expect(syncedRoleForExistingUser("pro@example.com", "formateur")).toBe(
+      "formateur",
+    );
+    expect(syncedRoleForExistingUser("pro@example.com", "intervenant")).toBe(
       "intervenant",
     );
+    expect(syncedRoleForExistingUser("pro@example.com", "eleve")).toBe("eleve");
+  });
+
+  it("promouvoit ou retire admin selon la whitelist", () => {
+    process.env.ADMIN_LIST = "admin@example.com";
+    expect(syncedRoleForExistingUser("admin@example.com", "eleve")).toBe("admin");
+    expect(syncedRoleForExistingUser("ex@example.com", "admin")).toBe("eleve");
+  });
+
+  it("n’accepte que élève / formateur / intervenant comme rôles assignables", () => {
+    expect(isAssignableRole("eleve")).toBe(true);
+    expect(isAssignableRole("formateur")).toBe(true);
+    expect(isAssignableRole("intervenant")).toBe(true);
+    expect(isAssignableRole("admin")).toBe(false);
   });
 });

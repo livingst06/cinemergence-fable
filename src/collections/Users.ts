@@ -38,6 +38,10 @@ export const Users: CollectionConfig = {
       type: "select",
       defaultValue: "eleve",
       required: true,
+      admin: {
+        description:
+          "Admin uniquement via ADMIN_LIST. Formateur / intervenant / élève depuis Les utilisateurs.",
+      },
       options: [
         { label: "Admin", value: "admin" },
         { label: "Formateur", value: "formateur" },

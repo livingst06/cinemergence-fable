@@ -5,10 +5,11 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/les-sessions", id: "sessions" as const, label: "Les sessions" },
   { href: "/les-paiements", id: "paiements" as const, label: "Les paiements" },
+  { href: "/les-utilisateurs", id: "utilisateurs" as const, label: "Les utilisateurs" },
 ];
 
 type AdminOutilsNavProps = {
-  current: "sessions" | "paiements";
+  current: "sessions" | "paiements" | "utilisateurs";
   className?: string;
 };
 

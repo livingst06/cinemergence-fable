@@ -8,7 +8,6 @@ import {
   splitPersonName,
   type SalonPostView,
 } from "@/lib/salon-constants";
-import { roleForEmail } from "@/lib/user-roles";
 import {
   formatFormationSessionLabel,
   PAID_ENROLLED_STATUSES,
@@ -123,9 +122,7 @@ function authorDisplayName(author: unknown): string {
 function authorRole(author: unknown): ReturnType<typeof salonAuthorRole> {
   if (author && typeof author === "object") {
     const email = (author as { email?: string | null }).email;
-    if (typeof email === "string" && email.trim()) {
-      return roleForEmail(email);
-    }
+    if (typeof email === "string" && isAdminEmail(email)) return "admin";
     return salonAuthorRole((author as { role?: unknown }).role);
   }
   return "eleve";

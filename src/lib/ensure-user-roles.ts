@@ -1,6 +1,10 @@
 import type { Payload } from "payload";
 
-import { isUserRole, roleForEmail, type UserRole } from "@/lib/user-roles";
+import {
+  isUserRole,
+  syncedRoleForExistingUser,
+  type UserRole,
+} from "@/lib/user-roles";
 
 const ROLE_ENUM_VALUES: readonly UserRole[] = [
   "admin",
@@ -40,8 +44,8 @@ export async function ensureUsersRoleEnum(payload: Payload): Promise<void> {
 }
 
 /**
- * Aligne `users.role` sur les whitelists (ADMIN_LIST, FORMATEUR_LIST,
- * INTERVENANT_LIST). Hors liste → élève.
+ * Aligne uniquement le flag admin sur `ADMIN_LIST`.
+ * Ne touche pas aux rôles formateur / intervenant / élève.
  */
 export async function ensureUserRoles(payload: Payload): Promise<string | null> {
   await ensureUsersRoleEnum(payload);
@@ -55,7 +59,7 @@ export async function ensureUserRoles(payload: Payload): Promise<string | null> 
   const logs: string[] = [];
   for (const doc of found.docs) {
     const email = typeof doc.email === "string" ? doc.email : null;
-    const desired = roleForEmail(email);
+    const desired = syncedRoleForExistingUser(email, doc.role);
     const current = isUserRole(doc.role) ? doc.role : null;
     if (current === desired) continue;
 

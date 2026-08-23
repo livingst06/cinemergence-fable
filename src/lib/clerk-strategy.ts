@@ -1,7 +1,7 @@
 import { createClerkClient, verifyToken } from "@clerk/backend";
 import type { AuthStrategy, AuthStrategyResult } from "payload";
 
-import { roleForEmail } from "@/lib/admin-auth";
+import { roleForNewUser, syncedRoleForExistingUser } from "@/lib/user-roles";
 import { ensureUsersRoleEnum } from "@/lib/ensure-user-roles";
 
 function extractSessionToken(headers: Request["headers"]): string | null {
@@ -19,8 +19,8 @@ function extractSessionToken(headers: Request["headers"]): string | null {
 /**
  * Stratégie d'authentification Payload qui délègue entièrement l'identité à Clerk.
  * Upsert paresseux du document `users` : lié par clerkId, puis par email (migration
- * en douceur des comptes locaux existants), sinon création. Le rôle suit les
- * whitelists (`ADMIN_LIST`, `FORMATEUR_LIST`, `INTERVENANT_LIST`) — élève sinon.
+ * en douceur des comptes locaux existants), sinon création. Admin via
+ * `ADMIN_LIST` ; sinon rôle Payload conservé (élève à la création).
  */
 export const clerkStrategy: AuthStrategy = {
   name: "clerk",
@@ -52,7 +52,7 @@ export const clerkStrategy: AuthStrategy = {
 
     if (byClerkId.docs[0]) {
       const existing = byClerkId.docs[0];
-      const desiredRole = roleForEmail(existing.email);
+      const desiredRole = syncedRoleForExistingUser(existing.email, existing.role);
       if (existing.role !== desiredRole) {
         const synced = await payload.update({
           collection: "users",
@@ -73,7 +73,6 @@ export const clerkStrategy: AuthStrategy = {
     if (!email) return { user: null };
 
     const fullName = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ");
-    const role = roleForEmail(email);
 
     const byEmail = await payload.find({
       collection: "users",
@@ -82,13 +81,17 @@ export const clerkStrategy: AuthStrategy = {
     });
 
     if (byEmail.docs[0]) {
+      const existing = byEmail.docs[0];
+      const role = syncedRoleForExistingUser(email, existing.role);
       const linked = await payload.update({
         collection: "users",
-        id: byEmail.docs[0].id,
+        id: existing.id,
         data: { clerkId: clerkUserId, role },
       });
       return { user: { collection: "users", ...linked } };
     }
+
+    const role = roleForNewUser(email);
 
     const created = await payload.create({
       collection: "users",

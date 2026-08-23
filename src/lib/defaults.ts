@@ -71,7 +71,7 @@ export const defaultIntervenants: IntervenantData[] = [
     role: "Réalisateur & fondateur",
     parrain: false,
     categorie: "formateur",
-    bio: "Formé au Cours Florent, Choukri Rouha débute comme acteur, puis s'impose à l'écriture et à la réalisation. Il a fondé Cinémergence pour offrir un cadre pro, du matériel cinéma et un résultat concret à chaque stagiaire.",
+    bio: "Formé au Cours Florent, Choukri Rouha débute comme acteur, puis s'impose à l'écriture et à la réalisation. Il a fondé Cinémergence pour offrir un cadre pro, du matériel cinéma et un résultat concret à chaque élève.",
     filmographie: [],
     photoUrl: "/images/site/founder/choukri-roua.jpg",
     photoMimeType: "image/jpeg",

@@ -12,6 +12,7 @@ import {
 } from "react";
 
 import { emailMatchesAdminList } from "@/lib/admin-auth";
+import { emailMatchesList } from "@/lib/user-roles";
 
 const ADMIN_MODE_STORAGE_KEY = "cinemergence:admin-mode";
 const ADMIN_MODE_EVENT = "cinemergence:admin-mode-change";
@@ -20,6 +21,8 @@ type AdminUiContextValue = {
   isSignedIn: boolean;
   userEmail: string | null;
   isAdminEligible: boolean;
+  isFormateurEligible: boolean;
+  isIntervenantEligible: boolean;
   isAdminMode: boolean;
   setAdminMode: (next: boolean) => void;
   toggleAdminMode: () => void;
@@ -70,12 +73,20 @@ function liveClerkEmails(
 export function AdminUiProvider({
   initialUserEmail,
   initialIsAdminEligible,
+  initialIsFormateurEligible = false,
+  initialIsIntervenantEligible = false,
   adminEmails,
+  formateurEmails = [],
+  intervenantEmails = [],
   children,
 }: {
   initialUserEmail: string | null;
   initialIsAdminEligible: boolean;
+  initialIsFormateurEligible?: boolean;
+  initialIsIntervenantEligible?: boolean;
   adminEmails: string[];
+  formateurEmails?: string[];
+  intervenantEmails?: string[];
   children: React.ReactNode;
 }) {
   const router = useRouter();
@@ -91,6 +102,16 @@ export function AdminUiProvider({
     isSignedIn &&
     (fromLiveEmail ||
       (adminEmails.length === 0 && initialIsAdminEligible));
+  const isFormateurEligible =
+    isSignedIn &&
+    (formateurEmails.length > 0
+      ? emails.some((email) => emailMatchesList(email, formateurEmails))
+      : initialIsFormateurEligible);
+  const isIntervenantEligible =
+    isSignedIn &&
+    (intervenantEmails.length > 0
+      ? emails.some((email) => emailMatchesList(email, intervenantEmails))
+      : initialIsIntervenantEligible);
 
   const isAdminMode = useSyncExternalStore(
     subscribeAdminMode,
@@ -115,6 +136,8 @@ export function AdminUiProvider({
       isSignedIn,
       userEmail,
       isAdminEligible,
+      isFormateurEligible,
+      isIntervenantEligible,
       isAdminMode,
       setAdminMode: (next) => {
         if (!isAdminEligible) return;
@@ -125,7 +148,14 @@ export function AdminUiProvider({
         writeAdminMode(!isAdminMode);
       },
     }),
-    [isAdminEligible, isAdminMode, isSignedIn, userEmail],
+    [
+      isAdminEligible,
+      isFormateurEligible,
+      isIntervenantEligible,
+      isAdminMode,
+      isSignedIn,
+      userEmail,
+    ],
   );
 
   return <AdminUiContext.Provider value={value}>{children}</AdminUiContext.Provider>;

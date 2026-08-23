@@ -185,7 +185,7 @@ export function AdminSessionDialog({
     }
     if (isEdit && places < enrolledMinPlaces) {
       toast.error(
-        `La capacité ne peut pas être inférieure aux ${enrolledMinPlaces} stagiaire${enrolledMinPlaces > 1 ? "s" : ""} déjà inscrit${enrolledMinPlaces > 1 ? "s" : ""}.`,
+        `La capacité ne peut pas être inférieure aux ${enrolledMinPlaces} élève${enrolledMinPlaces > 1 ? "s" : ""} déjà inscrit${enrolledMinPlaces > 1 ? "s" : ""}.`,
       );
       return;
     }
@@ -309,7 +309,7 @@ export function AdminSessionDialog({
             />
             {isEdit && enrolledMinPlaces > 0 ? (
               <p className="text-xs text-muted-text">
-                Minimum {enrolledMinPlaces} (stagiaire
+                Minimum {enrolledMinPlaces} (élève
                 {enrolledMinPlaces > 1 ? "s" : ""} déjà inscrit
                 {enrolledMinPlaces > 1 ? "s" : ""}). À {enrolledMinPlaces}, la
                 session sera complète.

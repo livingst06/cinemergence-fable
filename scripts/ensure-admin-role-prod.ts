@@ -1,6 +1,6 @@
 /**
- * Aligne les rôles Payload `users` sur `ADMIN_LIST` en production.
- * La stratégie Clerk synchronise aussi le rôle à chaque login via `ADMIN_LIST`.
+ * Aligne les rôles Payload `users` sur les whitelists (admin / formateur /
+ * intervenant / élève). Clerk synchronise aussi le rôle à chaque login.
  *
  * Usage: pnpm migrate:admin-role
  */

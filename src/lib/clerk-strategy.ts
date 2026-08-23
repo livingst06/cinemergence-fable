@@ -2,6 +2,7 @@ import { createClerkClient, verifyToken } from "@clerk/backend";
 import type { AuthStrategy, AuthStrategyResult } from "payload";
 
 import { roleForEmail } from "@/lib/admin-auth";
+import { ensureUsersRoleEnum } from "@/lib/ensure-user-roles";
 
 function extractSessionToken(headers: Request["headers"]): string | null {
   const authHeader = headers.get("authorization");
@@ -18,7 +19,8 @@ function extractSessionToken(headers: Request["headers"]): string | null {
 /**
  * Stratégie d'authentification Payload qui délègue entièrement l'identité à Clerk.
  * Upsert paresseux du document `users` : lié par clerkId, puis par email (migration
- * en douceur des comptes locaux existants), sinon création. Le rôle suit `ADMIN_LIST`.
+ * en douceur des comptes locaux existants), sinon création. Le rôle suit les
+ * whitelists (`ADMIN_LIST`, `FORMATEUR_LIST`, `INTERVENANT_LIST`) — élève sinon.
  */
 export const clerkStrategy: AuthStrategy = {
   name: "clerk",
@@ -39,6 +41,8 @@ export const clerkStrategy: AuthStrategy = {
     } catch {
       return { user: null };
     }
+
+    await ensureUsersRoleEnum(payload);
 
     const byClerkId = await payload.find({
       collection: "users",

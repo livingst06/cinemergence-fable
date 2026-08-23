@@ -22,7 +22,7 @@ export const Inscriptions: CollectionConfig = {
     useAsTitle: "id",
     defaultColumns: ["user", "session", "formation", "status", "updatedAt"],
     description:
-      "Inscriptions stagiaires liées à une session. Paiement Stripe → statut « payee » = place confirmée (pas de validation admin).",
+      "Inscriptions élèves liées à une session. Paiement Stripe → statut « payee » = place confirmée (pas de validation admin).",
   },
   access: {
     read: ({ req }) => {
@@ -76,7 +76,7 @@ export const Inscriptions: CollectionConfig = {
       type: "textarea",
       label: "Commentaire administrateur",
       admin: {
-        description: "Visible par le stagiaire en cas de refus ou de pièces demandées.",
+        description: "Visible par l’élève en cas de refus ou de pièces demandées.",
       },
     },
     {
@@ -185,7 +185,7 @@ export const Inscriptions: CollectionConfig = {
           const conflict = existing.docs.find((d) => String(d.id) !== selfId);
           if (conflict) {
             throw new Error(
-              "Ce stagiaire est déjà inscrit à cette session de formation.",
+              "Cet élève est déjà inscrit à cette session de formation.",
             );
           }
         }

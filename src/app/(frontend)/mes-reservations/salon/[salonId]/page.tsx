@@ -49,7 +49,7 @@ export default async function SessionSalonPage({ params }: Props) {
           <div className="container-page max-w-3xl space-y-4">
             <div className="card-stage space-y-4 p-8">
               <p className="text-sm text-muted-text">
-                Ce salon est réservé aux stagiaires inscrits à cette session.
+                Ce salon est réservé aux élèves inscrits à cette session.
               </p>
               <ButtonLink href="/mes-reservations" className="btn-outline-warm">
                 Retour à mes réservations

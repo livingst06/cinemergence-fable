@@ -13,7 +13,7 @@ export const FormationSessions: CollectionConfig = {
     useAsTitle: "label",
     defaultColumns: ["label", "formation", "dateDebut", "dateFin", "placesOffertes", "active"],
     description:
-      "Sessions datées : une formation peut avoir plusieurs sessions à des dates différentes. Les stagiaires s’inscrivent à une session.",
+      "Sessions datées : une formation peut avoir plusieurs sessions à des dates différentes. Les élèves s’inscrivent à une session.",
   },
   access: {
     read: () => true,

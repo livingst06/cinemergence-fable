@@ -5,11 +5,18 @@ import { useRouter } from "next/navigation";
 import { SendHorizonal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { UserAvatar } from "@/features/profile/UserAvatar";
 import { createSalonPost } from "@/features/salon/salon-actions";
 import { notifyFormFeedback } from "@/features/contact/use-form-feedback";
 import { initialFormState } from "@/features/contact/form-state";
-import { SALON_POST_MAX_LENGTH, type SalonPostView } from "@/lib/salon-constants";
+import {
+  isSalonStaffRole,
+  SALON_POST_MAX_LENGTH,
+  SALON_STAFF_ROLE_LABEL,
+  type SalonPostView,
+} from "@/lib/salon-constants";
 import { cn } from "@/lib/utils";
+import type { UserRole } from "@/lib/user-roles";
 
 type SalonChatProps = {
   salonId: string;
@@ -46,16 +53,30 @@ function formatTime(iso: string): string {
   return d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 }
 
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean).slice(0, 2);
-  const letters = parts.map((part) => part[0]?.toUpperCase() ?? "").join("");
-  return letters || "?";
-}
-
 function dayKey(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+function roleNameClass(role: UserRole): string {
+  if (role === "admin") return "text-amber-300";
+  if (role === "formateur") return "text-convert-light";
+  if (role === "intervenant") return "text-projector-light";
+  return "text-convert-light";
+}
+
+function roleBadgeClass(role: Exclude<UserRole, "eleve">): string {
+  if (role === "admin") return "bg-amber-400/15 text-amber-300";
+  if (role === "formateur") return "bg-convert/15 text-convert-light";
+  return "bg-white/10 text-projector-light";
+}
+
+function roleRingClass(role: UserRole): string {
+  if (role === "admin") return "ring-2 ring-amber-400/70";
+  if (role === "formateur") return "ring-2 ring-convert/70";
+  if (role === "intervenant") return "ring-2 ring-projector-light/70";
+  return "";
 }
 
 export function SalonChat({ salonId, currentUserId, posts }: SalonChatProps) {
@@ -125,12 +146,14 @@ export function SalonChat({ salonId, currentUserId, posts }: SalonChatProps) {
                       grouped ? (
                         <span className="size-8 shrink-0" aria-hidden />
                       ) : (
-                        <span
-                          className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-[11px] font-semibold text-cream"
-                          aria-hidden
-                        >
-                          {initials(post.authorName)}
-                        </span>
+                        <UserAvatar
+                          avatarKey={post.authorAvatarKey}
+                          name={post.authorName}
+                          className={cn(
+                            "mt-0.5 size-8 shrink-0",
+                            roleRingClass(post.authorRole),
+                          )}
+                        />
                       )
                     ) : null}
                     <div
@@ -142,9 +165,26 @@ export function SalonChat({ salonId, currentUserId, posts }: SalonChatProps) {
                       )}
                     >
                       {!mine && !grouped ? (
-                        <p className="mb-0.5 text-xs font-semibold text-convert-light">
-                          {post.authorName}
-                        </p>
+                        <div className="mb-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                          <p
+                            className={cn(
+                              "text-xs font-semibold",
+                              roleNameClass(post.authorRole),
+                            )}
+                          >
+                            {post.authorFirstName}
+                          </p>
+                          {isSalonStaffRole(post.authorRole) ? (
+                            <span
+                              className={cn(
+                                "rounded-full px-1.5 py-px text-[10px] font-medium uppercase tracking-wide",
+                                roleBadgeClass(post.authorRole),
+                              )}
+                            >
+                              {SALON_STAFF_ROLE_LABEL[post.authorRole]}
+                            </span>
+                          ) : null}
+                        </div>
                       ) : null}
                       <p className="whitespace-pre-wrap break-words">{post.body}</p>
                       {post.createdAt ? (

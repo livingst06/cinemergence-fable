@@ -1,12 +1,12 @@
 ---
-description: Boutons conversion stagiaire (inscription, paiement, panier)
+description: Boutons conversion élève (inscription, paiement, panier)
 globs: **/*.{tsx,css}
 alwaysApply: false
 ---
 
-# CTA conversion stagiaire
+# CTA conversion élève
 
-Tout bouton qui conduit le stagiaire à **s’inscrire**, **payer**, ou **ajouter un produit au panier** utilise la classe `btn-convert` (dégradé vert), jamais `btn-cta` (rouge brand).
+Tout bouton qui conduit l’élève à **s’inscrire**, **payer**, ou **ajouter un produit au panier** utilise la classe `btn-convert` (dégradé vert), jamais `btn-cta` (rouge brand).
 
 ## Utiliser `btn-convert`
 - Je m’inscris / Je réserve ma place

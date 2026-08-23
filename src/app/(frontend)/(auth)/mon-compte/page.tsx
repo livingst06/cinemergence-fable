@@ -44,9 +44,30 @@ export default async function MonComptePage() {
               </p>
             )}
             <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/mes-reservations" className="btn-cta">
+              <ButtonLink href="/mon-profil" className="btn-cta">
+                Mon profil
+              </ButtonLink>
+              <ButtonLink href="/mes-reservations" className="btn-outline-warm">
                 Mes réservations
               </ButtonLink>
+              {profile.isFormateurEligible ? (
+                <ButtonLink
+                  href="/mes-sessions-formateur"
+                  variant="outline"
+                  className="btn-outline-warm"
+                >
+                  Sessions formateur
+                </ButtonLink>
+              ) : null}
+              {profile.isIntervenantEligible ? (
+                <ButtonLink
+                  href="/mes-sessions-intervenant"
+                  variant="outline"
+                  className="btn-outline-warm"
+                >
+                  Sessions intervenant
+                </ButtonLink>
+              ) : null}
               {profile.isAdminEligible ? (
                 <>
                   <ButtonLink

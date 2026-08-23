@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 
 type HeaderProps = {
   formations: Pick<FormationData, "slug" | "titreCourt" | "prioritaire">[];
+  avatarSrc?: string | null;
 };
 
 const navLinks = [
@@ -32,7 +33,7 @@ function navLinkClass(active: boolean) {
   );
 }
 
-export function Header({ formations }: HeaderProps) {
+export function Header({ formations, avatarSrc = null }: HeaderProps) {
   const pathname = usePathname();
   const [formationsOpen, setFormationsOpen] = useState(false);
   const navToggleRef = useRef<HTMLInputElement>(null);
@@ -146,13 +147,13 @@ export function Header({ formations }: HeaderProps) {
 
             {SHOW_THEME_TOGGLE && <ThemeToggle className="h-9 w-9" />}
             <AdminModeToggle />
-            <HeaderUserMenu />
+            <HeaderUserMenu avatarSrc={avatarSrc} />
           </nav>
 
           <div className="relative z-[1] flex shrink-0 items-center gap-2 xl:hidden">
             {SHOW_THEME_TOGGLE && <ThemeToggle />}
             <AdminModeToggle />
-            <HeaderUserMenu />
+            <HeaderUserMenu avatarSrc={avatarSrc} />
             <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary transition-[background-color,border-color,color,box-shadow] duration-200">
               <input
                 ref={navToggleRef}

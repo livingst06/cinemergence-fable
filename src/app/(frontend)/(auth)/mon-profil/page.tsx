@@ -7,7 +7,13 @@ import { AvatarPicker } from "@/features/profile/AvatarPicker";
 import { UserAvatar } from "@/features/profile/UserAvatar";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
 import { isAvatarKey } from "@/lib/avatars";
+import {
+  isSalonStaffRole,
+  SALON_STAFF_ROLE_LABEL,
+  staffRoleBadgeClass,
+} from "@/lib/salon-constants";
 import { getSessionProfile } from "@/lib/session-profile";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Mon profil",
@@ -41,6 +47,8 @@ export default async function MonProfilPage() {
     .filter(Boolean)
     .join(" ")
     .trim();
+  const staffRole =
+    profile.role && isSalonStaffRole(profile.role) ? profile.role : null;
 
   return (
     <>
@@ -55,16 +63,30 @@ export default async function MonProfilPage() {
             />
             <div className="min-w-0">
               <p className="text-sm text-muted-text">Identité du compte</p>
-              <p className="mt-1 font-heading text-2xl text-cream">
-                {fullName || "Profil"}
-              </p>
+              <div className="mt-1 flex flex-wrap items-center gap-2.5">
+                <p className="font-heading text-2xl text-cream">
+                  {fullName || "Profil"}
+                </p>
+                {staffRole ? (
+                  <span
+                    className={cn(
+                      "rounded-full px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wide",
+                      staffRoleBadgeClass(staffRole),
+                    )}
+                  >
+                    {SALON_STAFF_ROLE_LABEL[staffRole]}
+                  </span>
+                ) : null}
+              </div>
             </div>
           </div>
 
           <div className="card-stage space-y-5 p-6 md:p-8">
             <h2 className="font-heading text-2xl text-cream">Tes informations</h2>
             <p className="text-sm text-muted-text">
-              Prénom et nom sont lus depuis ton compte. Ils ne sont pas modifiables ici.
+              {staffRole
+                ? "Prénom, nom et rôle sont lus depuis ton compte. Ils ne sont pas modifiables ici."
+                : "Prénom et nom sont lus depuis ton compte. Ils ne sont pas modifiables ici."}
             </p>
             <dl className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -83,6 +105,23 @@ export default async function MonProfilPage() {
                   {lastName}
                 </dd>
               </div>
+              {staffRole ? (
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-text">
+                    Rôle
+                  </dt>
+                  <dd className="mt-1 rounded-xl border border-white/10 bg-noir-tertiary/60 px-4 py-3">
+                    <span
+                      className={cn(
+                        "inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wide",
+                        staffRoleBadgeClass(staffRole),
+                      )}
+                    >
+                      {SALON_STAFF_ROLE_LABEL[staffRole]}
+                    </span>
+                  </dd>
+                </div>
+              ) : null}
             </dl>
           </div>
 

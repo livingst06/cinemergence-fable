@@ -171,7 +171,12 @@ export function GalerieAdmin({ interviews, plateau }: GalerieAdminProps) {
       >
         <div className="mt-6 max-w-4xl md:mt-10">
           {interviews.length > 0 || isAdminMode ? (
-            <GalleryGrid items={interviews} compact admin={interviewAdmin} />
+            <GalleryGrid
+              items={interviews}
+              compact
+              priorityFirst={interviews.length > 0}
+              admin={interviewAdmin}
+            />
           ) : (
             <p className="text-muted-text">{EMPTY_INTERVIEWS}</p>
           )}
@@ -189,7 +194,11 @@ export function GalerieAdmin({ interviews, plateau }: GalerieAdminProps) {
       <Section className="pt-6 pb-16 md:pt-10 md:pb-28">
         <div className="container-page">
           {plateau.length > 0 || isAdminMode ? (
-            <GalleryGrid items={plateau} admin={plateauAdmin} />
+            <GalleryGrid
+              items={plateau}
+              priorityFirst={plateau.length > 0}
+              admin={plateauAdmin}
+            />
           ) : (
             <p className="text-center text-muted-text">{EMPTY_PLATEAU}</p>
           )}

@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/Header";
 import { SiteNoticeBanner } from "@/components/layout/SiteNoticeBanner";
 import { AdminUiProvider } from "@/features/admin/AdminUiContext";
 import { getFormations, getSiteSettings } from "@/lib/data";
+import { getAdminEmails } from "@/lib/admin-auth";
 import { clerkAppearance } from "@/lib/clerk-appearance";
 import { clerkAllowedRedirectOrigins } from "@/lib/clerk-origins";
 import { getSessionProfile } from "@/lib/session-profile";
@@ -77,6 +78,7 @@ export default async function FrontendLayout({
           <AdminUiProvider
             initialUserEmail={profile.email}
             initialIsAdminEligible={profile.isAdminEligible}
+            adminEmails={getAdminEmails()}
           >
             <SiteNoticeBanner nda={site.nda} />
             <Header

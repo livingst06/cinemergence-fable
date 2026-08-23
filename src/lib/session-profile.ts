@@ -2,7 +2,7 @@ import "server-only";
 
 import { currentUser, type User } from "@clerk/nextjs/server";
 
-import { isAdminEmail } from "@/lib/admin-auth";
+import { anyEmailIsAdmin, isAdminEmail } from "@/lib/admin-auth";
 import { getPayloadClient } from "@/lib/payload";
 
 export type SessionProfile = {
@@ -19,6 +19,10 @@ function primaryEmail(user: User): string | null {
     user.emailAddresses[0]?.emailAddress ??
     null
   );
+}
+
+function clerkEmails(user: User): string[] {
+  return user.emailAddresses.map((entry) => entry.emailAddress).filter(Boolean);
 }
 
 function emptyProfile(): SessionProfile {
@@ -49,7 +53,7 @@ export async function getSessionProfile(): Promise<SessionProfile> {
   }
 
   const email = primaryEmail(clerkUser);
-  const isAdminEligible = isAdminEmail(email);
+  const isAdminEligible = anyEmailIsAdmin([email, ...clerkEmails(clerkUser)]);
 
   try {
     const payload = await getPayloadClient();

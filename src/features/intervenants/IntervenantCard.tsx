@@ -1,21 +1,35 @@
 import { Badge } from "@/components/ui/badge";
 import { MediaFrame } from "@/components/ui/MediaFrame";
 import type { IntervenantData } from "@/lib/defaults";
+import { cn } from "@/lib/utils";
 
 type IntervenantCardProps = {
   intervenant: IntervenantData;
 };
 
+const overlayBadgeClass =
+  "absolute right-3 top-3 z-20 h-9 px-3.5 py-1.5 text-base font-semibold tracking-wide md:right-4 md:top-4 md:h-8 md:px-3 md:text-sm";
+
 export function IntervenantCard({ intervenant }: IntervenantCardProps) {
   return (
     <article className="group card-stage relative overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:plateau-glow">
       {intervenant.parrain && (
-        <Badge className="absolute right-4 top-4 z-20 border-projector/30 bg-noir/80 px-2.5 py-1 text-xs font-semibold tracking-wide text-projector-light backdrop-blur-sm">
+        <Badge
+          className={cn(
+            overlayBadgeClass,
+            "border-projector/30 bg-noir/80 text-projector-light backdrop-blur-sm",
+          )}
+        >
           Parrain
         </Badge>
       )}
       {!intervenant.parrain && intervenant.categorie === "formateur" && (
-        <Badge className="absolute right-4 top-4 z-20 border-or/30 bg-noir/80 px-2.5 py-1 text-xs font-semibold tracking-wide text-or-light backdrop-blur-sm">
+        <Badge
+          className={cn(
+            overlayBadgeClass,
+            "border-or/30 bg-noir/80 text-or-light backdrop-blur-sm",
+          )}
+        >
           Formateur
         </Badge>
       )}

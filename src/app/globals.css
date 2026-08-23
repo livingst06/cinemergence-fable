@@ -423,7 +423,7 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   }
 
   .section-title {
-    @apply font-heading text-[clamp(1.85rem,4.4vw,2.85rem)] font-semibold leading-[1.05] tracking-tight text-balance;
+    @apply max-w-full font-heading text-[clamp(1.85rem,4.4vw,2.85rem)] font-semibold leading-[1.05] tracking-tight text-balance break-words;
   }
 
   .body-copy {

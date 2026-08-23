@@ -12,7 +12,7 @@ type SectionProps = {
 
 export function Section({ children, className, id }: SectionProps) {
   return (
-    <section id={id} className={cn("py-10 md:py-16 lg:py-28", className)}>
+    <section id={id} className={cn("py-10 md:py-14 lg:py-16", className)}>
       {children}
     </section>
   );
@@ -36,7 +36,7 @@ export function SectionHeader({
   return (
     <div
       className={cn(
-        "mb-8 md:mb-12 lg:mb-16",
+        "mb-8 md:mb-10",
         align === "center" && "mx-auto max-w-4xl text-center",
         align === "left" && "max-w-4xl text-left",
         className,

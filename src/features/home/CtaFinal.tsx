@@ -8,7 +8,7 @@ type CtaFinalProps = {
 
 export function CtaFinal({ site }: CtaFinalProps) {
   return (
-    <section className="border-t border-border bg-noir py-14 md:py-24 lg:py-32">
+    <section className="border-t border-border bg-noir py-14 md:py-20 lg:py-24">
       <div className="container-page text-center">
         <h2 className="display-title mx-auto max-w-4xl text-cream">
           Prêt à passer <span className="text-tungsten">à l&apos;action&nbsp;?</span>

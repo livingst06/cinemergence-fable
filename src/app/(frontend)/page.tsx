@@ -14,7 +14,6 @@ import { Temoignages } from "@/features/home/Temoignages";
 import { FinancementSection } from "@/features/financement/FinancementSection";
 import { FormationMiniCard } from "@/features/formations/FormationMiniCard";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
-import { NewsletterForm } from "@/features/contact/NewsletterForm";
 import {
   getFinancementDispositifs,
   getFormations,
@@ -87,7 +86,7 @@ export default async function HomePage() {
           poster={heroPoster}
         />
         <div className="hero-slash-edge" aria-hidden />
-        <div className="container-page relative z-10 flex flex-col justify-start pt-6 pb-10 md:min-h-[52.5vh] md:pt-10 md:pb-20 lg:pt-12 lg:pb-24">
+        <div className="container-page relative z-10 flex flex-col justify-start pt-6 pb-10 md:min-h-[52.5vh] md:pt-10 md:pb-14 lg:pt-12 lg:pb-16">
           <div className="w-full lg:w-3/4">
             <p className="eyebrow animate-fade-up">Paris · Marseille · Montpellier</p>
             <h1 className="display-title mt-3 animate-fade-up-delay-1 text-cream md:mt-6">
@@ -183,7 +182,7 @@ export default async function HomePage() {
       </Section>
 
       <Section>
-        <div className="container-page space-y-12 md:space-y-16">
+        <div className="container-page space-y-12">
           <div>
             <SectionHeader
               eyebrow="Production"
@@ -244,20 +243,6 @@ export default async function HomePage() {
 
       <Temoignages temoignages={temoignages} />
       <FinancementSection dispositifs={financement} />
-
-      <Section>
-        <div className="container-page">
-          <SectionHeader
-            eyebrow="Newsletter"
-            title="Les prochaines sessions"
-            align="left"
-            description="Sois informé·e des dates et des ouvertures de nos formations."
-          />
-          <div className="max-w-xl">
-            <NewsletterForm />
-          </div>
-        </div>
-      </Section>
 
       <CtaFinal site={site} />
       <StickyCta />

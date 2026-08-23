@@ -140,6 +140,11 @@ async function seed() {
     }
   }
   console.log("✓ Témoignages seeded");
+
+  const { ensureGalleryInterviews } = await import("../lib/ensure-gallery-cms");
+  const interviewLogs = await ensureGalleryInterviews(payload);
+  for (const line of interviewLogs) console.log(`✓ ${line}`);
+
   console.log("Seed complete.");
 }
 

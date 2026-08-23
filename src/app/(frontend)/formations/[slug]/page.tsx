@@ -17,7 +17,13 @@ import { FormationDetailGallery } from "@/features/formations/FormationDetailGal
 import { FormationSessionGallery } from "@/features/formations/FormationSessionGallery";
 import { FormationSessionsSection } from "@/features/formations/FormationSessionsSection";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
-import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
+import {
+  getCarouselMedia,
+  getFormationBySlug,
+  getFormations,
+  getIntervenants,
+  getSiteSettings,
+} from "@/lib/data";
 import { formationPath } from "@/lib/formation-types";
 import { splitDuree } from "@/lib/formation-format";
 import { formatFormationSessionLabel } from "@/lib/inscription-status";
@@ -27,7 +33,7 @@ import {
   type FormationSessionView,
 } from "@/lib/places";
 import { getSessionProfile } from "@/lib/session-profile";
-import { resolveFormationCoverUrl } from "@/lib/site-media";
+import { resolveFormationCoverUrl, rotateItemsBySlug } from "@/lib/site-media";
 import { courseJsonLd } from "@/lib/seo";
 
 export const revalidate = 300;
@@ -57,11 +63,17 @@ export default async function FormationDetailPage({ params }: Props) {
   const formation = await getFormationBySlug(slug);
   if (!formation) notFound();
 
-  const [site, allIntervenants, session] = await Promise.all([
+  const [site, allIntervenants, session, carousel] = await Promise.all([
     getSiteSettings(),
     getIntervenants(),
     getSessionProfile(),
+    getCarouselMedia(6),
   ]);
+  const sessionSlides = rotateItemsBySlug(carousel, formation.slug).flatMap((item) =>
+    item.url
+      ? [{ id: String(item.id), alt: item.alt, url: item.url }]
+      : [],
+  );
 
   let sessions: FormationSessionView[] = [];
   const paymentEnabled =
@@ -229,7 +241,7 @@ export default async function FormationDetailPage({ params }: Props) {
               <p className="mt-2 text-sm leading-relaxed text-cream/90">{formation.publicCible}</p>
             </div>
           </div>
-          <FormationSessionGallery slug={formation.slug} />
+          <FormationSessionGallery slides={sessionSlides} />
         </div>
 
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">

@@ -28,6 +28,7 @@ export const Media: CollectionConfig = {
       options: [
         { label: "Plateau", value: "plateau" },
         { label: "Livrable élève", value: "livrable" },
+        { label: "Interview élève", value: "interview" },
         { label: "Portrait", value: "portrait" },
         { label: "Formation (cover / galerie fiche)", value: "formation" },
         { label: "Autre", value: "autre" },

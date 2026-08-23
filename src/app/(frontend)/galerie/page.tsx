@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
 
-import { GalleryGrid } from "@/features/galerie/GalleryGrid";
-import { Placeholder } from "@/components/ui/Placeholder";
-import { Section } from "@/components/ui/Section";
-import { PageHero } from "@/components/sections/PageHero";
-import { getGalleryMedia } from "@/lib/data";
+import { GalerieAdmin } from "@/features/galerie/GalerieAdmin";
+import { getGalleryMedia, getInterviewMedia } from "@/lib/data";
 import { isImageMimeType } from "@/lib/media-utils";
-import { staticInterviewVideos } from "@/lib/site-media";
 
 export const revalidate = 300;
 
@@ -17,70 +13,40 @@ export const metadata: Metadata = {
   alternates: { canonical: "/galerie" },
 };
 
+function toGridItem(item: {
+  id: string | number;
+  alt: string;
+  url?: string;
+  mimeType?: string;
+  caption?: string;
+  category?: string;
+}) {
+  if (!item.url) return [];
+  return [
+    {
+      id: String(item.id),
+      alt: item.alt,
+      url: item.url,
+      mimeType: item.mimeType,
+      caption: item.caption,
+      category: item.category,
+    },
+  ];
+}
+
 export default async function GaleriePage() {
-  const media = await getGalleryMedia();
-  const plateau = media.filter(
-    (item) => item.url && isImageMimeType(item.mimeType, item.url),
+  const [media, interviews] = await Promise.all([
+    getGalleryMedia(),
+    getInterviewMedia(),
+  ]);
+  const plateau = media.flatMap((item) =>
+    item.url && isImageMimeType(item.mimeType, item.url) ? toGridItem(item) : [],
   );
 
-  const placeholders = [
-    "Plateau de tournage — Formation",
-    "Livrable élève — Court-métrage",
-    "Plateau — Jeu d'acteur face caméra",
-    "Livrable élève — Bande démo",
-    "Plateau — Caméra cinéma pro",
-    "Livrable élève — Scènes tournées",
-  ];
-
   return (
-    <>
-      <PageHero
-        title="Les interviews"
-        description={
-          <p className="text-pretty text-base leading-relaxed md:text-xl md:leading-relaxed">
-            Paroles d&apos;élèves, filmées pendant les formations
-          </p>
-        }
-      >
-        <div className="mt-6 max-w-4xl md:mt-10">
-          <GalleryGrid items={staticInterviewVideos} compact />
-        </div>
-      </PageHero>
-      <PageHero
-        headingAs="h2"
-        title="Sur le plateau"
-        description={
-          <p className="text-pretty text-base leading-relaxed md:text-xl md:leading-relaxed">
-            Moments capturés pendant nos sessions de formation
-          </p>
-        }
-      />
-      <Section className="pt-6 pb-16 md:pt-10 md:pb-28">
-        <div className="container-page">
-          {plateau.length > 0 ? (
-            <GalleryGrid
-              items={plateau.flatMap((item) =>
-                item.url
-                  ? [
-                      {
-                        id: String(item.id),
-                        alt: item.alt,
-                        url: item.url,
-                        mimeType: item.mimeType,
-                      },
-                    ]
-                  : [],
-              )}
-            />
-          ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
-              {placeholders.map((label) => (
-                <Placeholder key={label} label={label} aspect="video" hideLabel />
-              ))}
-            </div>
-          )}
-        </div>
-      </Section>
-    </>
+    <GalerieAdmin
+      interviews={interviews.flatMap(toGridItem)}
+      plateau={plateau}
+    />
   );
 }

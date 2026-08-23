@@ -44,60 +44,11 @@ const formationCoverFallbacks = [
   cover("formation-production-film.jpg"),
 ] as const;
 
-/** Photos placeholder (6 visuels plateau) — à remplacer par des clichés par formation. */
-const formationSessionPhotos: StaticGalleryItem[] = [
-  {
-    id: "fs-01",
-    alt: "Session de formation — jeu face caméra",
-    url: "/images/formations/formation-jouer-face-camera.jpg",
-    mimeType: "image/jpeg",
-  },
-  {
-    id: "fs-02",
-    alt: "Session de formation — bande démo",
-    url: "/images/formations/formation-bande-demo.jpg",
-    mimeType: "image/jpeg",
-  },
-  {
-    id: "fs-03",
-    alt: "Session de formation — court métrage",
-    url: "/images/formations/formation-realiser-court-metrage.jpg",
-    mimeType: "image/jpeg",
-  },
-  {
-    id: "fs-04",
-    alt: "Session de formation — écriture de scénario",
-    url: "/images/formations/formation-ecriture-scenario.jpg",
-    mimeType: "image/jpeg",
-  },
-  {
-    id: "fs-05",
-    alt: "Session de formation — lumière et caméra",
-    url: "/images/formations/formation-camera-cinema.jpg",
-    mimeType: "image/jpeg",
-  },
-  {
-    id: "fs-06",
-    alt: "Session de formation — production",
-    url: "/images/formations/formation-production-film.jpg",
-    mimeType: "image/jpeg",
-  },
-];
-
-/** Six photos de session, ordre stable et distinct par slug. */
-export function getFormationPlaceholderGallery(
-  slug: string,
-  count = 6,
-): StaticGalleryItem[] {
-  const start = hashSlug(slug) % formationSessionPhotos.length;
-  const rotated = [
-    ...formationSessionPhotos.slice(start),
-    ...formationSessionPhotos.slice(0, start),
-  ];
-  return rotated.slice(0, count).map((item) => ({
-    ...item,
-    id: `${slug}-${item.id}`,
-  }));
+/** Ordre stable et distinct par slug — mêmes médias CMS, départ décalé. */
+export function rotateItemsBySlug<T>(items: T[], slug: string): T[] {
+  if (items.length === 0) return items;
+  const start = hashSlug(slug) % items.length;
+  return [...items.slice(start), ...items.slice(0, start)];
 }
 
 function hashSlug(slug: string): number {
@@ -138,8 +89,8 @@ export const staticFounderPhoto = "/images/site/founder/choukri-roua.jpg";
 export const staticFounderPhotoCommitted = cover("founder-choukri-roua.jpg");
 
 /**
- * Interviews élèves — 3 extraits déjà présents dans le bucket `cinemergence-media`.
- * Clés Payload : media/cinemergence-*.mp4
+ * Interviews élèves — 3 extraits dans le bucket `cinemergence-media`.
+ * Source de seed CMS uniquement (affichage public = documents Payload `media`).
  */
 export const staticInterviewVideos: StaticGalleryItem[] = [
   {
@@ -161,24 +112,3 @@ export const staticInterviewVideos: StaticGalleryItem[] = [
     mimeType: "video/mp4",
   },
 ];
-
-export const staticGalleryItems: StaticGalleryItem[] = [
-  { id: "g01", alt: "Plateau de tournage — direction d'acteur", url: "/images/site/gallery/01.jpg", mimeType: "image/jpeg" },
-  { id: "g02", alt: "Plateau Cinémergence — équipe technique", url: "/images/site/gallery/02.jpg", mimeType: "image/jpeg" },
-  { id: "g03", alt: "Master class sur le plateau", url: "/images/site/gallery/03.jpg", mimeType: "image/jpeg" },
-  { id: "g04", alt: "Tournage en conditions professionnelles", url: "/images/site/gallery/04.jpg", mimeType: "image/jpeg" },
-  { id: "g05", alt: "Comédiens en répétition avant prise", url: "/images/site/gallery/05.jpg", mimeType: "image/jpeg" },
-  { id: "g06", alt: "Plateau lumière cinéma", url: "/images/site/gallery/06.jpg", mimeType: "image/jpeg" },
-  { id: "g07", alt: "Ambiance plateau Cinémergence", url: "/images/site/gallery/07.jpg", mimeType: "image/jpeg" },
-  { id: "g08", alt: "Élèves sur le tournage", url: "/images/site/gallery/08.jpg", mimeType: "image/jpeg" },
-  { id: "g09", alt: "Master class avec les intervenants", url: "/images/site/gallery/09.jpg", mimeType: "image/jpeg" },
-  { id: "g10", alt: "Extrait plateau — tournage stage", url: "/images/site/gallery/10.mp4", poster: "/images/site/gallery/10-poster.jpg", mimeType: "video/mp4" },
-  { id: "g11", alt: "Extrait plateau — mise en scène", url: "/images/site/gallery/11.mp4", poster: "/images/site/gallery/11-poster.jpg", mimeType: "video/mp4" },
-  { id: "g12", alt: "Livrable élève — scène tournée", url: "/images/site/gallery/12.mp4", poster: "/images/site/gallery/12-poster.jpg", mimeType: "video/mp4" },
-];
-
-export function getStaticCarouselItems(limit = 8): StaticGalleryItem[] {
-  return staticGalleryItems
-    .filter((item) => item.mimeType.startsWith("image/"))
-    .slice(0, limit);
-}

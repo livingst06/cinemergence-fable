@@ -15,10 +15,12 @@ export async function POST(request: Request) {
     const force = searchParams.get("force") === "1";
     const heroLogs = await prepareHeroAssets();
     const mediaLogs = await seedMediaContent(payload, { force });
+    const { ensureGalleryInterviews } = await import("@/lib/ensure-gallery-cms");
+    const interviewLogs = await ensureGalleryInterviews(payload);
 
     return NextResponse.json({
       success: true,
-      logs: [...heroLogs, ...mediaLogs],
+      logs: [...heroLogs, ...mediaLogs, ...interviewLogs],
     });
   } catch (error) {
     console.error("[seed/media]", error);

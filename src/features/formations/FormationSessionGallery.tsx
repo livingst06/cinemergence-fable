@@ -4,18 +4,22 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import { getFormationPlaceholderGallery } from "@/lib/site-media";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { cn } from "@/lib/utils";
 
+export type FormationSessionSlide = {
+  id: string;
+  alt: string;
+  url: string;
+};
+
 type FormationSessionGalleryProps = {
-  slug: string;
+  slides: FormationSessionSlide[];
 };
 
 const INTERVAL_MS = 3000;
 
-export function FormationSessionGallery({ slug }: FormationSessionGalleryProps) {
-  const slides = getFormationPlaceholderGallery(slug);
+export function FormationSessionGallery({ slides }: FormationSessionGalleryProps) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const reducedMotion = useReducedMotion();

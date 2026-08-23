@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Play, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { AdminAddCard } from "@/components/admin/AdminAddCard";
+import { AdminDeleteButton } from "@/features/admin/AdminMutationButtons";
 import { isVideoMimeType } from "@/lib/media-utils";
 import { cn } from "@/lib/utils";
 
@@ -14,12 +16,21 @@ export type GalleryGridItem = {
   url: string;
   mimeType?: string;
   poster?: string;
+  caption?: string;
+  category?: string;
+};
+
+type GalleryGridAdmin = {
+  onDelete: (item: GalleryGridItem) => void;
+  onAdd: () => void;
+  addLabel: string;
 };
 
 type GalleryGridProps = {
   items: GalleryGridItem[];
   /** Grille plus dense — interviews / extraits courts. */
   compact?: boolean;
+  admin?: GalleryGridAdmin;
 };
 
 function isVideo(item: GalleryGridItem) {
@@ -31,7 +42,7 @@ function previewSrc(item: GalleryGridItem) {
   return item.url;
 }
 
-export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
+export function GalleryGrid({ items, compact = false, admin }: GalleryGridProps) {
   const [openId, setOpenId] = useState<string | null>(null);
   const active = useMemo(
     () => items.find((item) => item.id === openId) ?? null,
@@ -46,13 +57,22 @@ export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
           compact
             ? "grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3"
             : "grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3",
+          admin && "pt-3",
         )}
       >
         {items.map((item) => (
           <article
             key={item.id}
-            className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/[0.08]"
+            className="group relative min-w-0 overflow-visible rounded-2xl border border-white/[0.08]"
           >
+            {admin ? (
+              <AdminDeleteButton
+                className="absolute -top-3 -right-3 z-30"
+                label={`Supprimer ${item.alt}`}
+                onClick={() => admin.onDelete(item)}
+              />
+            ) : null}
+            <div className="relative overflow-hidden rounded-2xl">
             <div className="relative aspect-video bg-noir-tertiary">
               <Image
                 src={previewSrc(item)}
@@ -78,8 +98,17 @@ export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
               onClick={() => setOpenId(item.id)}
               aria-label={`Agrandir : ${item.alt}`}
             />
+            </div>
           </article>
         ))}
+        {admin ? (
+          <AdminAddCard
+            label={admin.addLabel}
+            onAdd={admin.onAdd}
+            minHeightClassName="min-h-0 aspect-video"
+            className="rounded-2xl"
+          />
+        ) : null}
       </div>
 
       <Dialog.Root

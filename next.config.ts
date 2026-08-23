@@ -4,6 +4,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Accès mobile/LAN en local (ex. http://192.168.1.21:3000) — HMR + assets
   allowedDevOrigins: ["192.168.1.21", "127.0.0.1", "localhost"],
+  experimental: {
+    // Photos admin ≤ 8 Mo + multipart. Les vidéos d’interview vont en direct S3.
+    proxyClientMaxBodySize: "20mb",
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30,

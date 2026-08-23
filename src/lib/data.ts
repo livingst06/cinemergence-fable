@@ -20,11 +20,9 @@ import { isLocalMediaStorage } from "./storage-env";
 import { getPublicSiteUrl } from "./site-url";
 import { parseEurosFromTarifLabel } from "./inscription-status";
 import {
-  getStaticCarouselItems,
   resolveFormationCoverUrl,
   staticFounderPhoto,
   staticFounderPhotoCommitted,
-  staticGalleryItems,
   staticIntervenantPhotos,
 } from "./site-media";
 
@@ -436,6 +434,13 @@ function mapIntervenant(doc: Record<string, unknown>): IntervenantData {
   };
 }
 
+export function sortIntervenantsParrainsFirst(list: IntervenantData[]): IntervenantData[] {
+  return [...list].sort((a, b) => {
+    if (a.parrain !== b.parrain) return a.parrain ? -1 : 1;
+    return a.nom.localeCompare(b.nom, "fr", { sensitivity: "base" });
+  });
+}
+
 export async function getIntervenants(): Promise<IntervenantData[]> {
   try {
     const payload = await getPayloadClient();
@@ -446,10 +451,12 @@ export async function getIntervenants(): Promise<IntervenantData[]> {
       sort: "nom",
     });
     if (result.docs.length === 0) {
-      return defaultIntervenants.map((i) => ({
-        ...i,
-        photoUrl: i.photoUrl ?? staticIntervenantPhoto(i.slug),
-      }));
+      return sortIntervenantsParrainsFirst(
+        defaultIntervenants.map((i) => ({
+          ...i,
+          photoUrl: i.photoUrl ?? staticIntervenantPhoto(i.slug),
+        })),
+      );
     }
     const fromCms = result.docs
       .map((doc) => mapIntervenant(doc as Record<string, unknown>))
@@ -458,9 +465,9 @@ export async function getIntervenants(): Promise<IntervenantData[]> {
     const missingFormateurs = defaultIntervenants.filter(
       (i) => i.categorie === "formateur" && !cmsSlugs.has(i.slug),
     );
-    return [...fromCms, ...missingFormateurs];
+    return sortIntervenantsParrainsFirst([...fromCms, ...missingFormateurs]);
   } catch {
-    return defaultIntervenants;
+    return sortIntervenantsParrainsFirst(defaultIntervenants);
   }
 }
 
@@ -503,48 +510,69 @@ export async function getGalleryMedia(): Promise<GalleryMediaItem[]> {
     const payload = await getPayloadClient();
     const result = await payload.find({
       collection: "media",
-      limit: 24,
+      limit: 100,
+      sort: "-createdAt",
       where: {
         and: [
           { category: { not_equals: "portrait" } },
           { category: { not_equals: "formation" } },
-          // Covers / uploads admin orphelins ne doivent pas polluer la galerie publique
           { category: { not_equals: "autre" } },
+          { category: { not_equals: "interview" } },
         ],
       },
     });
-    const fromCms = result.docs.flatMap((doc, index) => {
-      const fallback = isLocalMediaStorage() ? staticGalleryItems[index] : undefined;
-      const url = resolveDisplayMediaUrl(doc, fallback?.url);
+    return result.docs.flatMap((doc) => {
+      const url = resolveDisplayMediaUrl(doc);
       if (!url) return [];
-      // Exclure les anciennes covers seed encore catégorisées "plateau"
       const alt = String(doc.alt ?? "");
       if (/^Couverture\s+[—–-]/u.test(alt.trim())) return [];
       return [
         {
           id: doc.id,
-          alt: alt || fallback?.alt || "Média Cinémergence",
+          alt: alt || "Média Cinémergence",
           url,
-          mimeType: resolveMediaMimeType(doc) ?? fallback?.mimeType,
+          mimeType: resolveMediaMimeType(doc),
           caption: doc.caption ? String(doc.caption) : undefined,
           category: doc.category ? String(doc.category) : undefined,
         } satisfies GalleryMediaItem,
       ];
     });
-
-    if (fromCms.length > 0) return fromCms;
-    return isLocalMediaStorage() ? staticGalleryItems : [];
   } catch {
-    return isLocalMediaStorage() ? staticGalleryItems : [];
+    return [];
+  }
+}
+
+export async function getInterviewMedia(): Promise<GalleryMediaItem[]> {
+  try {
+    const payload = await getPayloadClient();
+    const result = await payload.find({
+      collection: "media",
+      limit: 50,
+      sort: "-createdAt",
+      where: { category: { equals: "interview" } },
+    });
+    return result.docs.flatMap((doc) => {
+      const url = resolveDisplayMediaUrl(doc);
+      if (!url) return [];
+      return [
+        {
+          id: doc.id,
+          alt: String(doc.alt ?? "Interview élève"),
+          url,
+          mimeType: resolveMediaMimeType(doc) ?? "video/mp4",
+          caption: doc.caption ? String(doc.caption) : undefined,
+          category: "interview",
+        } satisfies GalleryMediaItem,
+      ];
+    });
+  } catch {
+    return [];
   }
 }
 
 export async function getCarouselMedia(limit = 8): Promise<GalleryMediaItem[]> {
   const media = await getGalleryMedia();
-  const fromCms = media
+  return media
     .filter((item) => item.url && isImageMimeType(item.mimeType, item.url))
     .slice(0, limit);
-
-  if (fromCms.length > 0) return fromCms;
-  return isLocalMediaStorage() ? getStaticCarouselItems(limit) : [];
 }

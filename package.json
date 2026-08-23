@@ -30,6 +30,7 @@
     "migrate:rename-sessions": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/migrate-rename-instance-to-session.ts",
     "supabase:rls": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/apply-supabase-rls.ts",
     "migrate:inscription-statuses": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/migrate-inscription-statuses.ts",
+    "seed:salons": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/ensure-session-salons.ts",
     "sync:site-url": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-site-url-prod.ts",
     "sync:instagram": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-instagram.ts",
     "sync:instagram:local": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-instagram.ts --local",

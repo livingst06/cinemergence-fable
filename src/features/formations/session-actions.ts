@@ -4,10 +4,9 @@ import { revalidatePath } from "next/cache";
 import type { Payload } from "payload";
 import { z } from "zod";
 
+import { PAID_ENROLLED_STATUSES } from "@/lib/inscription-status";
 import { getPayloadClient } from "@/lib/payload";
 import { requireAdmin } from "@/lib/session-profile";
-
-const ENROLLED_STATUSES = ["payee", "validee", "inscrit"] as const;
 
 const sessionFieldsSchema = z
   .object({
@@ -55,7 +54,7 @@ async function countEnrolledForSession(
     where: {
       and: [
         { session: { equals: sessionId } },
-        { status: { in: [...ENROLLED_STATUSES] } },
+        { status: { in: [...PAID_ENROLLED_STATUSES] } },
       ],
     },
     limit: 1,

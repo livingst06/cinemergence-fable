@@ -10,6 +10,8 @@ import { FormSubmissions } from "./collections/FormSubmissions";
 import { Inscriptions } from "./collections/Inscriptions";
 import { Intervenants } from "./collections/Intervenants";
 import { Media } from "./collections/Media";
+import { SalonPosts } from "./collections/SalonPosts";
+import { SessionSalons } from "./collections/SessionSalons";
 import { Temoignages } from "./collections/Temoignages";
 import { Users } from "./collections/Users";
 import { LegalPages } from "./globals/LegalPages";
@@ -37,6 +39,8 @@ export default buildConfig({
     Media,
     Formations,
     FormationSessions,
+    SessionSalons,
+    SalonPosts,
     Intervenants,
     Temoignages,
     FormSubmissions,

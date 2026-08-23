@@ -374,6 +374,16 @@ export async function cancelCheckoutHold(
     }
 
     if (doc.status === "en_paiement") {
+      const stripeSessionId = doc.stripeCheckoutSessionId
+        ? String(doc.stripeCheckoutSessionId)
+        : null;
+      if (stripeSessionId) {
+        try {
+          await getStripe().checkout.sessions.expire(stripeSessionId);
+        } catch (expireError) {
+          console.warn("[cancelCheckoutHold] expire session", expireError);
+        }
+      }
       await releaseHoldById(doc.id);
       const formation =
         typeof doc.formation === "object" && doc.formation

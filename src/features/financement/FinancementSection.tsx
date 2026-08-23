@@ -30,7 +30,7 @@ export function FinancementSection({
   return (
     <Section variant="secondary">
       <div className="container-page">
-        <SectionHeader eyebrow="Financement" title={title} description={descriptionNode} />
+        <SectionHeader eyebrow="Financement" title={title} description={descriptionNode} align="left" />
         {dispositifs.length > 0 && (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {dispositifs.map((d, i) => (
@@ -48,10 +48,11 @@ export function FinancementSection({
           </div>
         )}
         {showCta && (
-          <div className="mt-10 text-center">
+          <div className="mt-10">
             <ButtonLink
               href="/financement"
-              className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
+              size="lg"
+              className="btn-outline-warm min-h-12 rounded-lg px-8 py-2.5 text-sm font-semibold uppercase tracking-wider"
             >
               Je vérifie mon financement
             </ButtonLink>

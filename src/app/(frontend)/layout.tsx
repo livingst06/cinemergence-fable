@@ -19,7 +19,7 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const themeInitScript = `(function(){document.documentElement.classList.add("dark");})();`;
+const themeInitScript = `(function(){var r=document.documentElement;r.classList.add("dark");try{if(localStorage.getItem("cinemergence-notice")==="dismissed"){r.classList.add("site-notice-dismissed");}}catch(e){}document.addEventListener("change",function(e){if(e.target&&e.target.id==="site-notice-dismiss"){r.classList.add("site-notice-dismissed");try{localStorage.setItem("cinemergence-notice","dismissed")}catch(err){}}});})();`;
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteSettings();

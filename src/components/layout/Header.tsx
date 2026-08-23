@@ -170,14 +170,14 @@ export function Header({ formations }: HeaderProps) {
         </div>
       </header>
 
-      <div className="mobile-nav-panel fixed inset-0 z-[99998] xl:hidden">
+      <div className="mobile-nav-panel fixed inset-x-0 bottom-0 top-[calc(var(--site-notice-h)+env(safe-area-inset-top,0px))] z-[99998] xl:hidden">
         <label
           htmlFor="mobile-nav-toggle"
           className="mobile-nav-backdrop absolute inset-0 cursor-pointer bg-noir/75"
           aria-label="Fermer le menu"
         />
         <nav
-          className="mobile-nav-drawer absolute left-0 right-0 top-[calc(var(--site-notice-h)+4rem+env(safe-area-inset-top,0px))] max-h-[calc(100dvh-var(--site-notice-h)-4rem-env(safe-area-inset-top))] overflow-y-auto border-b border-border bg-noir-secondary shadow-2xl md:top-[calc(var(--site-notice-h)+4.5rem+env(safe-area-inset-top,0px))] md:max-h-[calc(100dvh-var(--site-notice-h)-4.5rem-env(safe-area-inset-top))]"
+          className="mobile-nav-drawer absolute left-0 right-0 top-16 max-h-[calc(100dvh-var(--site-notice-h)-4rem-env(safe-area-inset-top))] overflow-y-auto border-b border-border bg-noir-secondary shadow-2xl md:top-[4.5rem] md:max-h-[calc(100dvh-var(--site-notice-h)-4.5rem-env(safe-area-inset-top))]"
           aria-label="Navigation mobile"
         >
           <div className="container-page flex flex-col gap-1 py-4 pb-8">

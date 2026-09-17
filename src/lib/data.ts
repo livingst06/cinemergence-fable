@@ -17,7 +17,7 @@ import {
 import { getPayloadClient } from "./payload";
 import { isLocalMediaStorage } from "./storage-env";
 import { getPublicSiteUrl } from "./site-url";
-import { publicFinancements, PUBLIC_FINANCEMENT_KEYS } from "./formation-types";
+import { publicFinancements, PUBLIC_FINANCEMENT_KEYS, isFormationActive } from "./formation-types";
 import {
   getStaticCarouselItems,
   resolveFormationCoverUrl,
@@ -200,6 +200,8 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     titreCourt: sanitizePublicText(String(doc.titreCourt)),
     sousTitre: sanitizeOptionalText(doc.sousTitre ? String(doc.sousTitre) : undefined),
     prioritaire: Boolean(doc.prioritaire),
+    active:
+      typeof doc.active === "boolean" ? doc.active : isFormationActive(String(doc.slug)),
     audience:
       doc.audience === "entreprise" || doc.audience === "intermittent"
         ? doc.audience
@@ -252,6 +254,10 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
   };
 }
 
+function publicFormations(list: FormationData[]): FormationData[] {
+  return list.filter((f) => f.active);
+}
+
 export async function getFormations(): Promise<FormationData[]> {
   try {
     const payload = await getPayloadClient();
@@ -262,20 +268,26 @@ export async function getFormations(): Promise<FormationData[]> {
       depth: 1,
     });
     if (result.docs.length === 0 || result.docs.length < defaultFormations.length) {
-      return defaultFormations.map((f) =>
+      return publicFormations(
+        defaultFormations.map((f) =>
+          sanitizeFormationCopy({
+            ...f,
+            coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
+          }),
+        ),
+      );
+    }
+    return publicFormations(
+      result.docs.map((doc) => mapFormation(doc as Record<string, unknown>)),
+    );
+  } catch {
+    return publicFormations(
+      defaultFormations.map((f) =>
         sanitizeFormationCopy({
           ...f,
           coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
         }),
-      );
-    }
-    return result.docs.map((doc) => mapFormation(doc as Record<string, unknown>));
-  } catch {
-    return defaultFormations.map((f) =>
-      sanitizeFormationCopy({
-        ...f,
-        coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
-      }),
+      ),
     );
   }
 }

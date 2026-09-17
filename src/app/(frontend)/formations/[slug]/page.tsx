@@ -401,9 +401,9 @@ export default async function FormationDetailPage({ params }: Props) {
         {linkedIntervenants.length > 0 && (
           <div>
             <SectionHeader eyebrow="Intervenants" title="Encadré par" className="mb-8 md:mb-10" />
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
               {linkedIntervenants.map((i) => (
-                <IntervenantCard key={i.slug} intervenant={i} />
+                <IntervenantCard key={i.slug} compact intervenant={i} />
               ))}
             </div>
           </div>

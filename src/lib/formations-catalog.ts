@@ -1,7 +1,7 @@
 import type { FormationData } from "./formation-types";
 
 /** Catalogue des 23 formations — généré depuis les fiches DOCX Qualiopi. */
-export const formationsCatalog: FormationData[] = [
+export const formationsCatalog: Omit<FormationData, "active">[] = [
   {
     slug: "formation-castings-auditions",
     pole: "Jeu",

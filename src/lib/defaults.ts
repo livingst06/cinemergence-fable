@@ -1,8 +1,16 @@
 import type { FormationData, FaqItem, FinancementKey, ProgrammeJour } from "./formation-types";
+import { isFormationActive } from "./formation-types";
 import { formationsCatalog } from "./formations-catalog";
 
 export type { FormationData, FaqItem, FinancementKey, ProgrammeJour } from "./formation-types";
-export { formationPath, formationLivrableLabel, publicFinancements, PUBLIC_FINANCEMENT_KEYS } from "./formation-types";
+export {
+  formationPath,
+  formationLivrableLabel,
+  isFormationActive,
+  publicFinancements,
+  PUBLIC_FINANCEMENT_KEYS,
+  PUBLIC_FORMATION_SLUGS,
+} from "./formation-types";
 
 /** @deprecated Use ProgrammeJour — kept for seed/CMS compatibility aliases. */
 export type Module = ProgrammeJour;
@@ -99,7 +107,10 @@ export const defaultIntervenants: IntervenantData[] = [
   },
 ];
 
-export const defaultFormations: FormationData[] = formationsCatalog;
+export const defaultFormations: FormationData[] = formationsCatalog.map((f) => ({
+  ...f,
+  active: isFormationActive(f.slug),
+}));
 
 export const defaultTemoignages: TemoignageData[] = [
   {

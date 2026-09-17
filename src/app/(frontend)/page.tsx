@@ -142,7 +142,7 @@ export default async function HomePage() {
             align="left"
             description="Des professionnels en activité qui transmettent leur exigence sur le plateau."
           />
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {intervenants
               .filter(
                 (i) =>
@@ -169,7 +169,7 @@ export default async function HomePage() {
               </>
             }
           />
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 lg:gap-4">
             {orderedFormations.map((formation) => (
               <FormationMiniCard key={formation.slug} formation={formation} />
             ))}

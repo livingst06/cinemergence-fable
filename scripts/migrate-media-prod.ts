@@ -85,6 +85,7 @@ async function seedContentIfEmpty(payload: Awaited<ReturnType<typeof import("../
         pole: f.pole,
         titre: f.titre,
         titreCourt: f.titreCourt,
+        active: f.active,
         prioritaire: f.prioritaire,
         accroche: f.accroche,
         publicCible: f.publicCible,

@@ -81,6 +81,7 @@ export async function POST() {
         titre: f.titre,
         titreCourt: f.titreCourt,
         sousTitre: f.sousTitre,
+        active: f.active,
         prioritaire: f.prioritaire,
         audience: f.audience,
         accroche: f.accroche,

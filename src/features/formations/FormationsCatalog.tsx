@@ -29,6 +29,13 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
   const [pole, setPole] = useState("Tous");
   const [audience, setAudience] = useState<AudienceFilter>("tous");
 
+  const availableAudiences = useMemo(() => {
+    const present = new Set(formations.map((f) => f.audience));
+    return (Object.keys(audienceLabels) as AudienceFilter[]).filter(
+      (key) => key === "tous" || present.has(key),
+    );
+  }, [formations]);
+
   const filtered = useMemo(() => {
     let list = formations;
     if (audience !== "tous") {
@@ -46,25 +53,27 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Filtrer par public">
-        {(Object.keys(audienceLabels) as AudienceFilter[]).map((key) => (
-          <button
-            key={key}
-            type="button"
-            role="tab"
-            aria-selected={audience === key}
-            onClick={() => setAudience(key)}
-            className={cn(
-              "min-h-11 rounded-lg border px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors",
-              audience === key
-                ? "border-or/40 bg-or/15 text-cream"
-                : "border-white/10 bg-transparent text-cream/70 hover:border-or/30 hover:text-or-light",
-            )}
-          >
-            {audienceLabels[key]}
-          </button>
-        ))}
-      </div>
+      {availableAudiences.length > 2 && (
+        <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Filtrer par public">
+          {availableAudiences.map((key) => (
+            <button
+              key={key}
+              type="button"
+              role="tab"
+              aria-selected={audience === key}
+              onClick={() => setAudience(key)}
+              className={cn(
+                "min-h-11 rounded-lg border px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors",
+                audience === key
+                  ? "border-or/40 bg-or/15 text-cream"
+                  : "border-white/10 bg-transparent text-cream/70 hover:border-or/30 hover:text-or-light",
+              )}
+            >
+              {audienceLabels[key]}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="mb-10 flex flex-wrap gap-2" role="tablist" aria-label="Filtrer par pôle">
         {poles.map((p) => (
@@ -87,7 +96,7 @@ export function FormationsCatalog({ formations }: FormationsCatalogProps) {
       </div>
 
       {ordered.length > 0 ? (
-        <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3 xl:gap-5">
+        <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-5">
           {ordered.map((f) => (
             <FormationCard key={f.slug} formation={f} />
           ))}

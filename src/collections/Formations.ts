@@ -11,7 +11,7 @@ export const Formations: CollectionConfig = {
   slug: "formations",
   admin: {
     useAsTitle: "titre",
-    defaultColumns: ["titre", "pole", "prioritaire", "updatedAt"],
+    defaultColumns: ["titre", "pole", "active", "prioritaire", "updatedAt"],
   },
   fields: [
     {
@@ -47,6 +47,17 @@ export const Formations: CollectionConfig = {
       type: "text",
       admin: {
         description: "Sous-titre sous l'intitulé (fiche)",
+      },
+    },
+    {
+      name: "active",
+      type: "checkbox",
+      defaultValue: false,
+      label: "Active",
+      admin: {
+        description:
+          "Visible sur le site public. Décochez pour la retirer du catalogue sans la supprimer.",
+        position: "sidebar",
       },
     },
     {

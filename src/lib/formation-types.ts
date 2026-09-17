@@ -14,6 +14,25 @@ export function publicFinancements(keys: unknown): FinancementKey[] {
   );
 }
 
+/**
+ * Formations visibles sur le site public.
+ * Les autres restent dans le CMS pour une réactivation ultérieure.
+ */
+export const PUBLIC_FORMATION_SLUGS = [
+  "formation-stand-up",
+  "formation-jouer-face-camera",
+  "formation-doublage-voix",
+  "formation-passer-a-la-realisation",
+  "formation-realiser-documentaire",
+  "formation-lumiere-image",
+  "formation-ecriture-court-metrage",
+  "formation-comedien-face-action",
+] as const;
+
+export function isFormationActive(slug: string): boolean {
+  return (PUBLIC_FORMATION_SLUGS as readonly string[]).includes(slug);
+}
+
 export type FaqItem = { q: string; r: string };
 
 export type ProgrammeSequence = {
@@ -38,6 +57,8 @@ export type FormationData = {
   titreCourt: string;
   /** Sous-titre / accroche courte sous l'intitulé (fiche). */
   sousTitre?: string;
+  /** Visible sur le site public. Faux = conservée dans le CMS, masquée. */
+  active: boolean;
   prioritaire: boolean;
   /** Public catalogue : intermittents / audiovisuel vs entreprise. */
   audience: "intermittent" | "entreprise";

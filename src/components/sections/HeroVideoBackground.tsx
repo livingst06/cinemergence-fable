@@ -55,10 +55,10 @@ export function HeroVideoBackground({
       <HeroVideo src={mobileSrc} poster={poster} className="md:hidden" />
       <HeroVideo src={src} poster={poster} className="hidden md:block" />
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-noir via-noir/92 to-noir/25 md:via-noir/78 md:to-transparent" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir via-transparent to-noir/50" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_40%,rgba(90,109,128,0.16),transparent_55%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_90%_20%,rgba(61,79,97,0.25),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-noir/75 via-noir/45 to-noir/10 md:from-noir/60 md:via-noir/30 md:to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/45 via-transparent to-noir/20" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_40%,rgba(90,109,128,0.10),transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_90%_20%,rgba(61,79,97,0.14),transparent_60%)]" />
     </div>
   );
 }

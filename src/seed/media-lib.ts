@@ -47,7 +47,7 @@ export const intervenantPhotos: Record<string, string> = getIntervenantPhotoPath
 
 export const founderPhoto = "photos/image00019.jpeg";
 
-const heroVideoSource = "videos/VIDEO-2026-02-08-10-33-37.mp4";
+const heroVideoSource = "videos/hero-background.mp4";
 
 function resolveAsset(relativePath: string) {
   return path.join(assetsRoot, relativePath);
@@ -124,23 +124,24 @@ export async function prepareHeroAssets() {
 
   const heroMobileOut = path.join(publicVideos, "hero-plateau-travel-mobile.mp4");
 
+  // Keep native 1080p / full duration — do not recut or downscale "for weight".
   execSync(
-    `ffmpeg -y -ss 1 -t 18 -i "${videoIn}" -vf "scale=1280:-2,fps=24" -c:v libx264 -crf 30 -preset medium -an -movflags +faststart "${heroVideoOut}"`,
+    `ffmpeg -y -i "${videoIn}" -vf "scale=1920:-2" -r 25 -c:v libx264 -crf 26 -preset medium -an -movflags +faststart "${heroVideoOut}"`,
     { stdio: "pipe" },
   );
   execSync(
-    `ffmpeg -y -ss 1 -t 18 -i "${videoIn}" -vf "scale=854:-2,fps=24" -c:v libx264 -crf 32 -preset medium -an -movflags +faststart "${heroMobileOut}"`,
+    `ffmpeg -y -i "${videoIn}" -vf "scale=1280:-2" -r 25 -c:v libx264 -crf 30 -preset medium -an -movflags +faststart "${heroMobileOut}"`,
     { stdio: "pipe" },
   );
   execSync(
-    `ffmpeg -y -ss 00:00:02 -i "${videoIn}" -vframes 1 -q:v 3 "${posterTmp}"`,
+    `ffmpeg -y -ss 00:00:02 -i "${videoIn}" -vframes 1 -q:v 2 "${posterTmp}"`,
     { stdio: "pipe" },
   );
 
   await sharp(posterTmp)
     .rotate()
-    .resize(1280, 720, { fit: "cover" })
-    .jpeg({ quality: 68, mozjpeg: true, progressive: true })
+    .resize(1920, 1080, { fit: "cover" })
+    .jpeg({ quality: 82, mozjpeg: true, progressive: true })
     .toFile(heroPosterOut);
 
   if (fs.existsSync(posterTmp)) {

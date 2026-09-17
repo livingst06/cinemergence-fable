@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     qualities: [70, 75],
+    // Dev DNS64 (64:ff9b::) is classified as a private IP; without this the
+    // optimizer logs `resolved to private ip` and returns 400 for Supabase.
+    dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",
     remotePatterns: [
       { protocol: "http", hostname: "localhost" },
       { protocol: "https", hostname: "**.supabase.co", pathname: "/storage/v1/object/public/**" },

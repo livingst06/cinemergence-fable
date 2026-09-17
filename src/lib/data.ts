@@ -304,15 +304,21 @@ function mapIntervenant(doc: Record<string, unknown>): IntervenantData {
   };
 }
 
+function withParrainsFirst(list: IntervenantData[]) {
+  return [...list].sort((a, b) => Number(b.parrain) - Number(a.parrain));
+}
+
 export async function getIntervenants(): Promise<IntervenantData[]> {
   try {
     const payload = await getPayloadClient();
     const result = await payload.find({ collection: "intervenants", limit: 20, depth: 1 });
     if (result.docs.length === 0) {
-      return defaultIntervenants.map((i) => ({
-        ...i,
-        photoUrl: i.photoUrl ?? staticIntervenantPhoto(i.slug),
-      }));
+      return withParrainsFirst(
+        defaultIntervenants.map((i) => ({
+          ...i,
+          photoUrl: i.photoUrl ?? staticIntervenantPhoto(i.slug),
+        })),
+      );
     }
     const fromCms = result.docs
       .map((doc) => mapIntervenant(doc as Record<string, unknown>))
@@ -321,9 +327,9 @@ export async function getIntervenants(): Promise<IntervenantData[]> {
     const missingFormateurs = defaultIntervenants.filter(
       (i) => i.categorie === "formateur" && !cmsSlugs.has(i.slug),
     );
-    return [...fromCms, ...missingFormateurs];
+    return withParrainsFirst([...fromCms, ...missingFormateurs]);
   } catch {
-    return defaultIntervenants;
+    return withParrainsFirst(defaultIntervenants);
   }
 }
 

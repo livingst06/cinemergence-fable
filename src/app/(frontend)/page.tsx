@@ -150,7 +150,7 @@ export default async function HomePage() {
                   i.slug !== "karina-testa",
               )
               .map((i) => (
-                <IntervenantCard key={i.slug} intervenant={i} />
+                <IntervenantCard key={i.slug} compact intervenant={i} />
               ))}
           </div>
         </div>

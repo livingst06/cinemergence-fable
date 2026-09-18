@@ -45,7 +45,7 @@ export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
           "grid",
           compact
             ? "grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3"
-            : "grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3",
+            : "grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3 xl:grid-cols-6",
         )}
       >
         {items.map((item) => (
@@ -61,7 +61,7 @@ export function GalleryGrid({ items, compact = false }: GalleryGridProps) {
                 sizes={
                   compact
                     ? "(max-width: 768px) 100vw, 33vw"
-                    : "(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    : "(max-width: 640px) 50vw, (max-width: 1280px) 25vw, 16vw"
                 }
                 quality={70}
                 className="object-cover"

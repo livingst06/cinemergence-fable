@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 
+import { Analytics } from "@vercel/analytics/next";
+
 import { DeferredSiteChrome } from "@/components/DeferredSiteChrome";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
@@ -68,6 +70,7 @@ export default async function FrontendLayout({
           }))}
         />
         <DeferredSiteChrome />
+        <Analytics />
       </body>
     </html>
   );

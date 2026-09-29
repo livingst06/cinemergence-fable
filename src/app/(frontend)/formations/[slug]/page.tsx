@@ -84,7 +84,7 @@ export default async function FormationDetailPage({ params }: Props) {
 
       <div className="container-page space-y-10 py-8 md:space-y-20 md:py-16 lg:py-20">
         <header className="max-w-4xl">
-          <h1 className="display-title max-w-5xl text-cream">{formation.titre}</h1>
+          <h1 className="display-title da-rule max-w-5xl text-convert">{formation.titre}</h1>
           <p className="mt-5 text-base leading-relaxed text-muted-text md:text-lg">
             {formation.sousTitre ?? formation.accroche}
           </p>
@@ -178,7 +178,7 @@ export default async function FormationDetailPage({ params }: Props) {
         </div>
 
         <div className="max-w-3xl">
-          <h2 className="section-title text-cream">Pour qui ?</h2>
+          <h2 className="section-title">Pour qui ?</h2>
           <p className="mt-4 text-muted-text">{formation.pourQui}</p>
           {formation.prerequis && (
             <p className="mt-6 text-sm text-muted-text">
@@ -196,7 +196,6 @@ export default async function FormationDetailPage({ params }: Props) {
 
         <div className="max-w-3xl">
           <SectionHeader
-            eyebrow="Finalité"
             title="Ce que cette formation change"
             align="left"
             className="mb-6 md:mb-8"
@@ -218,7 +217,6 @@ export default async function FormationDetailPage({ params }: Props) {
 
         <div>
           <SectionHeader
-            eyebrow="Objectifs pédagogiques"
             title={"À l'issue, tu seras capable\u00a0de"}
             className="mb-8 md:mb-10"
           />
@@ -238,7 +236,6 @@ export default async function FormationDetailPage({ params }: Props) {
         {competences.length > 0 && (
           <div>
             <SectionHeader
-              eyebrow="Compétences visées"
               title="Ce que tu développes"
               className="mb-8 md:mb-10"
             />
@@ -248,7 +245,6 @@ export default async function FormationDetailPage({ params }: Props) {
 
         <div>
           <SectionHeader
-            eyebrow="Programme"
             title="Déroulement de la formation"
             className="mb-8 md:mb-10"
           />
@@ -301,7 +297,6 @@ export default async function FormationDetailPage({ params }: Props) {
 
         <div>
           <SectionHeader
-            eyebrow="Inclus"
             title="Ce qui est inclus"
             className="mb-8 md:mb-10"
           />
@@ -330,7 +325,7 @@ export default async function FormationDetailPage({ params }: Props) {
         </div>
 
         <div>
-          <SectionHeader eyebrow="Livrables" title="Tu repars avec" className="mb-8 md:mb-10" />
+          <SectionHeader title="Tu repars avec" className="mb-8 md:mb-10" />
           <ul className="grid gap-3 md:grid-cols-2">
             {livrables.map((item) => (
               <li
@@ -354,7 +349,6 @@ export default async function FormationDetailPage({ params }: Props) {
 
         <div className="max-w-3xl">
           <SectionHeader
-            eyebrow="Financement & accès"
             title="Comment s'inscrire"
             align="left"
             className="mb-6 md:mb-8"
@@ -400,7 +394,7 @@ export default async function FormationDetailPage({ params }: Props) {
 
         {linkedIntervenants.length > 0 && (
           <div>
-            <SectionHeader eyebrow="Intervenants" title="Encadré par" className="mb-8 md:mb-10" />
+            <SectionHeader title="Encadré par" className="mb-8 md:mb-10" />
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
               {linkedIntervenants.map((i) => (
                 <IntervenantCard key={i.slug} compact intervenant={i} />
@@ -412,7 +406,6 @@ export default async function FormationDetailPage({ params }: Props) {
         {formation.faq.length > 0 && (
           <div className="max-w-3xl">
             <SectionHeader
-              eyebrow="FAQ"
               title="Questions fréquentes"
               align="left"
               className="mb-6 md:mb-8"
@@ -431,7 +424,7 @@ export default async function FormationDetailPage({ params }: Props) {
         )}
 
         <div className="border-t border-white/[0.06] pt-12 text-center md:pt-16">
-          <h2 className="section-title text-cream">Prêt à te lancer ?</h2>
+          <h2 className="section-title">Prêt à te lancer ?</h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-text">
             Contacte-nous pour t&apos;inscrire ou vérifier le financement de cette formation.
           </p>

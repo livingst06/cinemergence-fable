@@ -68,6 +68,14 @@ const uploads: UploadSpec[] = [
     local: path.resolve("public/images/da/filmstrip.jpg"),
     key: "media/da/filmstrip.jpg",
   },
+  {
+    local: path.resolve("public/images/da/filmstrip-plain.jpg"),
+    key: "media/da/filmstrip-plain.jpg",
+  },
+  ...[1, 2, 3, 4].map((n) => ({
+    local: path.resolve(`public/images/da/filmstrip-${n}.jpg`),
+    key: `media/da/filmstrip-${n}.jpg`,
+  })),
 ];
 
 async function main() {

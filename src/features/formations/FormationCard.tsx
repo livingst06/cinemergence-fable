@@ -21,8 +21,8 @@ export function FormationCard({ formation }: FormationCardProps) {
   return (
     <article
       className={cn(
-        "card-stage flex h-auto w-full flex-col overflow-hidden transition-all duration-500",
-        "hover:-translate-y-1 hover:plateau-glow",
+        "card-stage flex h-auto w-full flex-col overflow-hidden transition-shadow duration-500",
+        "hover:plateau-glow",
         "md:h-full",
       )}
     >
@@ -51,7 +51,7 @@ export function FormationCard({ formation }: FormationCardProps) {
           <Badge variant="outline" className="w-fit shrink-0 border-or/25 bg-or/5 text-or-light">
             {formation.pole}
           </Badge>
-          <h3 className="line-clamp-2 font-heading text-lg font-medium leading-[1.35] tracking-[-0.015em] text-cream normal-case md:text-xl">
+          <h3 className="line-clamp-2 font-heading text-base font-semibold uppercase leading-snug tracking-[0.06em] text-cream md:text-lg">
             {formation.titre}
           </h3>
           <p className="line-clamp-2 text-[15px] leading-relaxed text-muted-text">

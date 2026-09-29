@@ -27,9 +27,9 @@ const navLinks = [
 
 function navLinkClass(active: boolean) {
   return cn(
-    "inline-block shrink-0 text-sm font-medium transition-colors hover:text-or-light",
-    "outline-none focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-or-light/50",
-    active ? "text-projector-light" : "text-cream/75",
+    "inline-block shrink-0 font-heading text-[11px] font-semibold uppercase tracking-[0.16em] transition-colors hover:text-convert",
+    "outline-none focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-convert/50",
+    active ? "text-convert" : "text-cream/80",
   );
 }
 
@@ -189,7 +189,7 @@ export function Header({ formations }: HeaderProps) {
           aria-label="Fermer le menu"
         />
         <nav
-          className="mobile-nav-drawer absolute left-0 right-0 top-16 max-h-[calc(100dvh-var(--site-notice-h)-4rem-env(safe-area-inset-top))] overflow-y-auto border-b border-border bg-noir-secondary shadow-2xl md:top-[4.5rem] md:max-h-[calc(100dvh-var(--site-notice-h)-4.5rem-env(safe-area-inset-top))]"
+          className="mobile-nav-drawer absolute left-0 right-0 top-[var(--site-header-h)] max-h-[calc(100dvh-var(--site-notice-h)-var(--site-header-h)-env(safe-area-inset-top))] overflow-y-auto border-b border-border bg-noir-secondary shadow-2xl"
           aria-label="Navigation mobile"
         >
           <div className="container-page flex flex-col gap-1 py-4 pb-8">

@@ -9,7 +9,7 @@ type HeroProofCardProps = {
 
 export function HeroProofCard({ nda }: HeroProofCardProps) {
   return (
-    <div className="relative overflow-hidden rounded-[1.25rem] border border-white/10">
+    <div className="relative overflow-hidden rounded-none border border-white/10">
       <div
         className="pointer-events-none absolute inset-0 bg-[#151b22]/35 backdrop-blur-md"
         aria-hidden

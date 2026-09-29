@@ -7,7 +7,7 @@ type HeroVideoBackgroundProps = {
 };
 
 const videoClassName =
-  "absolute inset-0 h-full w-full object-cover object-[55%_center]";
+  "hero-bg-media absolute inset-0 h-full w-full object-cover";
 
 type HeroVideoProps = {
   src: string;
@@ -55,10 +55,10 @@ export function HeroVideoBackground({
       <HeroVideo src={mobileSrc} poster={poster} className="md:hidden" />
       <HeroVideo src={src} poster={poster} className="hidden md:block" />
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-noir/75 via-noir/45 to-noir/10 md:from-noir/60 md:via-noir/30 md:to-transparent" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/45 via-transparent to-noir/20" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_40%,rgba(90,109,128,0.10),transparent_55%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_90%_20%,rgba(61,79,97,0.14),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-noir/85 via-noir/50 to-noir/10 md:from-noir/75 md:via-noir/35 md:to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/70 via-transparent to-noir/30" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_40%,rgba(47,91,255,0.16),transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_90%_20%,rgba(47,91,255,0.12),transparent_60%)]" />
     </div>
   );
 }

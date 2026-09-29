@@ -1,12 +1,9 @@
 /**
- * Thème Clerk aligné sur la direction artistique « Plateau vivant » du site
- * (rouge velours cinéma, fond noir profond, typographie San Francisco / system-ui).
- * Les valeurs pointent vers les variables CSS définies dans src/app/globals.css
- * afin de suivre automatiquement le mode clair/sombre du site.
+ * Thème Clerk aligné sur la DA bleue Sarah (noir, anthracite, bleu #2F5BFF).
  */
 export const clerkAppearance = {
   variables: {
-    colorPrimary: "var(--projector)",
+    colorPrimary: "var(--convert)",
     colorBackground: "var(--noir-secondary)",
     colorText: "var(--foreground)",
     colorTextSecondary: "var(--muted-foreground)",
@@ -14,21 +11,21 @@ export const clerkAppearance = {
     colorInputText: "var(--foreground)",
     colorDanger: "var(--destructive)",
     colorNeutral: "var(--muted-foreground)",
-    fontFamily: "var(--font-apple)",
+    fontFamily: "var(--font-sans)",
     borderRadius: "var(--radius)",
   },
   elements: {
     rootBox: "w-full",
     cardBox: "shadow-2xl border border-border",
     card: "bg-noir-secondary",
-    headerTitle: "font-heading tracking-wide",
+    headerTitle: "font-heading tracking-wide uppercase",
     headerSubtitle: "text-muted-foreground",
     socialButtonsBlockButton: "border border-border hover:bg-noir-tertiary",
     formButtonPrimary:
-      "bg-projector hover:bg-projector-light transition-colors font-sans normal-case shadow-[0_4px_16px_-4px_var(--projector-glow)]",
-    formFieldInput: "bg-noir-tertiary border-border focus:border-projector-light",
-    footerActionLink: "text-or-light hover:text-projector-light",
-    identityPreviewEditButton: "text-or-light",
+      "bg-convert hover:bg-convert-light transition-colors font-heading uppercase tracking-wider shadow-[0_4px_16px_-4px_var(--convert-glow)]",
+    formFieldInput: "bg-noir-tertiary border-border focus:border-convert",
+    footerActionLink: "text-convert hover:text-convert-light",
+    identityPreviewEditButton: "text-convert",
     formFieldLabel: "text-foreground",
     dividerLine: "bg-border",
     dividerText: "text-muted-foreground",

@@ -8,18 +8,24 @@ type SectionProps = {
   id?: string;
   /** Conservé pour compat — plus d’alternance de fond. */
   variant?: "default" | "secondary" | "dark";
+  compact?: boolean;
 };
 
-export function Section({ children, className, id }: SectionProps) {
+export function Section({ children, className, id, compact = false }: SectionProps) {
   return (
-    <section id={id} className={cn("py-10 md:py-16 lg:py-28", className)}>
+    <section
+      id={id}
+      className={cn(
+        compact ? "py-6 md:py-8 lg:py-10" : "py-10 md:py-16 lg:py-28",
+        className,
+      )}
+    >
       {children}
     </section>
   );
 }
 
 type SectionHeaderProps = {
-  eyebrow?: string;
   title: ReactNode;
   description?: ReactNode;
   align?: "left" | "center";
@@ -27,7 +33,6 @@ type SectionHeaderProps = {
 };
 
 export function SectionHeader({
-  eyebrow,
   title,
   description,
   align = "center",
@@ -42,8 +47,7 @@ export function SectionHeader({
         className,
       )}
     >
-      {eyebrow && <p className="eyebrow mb-3">{eyebrow}</p>}
-      <h2 className="section-title text-cream">{title}</h2>
+      <h2 className={cn("section-title", align === "left" && "da-rule")}>{title}</h2>
       {description && (
         <div
           className={cn(

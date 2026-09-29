@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function CgvPage() {
   return (
     <>
-      <PageHero eyebrow="Légal" title="Conditions générales de vente" />
+      <PageHero title="Conditions générales de vente" />
       <Section>
         <div className="container-page max-w-3xl">
           <LegalPageContent title="CGV" content={defaultLegal.cgv} />

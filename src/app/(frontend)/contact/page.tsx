@@ -30,7 +30,6 @@ export default async function ContactPage({ searchParams }: Props) {
   return (
     <>
       <PageHero
-        eyebrow="Contact"
         title="Je me lance"
         description={
           <>
@@ -43,7 +42,6 @@ export default async function ContactPage({ searchParams }: Props) {
         <div className="container-page grid gap-12 xl:grid-cols-5">
           <div className="xl:col-span-3">
             <SectionHeader
-              eyebrow="Formulaire"
               title="Envoie ta demande"
               align="left"
               className="mb-8"

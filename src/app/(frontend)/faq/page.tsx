@@ -19,7 +19,7 @@ export default function FaqPage() {
   return (
     <div className="container-page py-8 md:py-12">
       <div className="mx-auto max-w-2xl">
-        <h1 className="sr-only">FAQ</h1>
+        <h1 className="display-title da-rule mb-8 text-convert">FAQ</h1>
         <FaqList items={faqItems} />
         <p className="mt-8 text-sm text-muted-text">
           Une autre question&nbsp;?{" "}

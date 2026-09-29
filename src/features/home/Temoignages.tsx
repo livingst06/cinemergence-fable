@@ -46,13 +46,12 @@ export function Temoignages({ temoignages }: TemoignagesProps) {
   }, [temoignages]);
 
   return (
-    <Section>
+    <Section compact>
       <div className="container-page">
         <SectionHeader
-          eyebrow="Témoignages"
-          title="L'avis de nos élèves"
+          title="La parole aux élèves"
           align="left"
-          description="Six parcours, six retours d'expérience sur nos formations."
+          description="Des visages, des parcours, des retours d'expérience sur nos formations."
         />
         <div
           ref={gridRef}
@@ -65,7 +64,7 @@ export function Temoignages({ temoignages }: TemoignagesProps) {
               className="card-stage flex h-full flex-col p-4 md:p-5"
             >
               <p className="eyebrow">{profilLabels[t.profil]}</p>
-              <p className="mt-3 flex-1 text-base leading-relaxed text-cream md:text-lg">
+              <p className="mt-3 flex-1 font-serif text-lg leading-relaxed text-cream md:text-xl">
                 &ldquo;{t.quote.trim()}&rdquo;
               </p>
               <div className="mt-3 border-t border-white/[0.06] pt-3">

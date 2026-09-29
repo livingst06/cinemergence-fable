@@ -30,7 +30,6 @@ export default async function AssociationPage() {
   return (
     <>
       <PageHero
-        eyebrow="Qui sommes-nous ?"
         title="École de formation cinéma"
         description={
           <>
@@ -56,7 +55,6 @@ export default async function AssociationPage() {
               />
               <div className="space-y-6">
                 <SectionHeader
-                  eyebrow="Fondateur"
                   title="Choukri Rouha"
                   description="Réalisateur & fondateur de Cinémergence"
                   align="left"
@@ -83,7 +81,6 @@ export default async function AssociationPage() {
           </Reveal>
           <Reveal>
             <SectionHeader
-              eyebrow="Pourquoi Cinémergence ?"
               title="Le mot du fondateur"
               align="left"
               className="mb-8"
@@ -121,7 +118,6 @@ export default async function AssociationPage() {
         <div className="container-page grid gap-12 lg:grid-cols-2">
           <div>
             <SectionHeader
-              eyebrow="Notre mission"
               title="Former comme on tourne"
               align="left"
               className="mb-8"
@@ -179,7 +175,7 @@ export default async function AssociationPage() {
       </Section>
       <Section variant="secondary">
         <div className="container-page text-center">
-          <h2 className="section-title text-cream">Une question ?</h2>
+          <h2 className="section-title">Une question ?</h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-text">
             Écris-nous ou appelle-nous au {site.phone} — on te répond rapidement.
           </p>

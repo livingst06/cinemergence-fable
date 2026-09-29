@@ -11,14 +11,14 @@ type IntervenantCardProps = {
 function IntervenantBadge({ intervenant }: { intervenant: IntervenantData }) {
   if (intervenant.parrain) {
     return (
-      <Badge className="border-projector/30 bg-noir/80 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-projector-light backdrop-blur-sm">
+      <Badge className="h-auto border-projector/30 bg-noir/80 px-3 py-1.5 text-sm font-semibold uppercase tracking-[0.14em] text-projector-light backdrop-blur-sm md:text-base">
         Parrain
       </Badge>
     );
   }
   if (intervenant.categorie === "formateur") {
     return (
-      <Badge className="border-or/30 bg-noir/80 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-or-light backdrop-blur-sm">
+      <Badge className="h-auto border-or/30 bg-noir/80 px-3 py-1.5 text-sm font-semibold uppercase tracking-[0.14em] text-or-light backdrop-blur-sm md:text-base">
         Formateur
       </Badge>
     );
@@ -30,26 +30,24 @@ export function IntervenantCard({ intervenant }: IntervenantCardProps) {
   const badge = <IntervenantBadge intervenant={intervenant} />;
 
   return (
-    <article className="group card-stage relative w-full overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:plateau-glow">
-      {badge ? <div className="absolute right-2 top-2 z-20">{badge}</div> : null}
-      <div className="flex justify-center px-3 pt-3">
-        <MediaFrame
-          src={intervenant.photoUrl}
-          mimeType={intervenant.photoMimeType}
-          alt={`Portrait — ${intervenant.nom}`}
-          aspect="portrait"
-          sizes="(max-width: 640px) 45vw, (max-width: 1024px) 28vw, 20vw"
-          className="w-[78%] rounded-md border-0"
-        />
-      </div>
-      <div className="px-3 pb-3 pt-2">
-        <h3 className="font-heading text-xs font-medium leading-snug tracking-normal text-cream normal-case md:text-sm">
+    <article className="group relative w-full overflow-hidden bg-noir-secondary transition-all duration-500 hover:plateau-glow">
+      {badge ? <div className="absolute right-2 top-2 z-20 md:right-3 md:top-3">{badge}</div> : null}
+      <MediaFrame
+        src={intervenant.photoUrl}
+        mimeType={intervenant.photoMimeType}
+        alt={`Portrait — ${intervenant.nom}`}
+        aspect="portrait"
+        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        className="rounded-none border-0"
+      />
+      <div className="flex flex-col gap-2.5 px-5 pb-6 pt-5 text-left md:gap-3 md:px-6 md:pb-7 md:pt-6">
+        <h3 className="font-heading text-lg font-semibold uppercase leading-snug tracking-[0.06em] text-cream md:text-xl">
           {intervenant.nom}
         </h3>
-        <p className="mt-0.5 text-[11px] font-medium text-or-light">{intervenant.role}</p>
-        <p className="mt-1.5 text-xs leading-relaxed text-muted-text">{intervenant.bio}</p>
+        <p className="text-left text-base font-medium leading-snug text-convert md:text-lg">{intervenant.role}</p>
+        <p className="body-copy text-left">{intervenant.bio}</p>
         {intervenant.filmographie.length > 0 && (
-          <p className="mt-1.5 text-[10px] leading-snug tracking-wide text-cool-glow">
+          <p className="text-left text-sm leading-relaxed tracking-wide text-cool-glow md:text-base">
             {intervenant.filmographie.join(" · ")}
           </p>
         )}

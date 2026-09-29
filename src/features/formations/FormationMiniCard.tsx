@@ -19,7 +19,7 @@ export function FormationMiniCard({ formation }: FormationMiniCardProps) {
   const href = formationPath(formation.slug);
 
   return (
-    <article className="card-stage w-full overflow-hidden">
+    <article className="card-stage w-full overflow-hidden transition-shadow duration-500 hover:plateau-glow">
       <Link
         href={href}
         aria-label={`Voir la formation ${formation.titreCourt}`}
@@ -36,7 +36,7 @@ export function FormationMiniCard({ formation }: FormationMiniCardProps) {
           />
         </div>
         <div className="px-4 py-3.5 md:px-5 md:py-4">
-          <h3 className="line-clamp-2 text-left font-heading text-[15px] font-medium leading-[1.4] tracking-normal text-cream normal-case md:text-base">
+          <h3 className="line-clamp-2 text-left font-heading text-[13px] font-semibold uppercase leading-snug tracking-[0.08em] text-cream md:text-sm">
             {formation.titreCourt}
           </h3>
         </div>

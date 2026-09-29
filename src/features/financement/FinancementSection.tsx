@@ -11,6 +11,7 @@ type FinancementSectionProps = {
   title?: ReactNode;
   description?: ReactNode;
   showCta?: boolean;
+  compact?: boolean;
 };
 
 export function FinancementSection({
@@ -18,6 +19,7 @@ export function FinancementSection({
   title = "Ton projet peut être pris en\u00a0charge",
   description,
   showCta = true,
+  compact = false,
 }: FinancementSectionProps) {
   const descriptionNode =
     description ??
@@ -28,9 +30,9 @@ export function FinancementSection({
     );
 
   return (
-    <Section variant="secondary">
+    <Section variant="secondary" compact={compact}>
       <div className="container-page">
-        <SectionHeader eyebrow="Financement" title={title} description={descriptionNode} align="left" />
+        <SectionHeader title={title} description={descriptionNode} align="left" />
         {dispositifs.length > 0 && (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {dispositifs.map((d, i) => (

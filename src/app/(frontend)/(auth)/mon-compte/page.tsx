@@ -23,7 +23,7 @@ export default async function MonComptePage() {
 
   return (
     <>
-      <PageHero eyebrow="Espace membre" title="Mon compte" />
+      <PageHero title="Mon compte" />
       <Section>
         <div className="container-page max-w-2xl">
           <div className="card-stage p-8">

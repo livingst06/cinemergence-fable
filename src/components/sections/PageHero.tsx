@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 
 type PageHeroProps = {
-  eyebrow?: string;
   title: ReactNode;
   description?: ReactNode;
   children?: React.ReactNode;
@@ -17,7 +16,7 @@ export function PageHero({
   return (
     <section className="relative overflow-hidden bg-noir pt-8 pb-8 md:pt-16 md:pb-14">
       <div className="container-page">
-        <Heading className="display-title max-w-5xl text-cream">{title}</Heading>
+        <Heading className="display-title da-rule max-w-5xl text-convert">{title}</Heading>
         {description && (
           <div className="mt-4 max-w-4xl text-left text-base leading-relaxed text-muted-text md:mt-5 md:text-justify">
             {typeof description === "string" ? (

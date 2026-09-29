@@ -46,7 +46,6 @@ export default async function FinancementPage() {
   return (
     <>
       <PageHero
-        eyebrow="Financement"
         title={"Ton projet peut être pris en\u00a0charge"}
         description={
           <p className="text-lg leading-relaxed md:text-xl md:leading-relaxed">
@@ -88,7 +87,6 @@ export default async function FinancementPage() {
       <Section>
         <div className="container-page max-w-2xl text-base md:text-lg [&_input]:text-base [&_label]:text-base [&_textarea]:text-base md:[&_input]:text-lg md:[&_label]:text-lg md:[&_textarea]:text-lg">
           <SectionHeader
-            eyebrow="Contact"
             title={"Je vérifie mon\u00a0financement"}
             align="left"
           />

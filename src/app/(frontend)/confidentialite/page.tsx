@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function ConfidentialitePage() {
   return (
     <>
-      <PageHero eyebrow="Légal" title="Politique de confidentialité" />
+      <PageHero title="Politique de confidentialité" />
       <Section>
         <div className="container-page max-w-3xl">
           <LegalPageContent title="Politique de confidentialité (RGPD)" content={defaultLegal.confidentialite} />

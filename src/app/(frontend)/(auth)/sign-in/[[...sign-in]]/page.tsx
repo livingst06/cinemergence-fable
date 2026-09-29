@@ -13,7 +13,6 @@ export default function SignInPage() {
   return (
     <>
       <PageHero
-        eyebrow="Espace membre"
         title="Connexion"
         description="Accède à ton espace Cinémergence."
       />

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function MentionsLegalesPage() {
   return (
     <>
-      <PageHero eyebrow="Légal" title="Mentions légales" />
+      <PageHero title="Mentions légales" />
       <Section>
         <div className="container-page max-w-3xl">
           <LegalPageContent title="Mentions légales" content={defaultLegal.mentionsLegales} />

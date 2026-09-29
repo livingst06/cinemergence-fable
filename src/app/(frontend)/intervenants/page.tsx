@@ -27,8 +27,8 @@ export default async function IntervenantsPage() {
       <Section>
         <div className="container-page">
           <SectionHeader
-            eyebrow="Guests"
             title={"Nos intervenants\u00a0professionnels"}
+            align="left"
             description={
               <>
                 <p>Des talents du cinéma qui interviennent en masterclass et sur le plateau</p>

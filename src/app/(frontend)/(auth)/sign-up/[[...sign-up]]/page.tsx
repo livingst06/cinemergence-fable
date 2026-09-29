@@ -13,7 +13,6 @@ export default function SignUpPage() {
   return (
     <>
       <PageHero
-        eyebrow="Espace membre"
         title="Créer un compte"
         description="Rejoins Cinémergence pour suivre tes formations."
       />

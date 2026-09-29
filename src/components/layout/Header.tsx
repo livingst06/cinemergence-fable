@@ -36,6 +36,7 @@ function navLinkClass(active: boolean) {
 export function Header({ formations }: HeaderProps) {
   const pathname = usePathname();
   const [formationsOpen, setFormationsOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navToggleRef = useRef<HTMLInputElement>(null);
   const formationsCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -57,6 +58,7 @@ export function Header({ formations }: HeaderProps) {
 
   const closeMobileNav = () => {
     if (navToggleRef.current) navToggleRef.current.checked = false;
+    setMobileNavOpen(false);
   };
 
   useEffect(() => {
@@ -64,6 +66,11 @@ export function Header({ formations }: HeaderProps) {
       if (formationsCloseTimerRef.current) clearTimeout(formationsCloseTimerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (navToggleRef.current) navToggleRef.current.checked = false;
+    setMobileNavOpen(false);
+  }, [pathname]);
 
   const featured = formations.filter((f) => f.prioritaire);
   const menuFormations = featured.length > 0 ? featured : formations.slice(0, 4);
@@ -159,6 +166,7 @@ export function Header({ formations }: HeaderProps) {
                 type="checkbox"
                 id="mobile-nav-toggle"
                 className="native-touch-control xl:hidden"
+                onChange={(event) => setMobileNavOpen(event.target.checked)}
               />
               <span className="pointer-events-none relative z-0 flex items-center justify-center" aria-hidden>
                 <Menu className="mobile-nav-icon-open h-6 w-6" />
@@ -170,7 +178,11 @@ export function Header({ formations }: HeaderProps) {
         </div>
       </header>
 
-      <div className="mobile-nav-panel fixed inset-x-0 bottom-0 top-[calc(var(--site-notice-h)+env(safe-area-inset-top,0px))] z-[99998] xl:hidden">
+      <div
+        className="mobile-nav-panel fixed inset-x-0 bottom-0 top-[calc(var(--site-notice-h)+env(safe-area-inset-top,0px))] z-[99998] xl:hidden"
+        inert={!mobileNavOpen}
+        aria-hidden={!mobileNavOpen}
+      >
         <label
           htmlFor="mobile-nav-toggle"
           className="mobile-nav-backdrop absolute inset-0 cursor-pointer bg-noir/75"

@@ -174,7 +174,7 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     -webkit-text-size-adjust: 100%;
     hyphens: none;
     -webkit-hyphens: none;
-    overflow-x: clip;
+    overflow-x: hidden;
     scrollbar-gutter: stable;
   }
 
@@ -189,7 +189,7 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   body {
     @apply bg-noir text-cream font-sans antialiased;
     min-height: 100dvh;
-    overflow-x: clip;
+    overflow-x: hidden;
   }
 
   a,
@@ -676,4 +676,75 @@ body:has([data-sticky-cta]) .site-footer {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/*
+ * Hors @layer : sur iOS, un overlay `position:fixed` dans @layer base
+ * peut rester dans le hit-test même avec display:none.
+ */
+.mobile-nav-panel,
+.mobile-nav-panel * {
+  pointer-events: none !important;
+}
+
+header:has(#mobile-nav-toggle:checked) ~ .mobile-nav-panel {
+  display: block;
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto !important;
+}
+
+header:has(#mobile-nav-toggle:checked) ~ .mobile-nav-panel * {
+  pointer-events: auto !important;
+}
+
+@media (min-width: 1280px) {
+  header:has(#mobile-nav-toggle:checked) ~ .mobile-nav-panel,
+  header:has(#mobile-nav-toggle:checked) ~ .mobile-nav-panel * {
+    display: none;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none !important;
+  }
+}
+
+/* iOS : `cursor:pointer` déclenche un faux :hover au 1er tap (le clic part au 2e). */
+@media (hover: none) {
+  a,
+  button,
+  summary,
+  label,
+  [role="button"] {
+    cursor: default;
+  }
+}
+
+/*
+ * iOS Safari : ne pas mettre display:flex ni list-style:none sur <summary>,
+ * sinon le <details> n'ouvre plus au tap.
+ */
+.faq-item > summary {
+  display: block;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .faq-item > summary,
+  .faq-item > summary * {
+    cursor: pointer;
+  }
+}
+
+.faq-item > summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item .faq-chevron {
+  transition: transform 0.2s;
+}
+
+.faq-item[open] .faq-chevron {
+  transform: rotate(180deg);
 }

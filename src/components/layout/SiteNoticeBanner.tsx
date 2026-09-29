@@ -1,5 +1,7 @@
 import { X } from "lucide-react";
 
+import { NdaNumber } from "@/components/NdaNumber";
+
 type SiteNoticeBannerProps = {
   nda: string;
 };
@@ -10,6 +12,7 @@ export function SiteNoticeBanner({ nda }: SiteNoticeBannerProps) {
       className="site-notice-banner pointer-events-auto fixed inset-x-0 top-0 z-[100000] flex items-center pt-[env(safe-area-inset-top,0px)] pr-[max(0.75rem,env(safe-area-inset-right,0px))]"
       role="region"
       aria-label="Mention légale"
+      {...{ "x-apple-data-detectors": "false" }}
     >
       <label
         htmlFor="site-notice-dismiss"
@@ -20,8 +23,10 @@ export function SiteNoticeBanner({ nda }: SiteNoticeBannerProps) {
         <strong className="font-bold">Cinémergence</strong> est un{" "}
         <strong className="font-bold">organisme de formation professionnelle</strong> déclaré
         sous le numéro{" "}
-        <strong className="whitespace-nowrap font-bold">NDA {nda}</strong>, enregistré auprès
-        de la DREETS Île-de-France.
+        <strong className="whitespace-nowrap font-bold">
+          NDA <NdaNumber nda={nda} />,
+        </strong>{" "}
+        enregistré auprès de la DREETS Île-de-France.
       </p>
       <label className="relative z-20 inline-flex h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 cursor-pointer items-center justify-center md:h-7 md:min-h-7 md:w-7 md:min-w-7">
         <input

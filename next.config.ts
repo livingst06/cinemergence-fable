@@ -2,6 +2,9 @@ import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // iPhone / LAN : sans ça, Next bloque les assets de dev hors localhost
+  // et les boutons client (FAQ, etc.) ne réagissent pas au tap.
+  allowedDevOrigins: ["192.168.1.139", "127.0.0.1"],
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30,

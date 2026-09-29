@@ -29,6 +29,12 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${site.name}`,
     },
     description: site.description,
+    formatDetection: {
+      telephone: false,
+      email: false,
+      address: false,
+      date: false,
+    },
     openGraph: {
       type: "website",
       locale: "fr_FR",
@@ -45,7 +51,7 @@ export default async function FrontendLayout({
 
   return (
     <html lang="fr" className="dark min-h-dvh" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <body className="flex min-h-dvh flex-col overflow-x-clip">
+      <body className="flex min-h-dvh flex-col overflow-x-hidden">
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script
           type="application/ld+json"
@@ -59,7 +65,7 @@ export default async function FrontendLayout({
             prioritaire: f.prioritaire,
           }))}
         />
-        <main className="flex-1 overflow-x-clip pt-[calc(var(--site-notice-h)+4rem+env(safe-area-inset-top,0px))] md:pt-[calc(var(--site-notice-h)+4.5rem+env(safe-area-inset-top,0px))]">
+        <main className="flex-1 overflow-x-hidden pt-[calc(var(--site-notice-h)+4rem+env(safe-area-inset-top,0px))] md:pt-[calc(var(--site-notice-h)+4.5rem+env(safe-area-inset-top,0px))]">
           {children}
         </main>
         <Footer

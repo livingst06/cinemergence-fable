@@ -1,4 +1,5 @@
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { NdaNumber } from "@/components/NdaNumber";
 import type { SiteConfig } from "@/lib/data";
 import Link from "next/link";
 
@@ -35,7 +36,9 @@ export function CtaFinal({ site }: CtaFinalProps) {
 
         <ul className="caption-copy mx-auto mt-10 flex max-w-3xl flex-col gap-2 text-center sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2">
           <li>Inscription accompagnée · devis &amp; facture</li>
-          <li>Organisme déclaré · NDA {site.nda}</li>
+          <li>
+            Organisme déclaré · NDA <NdaNumber nda={site.nda} />
+          </li>
           <li>
             <a href={`mailto:${site.email}`} className="hover:text-or-light">
               {site.email}

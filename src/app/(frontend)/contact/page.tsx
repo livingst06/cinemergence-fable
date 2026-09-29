@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Section, SectionHeader } from "@/components/ui/Section";
 import { PageHero } from "@/components/sections/PageHero";
+import { NdaNumber } from "@/components/NdaNumber";
+import { Section, SectionHeader } from "@/components/ui/Section";
 import { ContactForm } from "@/features/contact/ContactForm";
 import { getFormations, getSiteSettings } from "@/lib/data";
 
@@ -104,7 +105,9 @@ export default async function ContactPage({ searchParams }: Props) {
               <h3 className="font-heading text-xl text-cream">Réassurance</h3>
               <ul className="mt-4 space-y-3 text-sm text-muted-text">
                 <li>Inscription accompagnée · devis &amp; facture</li>
-                <li>Organisme de formation déclaré · NDA {site.nda}</li>
+                <li>
+                  Organisme de formation déclaré · NDA <NdaNumber nda={site.nda} />
+                </li>
                 <li>
                   <Link href="/cgv" className="text-or-light hover:underline">
                     CGV &amp; politique d&apos;annulation

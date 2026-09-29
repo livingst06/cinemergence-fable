@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Logo } from "@/components/layout/Logo";
+import { NdaNumber } from "@/components/NdaNumber";
 import { QualiopiMark } from "@/components/brand/QualiopiMark";
 import { InstagramIcon, YoutubeIcon } from "@/components/brand/SocialIcons";
 import type { SiteConfig } from "@/lib/data";
@@ -22,7 +23,7 @@ export function Footer({ site, formations }: FooterProps) {
           <div>
             <Logo />
             <p className="mt-4 text-xs text-muted-text">
-              NDA {site.nda}
+              NDA <NdaNumber nda={site.nda} />
             </p>
             <QualiopiMark className="mt-5" size="sm" />
           </div>

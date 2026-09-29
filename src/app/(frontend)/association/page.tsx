@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { QualiopiMark } from "@/components/brand/QualiopiMark";
+import { NdaNumber } from "@/components/NdaNumber";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { MediaFrame } from "@/components/ui/MediaFrame";
 import { Reveal } from "@/components/ui/Reveal";
@@ -136,7 +137,7 @@ export default async function AssociationPage() {
                 nourrit des parcours concrets — chacun avec un livrable pour l'élève.
               </p>
               <p>
-                Organisme de formation déclaré (NDA {site.nda}), nous accompagnons aussi
+                Organisme de formation déclaré (NDA <NdaNumber nda={site.nda} />), nous accompagnons aussi
                 le financement des formations.
               </p>
             </div>
@@ -154,7 +155,9 @@ export default async function AssociationPage() {
               </div>
               <div>
                 <dt className="text-or-light">NDA</dt>
-                <dd className="text-muted-text">{site.nda}</dd>
+                <dd className="text-muted-text">
+                  <NdaNumber nda={site.nda} />
+                </dd>
               </div>
               <div>
                 <dt className="text-or-light">

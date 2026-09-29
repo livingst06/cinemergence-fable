@@ -37,33 +37,43 @@ async function main() {
   try {
     await client.query(sql);
 
-    const { rows } = await client.query<{ tablename: string; rls_enabled: boolean }>(`
-      SELECT c.relname AS tablename, c.relrowsecurity AS rls_enabled
+    const { rows } = await client.query<{
+      tablename: string;
+      rls_enabled: boolean;
+      owner: string;
+    }>(`
+      SELECT c.relname AS tablename,
+             c.relrowsecurity AS rls_enabled,
+             pg_catalog.pg_get_userbyid(c.relowner) AS owner
       FROM pg_class c
       JOIN pg_namespace n ON n.oid = c.relnamespace
       WHERE n.nspname = 'public'
         AND c.relkind = 'r'
-        AND (
-          c.relname LIKE 'payload_%'
-          OR c.relname LIKE 'formations%'
-          OR c.relname LIKE 'intervenants%'
-          OR c.relname IN (
-            'users', 'users_sessions', 'media', 'temoignages',
-            'form_submissions', 'site_settings', 'legal_pages'
-          )
+        AND NOT EXISTS (
+          SELECT 1 FROM pg_depend d
+          WHERE d.objid = c.oid AND d.deptype = 'e'
         )
       ORDER BY c.relname
     `);
 
-    const disabled = rows.filter((row) => !row.rls_enabled);
+    const disabled = rows.filter(
+      (row) => row.owner === "postgres" && !row.rls_enabled,
+    );
     if (disabled.length > 0) {
       console.error("Tables sans RLS:", disabled.map((row) => row.tablename).join(", "));
       process.exit(1);
     }
 
-    console.log(`✓ RLS activé sur ${rows.length} tables Payload.`);
-    for (const row of rows) {
+    const enabled = rows.filter((row) => row.rls_enabled);
+    console.log(`✓ RLS activé sur ${enabled.length} tables public.`);
+    for (const row of enabled) {
       console.log(`  · ${row.tablename}`);
+    }
+    const skipped = rows.filter((row) => row.owner !== "postgres");
+    if (skipped.length > 0) {
+      console.log(
+        `(ignorées, hors postgres: ${skipped.map((r) => r.tablename).join(", ")})`,
+      );
     }
   } finally {
     await client.end();

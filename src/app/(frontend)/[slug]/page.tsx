@@ -12,6 +12,7 @@ const RESERVED = new Set([
   "formations",
   "intervenants",
   "financement",
+  "faq",
   "association",
   "galerie",
   "contact",

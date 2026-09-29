@@ -20,6 +20,7 @@ const navLinks = [
   { href: "/", label: "Accueil" },
   { href: "/intervenants", label: "Intervenants" },
   { href: "/financement", label: "Financement" },
+  { href: "/faq", label: "FAQ" },
   { href: "/galerie", label: "Galerie" },
   { href: "/association", label: "Qui sommes-nous ?" },
 ];

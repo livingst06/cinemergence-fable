@@ -69,6 +69,11 @@ export function Footer({ site, formations }: FooterProps) {
                 </Link>
               </li>
               <li>
+                <Link href="/faq" className="transition-colors hover:text-or-light">
+                  FAQ
+                </Link>
+              </li>
+              <li>
                 <Link href="/association" className="transition-colors hover:text-or-light">
                   Qui sommes-nous ?
                 </Link>

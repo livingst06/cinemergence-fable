@@ -175,6 +175,7 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     hyphens: none;
     -webkit-hyphens: none;
     overflow-x: clip;
+    scrollbar-gutter: stable;
   }
 
   :root {

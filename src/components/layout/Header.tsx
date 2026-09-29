@@ -27,7 +27,8 @@ const navLinks = [
 
 function navLinkClass(active: boolean) {
   return cn(
-    "text-sm font-medium transition-colors hover:text-or-light",
+    "inline-block shrink-0 text-sm font-medium transition-colors hover:text-or-light",
+    "outline-none focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-or-light/50",
     active ? "text-projector-light" : "text-cream/75",
   );
 }

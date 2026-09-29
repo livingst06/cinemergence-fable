@@ -44,7 +44,7 @@ export default async function FrontendLayout({
   const jsonLd = organizationJsonLd(site);
 
   return (
-    <html lang="fr" className="dark min-h-dvh" suppressHydrationWarning>
+    <html lang="fr" className="dark min-h-dvh" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className="flex min-h-dvh flex-col overflow-x-clip">
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script

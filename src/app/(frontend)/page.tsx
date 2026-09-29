@@ -5,9 +5,11 @@ import Image from "next/image";
 import { preload } from "react-dom";
 
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { BrandSignature } from "@/components/brand/BrandSignature";
 import { HeroVideoBackground } from "@/components/sections/HeroVideoBackground";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { CtaFinal } from "@/features/home/CtaFinal";
+import { DaFilmstrip } from "@/features/home/DaFilmstrip";
 import { HeroProofCard } from "@/features/home/HeroProofCard";
 import { StickyCta } from "@/features/home/StickyCta";
 import { Temoignages } from "@/features/home/Temoignages";
@@ -78,80 +80,74 @@ export default async function HomePage() {
     (a, b) => Number(b.prioritaire) - Number(a.prioritaire),
   );
 
+  const portraitIntervenants = intervenants.filter(
+    (i) =>
+      (i.categorie ?? "professionnel") === "professionnel" && i.slug !== "karina-testa",
+  );
+
   return (
     <>
-      <section className="cinematic-grain relative overflow-hidden bg-noir md:min-h-[52.5vh]">
+      <section className="cinematic-grain relative overflow-hidden bg-noir md:min-h-[78vh]">
         <HeroVideoBackground
           src={heroPublicAsset("hero-plateau-travel.mp4")}
           srcMobile={heroPublicAsset("hero-plateau-travel-mobile.mp4")}
           poster={heroPoster}
         />
         <div className="hero-slash-edge" aria-hidden />
-        <div className="container-page relative z-10 flex flex-col justify-start pt-6 pb-10 md:min-h-[52.5vh] md:pt-10 md:pb-20 lg:pt-12 lg:pb-24">
-          <div className="w-full lg:w-3/4">
-            <p className="eyebrow animate-fade-up">Paris · Marseille · Montpellier</p>
-            <h1 className="display-title mt-3 animate-fade-up-delay-1 text-cream md:mt-6">
-              Cinémergence
-            </h1>
-            <p className="mt-3 animate-fade-up-delay-1 font-heading text-lg leading-snug text-cool-glow md:mt-4 md:text-xl">
-              Le cinéma, en conditions réelles.
-            </p>
-          </div>
-          <ul className="mt-5 w-full max-w-3xl animate-fade-up-delay-2 space-y-2 text-base leading-relaxed text-cream/85 md:mt-6 md:text-lg">
+        <div className="container-page relative z-10 flex flex-col justify-end pt-10 pb-12 md:min-h-[78vh] md:pt-16 md:pb-20 lg:pb-24">
+          <p className="eyebrow animate-fade-up">Cinéma × Formation × Émergence</p>
+          <h1 className="display-title da-rule mt-4 max-w-4xl animate-fade-up-delay-1 text-cream">
+            Cinémergence
+          </h1>
+          <BrandSignature className="mt-4 animate-fade-up-delay-1 text-3xl text-white md:text-5xl" />
+          <p className="mt-3 max-w-xl animate-fade-up-delay-1 font-heading text-[11px] font-semibold uppercase leading-relaxed tracking-[0.22em] text-cream/80 md:text-xs">
+            Des talents d&apos;aujourd&apos;hui aux cinéastes de demain
+          </p>
+          <ul className="mt-8 w-full max-w-xl animate-fade-up-delay-2 space-y-2 text-base leading-relaxed text-cream/90 md:text-lg">
             {[
               "Une immersion totale sur de vrais plateaux",
               "Direction d'acteur et encadrement pro",
-              "Matériel cinéma professionnel",
               "Un livrable concret pour chaque parcours",
-              "Montage / post-prod selon le parcours",
             ].map((item) => (
               <li key={item} className="flex items-center gap-3 md:gap-4">
-                <span
-                  className="h-2 w-2 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]"
-                  aria-hidden
-                />
+                <span className="h-1.5 w-1.5 shrink-0 bg-convert" aria-hidden />
                 <span>{item}</span>
               </li>
             ))}
           </ul>
-          <div className="mt-6 w-full max-w-xl animate-fade-up-delay-2 md:mt-8">
-            <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-start">
-              <ButtonLink href="/contact" size="lg" className="btn-cta min-h-12 w-full px-8 sm:w-auto sm:px-10">
-                Je réserve ma place
-              </ButtonLink>
-              <ButtonLink
-                href="/formations"
-                size="lg"
-                className="btn-outline-warm min-h-12 w-full rounded-lg px-8 py-2.5 text-sm font-semibold uppercase tracking-wider sm:w-auto sm:px-10"
-              >
-                Voir les formations
-              </ButtonLink>
-            </div>
-            <div className="mt-6 md:mt-10">
-              <HeroProofCard nda={site.nda} />
-            </div>
+          <div className="mt-8 flex w-full max-w-xl animate-fade-up-delay-2 flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+            <ButtonLink href="/contact" size="lg" className="btn-cta min-h-12 w-full px-8 sm:w-auto sm:px-10">
+              Je réserve ma place
+            </ButtonLink>
+            <ButtonLink
+              href="/formations"
+              size="lg"
+              className="btn-outline-warm min-h-12 w-full rounded-none px-8 py-2.5 text-sm font-semibold uppercase tracking-wider sm:w-auto sm:px-10"
+            >
+              Voir les formations
+            </ButtonLink>
+          </div>
+          <div className="mt-8 max-w-md animate-fade-up-delay-3">
+            <HeroProofCard nda={site.nda} />
           </div>
         </div>
       </section>
 
+      <DaFilmstrip />
+
       <Section>
         <div className="container-page">
           <SectionHeader
+            index="01"
             eyebrow="Intervenants"
-            title="Nos intervenants"
+            title="Les visages du métier"
             align="left"
             description="Des professionnels en activité qui transmettent leur exigence sur le plateau."
           />
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {intervenants
-              .filter(
-                (i) =>
-                  (i.categorie ?? "professionnel") === "professionnel" &&
-                  i.slug !== "karina-testa",
-              )
-              .map((i) => (
-                <IntervenantCard key={i.slug} compact intervenant={i} />
-              ))}
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+            {portraitIntervenants.map((i) => (
+              <IntervenantCard key={i.slug} compact intervenant={i} />
+            ))}
           </div>
         </div>
       </Section>
@@ -159,6 +155,7 @@ export default async function HomePage() {
       <Section id="formations">
         <div className="container-page">
           <SectionHeader
+            index="02"
             eyebrow="Catalogue"
             title="Nos formations"
             align="left"
@@ -186,6 +183,7 @@ export default async function HomePage() {
         <div className="container-page space-y-12 md:space-y-16">
           <div>
             <SectionHeader
+              index="03"
               eyebrow="Production"
               title="Matériel cinéma"
               align="left"
@@ -242,12 +240,19 @@ export default async function HomePage() {
         </div>
       </Section>
 
+      <section className="bg-convert px-4 py-10 text-center md:py-14">
+        <p className="mx-auto max-w-4xl font-serif text-2xl leading-snug text-white md:text-4xl">
+          Une école de cinéma premium, humaine et mémorable.
+        </p>
+      </section>
+
       <Temoignages temoignages={temoignages} />
       <FinancementSection dispositifs={financement} />
 
       <Section>
         <div className="container-page">
           <SectionHeader
+            index="06"
             eyebrow="Newsletter"
             title="Les prochaines sessions"
             align="left"

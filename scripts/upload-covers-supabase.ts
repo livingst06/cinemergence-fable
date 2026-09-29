@@ -64,6 +64,10 @@ const uploads: UploadSpec[] = [
     local: path.resolve("public/images/founder/choukri-roua.jpg"),
     key: "media/covers/founder-choukri-roua.jpg",
   },
+  {
+    local: path.resolve("public/images/da/filmstrip.jpg"),
+    key: "media/da/filmstrip.jpg",
+  },
 ];
 
 async function main() {

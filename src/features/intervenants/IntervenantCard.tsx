@@ -4,7 +4,7 @@ import type { IntervenantData } from "@/lib/defaults";
 
 type IntervenantCardProps = {
   intervenant: IntervenantData;
-  /** Homepage: portrait about one-third the default card photo. */
+  /** Conservé pour compat — toutes les cards ont désormais le même format. */
   compact?: boolean;
 };
 
@@ -26,9 +26,8 @@ function IntervenantBadge({ intervenant }: { intervenant: IntervenantData }) {
   return null;
 }
 
-export function IntervenantCard({ intervenant, compact = false }: IntervenantCardProps) {
+export function IntervenantCard({ intervenant }: IntervenantCardProps) {
   const badge = <IntervenantBadge intervenant={intervenant} />;
-  const photoClass = compact ? "w-[28%]" : "w-1/3";
 
   return (
     <article className="group card-stage relative w-full overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:plateau-glow">
@@ -39,8 +38,8 @@ export function IntervenantCard({ intervenant, compact = false }: IntervenantCar
           mimeType={intervenant.photoMimeType}
           alt={`Portrait — ${intervenant.nom}`}
           aspect="portrait"
-          sizes="(max-width: 640px) 22vw, (max-width: 1024px) 12vw, 8vw"
-          className={`${photoClass} rounded-md border-0`}
+          sizes="(max-width: 640px) 45vw, (max-width: 1024px) 28vw, 20vw"
+          className="w-[78%] rounded-md border-0"
         />
       </div>
       <div className="px-3 pb-3 pt-2">

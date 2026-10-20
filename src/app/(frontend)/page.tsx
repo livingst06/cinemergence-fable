@@ -92,7 +92,7 @@ export default async function HomePage() {
         <div className="relative z-10 flex min-h-[100svh] flex-1 flex-col pt-[calc(var(--site-notice-h)+var(--site-header-h)+env(safe-area-inset-top,0px))] md:min-h-[calc(78vh+var(--site-notice-h)+var(--site-header-h)+env(safe-area-inset-top,0px))]">
           <div className="container-page flex flex-col items-start pt-3 md:pt-4">
             <p className="eyebrow animate-fade-up">
-              devenir cinéaste professionnel
+              Apprendre avec des stars, tourner avec des pros
             </p>
             <h1 className="display-title da-rule mt-4 animate-fade-up-delay-1 text-cream">
               Cinémergence

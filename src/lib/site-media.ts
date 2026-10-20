@@ -25,13 +25,20 @@ function supabaseMediaUrl(objectKey: string): string {
 
 const cover = (filename: string) => supabaseMediaUrl(`media/covers/${filename}`);
 
+/** Couvertures versionnées dans le dépôt. Elles priment sur l'image du CMS. */
+const committedFormationCovers: Record<string, string> = {
+  "formation-jouer-face-camera": "/images/formations/formation-acting-tournage.png",
+  "formation-passer-a-la-realisation": "/images/formations/formation-realisation.png",
+  "formation-realiser-documentaire": "/images/formations/formation-documentaire.jpg",
+  "formation-stand-up": "/images/formations/formation-stand-up.png",
+};
+
 export const staticFormationCovers: Record<string, string> = {
-  "formation-jouer-face-camera": cover("formation-jouer-face-camera.jpg"),
+  ...committedFormationCovers,
   "formation-tourner-bande-demo": cover("formation-bande-demo.jpg"),
   "formation-realiser-film-court": cover("formation-realiser-court-metrage.jpg"),
   "formation-ecriture-court-metrage": cover("formation-ecriture-scenario.jpg"),
   "formation-lumiere-image": cover("formation-camera-cinema.jpg"),
-  "formation-passer-a-la-realisation": cover("formation-production-film.jpg"),
 };
 
 /** Pool de covers Supabase pour les formations sans image dédiée. */
@@ -117,6 +124,7 @@ function isUsableCoverUrl(url: string): boolean {
 
 /** Cover dédiée si connue, sinon image plateau de secours (stable par slug). */
 export function resolveFormationCoverUrl(slug: string, explicit?: string | null): string {
+  if (committedFormationCovers[slug]) return committedFormationCovers[slug];
   if (explicit && isUsableCoverUrl(explicit)) {
     // Prefer Supabase / absolute URLs; allow remaining /images/formations during transition
     return explicit;

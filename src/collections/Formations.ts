@@ -171,8 +171,12 @@ export const Formations: CollectionConfig = {
     {
       name: "tarif",
       type: "text",
+      access: {
+        read: ({ req }) => req.user?.role === "admin",
+      },
       admin: {
-        description: "Laisser vide si tarif à confirmer",
+        description:
+          "Non affiché sur le site. Conservé pour le paiement d'une place en session.",
       },
     },
     {

@@ -1,4 +1,12 @@
-/** Remove unlisted financeur names (AFDAS, OPCO, CPF, France Travail) from public copy. */
+const FUNDING_MENTION =
+  /\b(financements?|financer|financés?|financées?|financeurs?|prise en charge|éligibilit\w*|AFDAS|OPCO|CPF|France Travail|Pôle emploi|AIF|Mon Compte Formation)\b/i;
+
+/** True when public copy still promises a financement or names a financeur. */
+export function mentionsFunding(text: string): boolean {
+  return FUNDING_MENTION.test(text);
+}
+
+/** Remove unlisted financeur names and any remaining financement wording from public copy. */
 export function stripUnlistedFinanceurMentions(text: string): string {
   let value = text;
 
@@ -6,19 +14,21 @@ export function stripUnlistedFinanceurMentions(text: string): string {
     /dispositifs possibles/i.test(value) &&
     /\b(AFDAS|OPCO|CPF|France Travail)\b/i.test(value)
   ) {
-    return "Oui — on t'accompagne pour étudier les possibilités de financement.";
+    return "";
   }
 
   value = value
     .replace(/\s*—\s*axe prioritaire AFDAS\s*\d{4}/gi, "")
     .replace(/\s*axe prioritaire AFDAS\s*\d{4}/gi, "")
-    .replace(/\s*;\s*[^;]*\b(AFDAS|OPCO|CPF|France Travail|Pôle emploi|AIF)\b[^;]*/gi, "")
+    .replace(/\s*(?:—|,)?\s*et un axe prioritaire de financement(?:\s+en\s+\d{4})?/gi, "")
+    .replace(/\s*;\s*[^;]*\b(AFDAS|OPCO|CPF|France Travail|Pôle emploi|AIF|financement)\b[^;]*/gi, "")
     .replace(/,?\s*en vue d['’]une éligibilité future au CPF\.?/gi, "")
     .replace(/\s*—\s*Mon Compte Formation\b/gi, "")
     .replace(/\bMon Compte Formation\b/gi, "")
     .replace(/\bmoncompteformation\.gouv\.fr\b/gi, "")
-    .replace(/montage du dossier AFDAS/gi, "montage du dossier")
-    .replace(/dossier AFDAS/gi, "dossier de financement")
+    .replace(/\s*\([^)]*(?:dossier AFDAS|montage du dossier AFDAS|dossier de financement|financement)[^)]*\)/gi, "")
+    .replace(/montage du dossier AFDAS/gi, "")
+    .replace(/dossier AFDAS/gi, "")
     .replace(/\s*,\s*(AFDAS|OPCO|CPF|France Travail)\s*,/gi, ",")
     .replace(/\s*(?:,|ou|et)\s*(AFDAS|OPCO|CPF|France Travail)\b/gi, "")
     .replace(/\b(AFDAS|OPCO|CPF|France Travail)\s*(?:,|ou|et)\s*/gi, "")
@@ -103,7 +113,6 @@ type FormationTilesSource = {
   dureeHeures?: number;
   dureeJours?: number;
   format: string;
-  tarif: string | null;
   effectifMax?: number;
   publicCible: string;
 };
@@ -113,7 +122,7 @@ export type FormationTileBullet = {
   value: string;
 };
 
-/** Compact bullets mirroring the 5 stats tiles on a formation detail page. */
+/** Compact bullets mirroring the stats tiles on a formation detail page. */
 export function summarizeFormationTiles(
   formation: FormationTilesSource,
 ): FormationTileBullet[] {
@@ -124,7 +133,6 @@ export function summarizeFormationTiles(
       value: duree.subtitle ? `${duree.title} — ${duree.subtitle}` : duree.title,
     },
     { label: "Format", value: formation.format },
-    { label: "Tarif", value: formation.tarif ?? "À confirmer" },
   ];
   if (formation.effectifMax != null) {
     bullets.push({

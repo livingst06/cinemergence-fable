@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "FAQ — Cinémergence",
     description:
-      "Questions fréquentes sur Cinémergence : formations cinéma, certification Qualiopi, financement et inscription à Paris.",
+      "Questions fréquentes sur Cinémergence : formations cinéma, certification Qualiopi et inscription à Paris.",
     alternates: { canonical: "/faq" },
   };
 }

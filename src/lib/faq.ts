@@ -11,23 +11,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     q: "Qu'est-ce que la certification Qualiopi ?",
-    r: "Qualiopi est la certification qualité nationale des organismes de formation. Elle atteste que nos processus — de la conception des programmes au suivi des stagiaires — répondent à un référentiel qualité exigeant. Elle ouvre l'accès aux dispositifs de prise en charge selon votre statut.",
-  },
-  {
-    q: "Mes formations peuvent-elles être financées ?",
-    r: "Oui. Selon votre statut, une prise en charge est possible (financement employeur, financement personnel, ou d'autres dispositifs). Nous vous accompagnons dans le montage de votre dossier.",
-  },
-  {
-    q: "Je suis intermittent du spectacle ou artiste-auteur, comment financer ma formation ?",
-    r: "Selon vos droits et votre statut, tout ou partie de votre formation peut être pris en charge. Nous vous aidons à vérifier votre éligibilité et à constituer votre demande.",
-  },
-  {
-    q: "Je suis salarié, comment financer ma formation ?",
-    r: "Votre formation peut être financée par votre employeur, dans le cadre du plan de développement des compétences. Nous fournissons l'ensemble des documents nécessaires (programme, devis, convention) pour votre demande.",
-  },
-  {
-    q: "Combien de temps faut-il pour monter un dossier de financement ?",
-    r: "Les délais varient selon le dispositif et certains dossiers imposent un délai de carence avant l'entrée en formation. Nous vous indiquons le délai applicable à votre situation dès l'étude de votre demande, afin d'anticiper votre date de démarrage.",
+    r: "Qualiopi est la certification qualité nationale des organismes de formation. Elle atteste que nos processus — de la conception des programmes au suivi des stagiaires — répondent à un référentiel qualité exigeant.",
   },
   {
     q: "Quelles formations proposez-vous ?",
@@ -51,6 +35,6 @@ export const faqItems: FaqItem[] = [
   },
   {
     q: "Comment s'inscrire ou obtenir un devis ?",
-    r: "Contactez-nous via notre formulaire, par e-mail ou par téléphone. Nous étudions votre projet, identifions le dispositif de financement adapté à votre statut, puis vous transmettons un devis et le programme détaillé de la formation choisie.",
+    r: "Contactez-nous via notre formulaire, par e-mail ou par téléphone. Nous étudions votre projet, puis vous transmettons un devis et le programme détaillé de la formation choisie.",
   },
 ];

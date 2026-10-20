@@ -24,8 +24,7 @@ export default async function ContactPage({ searchParams }: Props) {
   const params = await searchParams;
   const formations = await getFormations();
   const site = await getSiteSettings();
-  const defaultType =
-    params.type === "financement" ? "financement" : ("inscription" as const);
+  const defaultType = "inscription" as const;
 
   return (
     <>
@@ -33,7 +32,7 @@ export default async function ContactPage({ searchParams }: Props) {
         title="Je me lance"
         description={
           <>
-            <p>Une question, une inscription, un projet de financement&nbsp;?</p>
+            <p>Une question, une inscription&nbsp;?</p>
             <p className="mt-1">Écris-nous — on te répond rapidement.</p>
           </>
         }

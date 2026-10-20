@@ -16,7 +16,7 @@ import {
 import { FormationSessionGallery } from "@/features/formations/FormationSessionGallery";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
-import { defaultFinancement, formationPath } from "@/lib/defaults";
+import { formationPath } from "@/lib/defaults";
 import { splitDuree } from "@/lib/formation-format";
 import { courseJsonLd } from "@/lib/seo";
 
@@ -55,10 +55,6 @@ export default async function FormationDetailPage({ params }: Props) {
   const linkedIntervenants = allIntervenants.filter(
     (i) => formation.intervenants.includes(i.slug) && i.slug !== "karina-testa",
   );
-
-  const financementLabels = defaultFinancement
-    .filter((d) => formation.financements.includes(d.key))
-    .map((d) => d.titre);
 
   const livrables =
     formation.livrables && formation.livrables.length > 0
@@ -124,13 +120,6 @@ export default async function FormationDetailPage({ params }: Props) {
             >
               Je m&apos;inscris
             </ButtonLink>
-            <ButtonLink
-              href="/financement"
-              size="lg"
-              className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
-            >
-              Vérifier le financement
-            </ButtonLink>
           </div>
         </header>
 
@@ -138,8 +127,8 @@ export default async function FormationDetailPage({ params }: Props) {
           <div
             className={
               formation.effectifMax != null
-                ? "grid gap-4 sm:grid-cols-2 xl:grid-cols-5 xl:gap-5"
-                : "grid gap-4 sm:grid-cols-2 xl:grid-cols-4 xl:gap-5"
+                ? "grid gap-4 sm:grid-cols-2 xl:grid-cols-4 xl:gap-5"
+                : "grid gap-4 sm:grid-cols-2 xl:grid-cols-3 xl:gap-5"
             }
           >
             <div className="card-stage p-5 md:p-6">
@@ -154,12 +143,6 @@ export default async function FormationDetailPage({ params }: Props) {
             <div className="card-stage p-5 md:p-6">
               <p className="eyebrow">Format</p>
               <p className="mt-2 font-heading text-2xl text-cream">{formation.format}</p>
-            </div>
-            <div className="card-stage p-5 md:p-6">
-              <p className="eyebrow">Tarif</p>
-              <p className="mt-2 font-heading text-2xl text-cream">
-                {formation.tarif ?? "À confirmer"}
-              </p>
             </div>
             {formation.effectifMax != null && (
               <div className="card-stage p-5 md:p-6">
@@ -178,7 +161,7 @@ export default async function FormationDetailPage({ params }: Props) {
         </div>
 
         <div className="max-w-3xl">
-          <h2 className="section-title">Pour qui ?</h2>
+          <h2 className="section-title da-rule">Pour qui ?</h2>
           <p className="mt-4 text-muted-text">{formation.pourQui}</p>
           {formation.prerequis && (
             <p className="mt-6 text-sm text-muted-text">
@@ -196,7 +179,7 @@ export default async function FormationDetailPage({ params }: Props) {
 
         <div className="max-w-3xl">
           <SectionHeader
-            title="Ce que cette formation change"
+            title="Ce que ça t'apporte"
             align="left"
             className="mb-6 md:mb-8"
           />
@@ -218,6 +201,7 @@ export default async function FormationDetailPage({ params }: Props) {
         <div>
           <SectionHeader
             title={"À l'issue, tu seras capable\u00a0de"}
+            align="left"
             className="mb-8 md:mb-10"
           />
           <ul className="grid gap-3 md:grid-cols-2">
@@ -237,15 +221,18 @@ export default async function FormationDetailPage({ params }: Props) {
           <div>
             <SectionHeader
               title="Ce que tu développes"
+              align="left"
               className="mb-8 md:mb-10"
             />
             <FormationLabeledGrid items={competences} />
           </div>
         )}
 
+        {formation.programme.length > 0 && (
         <div>
           <SectionHeader
             title="Déroulement de la formation"
+            align="left"
             className="mb-8 md:mb-10"
           />
           <div className="grid gap-4 md:grid-cols-2">
@@ -294,10 +281,12 @@ export default async function FormationDetailPage({ params }: Props) {
             ))}
           </div>
         </div>
+        )}
 
         <div>
           <SectionHeader
             title="Ce qui est inclus"
+            align="left"
             className="mb-8 md:mb-10"
           />
           <ul className="grid gap-3 sm:grid-cols-2">
@@ -325,7 +314,7 @@ export default async function FormationDetailPage({ params }: Props) {
         </div>
 
         <div>
-          <SectionHeader title="Tu repars avec" className="mb-8 md:mb-10" />
+          <SectionHeader title="Tu repars avec" align="left" className="mb-8 md:mb-10" />
           <ul className="grid gap-3 md:grid-cols-2">
             {livrables.map((item) => (
               <li
@@ -347,54 +336,9 @@ export default async function FormationDetailPage({ params }: Props) {
           />
         )}
 
-        <div className="max-w-3xl">
-          <SectionHeader
-            title="Comment s'inscrire"
-            align="left"
-            className="mb-6 md:mb-8"
-          />
-          {financementLabels.length > 0 && (
-            <p className="text-sm text-muted-text">
-              Financements éligibles :{" "}
-              <span className="text-or-light">{financementLabels.join(" · ")}</span>
-            </p>
-          )}
-          {formation.modalitesAccesFinancement && (
-            <p className="mt-4 leading-relaxed text-muted-text">
-              {formation.modalitesAccesFinancement}
-            </p>
-          )}
-          {formation.delaiAcces && (
-            <p className="mt-4 text-sm text-muted-text">
-              <span className="font-semibold text-or-light">Délai d&apos;accès — </span>
-              {formation.delaiAcces}
-            </p>
-          )}
-          {formation.evaluation && (
-            <p className="mt-4 text-sm text-muted-text">
-              <span className="font-semibold text-or-light">Évaluation — </span>
-              {formation.evaluation}
-            </p>
-          )}
-          {formation.accessibilite && (
-            <p className="mt-4 text-sm text-muted-text">
-              <span className="font-semibold text-or-light">Accessibilité — </span>
-              {formation.accessibilite}
-            </p>
-          )}
-          <div className="mt-8">
-            <ButtonLink
-              href="/financement"
-              className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
-            >
-              Je vérifie mon financement
-            </ButtonLink>
-          </div>
-        </div>
-
         {linkedIntervenants.length > 0 && (
           <div>
-            <SectionHeader title="Encadré par" className="mb-8 md:mb-10" />
+            <SectionHeader title="Encadré par" align="left" className="mb-8 md:mb-10" />
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
               {linkedIntervenants.map((i) => (
                 <IntervenantCard key={i.slug} compact intervenant={i} />
@@ -426,7 +370,7 @@ export default async function FormationDetailPage({ params }: Props) {
         <div className="border-t border-white/[0.06] pt-12 text-center md:pt-16">
           <h2 className="section-title">Prêt à te lancer ?</h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-text">
-            Contacte-nous pour t&apos;inscrire ou vérifier le financement de cette formation.
+            Contacte-nous pour t&apos;inscrire à cette formation.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <ButtonLink
@@ -435,12 +379,6 @@ export default async function FormationDetailPage({ params }: Props) {
               className="btn-cta"
             >
               Je m&apos;inscris
-            </ButtonLink>
-            <ButtonLink
-              href="/financement"
-              className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider"
-            >
-              Je vérifie mon financement
             </ButtonLink>
           </div>
         </div>

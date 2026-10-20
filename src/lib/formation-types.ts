@@ -24,8 +24,6 @@ export const PUBLIC_FORMATION_SLUGS = [
   "formation-doublage-voix",
   "formation-passer-a-la-realisation",
   "formation-realiser-documentaire",
-  "formation-lumiere-image",
-  "formation-ecriture-court-metrage",
   "formation-comedien-face-action",
 ] as const;
 

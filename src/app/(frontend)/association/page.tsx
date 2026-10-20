@@ -133,8 +133,7 @@ export default async function AssociationPage() {
                 nourrit des parcours concrets — chacun avec un livrable pour l'élève.
               </p>
               <p>
-                Organisme de formation déclaré (NDA <NdaNumber nda={site.nda} />), nous accompagnons aussi
-                le financement des formations.
+                Organisme de formation déclaré (NDA <NdaNumber nda={site.nda} />).
               </p>
             </div>
           </div>

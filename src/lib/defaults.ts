@@ -246,9 +246,8 @@ Conditions générales de vente — Cinémergence
 
 Les présentes CGV s'appliquent aux formations proposées par Cinémergence, association loi 1901, NDA 117 888 658 78.
 
-Inscription : toute inscription est confirmée par email après validation du financement ou du paiement.
+Inscription : toute inscription est confirmée par email après validation du paiement.
 Annulation : conditions d'annulation communiquées lors de l'inscription.
-Financement : les formations peuvent être prises en charge selon éligibilité, après étude de ta situation.
 Réclamations : cinemergence.paris@gmail.com
   `.trim(),
 };

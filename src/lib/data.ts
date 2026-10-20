@@ -1,4 +1,9 @@
-import { sanitizeEncadrement, sanitizePedagogyList, stripUnlistedFinanceurMentions } from "./formation-format";
+import {
+  mentionsFunding,
+  sanitizeEncadrement,
+  sanitizePedagogyList,
+  stripUnlistedFinanceurMentions,
+} from "./formation-format";
 import {
   defaultFinancement,
   defaultFormations,
@@ -17,7 +22,7 @@ import {
 import { getPayloadClient } from "./payload";
 import { isLocalMediaStorage } from "./storage-env";
 import { getPublicSiteUrl } from "./site-url";
-import { publicFinancements, PUBLIC_FINANCEMENT_KEYS, isFormationActive } from "./formation-types";
+import { PUBLIC_FINANCEMENT_KEYS, isFormationActive } from "./formation-types";
 import {
   getStaticCarouselItems,
   resolveFormationCoverUrl,
@@ -181,12 +186,15 @@ function sanitizeFormationCopy(formation: FormationData): FormationData {
     intro: sanitizePublicText(formation.intro),
     contexteFinalite: sanitizeOptionalText(formation.contexteFinalite),
     delaiAcces: sanitizeOptionalText(formation.delaiAcces),
-    financements: publicFinancements(formation.financements),
-    modalitesAccesFinancement: sanitizeOptionalText(formation.modalitesAccesFinancement),
-    faq: formation.faq.map((item) => ({
-      q: sanitizePublicText(item.q),
-      r: sanitizePublicText(item.r),
-    })),
+    financements: [],
+    modalitesAccesFinancement: undefined,
+    faq: formation.faq
+      .filter((item) => !mentionsFunding(item.q) && !mentionsFunding(item.r))
+      .map((item) => ({
+        q: sanitizePublicText(item.q),
+        r: sanitizePublicText(item.r),
+      }))
+      .filter((item) => item.q && item.r && !mentionsFunding(item.q) && !mentionsFunding(item.r)),
     metaTitle: sanitizePublicText(formation.metaTitle),
     metaDescription: sanitizePublicText(formation.metaDescription),
   };
@@ -228,7 +236,7 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     lieu: doc.lieu ? String(doc.lieu) : undefined,
     delaiAcces: sanitizeOptionalText(doc.delaiAcces ? String(doc.delaiAcces) : undefined),
     tarif: doc.tarif ? String(doc.tarif) : null,
-    financements: publicFinancements(doc.financements),
+    financements: [],
     methodesPedagogiques: sanitizePedagogyList(mapStringArray(doc.methodesPedagogiques)),
     moyensTechniques: sanitizePedagogyList(mapStringArray(doc.moyensTechniques)),
     encadrement: sanitizeEncadrement(
@@ -236,14 +244,15 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     ),
     evaluation: doc.evaluation ? String(doc.evaluation) : undefined,
     accessibilite: doc.accessibilite ? String(doc.accessibilite) : undefined,
-    modalitesAccesFinancement: sanitizeOptionalText(
-      doc.modalitesAccesFinancement ? String(doc.modalitesAccesFinancement) : undefined,
-    ),
+    modalitesAccesFinancement: undefined,
     intervenants: mapIntervenantSlugs(doc),
-    faq: ((doc.faq as { q: string; r: string }[] | undefined) ?? []).map((item) => ({
-      q: sanitizePublicText(item.q),
-      r: sanitizePublicText(item.r),
-    })),
+    faq: ((doc.faq as { q: string; r: string }[] | undefined) ?? [])
+      .filter((item) => !mentionsFunding(item.q) && !mentionsFunding(item.r))
+      .map((item) => ({
+        q: sanitizePublicText(item.q),
+        r: sanitizePublicText(item.r),
+      }))
+      .filter((item) => item.q && item.r && !mentionsFunding(item.q) && !mentionsFunding(item.r)),
     metaTitle: sanitizePublicText(String(doc.metaTitle)),
     metaDescription: sanitizePublicText(String(doc.metaDescription)),
     coverImageUrl: resolveDisplayMediaUrl(

@@ -24,7 +24,6 @@ export const PUBLIC_FORMATION_SLUGS = [
   "formation-doublage-voix",
   "formation-passer-a-la-realisation",
   "formation-realiser-documentaire",
-  "formation-comedien-face-action",
 ] as const;
 
 export function isFormationActive(slug: string): boolean {

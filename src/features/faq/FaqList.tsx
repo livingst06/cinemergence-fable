@@ -6,7 +6,7 @@ export function FaqList({ items }: { items: FaqItem[] }) {
       {items.map((item) => (
             <details key={item.q} className="faq-item group border-b border-white/[0.08]">
               <summary className="faq-summary py-3.5">
-                <span className="flex min-h-11 items-start justify-between gap-4 font-heading text-[13px] font-semibold uppercase leading-snug tracking-[0.08em] text-cream group-open:text-convert group-focus-within:text-convert md:text-[15px]">
+                <span className="flex min-h-11 items-start justify-between gap-4 font-heading text-base font-semibold leading-snug text-cream group-open:text-convert group-focus-within:text-convert">
               <span>{item.q}</span>
               <svg
                 className="faq-chevron mt-0.5 size-4 shrink-0 text-muted-text"
@@ -22,7 +22,7 @@ export function FaqList({ items }: { items: FaqItem[] }) {
               </svg>
             </span>
           </summary>
-          <p className="pb-4 pr-8 text-sm leading-relaxed text-muted-text md:text-[15px]">
+          <p className="pb-4 pr-8 text-base leading-relaxed text-muted-text">
             {item.r}
           </p>
         </details>

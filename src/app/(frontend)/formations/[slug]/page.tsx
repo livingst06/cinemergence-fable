@@ -80,18 +80,18 @@ export default async function FormationDetailPage({ params }: Props) {
 
       <div className="container-page space-y-10 py-8 md:space-y-20 md:py-16 lg:py-20">
         <header className="max-w-4xl">
-          <h1 className="display-title da-rule max-w-5xl text-convert">{formation.titre}</h1>
-          <p className="mt-5 text-base leading-relaxed text-muted-text md:text-lg">
+          <h1 className="display-title da-rule max-w-5xl">{formation.titre}</h1>
+          <p className="mt-5 text-lg leading-relaxed text-muted-text">
             {formation.sousTitre ?? formation.accroche}
           </p>
           <div className="mt-6 flex flex-col items-start gap-3">
             {formation.prioritaire && (
-              <span className="rounded-full bg-projector px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-cream">
+              <span className="rounded-full bg-projector px-3 py-1.5 text-sm font-bold text-cream">
                 À la une
               </span>
             )}
             <div className="w-full max-w-2xl rounded-xl border border-or/25 bg-or/5 px-4 py-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-or-light">
+              <p className="text-sm font-semibold text-or-light">
                 Livrable
               </p>
               <ul className="mt-2 space-y-1.5 text-sm leading-snug text-or-light">
@@ -133,7 +133,7 @@ export default async function FormationDetailPage({ params }: Props) {
           >
             <div className="card-stage p-5 md:p-6">
               <p className="eyebrow">Durée</p>
-              <p className="mt-2 font-heading text-3xl text-cream">{dureeParts.title}</p>
+              <p className="mt-2 text-left font-sans text-3xl text-cream">{dureeParts.title}</p>
               {dureeParts.subtitle && (
                 <p className="mt-1 text-sm leading-relaxed text-muted-text">
                   {dureeParts.subtitle}
@@ -142,12 +142,12 @@ export default async function FormationDetailPage({ params }: Props) {
             </div>
             <div className="card-stage p-5 md:p-6">
               <p className="eyebrow">Format</p>
-              <p className="mt-2 font-heading text-2xl text-cream">{formation.format}</p>
+              <p className="mt-2 text-left font-sans text-2xl text-cream">{formation.format}</p>
             </div>
             {formation.effectifMax != null && (
               <div className="card-stage p-5 md:p-6">
                 <p className="eyebrow">Places</p>
-                <p className="mt-2 font-heading text-2xl text-cream">
+                <p className="mt-2 text-left font-sans text-2xl text-cream">
                   {formation.effectifMax} places max par session
                 </p>
               </div>
@@ -238,7 +238,7 @@ export default async function FormationDetailPage({ params }: Props) {
           <div className="grid gap-4 md:grid-cols-2">
             {formation.programme.map((module, i) => (
               <article key={`${module.titre}-${i}`} className="card-stage flex flex-col p-6">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-or-light">
+                <span className="text-sm font-semibold text-or-light">
                   {module.jour != null
                     ? `Jour ${String(module.jour).padStart(2, "0")}`
                     : `Module ${String(i + 1).padStart(2, "0")}`}
@@ -262,7 +262,7 @@ export default async function FormationDetailPage({ params }: Props) {
                           <div className="flex items-start justify-between gap-3">
                             <p className="text-sm font-medium text-cream/90">{seq.titre}</p>
                             {seq.duree && (
-                              <span className="shrink-0 rounded-md border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-text">
+                              <span className="shrink-0 rounded-md border border-white/10 bg-white/[0.03] px-2 py-0.5 text-sm font-semibold text-muted-text">
                                 {seq.duree}
                               </span>
                             )}
@@ -339,7 +339,7 @@ export default async function FormationDetailPage({ params }: Props) {
         {linkedIntervenants.length > 0 && (
           <div>
             <SectionHeader title="Encadré par" align="left" className="mb-8 md:mb-10" />
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {linkedIntervenants.map((i) => (
                 <IntervenantCard key={i.slug} compact intervenant={i} />
               ))}

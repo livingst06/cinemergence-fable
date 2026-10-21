@@ -34,7 +34,8 @@ export function QualiopiMark({
       <figcaption className="min-w-0 pt-0.5">
         {showTitle && (
           <p className="text-sm font-heading font-semibold leading-snug text-cream">
-            Organisme de formation certifié jusqu&apos;au 17 août 2029
+            Organisme de formation certifié jusqu&apos;au{" "}
+            <span className="whitespace-nowrap">17 août 2029</span>
           </p>
         )}
         <p

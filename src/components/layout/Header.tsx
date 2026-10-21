@@ -26,7 +26,7 @@ const navLinks = [
 
 function navLinkClass(active: boolean) {
   return cn(
-    "inline-block shrink-0 font-heading text-[11px] font-semibold uppercase tracking-[0.16em] transition-colors hover:text-convert",
+    "inline-block shrink-0 font-heading text-sm font-semibold transition-colors hover:text-convert",
     "outline-none focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-convert/50",
     active ? "text-convert" : "text-cream/80",
   );
@@ -123,7 +123,7 @@ export function Header({ formations }: HeaderProps) {
                       >
                         <span>{f.titreCourt}</span>
                         {f.prioritaire && (
-                          <span className="rounded-full bg-projector/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-projector-light">
+                          <span className="rounded-full bg-projector/20 px-2 py-0.5 text-sm font-semibold text-projector-light">
                             À la une
                           </span>
                         )}
@@ -240,7 +240,7 @@ export function Header({ formations }: HeaderProps) {
                   </Link>
                 );
               })}
-            <ButtonLink href="/contact" className="btn-cta mt-3" onClick={closeMobileNav}>
+            <ButtonLink href="/contact" className="btn-cta mt-3 min-h-11" onClick={closeMobileNav}>
               Je m&apos;inscris
             </ButtonLink>
           </div>

@@ -56,7 +56,7 @@
   --radius: 0.25rem;
   --site-notice-h: 4rem;
   --site-header-h: 4rem;
-  --font-apple: var(--font-source-sans), "Source Sans 3", system-ui, sans-serif;
+  --font-apple: -apple-system, BlinkMacSystemFont, var(--font-inter), Inter, system-ui, sans-serif;
 }
 
 .dark {
@@ -140,10 +140,37 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   --color-convert: var(--convert);
   --color-convert-light: var(--convert-light);
   --color-convert-deep: var(--convert-deep);
-  --font-sans: var(--font-source-sans), "Source Sans 3", system-ui, sans-serif;
-  --font-heading: var(--font-oswald), Oswald, sans-serif;
-  --font-serif: var(--font-bodoni), "Bodoni Moda", Georgia, serif;
-  --font-script: var(--font-allura), Allura, cursive;
+  --font-sans: -apple-system, BlinkMacSystemFont, var(--font-inter), Inter, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-serif: var(--font-sans);
+  --font-script: var(--font-sans);
+  /* Échelle unique : 14 caption · 16 corps · 20 sous-titre · 32 titre · 44 affichage */
+  --text-xs: 0.875rem;
+  --text-xs--line-height: 1.45;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.45;
+  --text-base: 1rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.45;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.4;
+  --text-2xl: 2rem;
+  --text-2xl--line-height: 1.2;
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 2.75rem;
+  --text-4xl--line-height: 1.1;
+  --text-5xl: 2.75rem;
+  --text-5xl--line-height: 1.1;
+  --text-6xl: 2.75rem;
+  --text-6xl--line-height: 1.1;
+  --text-7xl: 2.75rem;
+  --text-7xl--line-height: 1.1;
+  --text-8xl: 2.75rem;
+  --text-8xl--line-height: 1.1;
+  --text-9xl: 2.75rem;
+  --text-9xl--line-height: 1.1;
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -189,9 +216,11 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   }
 
   body {
-    @apply bg-noir text-cream font-sans antialiased;
+    @apply bg-noir text-cream font-sans text-base antialiased;
     min-height: 100dvh;
     overflow-x: hidden;
+    letter-spacing: -0.011em;
+    font-optical-sizing: auto;
   }
 
   a,
@@ -360,7 +389,27 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   h2,
   h3,
   h4 {
-    @apply font-heading font-semibold uppercase tracking-tight;
+    @apply font-sans font-semibold;
+    text-transform: none;
+  }
+
+  h1 {
+    font-size: 2.75rem;
+    line-height: 1.08;
+    letter-spacing: -0.022em;
+  }
+
+  h2 {
+    font-size: 2rem;
+    line-height: 1.15;
+    letter-spacing: -0.018em;
+  }
+
+  h3,
+  h4 {
+    font-size: 1.25rem;
+    line-height: 1.3;
+    letter-spacing: -0.012em;
   }
 
   ::selection {
@@ -391,7 +440,8 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   }
 
   .display-title {
-    @apply font-heading text-[clamp(1.85rem,7.2vw,4.5rem)] font-semibold uppercase leading-[0.9] tracking-[0.04em] text-balance;
+    @apply font-sans text-4xl font-semibold text-balance text-cream;
+    letter-spacing: -0.022em;
   }
 
   /* Blanc opaque iOS : Safari ignore bg-color des enfants d’un backdrop-filter. */
@@ -408,19 +458,32 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   }
 
   .eyebrow {
-    @apply text-[11px] font-heading font-semibold uppercase tracking-[0.32em] text-convert;
+    @apply text-sm font-sans font-medium text-convert;
+    letter-spacing: -0.011em;
+  }
+
+  .hero-kicker {
+    font-family: var(--font-sans);
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.018em;
+    color: var(--convert);
+    text-wrap: balance;
   }
 
   .section-title {
-    @apply font-heading text-[clamp(1.85rem,4.4vw,2.85rem)] font-semibold uppercase leading-[1.05] tracking-[0.06em] text-balance text-convert;
+    @apply font-sans text-2xl font-semibold text-balance text-cream;
+    letter-spacing: -0.018em;
   }
 
   .body-copy {
-    @apply text-base leading-relaxed text-muted-text md:text-lg;
+    @apply text-base leading-relaxed text-muted-text;
   }
 
   .caption-copy {
-    @apply text-xs leading-snug tracking-wide text-muted-text;
+    @apply text-xs leading-snug text-muted-text;
+    letter-spacing: -0.006em;
   }
 
   .text-tungsten {
@@ -517,7 +580,8 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
 
   .btn-cta,
   .btn-convert {
-    @apply relative overflow-hidden border-0 font-heading font-semibold uppercase tracking-[0.14em];
+    @apply relative overflow-hidden border-0 font-sans text-base font-semibold;
+    letter-spacing: -0.011em;
     color: #ffffff;
     background: var(--convert);
     box-shadow: 0 8px 28px -8px var(--convert-glow);
@@ -552,7 +616,8 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   }
 
   .btn-outline-warm {
-    @apply border border-white/10 bg-white/[0.03] text-cream backdrop-blur-sm;
+    @apply border border-white/10 bg-white/[0.03] font-sans text-base font-semibold text-cream backdrop-blur-sm;
+    letter-spacing: -0.011em;
     transition: border-color 0.2s, background 0.2s, color 0.2s;
   }
 
@@ -605,7 +670,8 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   }
 
   .truth-card-vrai {
-    @apply mt-4 font-heading text-xl uppercase leading-snug tracking-[0.04em] md:text-2xl;
+    @apply mt-4 font-sans text-xl font-semibold leading-snug;
+    letter-spacing: -0.012em;
     color: var(--cream);
   }
 
@@ -748,8 +814,8 @@ header:has(#mobile-nav-toggle:checked) ~ .mobile-nav-panel * {
 }
 
 .da-signature {
-  line-height: 0.98;
-  padding-block: 0.15em 0.42em;
+  line-height: 1.15;
+  padding-block: 0.15em 0.2em;
 }
 
 .da-signature-tilt {
@@ -779,22 +845,22 @@ header:has(#mobile-nav-toggle:checked) ~ .mobile-nav-panel * {
 }
 
 .da-index {
-  font-family: var(--font-heading), Oswald, sans-serif;
-  font-size: 0.7rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.45;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: -0.011em;
   color: var(--convert);
 }
 
 .da-filmstrip-caption {
   width: max-content;
   max-width: none;
-  font-family: var(--font-oswald), Oswald, sans-serif;
-  font-weight: 500;
-  font-size: clamp(0.78rem, 1.05vw, 1.15rem);
-  line-height: 1.16;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  letter-spacing: -0.011em;
   color: #ffffff;
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45);
 }
@@ -804,15 +870,7 @@ header:has(#mobile-nav-toggle:checked) ~ .mobile-nav-panel * {
 }
 
 .da-filmstrip-caption-mobile {
-  font-size: clamp(0.88rem, 3.2vw, 1.2rem);
-  letter-spacing: 0.12em;
-  line-height: 1.18;
-}
-
-@media (min-width: 768px) {
-  .da-filmstrip-caption-mobile {
-    font-size: clamp(0.78rem, 1.05vw, 1.15rem);
-    letter-spacing: 0.12em;
-    line-height: 1.16;
-  }
+  font-size: 0.875rem;
+  letter-spacing: -0.011em;
+  line-height: 1.35;
 }

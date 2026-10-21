@@ -24,7 +24,7 @@ export function Footer({ site, formations }: FooterProps) {
           </div>
 
           <div className="min-w-0">
-            <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-or-light">
+            <h3 className="mb-4 text-sm font-semibold text-or-light">
               Formations
             </h3>
             <ul className="space-y-2">
@@ -50,7 +50,7 @@ export function Footer({ site, formations }: FooterProps) {
           </div>
 
           <div className="min-w-0">
-            <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-or-light">
+            <h3 className="mb-4 text-sm font-semibold text-or-light">
               Informations
             </h3>
             <ul className="space-y-2 text-sm text-cream/70">
@@ -83,7 +83,7 @@ export function Footer({ site, formations }: FooterProps) {
           </div>
 
           <div className="col-span-2 min-w-0 lg:col-span-1">
-            <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-or-light">
+            <h3 className="mb-4 text-sm font-semibold text-or-light">
               Contact
             </h3>
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-cream/70 lg:grid-cols-1">

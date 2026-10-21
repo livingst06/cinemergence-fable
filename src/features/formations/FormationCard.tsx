@@ -41,7 +41,7 @@ export function FormationCard({ formation }: FormationCardProps) {
             className="h-full rounded-none border-0 border-b border-white/[0.06] !aspect-auto"
           />
           {formation.prioritaire && (
-            <span className="absolute left-3 top-3 rounded-full bg-projector px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-cream shadow-lg">
+            <span className="absolute left-3 top-3 rounded-full bg-projector px-2.5 py-1 text-sm font-bold text-cream shadow-lg">
               À la une
             </span>
           )}
@@ -51,17 +51,17 @@ export function FormationCard({ formation }: FormationCardProps) {
           <Badge variant="outline" className="w-fit shrink-0 border-or/25 bg-or/5 text-or-light">
             {formation.pole}
           </Badge>
-          <h3 className="line-clamp-2 font-heading text-base font-semibold uppercase leading-snug tracking-[0.06em] text-cream md:text-lg">
+          <h3 className="line-clamp-2 font-heading text-base font-semibold leading-snug text-cream md:text-lg">
             {formation.titre}
           </h3>
-          <p className="line-clamp-2 text-[15px] leading-relaxed text-muted-text">
+          <p className="line-clamp-2 text-base leading-relaxed text-muted-text">
             {formation.accroche}
           </p>
-          <p className="line-clamp-2 border-t border-white/[0.06] pt-3 text-[11px] font-medium uppercase leading-relaxed tracking-[0.14em] text-or-light">
+          <p className="line-clamp-2 border-t border-white/[0.06] pt-3 text-sm font-medium leading-relaxed text-or-light">
             Livrable · {formationLivrableLabel(formation)}
           </p>
           {formation.effectifMax != null && (
-            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-text">
+            <p className="text-sm font-medium text-muted-text">
               {formation.effectifMax} places max par session
             </p>
           )}

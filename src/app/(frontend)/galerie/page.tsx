@@ -37,7 +37,7 @@ export default async function GaleriePage() {
       <PageHero
         title="Les interviews"
         description={
-          <p className="text-pretty text-base leading-relaxed md:text-xl md:leading-relaxed">
+          <p className="text-pretty text-lg leading-relaxed">
             Paroles d&apos;élèves, filmées pendant les formations
           </p>
         }
@@ -50,7 +50,7 @@ export default async function GaleriePage() {
         headingAs="h2"
         title="Sur le plateau"
         description={
-          <p className="text-pretty text-base leading-relaxed md:text-xl md:leading-relaxed">
+          <p className="text-pretty text-lg leading-relaxed">
             Moments capturés pendant nos sessions de formation
           </p>
         }

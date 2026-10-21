@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Allura, Bodoni_Moda, Oswald, Source_Sans_3 } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -13,29 +13,11 @@ import { cn } from "@/lib/utils";
 
 import "../globals.css";
 
-const sourceSans = Source_Sans_3({
+const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-source-sans",
-});
-
-const oswald = Oswald({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-oswald",
-});
-
-const bodoni = Bodoni_Moda({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-bodoni",
-});
-
-const allura = Allura({
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-  variable: "--font-allura",
+  variable: "--font-inter",
+  axes: ["opsz"],
 });
 
 export const viewport: Viewport = {
@@ -79,10 +61,7 @@ export default async function FrontendLayout({
     <html
       lang="fr"
       className={cn(
-        sourceSans.variable,
-        oswald.variable,
-        bodoni.variable,
-        allura.variable,
+        inter.variable,
         "dark min-h-dvh",
       )}
       data-scroll-behavior="smooth"

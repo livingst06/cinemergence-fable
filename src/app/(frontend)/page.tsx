@@ -91,16 +91,16 @@ export default async function HomePage() {
         <div className="hero-slash-edge" aria-hidden />
         <div className="relative z-10 flex min-h-[100svh] flex-1 flex-col pt-[calc(var(--site-notice-h)+var(--site-header-h)+env(safe-area-inset-top,0px))] md:min-h-[calc(78vh+var(--site-notice-h)+var(--site-header-h)+env(safe-area-inset-top,0px))]">
           <div className="container-page flex flex-col items-start pt-3 md:pt-4">
-            <p className="eyebrow animate-fade-up">
+            <p className="hero-kicker animate-fade-up">
               Apprendre avec des stars, tourner avec des pros
             </p>
             <h1 className="display-title da-rule mt-4 animate-fade-up-delay-1 text-cream">
               Cinémergence
             </h1>
-            <p className="mt-3 animate-fade-up-delay-1 font-heading text-[11px] font-semibold uppercase leading-relaxed tracking-[0.22em] text-cream/80 md:text-xs">
+            <p className="mt-3 animate-fade-up-delay-1 font-sans text-lg font-normal leading-snug text-cream/80">
               Des talents d&apos;aujourd&apos;hui aux cinéastes de demain
             </p>
-            <ul className="mt-8 animate-fade-up-delay-2 space-y-2 text-base leading-relaxed text-cream/90 md:text-lg">
+            <ul className="mt-8 animate-fade-up-delay-2 space-y-2 text-base leading-relaxed text-cream/90">
               {[
                 "Tu tournes sur de vrais plateaux",
                 "Tu montes en niveau avec des pros",
@@ -119,7 +119,7 @@ export default async function HomePage() {
               <ButtonLink
                 href="/formations"
                 size="lg"
-                className="btn-outline-warm min-h-12 w-full rounded-none px-8 py-2.5 text-sm font-semibold uppercase tracking-wider sm:w-auto sm:px-10"
+                className="btn-outline-warm min-h-12 w-full rounded-none px-8 sm:w-auto sm:px-10"
               >
                 Voir les formations
               </ButtonLink>
@@ -171,7 +171,7 @@ export default async function HomePage() {
             align="left"
             description="Des professionnels en activité qui transmettent leur exigence sur le plateau."
           />
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
             {portraitIntervenants.map((i) => (
               <IntervenantCard key={i.slug} compact intervenant={i} />
             ))}

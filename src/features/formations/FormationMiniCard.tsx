@@ -36,7 +36,7 @@ export function FormationMiniCard({ formation }: FormationMiniCardProps) {
           />
         </div>
         <div className="px-4 py-3.5 md:px-5 md:py-4">
-          <h3 className="line-clamp-2 text-left font-heading text-[13px] font-semibold uppercase leading-snug tracking-[0.08em] text-cream md:text-sm">
+          <h3 className="line-clamp-2 text-left font-heading text-sm font-semibold leading-snug text-cream">
             {formation.titreCourt}
           </h3>
         </div>

@@ -175,14 +175,16 @@ export default async function AssociationPage() {
       <Section variant="secondary">
         <div className="container-page text-center">
           <h2 className="section-title">Une question ?</h2>
-          <p className="mx-auto mt-4 max-w-xl text-muted-text">
-            Écris-nous ou appelle-nous au {site.phone} — on te répond rapidement.
+          <p className="mx-auto mt-4 max-w-xl text-balance text-muted-text">
+            <span className="whitespace-nowrap">Écris-nous</span> ou{" "}
+            <span className="whitespace-nowrap">appelle-nous au {site.phone}</span>
+            {" "}— on te répond rapidement.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <ButtonLink href="/contact" className="btn-cta">
               Je réserve ma place
             </ButtonLink>
-            <ButtonLink href="/formations" className="btn-outline-warm rounded-lg px-6 py-2.5 text-sm font-semibold uppercase tracking-wider">
+            <ButtonLink href="/formations" className="btn-outline-warm rounded-lg px-6">
               Voir les formations
             </ButtonLink>
           </div>

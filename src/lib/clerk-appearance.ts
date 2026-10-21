@@ -18,11 +18,11 @@ export const clerkAppearance = {
     rootBox: "w-full",
     cardBox: "shadow-2xl border border-border",
     card: "bg-noir-secondary",
-    headerTitle: "font-heading tracking-wide uppercase",
+    headerTitle: "font-sans font-semibold tracking-tight",
     headerSubtitle: "text-muted-foreground",
     socialButtonsBlockButton: "border border-border hover:bg-noir-tertiary",
     formButtonPrimary:
-      "bg-convert hover:bg-convert-light transition-colors font-heading uppercase tracking-wider shadow-[0_4px_16px_-4px_var(--convert-glow)]",
+      "bg-convert hover:bg-convert-light transition-colors font-sans font-semibold shadow-[0_4px_16px_-4px_var(--convert-glow)]",
     formFieldInput: "bg-noir-tertiary border-border focus:border-convert",
     footerActionLink: "text-convert hover:text-convert-light",
     identityPreviewEditButton: "text-convert",

@@ -41,7 +41,7 @@ export function FinancementSection({
                   <FinanceurLogo financeurKey={d.key} />
                   <h3 className="mt-4 font-heading text-xl text-or-light">{d.titre}</h3>
                   <p className="body-copy mt-2 text-left md:text-justify">{d.description}</p>
-                  <p className="caption-copy mt-4 font-medium uppercase text-cool-glow">
+                  <p className="caption-copy mt-4 font-medium text-cool-glow">
                     {d.public}
                   </p>
                 </div>
@@ -54,7 +54,7 @@ export function FinancementSection({
             <ButtonLink
               href="/financement"
               size="lg"
-              className="btn-outline-warm min-h-12 rounded-lg px-8 py-2.5 text-sm font-semibold uppercase tracking-wider"
+              className="btn-outline-warm min-h-12 rounded-lg px-8"
             >
               Je vérifie mon financement
             </ButtonLink>

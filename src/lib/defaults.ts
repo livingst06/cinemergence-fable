@@ -42,7 +42,7 @@ export const defaultSite = {
   description:
     "Cinémergence, école de formation cinéma à Paris. Formations professionnelles pour comédiens, techniciens et entreprises — encadrées comme de vrais plateaux.",
   url: "https://cinemergence.fr",
-  email: "cinemergence.paris@gmail.com",
+  email: "contact@cinemergence.fr",
   phone: "+33 7 69 18 55 94",
   city: "Paris, Île-de-France",
   nda: "117 888 658 78",
@@ -224,7 +224,7 @@ export const defaultLegal = {
   mentionsLegales: `
 Cinémergence — Association loi 1901
 Siège : Paris, Île-de-France
-Email : cinemergence.paris@gmail.com
+Email : contact@cinemergence.fr
 Numéro de déclaration d'activité (NDA) : 117 888 658 78
 
 Directeur de la publication : Cinémergence
@@ -239,7 +239,7 @@ Données collectées : nom, email, téléphone, message, formation souhaitée.
 Finalité : répondre à vos demandes, gérer les inscriptions, envoyer des informations sur nos formations.
 Base légale : consentement et intérêt légitime.
 Durée de conservation : 3 ans à compter du dernier contact.
-Vos droits : accès, rectification, suppression, opposition — contactez cinemergence.paris@gmail.com.
+Vos droits : accès, rectification, suppression, opposition — contactez contact@cinemergence.fr.
   `.trim(),
   cgv: `
 Conditions générales de vente — Cinémergence
@@ -248,6 +248,6 @@ Les présentes CGV s'appliquent aux formations proposées par Cinémergence, ass
 
 Inscription : toute inscription est confirmée par email après validation du paiement.
 Annulation : conditions d'annulation communiquées lors de l'inscription.
-Réclamations : cinemergence.paris@gmail.com
+Réclamations : contact@cinemergence.fr
   `.trim(),
 };

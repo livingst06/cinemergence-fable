@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { getFormations, getSiteSettings } from "@/lib/data";
+import { formationPath } from "@/lib/defaults";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [site, formations] = await Promise.all([getSiteSettings(), getFormations()]);
@@ -13,7 +14,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/association",
     "/galerie",
     "/contact",
-    "/formations/kheiron",
     "/mentions-legales",
     "/confidentialite",
     "/cgv",
@@ -27,7 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: path === "" ? 1 : path === "/formations" ? 0.95 : 0.8,
     })),
     ...formations.map((f) => ({
-      url: `${site.url}/formations/${f.slug}`,
+      url: `${site.url}${formationPath(f.slug)}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: f.prioritaire ? 0.9 : 0.7,

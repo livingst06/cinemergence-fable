@@ -20,6 +20,7 @@ import {
   getSiteSettings,
   getTemoignages,
 } from "@/lib/data";
+import { publicFormateurSlugs } from "@/lib/defaults";
 
 export const revalidate = 300;
 
@@ -79,6 +80,9 @@ export default async function HomePage() {
     (i) =>
       (i.categorie ?? "professionnel") === "professionnel" && i.slug !== "karina-testa",
   );
+  const formateurs = publicFormateurSlugs
+    .map((slug) => intervenants.find((i) => i.slug === slug))
+    .filter((i) => i != null);
 
   return (
     <>
@@ -178,6 +182,23 @@ export default async function HomePage() {
           </div>
         </div>
       </Section>
+
+      {formateurs.length > 0 && (
+        <Section compact>
+          <div className="container-page">
+            <SectionHeader
+              title="Les formateurs"
+              align="left"
+              description="Ils accompagnent les élèves sur toute la formation."
+            />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+              {formateurs.map((i) => (
+                <IntervenantCard key={i.slug} compact intervenant={i} />
+              ))}
+            </div>
+          </div>
+        </Section>
+      )}
 
       <Section compact>
         <div className="container-page space-y-8 md:space-y-10">

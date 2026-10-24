@@ -5,6 +5,7 @@ import { NdaNumber } from "@/components/NdaNumber";
 import { QualiopiMark } from "@/components/brand/QualiopiMark";
 import { InstagramIcon, YoutubeIcon } from "@/components/brand/SocialIcons";
 import type { SiteConfig } from "@/lib/data";
+import { formationPath } from "@/lib/defaults";
 
 type FooterProps = {
   site: SiteConfig;
@@ -39,7 +40,7 @@ export function Footer({ site, formations }: FooterProps) {
               {footerFormations.map((f) => (
                 <li key={f.slug}>
                   <Link
-                    href={`/formations/${f.slug}`}
+                    href={formationPath(f.slug)}
                     className="text-sm text-cream/70 transition-colors hover:text-or-light"
                   >
                     {f.titreCourt}

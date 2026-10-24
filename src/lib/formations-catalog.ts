@@ -2277,6 +2277,149 @@ export const formationsCatalog: Omit<FormationData, "active">[] = [
     metaDescription: "Écrire et jouer son stand-up. 30 heures — 4 journées de 7 h 30. École de formation Cinémergence à Paris.",
   },
   {
+    slug: "kheiron",
+    pole: "Jeu",
+    titre: "Masterclass avec Kheiron",
+    titreCourt: "Masterclass avec Kheiron",
+    sousTitre: "Écris et joue ton sketch devant Kheiron, puis sur la scène d'un café-théâtre — 30 heures",
+    prioritaire: false,
+    audience: "intermittent",
+    accroche:
+      "4 jours pour écrire, roder et jouer ton sketch devant Kheiron, puis sur la scène d'un café-théâtre parisien.",
+    publicCible: "Débutants et confirmés qui veulent monter sur scène. Aucune expérience préalable n'est nécessaire.",
+    livrable: "Ton sketch joué devant le public d'un café-théâtre, filmé et monté",
+    livrables: [
+      "La captation montée de ta scène ouverte en café-théâtre",
+      "Ton passage filmé devant Kheiron le premier jour, et ta scène finale : ton avant / après",
+      "Une feuille de route écrite pour retravailler ton sketch",
+    ],
+    intro:
+      "Tu fais rire tes proches. Ici, tu passes de l'idée à une vraie scène : tu écris ton sketch, tu le joues devant Kheiron dès le premier jour, tu le réécris, puis tu le présentes devant le public d'un café-théâtre parisien.",
+    contexteFinalite:
+      "Entre « je suis drôle » et « je tiens une salle », il manque le passage devant un public qui ne te doit rien, et des retours sur ton propre texte.\n\nPendant 4 jours, sur deux week-ends, tu travailles ton sketch du premier jet à la scène. Le samedi 28 novembre, Kheiron anime la masterclass au Théâtre Apollo et te coache en direct sur ton passage. Les formateurs reprennent ensuite l'écriture et le jeu jusqu'à la scène ouverte du 6 décembre, filmée en conditions professionnelles.",
+    pourQui:
+      "Pour tous ceux qui veulent découvrir le stand-up, apprendre à faire rire ou perfectionner leur humour sur scène. Débutants, passionnés, humoristes, comédiens, auteurs, créateurs de contenu ou simples curieux : seule compte l'envie de monter sur scène, et d'être présent les 4 jours.",
+    objectifs: [
+      "Jouer ton sketch devant Kheiron et intégrer ses retours",
+      "Repérer les mécanismes du rire et réécrire tes vannes",
+      "Trouver ton angle, ton personnage de scène et la structure de ton passage",
+      "Travailler le rythme, les silences et le rapport au public",
+      "Roder ton sketch entre les deux week-ends avec une feuille de route",
+      "Jouer 4 à 5 minutes devant le public d'un café-théâtre",
+    ],
+    competences: [
+      "Mécanismes du rire : surprise, décalage, tabou, autodérision",
+      "Écriture de la vanne : prémisse, setup, punchline, tag, callback",
+      "Persona : angle, personnage de scène, structure du passage",
+      "Jeu : rythme, silences, gestion d'un bide ou d'un chahut",
+      "Scène : passage devant public et lecture des retours",
+    ],
+    programme: [
+      {
+        jour: 1,
+        titre: "Le métier et le diagnostic",
+        objectifJournee: "Samedi 28 novembre, au Théâtre Apollo : comprendre le métier et jouer ton sketch devant Kheiron.",
+        sequences: [
+          { titre: "Masterclass avec Kheiron", detail: "Son parcours, le métier de stand-uppeur, les scènes ouvertes, les plateaux, les comedy clubs, et tes questions." },
+          { titre: "Ton passage devant lui", detail: "4 à 5 minutes, puis ses retours sur ton texte." },
+          { titre: "Passage filmé", detail: "Ton point de départ, pour mesurer la progression au jour 4." },
+        ],
+      },
+      {
+        jour: 2,
+        titre: "Comprendre le rire, écrire la vanne",
+        objectifJournee: "Dimanche 29 novembre : réécrire ton sketch et repartir avec une feuille de route.",
+        sequences: [
+          { titre: "Les mécanismes du rire", detail: "Surprise, décalage, tabou, autodérision." },
+          { titre: "La structure d'une vanne", detail: "Prémisse, setup, punchline, tag, callback." },
+          { titre: "Réécriture", detail: "Tu retravailles ton sketch et tu repars avec ta feuille de route." },
+        ],
+      },
+      {
+        jour: 3,
+        titre: "Se trouver et passer à la scène",
+        objectifJournee: "Samedi 5 décembre : passer du texte retravaillé pendant la semaine à la scène.",
+        sequences: [
+          { titre: "Ton angle et ta structure", detail: "Personnage de scène, point de vue, enchaînement du passage." },
+          { titre: "Rythme et public", detail: "Silences, tempo, gérer un bide ou un chahut." },
+          { titre: "Filages filmés", detail: "Passages, retours et visionnage." },
+        ],
+      },
+      {
+        jour: 4,
+        titre: "Rodage et scène ouverte",
+        objectifJournee: "Dimanche 6 décembre : dernière répétition, puis scène ouverte le soir.",
+        sequences: [
+          { titre: "Générale", detail: "Dernière réécriture et répétition du passage." },
+          { titre: "Scène ouverte", detail: "4 à 5 minutes devant le public d'un café-théâtre parisien." },
+          { titre: "Captation et bilan", detail: "Filmée en conditions professionnelles, avec un retour à chaud." },
+        ],
+      },
+    ],
+    duree: "30 heures — 4 journées",
+    dureeHeures: 30,
+    dureeJours: 4,
+    format: "2 week-ends · 28–29 novembre et 5–6 décembre 2026",
+    modalite: "Présentiel",
+    effectifMax: 20,
+    prerequis: "Aucune expérience préalable n'est nécessaire. Apporte un premier sketch le jour 1, même brouillon.",
+    lieu: "Paris — Théâtre Apollo le 28 novembre, puis salle de travail et café-théâtre",
+    delaiAcces: "Inscription dans la limite des 20 places. Le stage est confirmé dès 10 inscrits.",
+    tarif: "1 500 €",
+    financements: [],
+    methodesPedagogiques: [
+      "Masterclass et coaching en direct sur ton propre sketch",
+      "Ateliers d'écriture, réécriture et feuille de route personnelle",
+      "Filages filmés avec visionnage et retours",
+      "Scène ouverte devant public, hors du seul groupe d'élèves",
+    ],
+    moyensTechniques: [
+      "Salle de travail pour l'écriture et les filages",
+      "Captation du passage du jour 1 et de la scène ouverte",
+      "Montage de la captation remis après la formation",
+    ],
+    encadrement:
+      "Le jour 1, Kheiron anime la masterclass au Théâtre Apollo et coache les passages. Phil Darwin accompagne le groupe pendant les 4 jours, avec un formateur dont le nom reste secret jusqu'à l'annonce.",
+    evaluation:
+      "Le jour 1, ton passage devant Kheiron est filmé : c'est le point de départ. Les filages du jour 3 servent de retours en cours de parcours. La scène ouverte du jour 4 est filmée, avec un bilan à chaud. Tu repars avec les captations et une attestation de fin de formation.",
+    accessibilite:
+      "Les locaux sont accessibles et les modalités pédagogiques peuvent être adaptées en fonction des besoins. Toute situation particulière est étudiée en amont avec le référent handicap.",
+    intervenants: ["kheiron", "phil-darwin", "formateur-mystere"],
+    faq: [
+      {
+        q: "Je n'ai jamais fait de scène. C'est pour moi ?",
+        r: "Oui. Aucune expérience préalable n'est nécessaire. Tu écris et tu rodes ton passage avec les formateurs avant la scène ouverte.",
+      },
+      {
+        q: "Est-ce que je dois arriver avec un texte ?",
+        r: "Oui, apporte un premier sketch le jour 1, même brouillon. C'est lui que tu joues devant Kheiron, puis que tu réécris jusqu'à la scène finale.",
+      },
+      {
+        q: "Est-ce que Kheiron est présent les 4 jours ?",
+        r: "Kheiron anime le jour 1, le samedi 28 novembre au Théâtre Apollo : la masterclass, puis les passages coachés. Phil Darwin t'accompagne pendant les 4 jours, jusqu'à la scène ouverte.",
+      },
+      {
+        q: "Pourquoi deux week-ends ?",
+        r: "La semaine entre les deux sessions te laisse le temps de réécrire ton sketch avec ta feuille de route, et de suivre la formation sans quitter ton emploi.",
+      },
+      {
+        q: "Comment se passe la scène finale ?",
+        r: "Le dimanche 6 décembre au soir, dans un café-théâtre parisien. Tu joues 4 à 5 minutes devant le public, filmé par une équipe de captation, avec un retour à chaud.",
+      },
+      {
+        q: "La vidéo de mon passage m'appartient ?",
+        r: "Oui. Tu reçois la captation montée de ton passage après la formation, pour tes réseaux, les programmateurs ou tes candidatures.",
+      },
+      {
+        q: "Avec quoi est-ce que je repars concrètement ?",
+        r: "La captation montée de ta scène ouverte, ton avant / après filmé, et une feuille de route écrite pour continuer à roder ton sketch.",
+      },
+    ],
+    metaTitle: "Masterclass avec Kheiron — Formation stand-up Paris | Cinémergence",
+    metaDescription:
+      "Masterclass stand-up de 4 jours à Paris : joue ton sketch devant Kheiron, réécris-le, puis termine sur la scène d'un café-théâtre. 28–29 novembre et 5–6 décembre 2026.",
+  },
+  {
     slug: "formation-tourner-bande-demo",
     pole: "Jeu",
     titre: "Tourner sa bande démo professionnelle",

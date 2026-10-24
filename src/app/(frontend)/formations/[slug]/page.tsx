@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {
   Accordion,
   AccordionContent,
@@ -16,7 +16,7 @@ import {
 import { FormationSessionGallery } from "@/features/formations/FormationSessionGallery";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
-import { formationPath } from "@/lib/defaults";
+import { canonicalFormationSlug, formationPath } from "@/lib/defaults";
 import { splitDuree } from "@/lib/formation-format";
 import { courseJsonLd } from "@/lib/seo";
 
@@ -28,11 +28,14 @@ type Props = {
 
 export async function generateStaticParams() {
   const formations = await getFormations();
-  return formations.map((f) => ({ slug: f.slug }));
+  return formations
+    .filter((f) => canonicalFormationSlug(f.slug) === f.slug && f.slug !== "kheiron")
+    .map((f) => ({ slug: f.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: raw } = await params;
+  const slug = canonicalFormationSlug(raw);
   const formation = await getFormationBySlug(slug);
   if (!formation) return {};
   return {
@@ -43,7 +46,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function FormationDetailPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug: raw } = await params;
+  const slug = canonicalFormationSlug(raw);
+  if (raw !== slug) redirect(formationPath(slug));
   const formation = await getFormationBySlug(slug);
   if (!formation) notFound();
 
@@ -52,9 +57,10 @@ export default async function FormationDetailPage({ params }: Props) {
     getIntervenants(),
   ]);
 
-  const linkedIntervenants = allIntervenants.filter(
-    (i) => formation.intervenants.includes(i.slug) && i.slug !== "karina-testa",
-  );
+  const intervenantBySlug = new Map(allIntervenants.map((i) => [i.slug, i]));
+  const linkedIntervenants = formation.intervenants
+    .map((slug) => intervenantBySlug.get(slug))
+    .filter((i): i is NonNullable<typeof i> => i != null && i.slug !== "karina-testa");
 
   const livrables =
     formation.livrables && formation.livrables.length > 0

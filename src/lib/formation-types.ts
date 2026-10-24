@@ -19,6 +19,7 @@ export function publicFinancements(keys: unknown): FinancementKey[] {
  * Les autres restent dans le CMS pour une réactivation ultérieure.
  */
 export const PUBLIC_FORMATION_SLUGS = [
+  "kheiron",
   "formation-stand-up",
   "formation-jouer-face-camera",
   "formation-doublage-voix",
@@ -96,8 +97,24 @@ export type FormationData = {
   coverImageMimeType?: string;
 };
 
+/** Exception : la masterclass Kheiron reste sur cette URL, promo WhatsApp comprise. */
+export const KHEIRON_FORMATION_SLUG = "kheiron";
+export const KHEIRON_FORMATION_PATH = "/formations/kheiron";
+
+const FORMATION_PATH_EXCEPTIONS: Record<string, string> = {
+  [KHEIRON_FORMATION_SLUG]: KHEIRON_FORMATION_PATH,
+  "formation-kheiron": KHEIRON_FORMATION_PATH,
+  "masterclass-kheiron": KHEIRON_FORMATION_PATH,
+  "masterclass-avec-kheiron": KHEIRON_FORMATION_PATH,
+};
+
 export function formationPath(slug: string) {
-  return `/formations/${slug}`;
+  return FORMATION_PATH_EXCEPTIONS[slug] ?? `/formations/${slug}`;
+}
+
+export function canonicalFormationSlug(slug: string) {
+  if (FORMATION_PATH_EXCEPTIONS[slug] === KHEIRON_FORMATION_PATH) return KHEIRON_FORMATION_SLUG;
+  return slug;
 }
 
 export function formationLivrableLabel(formation: Pick<FormationData, "livrable" | "livrables">) {

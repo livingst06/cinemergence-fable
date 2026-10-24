@@ -4,9 +4,12 @@ import { formationsCatalog } from "./formations-catalog";
 
 export type { FormationData, FaqItem, FinancementKey, ProgrammeJour } from "./formation-types";
 export {
+  canonicalFormationSlug,
   formationPath,
   formationLivrableLabel,
   isFormationActive,
+  KHEIRON_FORMATION_PATH,
+  KHEIRON_FORMATION_SLUG,
   publicFinancements,
   PUBLIC_FINANCEMENT_KEYS,
   PUBLIC_FORMATION_SLUGS,
@@ -54,6 +57,9 @@ export const defaultSite = {
   instagramUrl: "https://www.instagram.com/cinemergence/",
   youtubeUrl: "https://www.youtube.com/@cinemergence",
 } as const;
+
+/** Formateurs affichés sur le site, en plus des intervenants professionnels. */
+export const publicFormateurSlugs = ["phil-darwin", "formateur-mystere"] as const;
 
 export const defaultIntervenants: IntervenantData[] = [
   {
@@ -104,6 +110,45 @@ export const defaultIntervenants: IntervenantData[] = [
     filmographie: [],
     photoUrl: "/images/formations/formation-jouer-face-camera.jpg",
     photoMimeType: "image/jpeg",
+  },
+  {
+    slug: "kheiron",
+    nom: "Kheiron",
+    role: "Humoriste, auteur et réalisateur",
+    parrain: false,
+    categorie: "professionnel",
+    bio: "Humoriste, auteur et réalisateur. Le jour 1, il anime la masterclass et te coache sur ton propre sketch : tu joues devant lui, il te corrige sur ton texte.",
+    filmographie: [
+      "60 minutes",
+      "Dragon",
+      "Nous trois ou rien",
+      "Mauvaises Herbes",
+      "Brutus vs César",
+    ],
+    photoUrl: "/images/intervenants/kheiron.webp",
+    photoMimeType: "image/webp",
+  },
+  {
+    slug: "phil-darwin",
+    nom: "Phil Darwin",
+    role: "Humoriste, comédien et formateur",
+    parrain: false,
+    categorie: "formateur",
+    bio: "Artiste franco-congolais, il évolue depuis plus de 20 ans dans le stand-up, le théâtre et les médias. Il a joué à l'Olympia, au Zénith de Paris et à La Cigale, et dans des festivals en Europe, en Afrique et en Amérique du Nord. Chroniqueur radio et comédien, il joue dans Mayouya de Claudia Yoka, présenté à Cannes en 2022. Il transmet le métier : écriture humoristique, interprétation, rythme comique et présence scénique. Pendant les 4 jours, il t'accompagne jusqu'à ton sketch devant le public.",
+    filmographie: ["Mayouya"],
+    photoUrl: "/images/intervenants/phil-darwin.webp",
+    photoMimeType: "image/webp",
+  },
+  {
+    slug: "formateur-mystere",
+    nom: "Formateur mystère",
+    role: "Formateur",
+    parrain: false,
+    categorie: "formateur",
+    bio: "Son nom reste secret pour l'instant : il sera dévoilé prochainement. Les premiers inscrits le découvriront avant tout le monde.",
+    filmographie: [],
+    photoUrl: "/images/intervenants/formateur-mystere.webp",
+    photoMimeType: "image/webp",
   },
 ];
 

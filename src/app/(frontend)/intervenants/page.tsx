@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getIntervenants, getSiteSettings } from "@/lib/data";
+import { publicFormateurSlugs } from "@/lib/defaults";
 
 export const revalidate = 300;
 
@@ -20,6 +21,9 @@ export default async function IntervenantsPage() {
   const professionnels = intervenants.filter(
     (i) => (i.categorie ?? "professionnel") === "professionnel" && i.slug !== "karina-testa",
   );
+  const formateurs = publicFormateurSlugs
+    .map((slug) => intervenants.find((i) => i.slug === slug))
+    .filter((i) => i != null);
 
   return (
     <>
@@ -44,6 +48,23 @@ export default async function IntervenantsPage() {
           </div>
         </div>
       </Section>
+      {formateurs.length > 0 && (
+        <Section>
+          <div className="container-page">
+            <SectionHeader
+              title="Les formateurs"
+              align="left"
+              description="Ils accompagnent les élèves sur toute la formation."
+              className="mb-8 md:mb-10"
+            />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {formateurs.map((i) => (
+                <IntervenantCard key={i.slug} compact intervenant={i} />
+              ))}
+            </div>
+          </div>
+        </Section>
+      )}
     </>
   );
 }

@@ -25,6 +25,7 @@ import { getPublicSiteUrl } from "./site-url";
 import { PUBLIC_FINANCEMENT_KEYS, isFormationActive } from "./formation-types";
 import {
   getStaticCarouselItems,
+  committedIntervenantPhotos,
   resolveFormationCoverUrl,
   staticFounderPhoto,
   staticFounderPhotoCommitted,
@@ -37,6 +38,7 @@ function staticFormationCover(slug: string) {
 }
 
 function staticIntervenantPhoto(slug: string) {
+  if (committedIntervenantPhotos[slug]) return committedIntervenantPhotos[slug];
   return isLocalMediaStorage() ? staticIntervenantPhotos[slug] : undefined;
 }
 
@@ -307,12 +309,14 @@ export async function getFormationBySlug(slug: string): Promise<FormationData | 
 }
 
 function mapIntervenant(doc: Record<string, unknown>): IntervenantData {
+  const slug = String(doc.slug);
   const categorie =
     doc.categorie === "formateur" || doc.categorie === "professionnel"
       ? doc.categorie
       : "professionnel";
+  const committedPhoto = committedIntervenantPhotos[slug];
   return {
-    slug: String(doc.slug),
+    slug,
     nom: String(doc.nom),
     role: String(doc.role),
     parrain: Boolean(doc.parrain),
@@ -320,8 +324,8 @@ function mapIntervenant(doc: Record<string, unknown>): IntervenantData {
     bio: String(doc.bio),
     filmographie:
       (doc.filmographie as { titre: string }[] | undefined)?.map((f) => f.titre) ?? [],
-    photoUrl: resolveDisplayMediaUrl(doc.photo, staticIntervenantPhoto(String(doc.slug))),
-    photoMimeType: resolveMediaMimeType(doc.photo),
+    photoUrl: committedPhoto ?? resolveDisplayMediaUrl(doc.photo, staticIntervenantPhoto(slug)),
+    photoMimeType: committedPhoto ? "image/webp" : resolveMediaMimeType(doc.photo),
   };
 }
 
@@ -332,7 +336,7 @@ function withParrainsFirst(list: IntervenantData[]) {
 export async function getIntervenants(): Promise<IntervenantData[]> {
   try {
     const payload = await getPayloadClient();
-    const result = await payload.find({ collection: "intervenants", limit: 20, depth: 1 });
+    const result = await payload.find({ collection: "intervenants", limit: 50, depth: 1 });
     if (result.docs.length === 0) {
       return withParrainsFirst(
         defaultIntervenants.map((i) => ({
@@ -345,10 +349,13 @@ export async function getIntervenants(): Promise<IntervenantData[]> {
       .map((doc) => mapIntervenant(doc as Record<string, unknown>))
       .filter((i) => i.slug !== "karina-testa");
     const cmsSlugs = new Set(fromCms.map((i) => i.slug));
-    const missingFormateurs = defaultIntervenants.filter(
-      (i) => i.categorie === "formateur" && !cmsSlugs.has(i.slug),
-    );
-    return withParrainsFirst([...fromCms, ...missingFormateurs]);
+    const missing = defaultIntervenants
+      .filter((i) => !cmsSlugs.has(i.slug))
+      .map((i) => ({
+        ...i,
+        photoUrl: i.photoUrl ?? staticIntervenantPhoto(i.slug),
+      }));
+    return withParrainsFirst([...fromCms, ...missing]);
   } catch {
     return withParrainsFirst(defaultIntervenants);
   }

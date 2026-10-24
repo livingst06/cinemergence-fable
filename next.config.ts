@@ -40,6 +40,31 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/kheiron",
+        destination: "/formations/kheiron",
+        permanent: true,
+      },
+      {
+        source: "/formation-kheiron",
+        destination: "/formations/kheiron",
+        permanent: true,
+      },
+      {
+        source: "/formations/formation-kheiron",
+        destination: "/formations/kheiron",
+        permanent: true,
+      },
+      {
+        source: "/formations/masterclass-kheiron",
+        destination: "/formations/kheiron",
+        permanent: true,
+      },
+      {
+        source: "/formations/masterclass-avec-kheiron",
+        destination: "/formations/kheiron",
+        permanent: true,
+      },
+      {
         source: "/formation-jouer-face-camera",
         destination: "/formations/formation-jouer-face-camera",
         permanent: true,

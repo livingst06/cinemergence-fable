@@ -31,6 +31,7 @@ const committedFormationCovers: Record<string, string> = {
   "formation-passer-a-la-realisation": "/images/formations/formation-realisation.png",
   "formation-realiser-documentaire": "/images/formations/formation-documentaire.jpg",
   "formation-stand-up": "/images/formations/formation-stand-up.png",
+  kheiron: "/images/formations/masterclass-kheiron.webp",
 };
 
 export const staticFormationCovers: Record<string, string> = {
@@ -132,6 +133,13 @@ export function resolveFormationCoverUrl(slug: string, explicit?: string | null)
   if (staticFormationCovers[slug]) return staticFormationCovers[slug];
   return formationCoverFallbacks[hashSlug(slug) % formationCoverFallbacks.length];
 }
+
+/** Portraits versionnés : ils priment sur la photo du CMS. */
+export const committedIntervenantPhotos: Record<string, string> = {
+  kheiron: "/images/intervenants/kheiron.webp",
+  "phil-darwin": "/images/intervenants/phil-darwin.webp",
+  "formateur-mystere": "/images/intervenants/formateur-mystere.webp",
+};
 
 export const staticIntervenantPhotos: Record<string, string> = {
   "bibi-naceri": "/images/site/intervenants/bibi-naceri.jpg",

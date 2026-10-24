@@ -353,20 +353,14 @@ export function KheironLanding() {
             </div>
           </div>
         </div>
-        <div className="wrap kh-bento-wrap">
-          <div>
-            <span className="eyebrow">Son univers, de la scène à l&apos;écran</span>
-            <p className="ps-sub">Et de retour dans la saison 2 de la série culte <em>Bref.</em></p>
-          </div>
-          <KheironPosterShow
-            posters={POSTERS.map(([file, alt, title, caption]) => ({
-              src: img(file),
-              alt,
-              title,
-              caption,
-            }))}
-          />
-        </div>
+        <KheironPosterShow
+          posters={POSTERS.map(([file, alt, title, caption]) => ({
+            src: img(file),
+            alt,
+            title,
+            caption,
+          }))}
+        />
         <div className="wrap team-head">
           <span className="eyebrow">Ton équipe sur les 4 jours</span>
           <h2>Kheiron ouvre le bal. Eux t&apos;emmènent jusqu&apos;à la scène.</h2>
@@ -612,15 +606,9 @@ export function KheironLanding() {
       </section>
 
       <section className="plateau-section" id="plateau" aria-label="Photos de tournage">
-        <div className="wrap">
-          <div>
-            <span className="eyebrow">Sur le plateau</span>
-            <h2>Nos élèves, en conditions réelles de tournage.</h2>
-          </div>
-          <KheironPlateauShow
-            photos={PLATEAU.map(([file, alt]) => ({ src: img(`plateau/${file}`), alt }))}
-          />
-        </div>
+        <KheironPlateauShow
+          photos={PLATEAU.map(([file, alt]) => ({ src: img(`plateau/${file}`), alt }))}
+        />
       </section>
 
       <footer>

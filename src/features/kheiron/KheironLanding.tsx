@@ -1,7 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
+import {
+  KheironPlateauShow,
+  KheironPosterShow,
+  KheironVideoShow,
+} from "@/features/kheiron/KheironCarousel";
 import {
   KHEIRON_MEDIA,
   KHEIRON_PAYMENT_LINK,
@@ -110,51 +115,6 @@ function writeStore(key: string, value: unknown, storage: Storage = localStorage
   }
 }
 
-function useSnapTrack<T extends HTMLElement = HTMLUListElement>() {
-  const ref = useRef<T>(null);
-  useEffect(() => {
-    const track = ref.current;
-    if (!track) return;
-    let down = false;
-    let x0 = 0;
-    let s0 = 0;
-    const step = () => ((track.children[0] as HTMLElement | undefined)?.offsetWidth ?? 260) + 16;
-    const onDown = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse") return;
-      down = true;
-      x0 = event.clientX;
-      s0 = track.scrollLeft;
-      track.classList.add("dragging");
-    };
-    const onMove = (event: PointerEvent) => {
-      if (down) track.scrollLeft = s0 - (event.clientX - x0);
-    };
-    const onUp = () => {
-      if (!down) return;
-      down = false;
-      track.classList.remove("dragging");
-      track.scrollTo({ left: Math.round(track.scrollLeft / step()) * step(), behavior: "smooth" });
-    };
-    track.addEventListener("pointerdown", onDown);
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", onUp);
-    return () => {
-      track.removeEventListener("pointerdown", onDown);
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", onUp);
-    };
-  }, []);
-
-  const scrollByDir = (dir: number) => {
-    const track = ref.current;
-    if (!track) return;
-    const width = (track.children[0] as HTMLElement | undefined)?.offsetWidth ?? 260;
-    track.scrollBy({ left: dir * (width + 16), behavior: "smooth" });
-  };
-
-  return { ref, scrollByDir };
-}
-
 function useCountdown() {
   const [short, setShort] = useState("quelques jours");
   const [clock, setClock] = useState({ j: "--", h: "--", m: "--" });
@@ -230,13 +190,7 @@ function Qualiopi({ className }: { className?: string }) {
 
 export function KheironLanding() {
   const { short, clock } = useCountdown();
-  const posters = useSnapTrack();
-  const plateau = useSnapTrack();
-  const videos = useSnapTrack<HTMLDivElement>();
-  const [plateauIndex, setPlateauIndex] = useState(1);
-  const [playing, setPlaying] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
-  const videoRefs = useRef<Array<HTMLVideoElement | null>>([]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -258,17 +212,6 @@ export function KheironLanding() {
     return () => window.removeEventListener("pageshow", onShow);
   }, []);
 
-  useEffect(() => {
-    const trackEl = plateau.ref.current;
-    if (!trackEl) return;
-    const onScroll = () => {
-      const width = ((trackEl.children[0] as HTMLElement | undefined)?.offsetWidth ?? 260) + 16;
-      setPlateauIndex(Math.min(PLATEAU.length, Math.round(trackEl.scrollLeft / width) + 1));
-    };
-    trackEl.addEventListener("scroll", onScroll, { passive: true });
-    return () => trackEl.removeEventListener("scroll", onScroll);
-  }, [plateau.ref]);
-
   const checkout = () => {
     setBusy(true);
     track("InitiateCheckout", { content_name: KHEIRON_STAGE }, newId());
@@ -287,19 +230,6 @@ export function KheironLanding() {
   };
 
   const onWhatsApp = () => track("Contact", { content_name: KHEIRON_STAGE, method: "whatsapp" }, newId());
-
-  const playVideo = (index: number) => {
-    setPlaying(index);
-    videoRefs.current.forEach((video, i) => {
-      if (!video) return;
-      if (i === index) {
-        video.controls = true;
-        void video.play().catch(() => undefined);
-      } else {
-        video.pause();
-      }
-    });
-  };
 
   return (
     <div className="kheiron" id="top">
@@ -424,27 +354,19 @@ export function KheironLanding() {
           </div>
         </div>
         <div className="wrap kh-bento-wrap">
-          <div className="pl-head">
-            <div>
-              <span className="eyebrow">Son univers, de la scène à l&apos;écran</span>
-              <p className="ps-sub">Et de retour dans la saison 2 de la série culte <em>Bref.</em></p>
-            </div>
-            <div className="pl-nav">
-              <button type="button" aria-label="Affiche précédente" onClick={() => posters.scrollByDir(-1)}>←</button>
-              <button type="button" aria-label="Affiche suivante" onClick={() => posters.scrollByDir(1)}>→</button>
-            </div>
+          <div>
+            <span className="eyebrow">Son univers, de la scène à l&apos;écran</span>
+            <p className="ps-sub">Et de retour dans la saison 2 de la série culte <em>Bref.</em></p>
           </div>
+          <KheironPosterShow
+            posters={POSTERS.map(([file, alt, title, caption]) => ({
+              src: img(file),
+              alt,
+              title,
+              caption,
+            }))}
+          />
         </div>
-        <ul className="pl-track ps-track" ref={posters.ref}>
-          {POSTERS.map(([file, alt, title, caption]) => (
-            <li className="ps-item" key={file}>
-              <figure>
-                <div className="ps-img"><img decoding="async" src={img(file)} alt={alt} width={560} height={840} loading="lazy" /></div>
-                <figcaption><b>{title}</b>{caption}</figcaption>
-              </figure>
-            </li>
-          ))}
-        </ul>
         <div className="wrap team-head">
           <span className="eyebrow">Ton équipe sur les 4 jours</span>
           <h2>Kheiron ouvre le bal. Eux t&apos;emmènent jusqu&apos;à la scène.</h2>
@@ -559,28 +481,7 @@ export function KheironLanding() {
           <h2>Ce qu&apos;en disent nos anciens élèves.</h2>
           <p className="lead">Ils ont suivi nos formations cinéma. Ils racontent avec leurs mots ce qui a changé pour eux. Chaque formation Cinémergence repose sur la même exigence : des professionnels du métier, des conditions réelles et un livrable concret à la fin.</p>
           <div className="vcar" aria-label="Témoignages vidéo">
-            <div className="vtrack" ref={videos.ref}>
-              {VIDEOS.map((video, index) => (
-                <div className={playing === index ? "vcard playing" : "vcard"} key={video.nom}>
-                  <video
-                    ref={(node) => { videoRefs.current[index] = node; }}
-                    src={video.src}
-                    poster={video.poster}
-                    preload="none"
-                    playsInline
-                    onPlay={() => {
-                      videoRefs.current.forEach((other, i) => { if (i !== index) other?.pause(); });
-                    }}
-                  />
-                  <button type="button" className="play" aria-label={`Lire le témoignage de ${video.nom}`} onClick={() => playVideo(index)}>▶</button>
-                  <div className="cap"><b>{video.nom}</b><span>Élève Cinémergence</span></div>
-                </div>
-              ))}
-            </div>
-            <div className="vnav">
-              <button type="button" aria-label="Vidéo précédente" onClick={() => videos.scrollByDir(-1)}>←</button>
-              <button type="button" aria-label="Vidéo suivante" onClick={() => videos.scrollByDir(1)}>→</button>
-            </div>
+            <KheironVideoShow videos={VIDEOS} />
           </div>
           <div className="testis">
             <figure className="testi"><span className="profil">Débutant</span><blockquote>Je n&apos;avais aucune bande démo. En deux jours, j&apos;ai travaillé des scènes exigeantes et obtenu des images exploitables. Le regard d&apos;un réalisateur change vraiment la façon d&apos;aborder le jeu.</blockquote><figcaption><b>Sarah, 24 ans</b><span className="formation">Stage Bande Démo Cinéma</span></figcaption></figure>
@@ -712,25 +613,14 @@ export function KheironLanding() {
 
       <section className="plateau-section" id="plateau" aria-label="Photos de tournage">
         <div className="wrap">
-          <div className="pl-head">
-            <div>
-              <span className="eyebrow">Sur le plateau</span>
-              <h2>Nos élèves, en conditions réelles de tournage.</h2>
-            </div>
-            <div className="pl-nav">
-              <span className="pl-count" aria-live="polite"><b>{plateauIndex}</b> / {PLATEAU.length}</span>
-              <button type="button" aria-label="Photo précédente" onClick={() => plateau.scrollByDir(-1)}>←</button>
-              <button type="button" aria-label="Photo suivante" onClick={() => plateau.scrollByDir(1)}>→</button>
-            </div>
+          <div>
+            <span className="eyebrow">Sur le plateau</span>
+            <h2>Nos élèves, en conditions réelles de tournage.</h2>
           </div>
+          <KheironPlateauShow
+            photos={PLATEAU.map(([file, alt]) => ({ src: img(`plateau/${file}`), alt }))}
+          />
         </div>
-        <ul className="pl-track" ref={plateau.ref}>
-          {PLATEAU.map(([file, alt]) => (
-            <li className="pl-item" key={file}>
-              <img decoding="async" src={img(`plateau/${file}`)} alt={alt} width={720} height={900} loading="lazy" />
-            </li>
-          ))}
-        </ul>
       </section>
 
       <footer>

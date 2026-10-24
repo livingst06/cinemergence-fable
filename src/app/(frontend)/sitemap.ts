@@ -13,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/association",
     "/galerie",
     "/contact",
+    "/formations/kheiron",
     "/mentions-legales",
     "/confidentialite",
     "/cgv",

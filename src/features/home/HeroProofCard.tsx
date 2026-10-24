@@ -2,14 +2,16 @@ import { QualiopiMark } from "@/components/brand/QualiopiMark";
 import { NdaNumber } from "@/components/NdaNumber";
 import { FinanceurLogos } from "@/features/home/FinanceurLogos";
 import { PUBLIC_FINANCEMENT_KEYS } from "@/lib/formation-types";
+import { cn } from "@/lib/utils";
 
 type HeroProofCardProps = {
   nda: string;
+  className?: string;
 };
 
-export function HeroProofCard({ nda }: HeroProofCardProps) {
+export function HeroProofCard({ nda, className }: HeroProofCardProps) {
   return (
-    <div className="relative overflow-hidden rounded-none border border-white/10">
+    <div className={cn("relative h-full overflow-hidden rounded-none border border-white/10", className)}>
       <div
         className="pointer-events-none absolute inset-0 bg-[#151b22]/35 backdrop-blur-md"
         aria-hidden

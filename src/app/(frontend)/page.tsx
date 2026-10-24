@@ -9,6 +9,7 @@ import { HeroVideoBackground } from "@/components/sections/HeroVideoBackground";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { CtaFinal } from "@/features/home/CtaFinal";
 import { DaFilmstrip } from "@/features/home/DaFilmstrip";
+import { HeroKheironCard } from "@/features/home/HeroKheironCard";
 import { HeroProofCard } from "@/features/home/HeroProofCard";
 import { Temoignages } from "@/features/home/Temoignages";
 import { FormationMiniCard } from "@/features/formations/FormationMiniCard";
@@ -131,8 +132,13 @@ export default async function HomePage() {
           </div>
           <div className="mt-auto w-full">
             <div className="container-page pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] pt-10 md:pb-10">
-              <div className="max-w-3xl animate-fade-up-delay-3">
-                <HeroProofCard nda={site.nda} />
+              <div className="grid max-w-5xl animate-fade-up-delay-3 items-stretch gap-3 lg:grid-cols-[minmax(0,1.35fr)_minmax(16.5rem,0.8fr)]">
+                <div className="order-2 lg:order-1">
+                  <HeroProofCard nda={site.nda} />
+                </div>
+                <div className="order-1 lg:order-2">
+                  <HeroKheironCard />
+                </div>
               </div>
             </div>
           </div>

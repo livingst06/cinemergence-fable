@@ -691,6 +691,26 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     }
   }
 
+  .hero-new-badge {
+    position: absolute;
+    z-index: 20;
+    top: -0.65rem;
+    right: -0.55rem;
+    display: inline-flex;
+    transform: rotate(-32deg);
+    transform-origin: center;
+    background: #ccff00;
+    color: #111111;
+    padding: 0.2rem 0.65rem;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    box-shadow: 0 0 16px rgba(204, 255, 0, 0.55);
+    animation: hero-new-pulse 3.2s ease-in-out infinite;
+  }
+
   .animate-fade-up {
     animation: slideUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
@@ -722,6 +742,20 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     .hero-bg-video {
       display: none !important;
     }
+
+    .hero-new-badge {
+      animation: none;
+    }
+  }
+}
+
+@keyframes hero-new-pulse {
+  0%,
+  100% {
+    transform: rotate(-32deg) scale(1);
+  }
+  50% {
+    transform: rotate(-32deg) scale(1.18);
   }
 }
 

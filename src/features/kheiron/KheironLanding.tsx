@@ -9,11 +9,16 @@ import {
 } from "@/features/kheiron/KheironCarousel";
 import {
   KHEIRON_MEDIA,
-  KHEIRON_PAYMENT_LINK,
   KHEIRON_STAGE,
   KHEIRON_START,
   whatsAppLink,
 } from "@/features/kheiron/config";
+
+type KheironOffer = {
+  paymentLink: string;
+  seatsLeft: number;
+  phase: "early" | "standard" | "full";
+};
 
 const img = (file: string) => `${KHEIRON_MEDIA}/images/${file}`;
 const vid = (file: string) => `${KHEIRON_MEDIA}/videos/${file}`;
@@ -188,7 +193,7 @@ function Qualiopi({ className }: { className?: string }) {
   );
 }
 
-export function KheironLanding() {
+export function KheironLanding({ offer }: { offer: KheironOffer }) {
   const { short, clock } = useCountdown();
   const [busy, setBusy] = useState(false);
 
@@ -215,7 +220,7 @@ export function KheironLanding() {
   const checkout = () => {
     setBusy(true);
     track("InitiateCheckout", { content_name: KHEIRON_STAGE }, newId());
-    const url = new URL(KHEIRON_PAYMENT_LINK);
+    const url = new URL(offer.paymentLink);
     const params = new URLSearchParams(window.location.search);
     const cid = params.get("cid") || "";
     const email = params.get("email") || "";
@@ -230,6 +235,10 @@ export function KheironLanding() {
   };
 
   const onWhatsApp = () => track("Contact", { content_name: KHEIRON_STAGE, method: "whatsapp" }, newId());
+  const placesLeft =
+    offer.seatsLeft <= 1
+      ? `Il reste ${Math.max(offer.seatsLeft, 0)} place.`
+      : `Il reste ${offer.seatsLeft} places.`;
 
   return (
     <div className="kheiron" id="top">
@@ -238,7 +247,7 @@ export function KheironLanding() {
           <div className="wrap">
             <span className="dot" aria-hidden="true" />
             <span>
-              <b>Session unique</b> · 20 places · Début dans <b>{short}</b>
+              <b>Session unique</b> · {offer.phase === "full" ? "Complet" : placesLeft} · Début dans <b>{short}</b>
               <span className="u-more"> · Aucune autre date prévue avec Kheiron</span>
             </span>
             <a href="#tarif">Je me lance</a>
@@ -269,7 +278,7 @@ export function KheironLanding() {
               <a href="#programme" className="btn btn-ghost">Voir le programme</a>
             </div>
             <div className="scarcity-box">
-              <span className="scarce-pill">⚡ 20 places seulement</span>
+              <span className="scarce-pill">⚡ {offer.phase === "full" ? "Complet" : placesLeft}</span>
               <span className="scarce-pill">⏳ Début dans {short}</span>
             </div>
             <div className="trust-row">
@@ -528,6 +537,22 @@ export function KheironLanding() {
             </div>
             <div className="price">1 490 €</div>
             <p className="price-sub">ou <b>3 × 496,67 € sans frais</b></p>
+            {offer.phase !== "full" && <p className="seats-left">{placesLeft}</p>}
+            {offer.phase === "early" && (
+              <aside className="early" aria-label="Offre sur les 5 premières places">
+                <span className="early-tag">5 premières places</span>
+                <p className="early-price">1 290 €</p>
+                <p className="early-note">
+                  <b>200 € de moins.</b> Dès la 6<sup>e</sup> place, le tarif repasse à 1 490 €.
+                </p>
+              </aside>
+            )}
+            {offer.phase === "full" && (
+              <aside className="soldout" aria-label="Session complète">
+                <span className="soldout-tag">COMPLET</span>
+                <p>Inscrivez-vous pour les futures sessions.</p>
+              </aside>
+            )}
             <ul>
               <li>La masterclass de Kheiron et ton passage coaché devant lui</li>
               <li>30 heures de formation sur 2 week-ends, 20 places seulement</li>
@@ -538,7 +563,7 @@ export function KheironLanding() {
             </ul>
             <div className="trust-row trust-center"><Qualiopi /></div>
             <button type="button" className="btn btn-primary" aria-busy={busy} onClick={checkout}>Je me lance : je réserve ma place →</button>
-            <p className="last-call">⚡ 20 places, une seule session. Quand c&apos;est complet, c&apos;est complet.</p>
+            <p className="last-call">⚡ {offer.phase === "full" ? "Complet." : placesLeft} Une seule session. Quand c&apos;est complet, c&apos;est complet.</p>
             <p className="pay-note">Paiement sécurisé par Stripe · Carte bancaire ou paiement en 3× sans frais</p>
             <figure className="pull"><div><div className="stars" aria-label="5 sur 5">★★★★★</div><blockquote>Le cadre est professionnel. On se sent considéré comme un acteur, pas comme un élève. J&apos;ai gagné en confiance face caméra.</blockquote><cite><b>Laura, 35 ans, intermittente</b> · Stage Bande Démo Cinéma</cite></div></figure>
             <div className="guarantee">
@@ -628,7 +653,7 @@ export function KheironLanding() {
       </footer>
 
       <div className="sticky">
-        <small>Masterclass avec Kheiron<br /><b>{short} · 20 places</b></small>
+        <small>Masterclass avec Kheiron<br /><b>{short} · {offer.phase === "full" ? "Complet" : placesLeft}</b></small>
         <a href="#tarif" className="btn btn-primary btn-alive">Je me lance</a>
       </div>
     </div>

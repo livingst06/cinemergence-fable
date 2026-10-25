@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 
 import { KheironLanding } from "@/features/kheiron/KheironLanding";
 import { defaultSite } from "@/lib/defaults";
+import { getKheironOffer } from "@/lib/kheiron-checkout";
+
+export const dynamic = "force-dynamic";
 
 const title = "Masterclass Stand-Up avec Kheiron — Cinémergence";
 const description =
@@ -14,6 +17,7 @@ export const metadata: Metadata = {
   openGraph: { title, description, url: `${defaultSite.url}/formations/kheiron` },
 };
 
-export default function KheironPage() {
-  return <KheironLanding />;
+export default async function KheironPage() {
+  const offer = await getKheironOffer();
+  return <KheironLanding offer={offer} />;
 }

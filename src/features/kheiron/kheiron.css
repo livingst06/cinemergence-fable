@@ -355,6 +355,15 @@
 .kheiron .quote-space{margin-top:32px}
 .kheiron .price-sub{color:var(--muted)}
 .kheiron .price-sub b{color:var(--text)}
+.kheiron .seats-left{margin-top:14px;font-size:18px;font-weight:700}
+.kheiron .early{margin:18px auto 0;max-width:460px;background:rgba(255,225,77,.1);border:1px solid rgba(255,225,77,.55);border-radius:16px;padding:14px 18px 16px}
+.kheiron .early-tag{display:inline-flex;background:#ffe14d;color:#111;font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;border-radius:999px;padding:5px 10px}
+.kheiron .early-price{font-family:var(--font-k-bebas),sans-serif;font-size:48px;line-height:1;letter-spacing:1px;margin-top:8px}
+.kheiron .early-note{margin-top:6px;color:var(--muted);font-size:15px}
+.kheiron .early-note b{color:var(--text)}
+.kheiron .soldout{margin:18px auto 0;max-width:460px;border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.kheiron .soldout-tag{display:inline-flex;background:var(--accent);color:#fff;font-size:12px;font-weight:800;letter-spacing:1.4px;border-radius:999px;padding:5px 10px}
+.kheiron .soldout p{margin-top:10px;font-size:16px}
 .kheiron .coach .pic img.darwin{object-position:50% 8%}
 .kheiron .trust-center{justify-content:center;margin:0 0 22px}
 .kheiron .shield{font-size:22px}
@@ -369,6 +378,7 @@
 .kheiron-merci ol{text-align:left;margin:26px 0;padding-left:22px;display:grid;gap:10px;color:#A9B1BE}
 .kheiron-merci ol b{color:#fff}
 .kheiron-merci a{color:#5B7DFF;font-weight:700;text-decoration:none}
+.kheiron-merci .back{display:inline-flex;margin:8px 0 6px;background:#2F5BFF;color:#fff;border-radius:999px;padding:14px 22px}
 .k-consent{position:fixed;left:0;right:0;bottom:0;z-index:80;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px calc(14px + env(safe-area-inset-bottom));background:rgba(8,10,15,.96);border-top:1px solid #262C38;color:#A9B1BE;font:400 14px/1.45 var(--font-k-sans),system-ui,sans-serif}
 .k-consent p{max-width:720px}
 .k-consent a{color:#fff}

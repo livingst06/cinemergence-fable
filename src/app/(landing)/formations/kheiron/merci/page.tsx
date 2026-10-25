@@ -1,13 +1,28 @@
 import type { Metadata } from "next";
 
 import { KHEIRON_MEDIA } from "@/features/kheiron/config";
+import { recordKheironPayment } from "@/lib/kheiron-checkout";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Place réservée — Masterclass Stand-Up · Cinémergence",
   robots: { index: false, follow: false },
 };
 
-export default function KheironMerciPage() {
+type Props = {
+  searchParams: Promise<{ session_id?: string | string[] }>;
+};
+
+export default async function KheironMerciPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const sessionId = Array.isArray(params.session_id) ? params.session_id[0] : params.session_id;
+  try {
+    await recordKheironPayment(sessionId);
+  } catch (error) {
+    console.error("[kheiron-merci]", error);
+  }
+
   return (
     <main className="kheiron-merci">
       <div className="box">

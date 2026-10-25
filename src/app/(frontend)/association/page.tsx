@@ -42,7 +42,8 @@ export default async function AssociationPage() {
         }
       />
       <Section>
-        <div className="container-page grid gap-12 lg:grid-cols-2 lg:items-start lg:gap-16">
+        <div className="container-page">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-start lg:gap-16">
           <Reveal>
             <div className="space-y-8">
               <MediaFrame
@@ -112,6 +113,74 @@ export default async function AssociationPage() {
               </footer>
             </blockquote>
           </Reveal>
+        </div>
+          <article className="mt-16 border-t border-white/[0.06] pt-16 lg:mt-24 lg:pt-24">
+            <div className="grid gap-12 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start lg:gap-16">
+              <Reveal>
+                <MediaFrame
+                  src="/images/founder/gregory-verdat.jpg"
+                  alt="Grégory Verdat au Cannes World Film Festival, avec la Luciole d'or"
+                  aspect="portrait"
+                  sizes="(max-width: 1024px) 100vw, 22rem"
+                  className="card-stage max-w-md overflow-hidden rounded-lg border border-white/[0.06]"
+                />
+              </Reveal>
+              <Reveal>
+                <div className="space-y-6">
+                  <SectionHeader
+                    title="Grégory Verdat"
+                    description="Vice-président de Cinémergence, fondateur et président de Bakélite Films, scénariste"
+                    align="left"
+                    className="mb-0"
+                  />
+                  <div className="space-y-4 text-sm leading-relaxed text-muted-text">
+                    <p>
+                      Grégory Verdat conjugue son engagement associatif avec un parcours dans
+                      l&apos;écriture et la production cinématographique.
+                    </p>
+                    <p>
+                      Après des collaborations avec le réalisateur Maxwell A. Cadevall sur{" "}
+                      <span className="text-cream/90">Cœur de femme</span>,{" "}
+                      <span className="text-cream/90">Jeu de couples</span> et{" "}
+                      <span className="text-cream/90">Jeu de dames</span>, il cofonde Bakélite
+                      Films avec Choukri Rouha et en assure la présidence. Il accompagne les
+                      projets, de leur développement artistique jusqu&apos;à l&apos;écran.
+                    </p>
+                    <p>
+                      Scénariste et producteur de{" "}
+                      <span className="text-cream/90">MOTHERS (Le Tombeau des Anges)</span>, il en
+                      assure également la coordination de production. Sélectionné et projeté au
+                      prestigieux Chinese Theatre du Beverly Hills Film Festival, le film remporte la
+                      Luciole d&apos;or, prix du meilleur court-métrage de fiction au Cannes World
+                      Film Festival en 2025, ainsi que des prix du scénario au Festival
+                      international maghrébin du film d&apos;Oujda.
+                    </p>
+                    <p>
+                      Sa collaboration avec Choukri Rouha se poursuit avec la coécriture de deux
+                      longs-métrages&nbsp;: <span className="text-cream/90">Les Cordes</span>,
+                      autour de la boxe et de la résilience, et{" "}
+                      <span className="text-cream/90">Ne m&apos;oublie pas</span>, consacré à la
+                      maladie d&apos;Alzheimer. Ces projets prolongent son engagement dans
+                      l&apos;écriture et le développement de récits ancrés dans des enjeux humains
+                      et sociaux.
+                    </p>
+                    <p>
+                      Membre actif de la CST, il inscrit son engagement cinématographique au
+                      croisement de la création, des métiers techniques et des exigences de
+                      production.
+                    </p>
+                    <p>
+                      En parallèle de son parcours artistique, il évolue dans le secteur du
+                      numérique, où il a développé une longue expérience en business
+                      développement, gestion de partenariats stratégiques et de maîtrise des
+                      technologies. Cette double culture nourrit son approche du cinéma, associant
+                      créativité, compréhension des outils et structuration des projets.
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+          </article>
         </div>
       </Section>
       <Section>

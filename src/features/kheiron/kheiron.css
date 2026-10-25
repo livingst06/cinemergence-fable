@@ -378,7 +378,6 @@
 .kheiron-merci ol{text-align:left;margin:26px 0;padding-left:22px;display:grid;gap:10px;color:#A9B1BE}
 .kheiron-merci ol b{color:#fff}
 .kheiron-merci a{color:#5B7DFF;font-weight:700;text-decoration:none}
-.kheiron-merci .back{display:inline-flex;margin:8px 0 6px;background:#2F5BFF;color:#fff;border-radius:999px;padding:14px 22px}
 .k-consent{position:fixed;left:0;right:0;bottom:0;z-index:80;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px calc(14px + env(safe-area-inset-bottom));background:rgba(8,10,15,.96);border-top:1px solid #262C38;color:#A9B1BE;font:400 14px/1.45 var(--font-k-sans),system-ui,sans-serif}
 .k-consent p{max-width:720px}
 .k-consent a{color:#fff}

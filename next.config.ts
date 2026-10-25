@@ -40,11 +40,6 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        source: "/stripe-erreur",
-        destination: "/formations/kheiron/stripe-erreur",
-        permanent: false,
-      },
-      {
         source: "/kheiron",
         destination: "/formations/kheiron",
         permanent: true,

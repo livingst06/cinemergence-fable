@@ -88,15 +88,16 @@ export default async function AssociationPage() {
             />
             <blockquote className="card-stage p-6 md:p-8">
               <p className="text-sm leading-relaxed text-cream/90 md:text-base">
-                &ldquo; J&apos;ai commencé comme beaucoup : sans contact, sans moyens, juste avec
-                l&apos;envie de jouer et d&apos;apprendre. À l&apos;époque, faire une bande démo
-                coûtait une fortune, et rares étaient ceux qui pouvaient se payer un vrai
+                &laquo;&nbsp;J&apos;ai commencé comme beaucoup : sans contact, sans moyens, juste
+                avec l&apos;envie de jouer et d&apos;apprendre. À l&apos;époque, faire une bande
+                démo coûtait une fortune, et rares étaient ceux qui pouvaient se payer un vrai
                 tournage.
               </p>
               <p className="mt-4 text-sm leading-relaxed text-cream/90 md:text-base">
                 Mon expérience m&apos;a appris que le talent seul ne suffit pas si tu n&apos;as
                 pas les bons outils pour te montrer. J&apos;ai imaginé cette école de formation
-                pour changer ça.
+                pour changer ça, avec les conseils et le soutien de mon ami Grégory Verdat, déjà
+                un pilier à mes côtés au sein de Bakélite Films.
               </p>
               <p className="mt-4 text-sm leading-relaxed text-cream/90 md:text-base">
                 Offrir à chaque élève un cadre pro, du matériel cinéma, une direction
@@ -104,12 +105,18 @@ export default async function AssociationPage() {
                 exploitables.
               </p>
               <p className="mt-4 text-sm leading-relaxed text-cream/90 md:text-base">
+                Mais au-delà de la formation, nous voulons aussi ouvrir des portes : rejoindre
+                Cinémergence, c&apos;est intégrer un <em>réseau</em> de professionnels et de
+                passionnés qui s&apos;agrandit à chaque stage, au fil des rencontres et des
+                collaborations.
+              </p>
+              <p className="mt-4 text-sm leading-relaxed text-cream/90 md:text-base">
                 Mon objectif est de donner une vraie chance à chacun. Parce
                 qu&apos;aujourd&apos;hui, ce qui compte, c&apos;est ce que tu montres à
-                l&apos;écran. &rdquo;
+                l&apos;écran — mais aussi les liens que tu construis pour la suite.&nbsp;&raquo;
               </p>
               <footer className="mt-8 text-sm font-semibold text-or-light">
-                — Choukri Rouha, fondateur
+                — Choukri Rouha, fondateur de Cinémergence
               </footer>
             </blockquote>
           </Reveal>

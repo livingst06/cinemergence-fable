@@ -2365,7 +2365,7 @@ export const formationsCatalog: Omit<FormationData, "active">[] = [
     prerequis: "Aucune expérience préalable n'est nécessaire. Apporte un premier sketch le jour 1, même brouillon.",
     lieu: "Paris — Théâtre Apollo le 28 novembre, puis salle de travail et café-théâtre",
     delaiAcces: "Inscription dans la limite des 20 places. Le stage est confirmé dès 10 inscrits.",
-    tarif: "1 500 €",
+    tarif: "1 490 €",
     financements: [],
     methodesPedagogiques: [
       "Masterclass et coaching en direct sur ton propre sketch",

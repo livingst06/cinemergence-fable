@@ -526,8 +526,8 @@ export function KheironLanding() {
               <div><b>{clock.h}</b><span>heures</span></div>
               <div><b>{clock.m}</b><span>min</span></div>
             </div>
-            <div className="price">1 500 €</div>
-            <p className="price-sub">ou <b>3 × 500 € sans frais</b></p>
+            <div className="price">1 490 €</div>
+            <p className="price-sub">ou <b>3 × 496,67 € sans frais</b></p>
             <ul>
               <li>La masterclass de Kheiron et ton passage coaché devant lui</li>
               <li>30 heures de formation sur 2 week-ends, 20 places seulement</li>

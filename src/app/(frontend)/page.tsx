@@ -87,7 +87,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="cinematic-grain relative -mt-[calc(var(--site-notice-h)+var(--site-header-h)+env(safe-area-inset-top,0px))] flex min-h-[100svh] flex-col overflow-hidden bg-noir md:min-h-[calc(78vh+var(--site-notice-h)+var(--site-header-h)+env(safe-area-inset-top,0px))]">
+      <section className="cinematic-grain relative -mt-[calc(var(--site-notice-h)+var(--site-header-h)+env(safe-area-inset-top,0px))] flex min-h-[100svh] flex-col overflow-clip bg-noir md:min-h-[calc(78vh+var(--site-notice-h)+var(--site-header-h)+env(safe-area-inset-top,0px))]">
         <HeroVideoBackground
           src={heroPublicAsset("hero-plateau-travel.mp4")}
           srcMobile={heroPublicAsset("hero-plateau-travel-mobile.mp4")}

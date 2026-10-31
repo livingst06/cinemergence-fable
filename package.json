@@ -26,6 +26,7 @@
     "sync:media": "tsx src/seed/sync-public-media.ts",
     "generate:importmap": "payload generate:importmap",
     "generate:types": "payload generate:types",
+    "prepare": "node scripts/install-git-hooks.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test"
   },

@@ -12,3 +12,4 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Payload schema push is disabled in `src/payload.config.ts`. An empty database is restored from `/opt/cinemergence-schema.sql`. After the dev server is up, `pnpm seed` loads editorial content.
 - Dev server: `pnpm dev --hostname 0.0.0.0 --port 3000`. Site: http://localhost:3000. Admin: http://localhost:3000/admin.
 - `pnpm test` runs the Vitest unit suite. `pnpm build` is the production build. `pnpm lint` currently reports existing violations in the app.
+- Accepter une PR seulement sur demande explicite : squash sur `main` (`gh pr merge <n> --squash --delete-branch`), puis supprimer la branche sur GitHub, en local sur le PC et dans le Cloud. Détail dans `.cursor/rules/pr-squash-delete-branch.mdc`. `pnpm install` active le hook `.githooks/post-merge`, qui enlève les branches locales déjà parties du remote au prochain `git pull`.

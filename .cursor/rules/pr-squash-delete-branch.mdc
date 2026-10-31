@@ -1,0 +1,48 @@
+---
+description: Accepter une PR en squash sur main, puis supprimer la branche en local, dans le cloud et sur GitHub
+alwaysApply: true
+---
+
+# Accepter une pull request
+
+Cette règle vaut pour un agent Cursor (Cloud ou PC) et pour un développeur. Elle ne donne pas le droit de merger : on ne l'applique que lorsque l'acceptation de la PR est demandée explicitement.
+
+## Fusion
+
+Squash and merge sur `main`. Pas de merge commit, pas de rebase.
+
+```bash
+gh pr merge <numéro> --squash --delete-branch
+```
+
+`--delete-branch` supprime la branche sur GitHub et dans le clone où la commande est lancée.
+
+## Supprimer la branche partout
+
+Après le squash, la branche de la PR ne doit plus exister :
+
+1. Sur GitHub (`origin`).
+2. En local sur le PC.
+3. En local dans l'environnement Cloud.
+
+Depuis chaque clone qui a encore la branche (PC et Cloud) :
+
+```bash
+git fetch origin --prune
+git checkout main
+git pull origin main
+git branch -D <branche>
+git push origin --delete <branche>
+```
+
+`git push origin --delete` peut échouer si GitHub a déjà retiré la branche : c'est le résultat attendu. Ne pas supprimer `main`.
+
+Le hook `.githooks/post-merge` (activé par `pnpm install`, qui pose `core.hooksPath`) refait ce ménage au prochain `git pull` sur l'autre machine : il efface les branches locales dont le suivi distant est parti.
+
+## Réglage GitHub (une fois, compte admin)
+
+Le jeton des agents ne peut pas modifier ces cases. Un admin du dépôt les active dans Settings → General → Pull Requests :
+
+- cocher uniquement **Allow squash merging**
+- décocher Allow merge commits et Allow rebase merging
+- cocher **Automatically delete head branches**

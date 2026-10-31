@@ -22,27 +22,50 @@ export function Temoignages({ temoignages }: TemoignagesProps) {
     const root = gridRef.current;
     if (!root) return;
 
+    // Pas de ResizeObserver : sur mobile il se relançait pendant le geste,
+    // le navigateur réancrait la page et le scroll vers le haut saccadait
+    // sans pouvoir atteindre le sommet. Une colonne n'a pas besoin de
+    // hauteurs égales ; à partir de md on mesure au chargement et au resize.
+    const columns = window.matchMedia("(min-width: 768px)");
     const cards = () => [...root.querySelectorAll<HTMLElement>("[data-equal-height]")];
 
-    let observer: ResizeObserver;
     const apply = () => {
       const nodes = cards();
-      observer.disconnect();
-      nodes.forEach((card) => {
-        card.style.minHeight = "";
-      });
-      const max = Math.max(0, ...nodes.map((card) => card.offsetHeight));
-      if (max > 0) {
-        nodes.forEach((card) => {
-          card.style.minHeight = `${max}px`;
-        });
+      if (!columns.matches) {
+        for (const card of nodes) {
+          if (card.style.minHeight) card.style.minHeight = "";
+        }
+        return;
       }
-      observer.observe(root);
+      for (const card of nodes) card.style.minHeight = "";
+      const max = Math.ceil(
+        Math.max(0, ...nodes.map((card) => card.getBoundingClientRect().height)),
+      );
+      const next = max > 0 ? `${max}px` : "";
+      for (const card of nodes) {
+        if (card.style.minHeight !== next) card.style.minHeight = next;
+      }
     };
 
-    observer = new ResizeObserver(apply);
     apply();
-    return () => observer.disconnect();
+    let lastWidth = root.getBoundingClientRect().width;
+    const onResize = () => {
+      const width = root.getBoundingClientRect().width;
+      // La barre d'adresse mobile change la hauteur, pas la largeur.
+      // Remesurer dans ce cas réancrerait le scroll et bloquerait la remontée.
+      if (Math.abs(width - lastWidth) < 1) return;
+      lastWidth = width;
+      apply();
+    };
+    columns.addEventListener("change", apply);
+    window.addEventListener("resize", onResize);
+    const fontsReady = document.fonts?.ready.then(apply);
+
+    return () => {
+      columns.removeEventListener("change", apply);
+      window.removeEventListener("resize", onResize);
+      void fontsReady;
+    };
   }, [temoignages]);
 
   return (

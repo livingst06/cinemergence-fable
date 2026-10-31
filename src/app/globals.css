@@ -199,12 +199,22 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   }
 
   html {
-    @apply scroll-smooth;
     -webkit-text-size-adjust: 100%;
     hyphens: none;
     -webkit-hyphens: none;
-    overflow-x: hidden;
-    scrollbar-gutter: stable;
+    /*
+     * clip, pas hidden : hidden calcule overflow-y en auto et fait de <html>
+     * un scrollport. Sur mobile, ce scrollport descend puis saccade et refuse
+     * de remonter jusqu'en haut.
+     */
+    overflow-x: clip;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    html {
+      scroll-behavior: smooth;
+      scrollbar-gutter: stable;
+    }
   }
 
   :root {
@@ -218,7 +228,7 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
   body {
     @apply bg-noir text-cream font-sans text-base antialiased;
     min-height: 100dvh;
-    overflow-x: hidden;
+    overflow-x: clip;
     letter-spacing: -0.011em;
     font-optical-sizing: auto;
   }
@@ -768,6 +778,19 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Le défilement horizontal ne doit pas voler le geste vertical sur mobile. */
+@media (hover: none) and (pointer: coarse) {
+  html,
+  body {
+    overscroll-behavior-x: none;
+  }
+}
+
+/* Ces cartes ne doivent pas servir d'ancre de scroll quand leur hauteur bouge. */
+[data-equal-height] {
+  overflow-anchor: none;
 }
 
 /*

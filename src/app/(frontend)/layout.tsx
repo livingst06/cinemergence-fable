@@ -67,7 +67,7 @@ export default async function FrontendLayout({
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
-      <body className="flex min-h-dvh flex-col overflow-x-hidden">
+      <body className="flex min-h-dvh flex-col overflow-x-clip">
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script
           type="application/ld+json"
@@ -81,7 +81,7 @@ export default async function FrontendLayout({
             prioritaire: f.prioritaire,
           }))}
         />
-        <main className="flex-1 overflow-x-hidden pt-[calc(var(--site-notice-h)+var(--site-header-h)+env(safe-area-inset-top,0px))]">
+        <main className="flex-1 overflow-x-clip pt-[calc(var(--site-notice-h)+var(--site-header-h)+env(safe-area-inset-top,0px))]">
           {children}
         </main>
         <Footer

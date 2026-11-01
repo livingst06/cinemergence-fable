@@ -189,7 +189,7 @@ chmod +x scripts/sync-vercel-env.sh
 
 ### Notifications email (formulaires contact)
 
-Les soumissions sont enregistrées dans Payload (**Admin → Form submissions**), puis une notification part via **Brevo** si `BREVO_API_KEY` est configurée.
+Les soumissions sont enregistrées dans Payload (**Admin → Form submissions**), puis une notification part via **Brevo** si `BREVO_API_KEY` est configurée. Le destinataire est `contact@cinemergence.fr` (`CONTACT_NOTIFICATION_EMAIL`). Les anciennes adresses `cinemergence.paris@gmail.com` et `verdat.sylvain@gmail.com`, si elles sont encore dans l'environnement, sont redirigées vers cette boîte.
 
 1. Créer un compte sur [brevo.com](https://www.brevo.com)
 2. **Expéditeurs** → vérifier `contact@cinemergence.fr`

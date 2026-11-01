@@ -2,19 +2,39 @@ import nodemailer from "nodemailer";
 
 import type { ContactInput } from "@/lib/validations";
 
-const PUBLIC_CONTACT_EMAIL = "contact@cinemergence.fr";
+/** Boîte qui reçoit les questions des formulaires contact, inscription et financement. */
+export const CONTACT_NOTIFICATION_INBOX = "contact@cinemergence.fr";
 
-/** Ancienne adresse publique, encore possible dans un environnement Vercel non resynchronisé. */
-const LEGACY_PUBLIC_EMAILS = new Set([
+/** Adresses encore présentes dans certains environnements, remplacées par la boîte de contact. */
+const LEGACY_CONTACT_EMAILS = new Set([
   "cinemergence.paris@gmail.com",
   "cinemergence.paris.@gmail.com",
+  "verdat.sylvain@gmail.com",
 ]);
 
-function resolveContactEmail(value: string | undefined): string | undefined {
-  const trimmed = value?.trim();
-  if (!trimmed) return undefined;
-  if (LEGACY_PUBLIC_EMAILS.has(trimmed.toLowerCase())) return PUBLIC_CONTACT_EMAIL;
-  return trimmed;
+function isLegacyContactEmail(value: string): boolean {
+  return LEGACY_CONTACT_EMAILS.has(value.trim().toLowerCase());
+}
+
+/**
+ * Destinataire effectif. Une adresse absente ou ancienne est remplacée par
+ * contact@cinemergence.fr. Toute autre valeur explicite reste respectée.
+ */
+export function resolveContactNotificationEmail(
+  configured: string | undefined = process.env.CONTACT_NOTIFICATION_EMAIL,
+): string {
+  const to = configured?.trim() ?? "";
+  if (!to || isLegacyContactEmail(to)) return CONTACT_NOTIFICATION_INBOX;
+  return to;
+}
+
+/** Expéditeur Brevo. Même repli que le destinataire des formulaires. */
+export function resolveSenderEmail(
+  configured: string | undefined = process.env.BREVO_SENDER_EMAIL,
+): string {
+  const sender = configured?.trim() ?? "";
+  if (!sender || isLegacyContactEmail(sender)) return CONTACT_NOTIFICATION_INBOX;
+  return sender;
 }
 
 const TYPE_LABELS: Record<ContactInput["type"], string> = {
@@ -32,7 +52,7 @@ function escapeHtml(value: string): string {
 }
 
 function buildEmailContent(data: ContactInput, to: string) {
-  const senderEmail = resolveContactEmail(process.env.BREVO_SENDER_EMAIL) || to;
+  const senderEmail = resolveSenderEmail();
   const senderName = process.env.BREVO_SENDER_NAME?.trim() || "Cinémergence";
 
   const phoneLine = data.telephone
@@ -127,7 +147,7 @@ async function sendViaRestApi(
   to: string,
   data: ContactInput,
 ): Promise<{ ok: boolean; error?: string }> {
-  const senderEmail = resolveContactEmail(process.env.BREVO_SENDER_EMAIL) || to;
+  const senderEmail = resolveSenderEmail();
   const senderName = process.env.BREVO_SENDER_NAME?.trim() || "Cinémergence";
   const { html } = buildEmailContent(data, to);
 
@@ -168,12 +188,7 @@ export async function sendContactNotification(
   data: ContactInput,
 ): Promise<{ ok: boolean; skipped?: boolean; error?: string }> {
   const apiKey = process.env.BREVO_API_KEY?.trim();
-  const to = resolveContactEmail(process.env.CONTACT_NOTIFICATION_EMAIL);
-
-  if (!to) {
-    console.warn("[contact-notify] CONTACT_NOTIFICATION_EMAIL not set");
-    return { ok: false, skipped: true, error: "missing_recipient" };
-  }
+  const to = resolveContactNotificationEmail();
 
   if (!apiKey) {
     console.warn("[contact-notify] BREVO_API_KEY not set — notification email skipped");

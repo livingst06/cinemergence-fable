@@ -15,7 +15,47 @@ vi.mock("nodemailer", () => ({
   },
 }));
 
-import { sendContactNotification } from "@/lib/contact-notify";
+import {
+  CONTACT_NOTIFICATION_INBOX,
+  resolveContactNotificationEmail,
+  resolveSenderEmail,
+  sendContactNotification,
+} from "@/lib/contact-notify";
+
+const sample = {
+  nom: "Jean Test",
+  email: "jean@example.com",
+  message: "Message de test valide",
+  type: "contact" as const,
+};
+
+describe("resolveContactNotificationEmail", () => {
+  it("uses the Cinémergence inbox by default", () => {
+    expect(resolveContactNotificationEmail(undefined)).toBe(CONTACT_NOTIFICATION_INBOX);
+    expect(resolveContactNotificationEmail("  ")).toBe(CONTACT_NOTIFICATION_INBOX);
+  });
+
+  it("redirects the former personal inbox", () => {
+    expect(resolveContactNotificationEmail("verdat.sylvain@gmail.com")).toBe(
+      CONTACT_NOTIFICATION_INBOX,
+    );
+    expect(resolveContactNotificationEmail("  Verdat.Sylvain@gmail.com ")).toBe(
+      CONTACT_NOTIFICATION_INBOX,
+    );
+  });
+
+  it("keeps any other configured recipient", () => {
+    expect(resolveContactNotificationEmail("autre@example.com")).toBe("autre@example.com");
+  });
+});
+
+describe("resolveSenderEmail", () => {
+  it("keeps the verified historical sender until BREVO_SENDER_EMAIL is set", () => {
+    expect(resolveSenderEmail(undefined)).toBe("verdat.sylvain@gmail.com");
+    expect(resolveSenderEmail("  ")).toBe("verdat.sylvain@gmail.com");
+    expect(resolveSenderEmail("expediteur@example.com")).toBe("expediteur@example.com");
+  });
+});
 
 describe("sendContactNotification", () => {
   beforeEach(() => {
@@ -30,15 +70,10 @@ describe("sendContactNotification", () => {
   });
 
   it("skips when BREVO_API_KEY is missing", async () => {
-    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "verdat.sylvain@gmail.com");
+    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", CONTACT_NOTIFICATION_INBOX);
     vi.stubEnv("BREVO_API_KEY", "");
 
-    const result = await sendContactNotification({
-      nom: "Jean Test",
-      email: "jean@example.com",
-      message: "Message de test valide",
-      type: "contact",
-    });
+    const result = await sendContactNotification(sample);
 
     expect(result.ok).toBe(false);
     expect(result.skipped).toBe(true);
@@ -46,7 +81,7 @@ describe("sendContactNotification", () => {
 
   it("sends via Brevo REST when key is xkeysib", async () => {
     vi.stubEnv("BREVO_API_KEY", "xkeysib-test-key");
-    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "verdat.sylvain@gmail.com");
+    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", CONTACT_NOTIFICATION_INBOX);
 
     const fetchMock = vi.spyOn(global, "fetch").mockResolvedValue(
       new Response("{}", { status: 201 }),
@@ -64,6 +99,10 @@ describe("sendContactNotification", () => {
     expect(fetchMock).toHaveBeenCalledOnce();
     const [, init] = fetchMock.mock.calls[0]!;
     expect(init?.headers).toMatchObject({ "api-key": "xkeysib-test-key" });
+    expect(JSON.parse(String(init?.body))).toMatchObject({
+      sender: { email: "verdat.sylvain@gmail.com", name: "Cinémergence" },
+      to: [{ email: CONTACT_NOTIFICATION_INBOX }],
+    });
     expect(createTransportMock).not.toHaveBeenCalled();
   });
 
@@ -102,7 +141,8 @@ describe("sendContactNotification", () => {
     expect(createTransportMock).toHaveBeenCalledOnce();
     expect(sendMailMock).toHaveBeenCalledOnce();
     expect(sendMailMock.mock.calls[0]?.[0]).toMatchObject({
-      to: "verdat.sylvain@gmail.com",
+      to: CONTACT_NOTIFICATION_INBOX,
+      from: '"Cinémergence" <verdat.sylvain@gmail.com>',
       replyTo: '"Jean Test" <jean@example.com>',
     });
   });

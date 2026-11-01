@@ -185,14 +185,14 @@ chmod +x scripts/sync-vercel-env.sh
 | `BREVO_API_KEY` | Clé Brevo : `xsmtpsib-…` (SMTP) ou `xkeysib-…` (API REST) |
 | `BREVO_SMTP_LOGIN` | **Obligatoire avec `xsmtpsib-`** — login affiché dans Brevo → SMTP & API → onglet SMTP (`xxx@smtp-brevo.com`) |
 | `CONTACT_NOTIFICATION_EMAIL` | Destinataire des formulaires : `contact@cinemergence.fr` |
-| `BREVO_SENDER_EMAIL` | Expéditeur vérifié dans Brevo : `contact@cinemergence.fr` |
+| `BREVO_SENDER_EMAIL` | Expéditeur déjà déclaré dans Brevo : `verdat.sylvain@gmail.com` |
 
 ### Notifications email (formulaires contact)
 
-Les soumissions sont enregistrées dans Payload (**Admin → Form submissions**), puis une notification part via **Brevo** si `BREVO_API_KEY` est configurée. Le destinataire est `contact@cinemergence.fr` (`CONTACT_NOTIFICATION_EMAIL`). Les anciennes adresses `cinemergence.paris@gmail.com` et `verdat.sylvain@gmail.com`, si elles sont encore dans l'environnement, sont redirigées vers cette boîte.
+Les soumissions sont enregistrées dans Payload (**Admin → Form submissions**), puis une notification part via **Brevo** si `BREVO_API_KEY` est configurée. Le destinataire est `contact@cinemergence.fr` (`CONTACT_NOTIFICATION_EMAIL`). Les anciennes adresses `cinemergence.paris@gmail.com` et `verdat.sylvain@gmail.com`, si elles sont encore le destinataire, sont redirigées vers cette boîte. L'expéditeur reste `verdat.sylvain@gmail.com`, déjà déclaré dans Brevo : un From non vérifié (`contact@cinemergence.fr` inclus) est remplacé par cette adresse, sinon Brevo bloque l'envoi.
 
 1. Créer un compte sur [brevo.com](https://www.brevo.com)
-2. **Expéditeurs** → vérifier `contact@cinemergence.fr`
+2. **Expéditeurs** → l'adresse déclarée est `verdat.sylvain@gmail.com`. Ne pas envoyer depuis `contact@cinemergence.fr` tant qu'elle n'y est pas vérifiée.
 3. **SMTP & API → onglet SMTP** :
    - Copier le **login SMTP** (`xxx@smtp-brevo.com`) → `BREVO_SMTP_LOGIN`
    - Copier la **clé SMTP** (`xsmtpsib-…`) → `BREVO_API_KEY`

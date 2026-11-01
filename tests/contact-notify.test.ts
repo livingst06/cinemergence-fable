@@ -16,6 +16,7 @@ vi.mock("nodemailer", () => ({
 }));
 
 import {
+  BREVO_VERIFIED_SENDER,
   CONTACT_NOTIFICATION_INBOX,
   resolveContactNotificationEmail,
   resolveSenderEmail,
@@ -56,11 +57,14 @@ describe("resolveContactNotificationEmail", () => {
 });
 
 describe("resolveSenderEmail", () => {
-  it("uses contact@cinemergence.fr until a distinct BREVO_SENDER_EMAIL is set", () => {
-    expect(resolveSenderEmail(undefined)).toBe(CONTACT_NOTIFICATION_INBOX);
-    expect(resolveSenderEmail("  ")).toBe(CONTACT_NOTIFICATION_INBOX);
-    expect(resolveSenderEmail("verdat.sylvain@gmail.com")).toBe(CONTACT_NOTIFICATION_INBOX);
-    expect(resolveSenderEmail("cinemergence.paris@gmail.com")).toBe(CONTACT_NOTIFICATION_INBOX);
+  it("uses the sender already declared in Brevo", () => {
+    expect(resolveSenderEmail(undefined)).toBe(BREVO_VERIFIED_SENDER);
+    expect(resolveSenderEmail("  ")).toBe(BREVO_VERIFIED_SENDER);
+    expect(resolveSenderEmail("verdat.sylvain@gmail.com")).toBe(BREVO_VERIFIED_SENDER);
+    expect(resolveSenderEmail("  Verdat.Sylvain@gmail.com ")).toBe(BREVO_VERIFIED_SENDER);
+    expect(resolveSenderEmail(CONTACT_NOTIFICATION_INBOX)).toBe(BREVO_VERIFIED_SENDER);
+    expect(resolveSenderEmail("cinemergence.paris@gmail.com")).toBe(BREVO_VERIFIED_SENDER);
+    expect(resolveSenderEmail("cinemergence.paris.@gmail.com")).toBe(BREVO_VERIFIED_SENDER);
     expect(resolveSenderEmail("expediteur@example.com")).toBe("expediteur@example.com");
   });
 });
@@ -108,7 +112,7 @@ describe("sendContactNotification", () => {
     const [, init] = fetchMock.mock.calls[0]!;
     expect(init?.headers).toMatchObject({ "api-key": "xkeysib-test-key" });
     expect(JSON.parse(String(init?.body))).toMatchObject({
-      sender: { email: CONTACT_NOTIFICATION_INBOX, name: "Cinémergence" },
+      sender: { email: BREVO_VERIFIED_SENDER, name: "Cinémergence" },
       to: [{ email: CONTACT_NOTIFICATION_INBOX }],
     });
     expect(createTransportMock).not.toHaveBeenCalled();
@@ -150,7 +154,7 @@ describe("sendContactNotification", () => {
     expect(sendMailMock).toHaveBeenCalledOnce();
     expect(sendMailMock.mock.calls[0]?.[0]).toMatchObject({
       to: CONTACT_NOTIFICATION_INBOX,
-      from: `"Cinémergence" <${CONTACT_NOTIFICATION_INBOX}>`,
+      from: `"Cinémergence" <${BREVO_VERIFIED_SENDER}>`,
       replyTo: '"Jean Test" <jean@example.com>',
     });
   });
@@ -171,7 +175,7 @@ describe("sendContactNotification", () => {
     expect(result.ok).toBe(true);
     expect(sendMailMock.mock.calls[0]?.[0]).toMatchObject({
       to: "contact@cinemergence.fr",
-      from: '"Cinémergence" <contact@cinemergence.fr>',
+      from: `"Cinémergence" <${BREVO_VERIFIED_SENDER}>`,
     });
   });
 });

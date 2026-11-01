@@ -5,11 +5,27 @@ import type { ContactInput } from "@/lib/validations";
 /** Boîte qui reçoit les questions des formulaires contact, inscription et financement. */
 export const CONTACT_NOTIFICATION_INBOX = "contact@cinemergence.fr";
 
+/**
+ * Expéditeur déjà déclaré dans Brevo. Un autre From est refusé par le relais
+ * tant qu'il n'est pas vérifié dans Expéditeurs.
+ */
+export const BREVO_VERIFIED_SENDER = "verdat.sylvain@gmail.com";
+
 /** Adresses encore présentes dans certains environnements, remplacées par la boîte de contact. */
 const LEGACY_CONTACT_EMAILS = new Set([
   "cinemergence.paris@gmail.com",
   "cinemergence.paris.@gmail.com",
   "verdat.sylvain@gmail.com",
+]);
+
+/**
+ * Ces From ne sont pas l'expéditeur déclaré chez Brevo. Les utiliser bloque l'envoi.
+ * contact@cinemergence.fr reste le destinataire, pas l'expéditeur.
+ */
+const UNDECLARED_SENDERS = new Set([
+  CONTACT_NOTIFICATION_INBOX,
+  "cinemergence.paris@gmail.com",
+  "cinemergence.paris.@gmail.com",
 ]);
 
 function isLegacyContactEmail(value: string): boolean {
@@ -28,12 +44,13 @@ export function resolveContactNotificationEmail(
   return to;
 }
 
-/** Expéditeur Brevo. Même repli que le destinataire des formulaires. */
+/** Expéditeur Brevo. Repli sur l'adresse déjà déclarée, pour ne pas bloquer l'envoi. */
 export function resolveSenderEmail(
   configured: string | undefined = process.env.BREVO_SENDER_EMAIL,
 ): string {
   const sender = configured?.trim() ?? "";
-  if (!sender || isLegacyContactEmail(sender)) return CONTACT_NOTIFICATION_INBOX;
+  if (!sender || UNDECLARED_SENDERS.has(sender.toLowerCase())) return BREVO_VERIFIED_SENDER;
+  if (sender.toLowerCase() === BREVO_VERIFIED_SENDER) return BREVO_VERIFIED_SENDER;
   return sender;
 }
 

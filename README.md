@@ -184,15 +184,15 @@ chmod +x scripts/sync-vercel-env.sh
 | `MIGRATE_MEDIA_SECRET` | Bearer pour `POST /api/seed/migrate-storage` |
 | `BREVO_API_KEY` | Clé Brevo : `xsmtpsib-…` (SMTP) ou `xkeysib-…` (API REST) |
 | `BREVO_SMTP_LOGIN` | **Obligatoire avec `xsmtpsib-`** — login affiché dans Brevo → SMTP & API → onglet SMTP (`xxx@smtp-brevo.com`) |
-| `CONTACT_NOTIFICATION_EMAIL` | Destinataire (ex. `verdat.sylvain@gmail.com`) |
-| `BREVO_SENDER_EMAIL` | Expéditeur vérifié dans Brevo (souvent la même adresse au départ) |
+| `CONTACT_NOTIFICATION_EMAIL` | Destinataire des formulaires : `contact@cinemergence.fr` |
+| `BREVO_SENDER_EMAIL` | Expéditeur vérifié dans Brevo : `contact@cinemergence.fr` |
 
 ### Notifications email (formulaires contact)
 
 Les soumissions sont enregistrées dans Payload (**Admin → Form submissions**), puis une notification part via **Brevo** si `BREVO_API_KEY` est configurée.
 
 1. Créer un compte sur [brevo.com](https://www.brevo.com)
-2. **Expéditeurs** → vérifier `verdat.sylvain@gmail.com` (ou ton domaine)
+2. **Expéditeurs** → vérifier `contact@cinemergence.fr`
 3. **SMTP & API → onglet SMTP** :
    - Copier le **login SMTP** (`xxx@smtp-brevo.com`) → `BREVO_SMTP_LOGIN`
    - Copier la **clé SMTP** (`xsmtpsib-…`) → `BREVO_API_KEY`

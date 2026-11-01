@@ -30,7 +30,7 @@ describe("sendContactNotification", () => {
   });
 
   it("skips when BREVO_API_KEY is missing", async () => {
-    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "verdat.sylvain@gmail.com");
+    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "contact@cinemergence.fr");
     vi.stubEnv("BREVO_API_KEY", "");
 
     const result = await sendContactNotification({
@@ -46,7 +46,7 @@ describe("sendContactNotification", () => {
 
   it("sends via Brevo REST when key is xkeysib", async () => {
     vi.stubEnv("BREVO_API_KEY", "xkeysib-test-key");
-    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "verdat.sylvain@gmail.com");
+    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "contact@cinemergence.fr");
 
     const fetchMock = vi.spyOn(global, "fetch").mockResolvedValue(
       new Response("{}", { status: 201 }),
@@ -69,7 +69,7 @@ describe("sendContactNotification", () => {
 
   it("fails when xsmtpsib key but BREVO_SMTP_LOGIN is missing", async () => {
     vi.stubEnv("BREVO_API_KEY", "xsmtpsib-test-key");
-    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "verdat.sylvain@gmail.com");
+    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "contact@cinemergence.fr");
 
     const result = await sendContactNotification({
       nom: "Jean Test",
@@ -85,7 +85,7 @@ describe("sendContactNotification", () => {
 
   it("sends via Brevo SMTP when key is xsmtpsib", async () => {
     vi.stubEnv("BREVO_API_KEY", "xsmtpsib-test-key");
-    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "verdat.sylvain@gmail.com");
+    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "contact@cinemergence.fr");
     vi.stubEnv("BREVO_SMTP_LOGIN", "123456@smtp-brevo.com");
 
     const fetchMock = vi.spyOn(global, "fetch");
@@ -102,8 +102,28 @@ describe("sendContactNotification", () => {
     expect(createTransportMock).toHaveBeenCalledOnce();
     expect(sendMailMock).toHaveBeenCalledOnce();
     expect(sendMailMock.mock.calls[0]?.[0]).toMatchObject({
-      to: "verdat.sylvain@gmail.com",
+      to: "contact@cinemergence.fr",
       replyTo: '"Jean Test" <jean@example.com>',
+    });
+  });
+
+  it("rewrites the legacy public gmail to contact@cinemergence.fr", async () => {
+    vi.stubEnv("BREVO_API_KEY", "xsmtpsib-test-key");
+    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "cinemergence.paris@gmail.com");
+    vi.stubEnv("BREVO_SENDER_EMAIL", "cinemergence.paris.@gmail.com");
+    vi.stubEnv("BREVO_SMTP_LOGIN", "123456@smtp-brevo.com");
+
+    const result = await sendContactNotification({
+      nom: "Jean Test",
+      email: "jean@example.com",
+      message: "Message de test valide",
+      type: "contact",
+    });
+
+    expect(result.ok).toBe(true);
+    expect(sendMailMock.mock.calls[0]?.[0]).toMatchObject({
+      to: "contact@cinemergence.fr",
+      from: '"Cinémergence" <contact@cinemergence.fr>',
     });
   });
 });

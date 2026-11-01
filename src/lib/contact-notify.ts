@@ -2,6 +2,21 @@ import nodemailer from "nodemailer";
 
 import type { ContactInput } from "@/lib/validations";
 
+const PUBLIC_CONTACT_EMAIL = "contact@cinemergence.fr";
+
+/** Ancienne adresse publique, encore possible dans un environnement Vercel non resynchronisé. */
+const LEGACY_PUBLIC_EMAILS = new Set([
+  "cinemergence.paris@gmail.com",
+  "cinemergence.paris.@gmail.com",
+]);
+
+function resolveContactEmail(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  if (!trimmed) return undefined;
+  if (LEGACY_PUBLIC_EMAILS.has(trimmed.toLowerCase())) return PUBLIC_CONTACT_EMAIL;
+  return trimmed;
+}
+
 const TYPE_LABELS: Record<ContactInput["type"], string> = {
   contact: "Contact général",
   inscription: "Inscription formation",
@@ -17,7 +32,7 @@ function escapeHtml(value: string): string {
 }
 
 function buildEmailContent(data: ContactInput, to: string) {
-  const senderEmail = process.env.BREVO_SENDER_EMAIL?.trim() || to;
+  const senderEmail = resolveContactEmail(process.env.BREVO_SENDER_EMAIL) || to;
   const senderName = process.env.BREVO_SENDER_NAME?.trim() || "Cinémergence";
 
   const phoneLine = data.telephone
@@ -112,7 +127,7 @@ async function sendViaRestApi(
   to: string,
   data: ContactInput,
 ): Promise<{ ok: boolean; error?: string }> {
-  const senderEmail = process.env.BREVO_SENDER_EMAIL?.trim() || to;
+  const senderEmail = resolveContactEmail(process.env.BREVO_SENDER_EMAIL) || to;
   const senderName = process.env.BREVO_SENDER_NAME?.trim() || "Cinémergence";
   const { html } = buildEmailContent(data, to);
 
@@ -153,7 +168,7 @@ export async function sendContactNotification(
   data: ContactInput,
 ): Promise<{ ok: boolean; skipped?: boolean; error?: string }> {
   const apiKey = process.env.BREVO_API_KEY?.trim();
-  const to = process.env.CONTACT_NOTIFICATION_EMAIL?.trim();
+  const to = resolveContactEmail(process.env.CONTACT_NOTIFICATION_EMAIL);
 
   if (!to) {
     console.warn("[contact-notify] CONTACT_NOTIFICATION_EMAIL not set");

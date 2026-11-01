@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Push production media + core env vars to Vercel.
+# Push core env vars to Vercel.
+# Secrets stay on production. The public contact address is also written to preview and development.
 # Prerequisite: vercel login && vercel link (from repo root)
 #
 # Usage:
@@ -51,14 +52,35 @@ if [[ -n "${VERCEL_TOKEN:-}" ]]; then
   VERCEL_ARGS=(--token "$VERCEL_TOKEN")
 fi
 
+# Adresse de contact : production, preview et development.
+ALL_ENV_KEYS=(
+  CONTACT_NOTIFICATION_EMAIL
+  BREVO_SENDER_EMAIL
+  BREVO_SENDER_NAME
+)
+
+targets_for() {
+  local key="$1"
+  local all
+  for all in "${ALL_ENV_KEYS[@]}"; do
+    if [[ "$key" == "$all" ]]; then
+      echo "production preview development"
+      return
+    fi
+  done
+  echo "production"
+}
+
 for key in "${VARS[@]}"; do
   value="$(grep -E "^${key}=" "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
   if [[ -z "$value" ]]; then
     echo "Skip $key (empty)"
     continue
   fi
-  printf '%s' "$value" | npx vercel env add "$key" production --force "${VERCEL_ARGS[@]}"
-  echo "Set $key (production)"
+  for target in $(targets_for "$key"); do
+    printf '%s' "$value" | npx vercel env add "$key" "$target" --force "${VERCEL_ARGS[@]}"
+    echo "Set $key ($target)"
+  done
 done
 
 echo "Done. Redeploy Vercel for changes to apply."

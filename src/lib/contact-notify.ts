@@ -3,30 +3,55 @@ import nodemailer from "nodemailer";
 import type { ContactInput } from "@/lib/validations";
 
 /** Boîte qui reçoit les questions des formulaires contact, inscription et financement. */
-export const CONTACT_NOTIFICATION_INBOX = "cinemergence.paris@gmail.com";
-
-const LEGACY_CONTACT_NOTIFICATION_EMAIL = "verdat.sylvain@gmail.com";
+export const CONTACT_NOTIFICATION_INBOX = "contact@cinemergence.fr";
 
 /**
- * Destinataire effectif. L'ancienne adresse personnelle, encore présente
- * dans les environnements déjà déployés, est redirigée vers la boîte Cinémergence.
- * Toute autre valeur de CONTACT_NOTIFICATION_EMAIL reste respectée.
+ * Expéditeur déjà déclaré dans Brevo. Un autre From est refusé par le relais
+ * tant qu'il n'est pas vérifié dans Expéditeurs.
+ */
+export const BREVO_VERIFIED_SENDER = "verdat.sylvain@gmail.com";
+
+/** Adresses encore présentes dans certains environnements, remplacées par la boîte de contact. */
+const LEGACY_CONTACT_EMAILS = new Set([
+  "cinemergence.paris@gmail.com",
+  "cinemergence.paris.@gmail.com",
+  "verdat.sylvain@gmail.com",
+]);
+
+/**
+ * Ces From ne sont pas l'expéditeur déclaré chez Brevo. Les utiliser bloque l'envoi.
+ * contact@cinemergence.fr reste le destinataire, pas l'expéditeur.
+ */
+const UNDECLARED_SENDERS = new Set([
+  CONTACT_NOTIFICATION_INBOX,
+  "cinemergence.paris@gmail.com",
+  "cinemergence.paris.@gmail.com",
+]);
+
+function isLegacyContactEmail(value: string): boolean {
+  return LEGACY_CONTACT_EMAILS.has(value.trim().toLowerCase());
+}
+
+/**
+ * Destinataire effectif. Une adresse absente ou ancienne est remplacée par
+ * contact@cinemergence.fr. Toute autre valeur explicite reste respectée.
  */
 export function resolveContactNotificationEmail(
   configured: string | undefined = process.env.CONTACT_NOTIFICATION_EMAIL,
 ): string {
   const to = configured?.trim() ?? "";
-  if (!to || to.toLowerCase() === LEGACY_CONTACT_NOTIFICATION_EMAIL) {
-    return CONTACT_NOTIFICATION_INBOX;
-  }
+  if (!to || isLegacyContactEmail(to)) return CONTACT_NOTIFICATION_INBOX;
   return to;
 }
 
-/** Expéditeur Brevo. L'adresse vérifiée historique reste le repli tant que BREVO_SENDER_EMAIL n'est pas défini. */
+/** Expéditeur Brevo. Repli sur l'adresse déjà déclarée, pour ne pas bloquer l'envoi. */
 export function resolveSenderEmail(
   configured: string | undefined = process.env.BREVO_SENDER_EMAIL,
 ): string {
-  return configured?.trim() || LEGACY_CONTACT_NOTIFICATION_EMAIL;
+  const sender = configured?.trim() ?? "";
+  if (!sender || UNDECLARED_SENDERS.has(sender.toLowerCase())) return BREVO_VERIFIED_SENDER;
+  if (sender.toLowerCase() === BREVO_VERIFIED_SENDER) return BREVO_VERIFIED_SENDER;
+  return sender;
 }
 
 const TYPE_LABELS: Record<ContactInput["type"], string> = {

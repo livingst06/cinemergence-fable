@@ -1,20 +1,16 @@
 import pg from "pg";
 
-/** Les 5 premiers paiements confirmés : 1 290 €. */
-const EARLY_PAYMENT_LINK = "https://buy.stripe.com/aFadR8fWP9H18Vr5Z2bwk09";
-/** À partir du 6e, et aussi une fois la session complète : 1 490 €. */
-const STANDARD_PAYMENT_LINK = "https://buy.stripe.com/3cI28q3a38CX5Jf9bebwk0b";
+import {
+  isKheironPaymentAmount,
+  kheironOfferFromCount,
+  type KheironOffer,
+  type KheironOfferPhase,
+} from "@/lib/kheiron-offer";
 
-const EARLY_LIMIT = 5;
-const CAPACITY = 20;
+export { kheironOfferFromCount };
+export type { KheironOffer, KheironOfferPhase };
 
 const SESSION_ID = /^cs_(live|test)_[A-Za-z0-9]{8,}$/;
-
-/** Liens du compte Stripe qui encaisse la masterclass, avec leur montant en centimes. */
-const KHEIRON_PAYMENT_LINKS: Record<string, number> = {
-  plink_1UTe7yCXL04XIOiV6iAxpnwA: 129_000,
-  plink_1UU3ceCXL04XIOiVTvg1tidi: 149_000,
-};
 
 type StripeCheckoutSession = {
   mode?: string;
@@ -30,26 +26,15 @@ export function isPaidKheironSession(session: StripeCheckoutSession): boolean {
   const link =
     typeof session.payment_link === "string" ? session.payment_link : session.payment_link?.id;
   if (!link) return false;
-  const expectedAmount = KHEIRON_PAYMENT_LINKS[link];
   return (
     session.livemode === true &&
     session.mode === "payment" &&
     session.status === "complete" &&
     session.payment_status === "paid" &&
     session.currency === "eur" &&
-    expectedAmount !== undefined &&
-    session.amount_total === expectedAmount
+    isKheironPaymentAmount(link, session.amount_total)
   );
 }
-
-export type KheironOfferPhase = "early" | "standard" | "full";
-
-export type KheironOffer = {
-  paidCount: number;
-  seatsLeft: number;
-  phase: KheironOfferPhase;
-  paymentLink: string;
-};
 
 let pool: pg.Pool | null = null;
 let tableReady: Promise<void> | null = null;
@@ -77,17 +62,6 @@ async function ensureTable() {
       });
   }
   await tableReady;
-}
-
-export function kheironOfferFromCount(paidCount: number): KheironOffer {
-  const seatsLeft = Math.max(0, CAPACITY - paidCount);
-  if (paidCount >= CAPACITY) {
-    return { paidCount, seatsLeft, phase: "full", paymentLink: STANDARD_PAYMENT_LINK };
-  }
-  if (paidCount >= EARLY_LIMIT) {
-    return { paidCount, seatsLeft, phase: "standard", paymentLink: STANDARD_PAYMENT_LINK };
-  }
-  return { paidCount, seatsLeft, phase: "early", paymentLink: EARLY_PAYMENT_LINK };
 }
 
 export async function getKheironOffer(): Promise<KheironOffer> {

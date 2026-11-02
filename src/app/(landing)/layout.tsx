@@ -3,7 +3,7 @@ import { Bebas_Neue, Inter, Playfair_Display, Plus_Jakarta_Sans } from "next/fon
 
 import { Analytics } from "@/components/Analytics";
 import { KheironConsent } from "@/features/kheiron/KheironConsent";
-import { socialMetadata } from "@/lib/share-metadata";
+import { kheironShareImage, socialMetadata } from "@/lib/share-metadata";
 import { getPublicSiteUrl } from "@/lib/site-url";
 
 import "@/features/kheiron/kheiron.css";
@@ -37,7 +37,7 @@ const serif = Playfair_Display({
   display: "swap",
 });
 
-const social = socialMetadata();
+const social = socialMetadata({ image: kheironShareImage });
 
 export const metadata: Metadata = {
   metadataBase: new URL(getPublicSiteUrl()),

@@ -1,4 +1,5 @@
 import type { SiteConfig } from "./data";
+import { SHARE_IMAGE_PATH } from "./share-metadata";
 
 export function organizationJsonLd(site: SiteConfig) {
   return {
@@ -8,6 +9,7 @@ export function organizationJsonLd(site: SiteConfig) {
     alternateName: "Cinémergence — École de formation cinéma",
     description: site.description,
     url: site.url,
+    image: new URL(SHARE_IMAGE_PATH, site.url).href,
     email: site.email,
     address: {
       "@type": "PostalAddress",

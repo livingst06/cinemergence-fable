@@ -3,6 +3,8 @@ import { Bebas_Neue, Inter, Playfair_Display, Plus_Jakarta_Sans } from "next/fon
 
 import { Analytics } from "@/components/Analytics";
 import { KheironConsent } from "@/features/kheiron/KheironConsent";
+import { socialMetadata } from "@/lib/share-metadata";
+import { getPublicSiteUrl } from "@/lib/site-url";
 
 import "@/features/kheiron/kheiron.css";
 
@@ -35,10 +37,15 @@ const serif = Playfair_Display({
   display: "swap",
 });
 
+const social = socialMetadata();
+
 export const metadata: Metadata = {
+  metadataBase: new URL(getPublicSiteUrl()),
   title: "Masterclass Stand-Up avec Kheiron — Cinémergence",
   description:
     "Formation stand-up de 4 jours à Paris : joue ton sketch devant Kheiron au Théâtre Apollo, réécris-le avec nos formateurs et termine par une scène ouverte filmée dans un café-théâtre. 28–29 novembre & 5–6 décembre 2026.",
+  openGraph: social.openGraph,
+  twitter: social.twitter,
 };
 
 export default function LandingLayout({ children }: { children: React.ReactNode }) {

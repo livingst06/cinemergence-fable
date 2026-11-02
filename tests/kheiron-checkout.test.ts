@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import { isPaidKheironSession } from "@/lib/kheiron-checkout";
+import {
+  KHEIRON_EARLY_PAYMENT_LINK,
+  KHEIRON_STANDARD_PAYMENT_LINK,
+  kheironOfferFromCount,
+  kheironPrice,
+} from "@/lib/kheiron-offer";
 
 const earlyPaid = {
   livemode: true,
@@ -8,16 +14,24 @@ const earlyPaid = {
   status: "complete",
   payment_status: "paid",
   currency: "eur",
-  amount_total: 129_000,
+  amount_total: 89_000,
   payment_link: "plink_1UTe7yCXL04XIOiV6iAxpnwA",
 };
 
 describe("isPaidKheironSession", () => {
-  it("accepte le lien à 1 290 € une fois payé", () => {
+  it("accepte le premier lien à 890 €, et encore un paiement déjà encaissé à 1 290 €", () => {
     expect(isPaidKheironSession(earlyPaid)).toBe(true);
+    expect(isPaidKheironSession({ ...earlyPaid, amount_total: 129_000 })).toBe(true);
   });
 
-  it("accepte le lien à 1 490 € une fois payé", () => {
+  it("accepte le second lien à 990 €, et encore un paiement déjà encaissé à 1 490 €", () => {
+    expect(
+      isPaidKheironSession({
+        ...earlyPaid,
+        amount_total: 99_000,
+        payment_link: "plink_1UU3ceCXL04XIOiVTvg1tidi",
+      }),
+    ).toBe(true);
     expect(
       isPaidKheironSession({
         ...earlyPaid,
@@ -27,8 +41,9 @@ describe("isPaidKheironSession", () => {
     ).toBe(true);
   });
 
-  it("refuse un autre lien, un montant échangé, un impayé ou le mode test", () => {
+  it("refuse un autre lien, un montant qui n'est pas celui du lien, un impayé ou le mode test", () => {
     expect(isPaidKheironSession({ ...earlyPaid, payment_link: "plink_autre" })).toBe(false);
+    expect(isPaidKheironSession({ ...earlyPaid, amount_total: 99_000 })).toBe(false);
     expect(isPaidKheironSession({ ...earlyPaid, amount_total: 149_000 })).toBe(false);
     expect(isPaidKheironSession({ ...earlyPaid, payment_status: "unpaid" })).toBe(false);
     expect(isPaidKheironSession({ ...earlyPaid, status: "open" })).toBe(false);
@@ -43,5 +58,78 @@ describe("isPaidKheironSession", () => {
         payment_link: { id: "plink_1UTe7yCXL04XIOiV6iAxpnwA" },
       }),
     ).toBe(true);
+  });
+});
+
+describe("kheironOfferFromCount", () => {
+  it("garde le tarif des 5 premières places et le compteur sur 20", () => {
+    expect(kheironOfferFromCount(0)).toMatchObject({
+      paidCount: 0,
+      seatsLeft: 20,
+      phase: "early",
+      paymentLink: KHEIRON_EARLY_PAYMENT_LINK,
+    });
+    expect(kheironOfferFromCount(4)).toMatchObject({
+      seatsLeft: 16,
+      phase: "early",
+      paymentLink: KHEIRON_EARLY_PAYMENT_LINK,
+    });
+  });
+
+  it("passe à 990 € de la 6e à la 20e place, avec le même lien Stripe", () => {
+    expect(kheironOfferFromCount(5)).toMatchObject({
+      seatsLeft: 15,
+      phase: "standard",
+      paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
+    });
+    expect(kheironOfferFromCount(19)).toMatchObject({
+      seatsLeft: 1,
+      phase: "standard",
+      paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
+    });
+  });
+
+  it("ouvre 4 places supplémentaires à partir de la 20e place achetée", () => {
+    expect(kheironOfferFromCount(20)).toMatchObject({
+      seatsLeft: 4,
+      phase: "extra",
+      paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
+    });
+    expect(kheironOfferFromCount(23)).toMatchObject({
+      seatsLeft: 1,
+      phase: "extra",
+      paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
+    });
+  });
+
+  it("fige le compteur à complet dès 24 places, sans le décrémenter ensuite", () => {
+    const full = kheironOfferFromCount(24);
+    expect(full).toMatchObject({
+      paidCount: 24,
+      seatsLeft: 0,
+      phase: "full",
+      paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
+    });
+    expect(kheironOfferFromCount(34)).toMatchObject({
+      paidCount: 34,
+      seatsLeft: 0,
+      phase: "full",
+      paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
+    });
+  });
+});
+
+describe("kheironPrice", () => {
+  it("met le 3× en tête, en € TTC, puis le paiement en une fois", () => {
+    expect(kheironPrice("early")).toEqual({
+      installments: "3 x 296,67\u00a0€\u00a0TTC",
+      once: "890\u00a0€\u00a0TTC",
+    });
+    expect(kheironPrice("standard")).toEqual({
+      installments: "3 x 330\u00a0€\u00a0TTC",
+      once: "990\u00a0€\u00a0TTC",
+    });
+    expect(kheironPrice("extra")).toEqual(kheironPrice("standard"));
+    expect(kheironPrice("full")).toEqual(kheironPrice("standard"));
   });
 });

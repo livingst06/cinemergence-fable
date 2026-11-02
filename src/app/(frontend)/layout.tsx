@@ -9,6 +9,7 @@ import { Header } from "@/components/layout/Header";
 import { SiteNoticeBanner } from "@/components/layout/SiteNoticeBanner";
 import { getFormations, getSiteSettings } from "@/lib/data";
 import { organizationJsonLd } from "@/lib/seo";
+import { socialMetadata } from "@/lib/share-metadata";
 import { cn } from "@/lib/utils";
 
 import "../globals.css";
@@ -30,6 +31,7 @@ const themeInitScript = `(function(){var r=document.documentElement;r.classList.
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteSettings();
+  const social = socialMetadata({ siteName: site.name });
   return {
     metadataBase: new URL(site.url),
     title: {
@@ -43,11 +45,8 @@ export async function generateMetadata(): Promise<Metadata> {
       address: false,
       date: false,
     },
-    openGraph: {
-      type: "website",
-      locale: "fr_FR",
-      siteName: site.name,
-    },
+    openGraph: social.openGraph,
+    twitter: social.twitter,
   };
 }
 

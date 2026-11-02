@@ -13,6 +13,7 @@ import {
   KHEIRON_START,
   whatsAppLink,
 } from "@/features/kheiron/config";
+import { temoignageVideoCopy, temoignageVideos } from "@/features/temoignages-video/videos";
 
 type KheironOffer = {
   paymentLink: string;
@@ -21,17 +22,6 @@ type KheironOffer = {
 };
 
 const img = (file: string) => `${KHEIRON_MEDIA}/images/${file}`;
-const vid = (file: string) => `${KHEIRON_MEDIA}/videos/${file}`;
-
-const VIDEOS = [
-  { src: vid("temoignage-lea.mp4"), poster: img("temoignage-lea.webp"), nom: "Léa" },
-  { src: vid("temoignage-clement.mp4"), poster: img("temoignage-clement.webp"), nom: "Clément" },
-  { src: vid("temoignage-chloe.mp4"), poster: img("temoignage-chloe.webp"), nom: "Chloé" },
-  { src: vid("temoignage-maxime.mp4"), poster: img("temoignage-maxime.webp"), nom: "Maxime" },
-  { src: vid("temoignage-klemence.mp4"), poster: img("temoignage-klemence.webp"), nom: "Klémence" },
-  { src: vid("temoignage-caner.mp4"), poster: img("temoignage-caner.webp"), nom: "Caner" },
-  { src: vid("temoignage-jean.mp4"), poster: img("temoignage-jean.webp"), nom: "Jean" },
-];
 
 const POSTERS = [
   ["affiche-60-minutes.webp", "Affiche de 60 minutes avec Kheiron : On n'éteindra pas la lumière", "60 minutes avec Kheiron", "Son spectacle de stand-up"],
@@ -480,11 +470,11 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
 
       <section className="testi-section" id="temoignages">
         <div className="wrap">
-          <span className="eyebrow">Ils sont passés par Cinémergence</span>
-          <h2>Ce qu&apos;en disent nos anciens élèves.</h2>
-          <p className="lead">Ils ont suivi nos formations cinéma. Ils racontent avec leurs mots ce qui a changé pour eux. Chaque formation Cinémergence repose sur la même exigence : des professionnels du métier, des conditions réelles et un livrable concret à la fin.</p>
+          <span className="eyebrow">{temoignageVideoCopy.eyebrow}</span>
+          <h2>{temoignageVideoCopy.title}</h2>
+          <p className="lead">{temoignageVideoCopy.lead}</p>
           <div className="vcar" aria-label="Témoignages vidéo">
-            <KheironVideoShow videos={VIDEOS} />
+            <KheironVideoShow videos={temoignageVideos} />
           </div>
           <div className="testis">
             <figure className="testi"><span className="profil">Débutant</span><blockquote>Je n&apos;avais aucune bande démo. En deux jours, j&apos;ai travaillé des scènes exigeantes et obtenu des images exploitables. Le regard d&apos;un réalisateur change vraiment la façon d&apos;aborder le jeu.</blockquote><figcaption><b>Sarah, 24 ans</b><span className="formation">Stage Bande Démo Cinéma</span></figcaption></figure>

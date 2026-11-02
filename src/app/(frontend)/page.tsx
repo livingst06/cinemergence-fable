@@ -12,6 +12,7 @@ import { DaFilmstrip } from "@/features/home/DaFilmstrip";
 import { HeroKheironCard } from "@/features/home/HeroKheironCard";
 import { HeroProofCard } from "@/features/home/HeroProofCard";
 import { Temoignages } from "@/features/home/Temoignages";
+import { TemoignagesVideo } from "@/features/temoignages-video/TemoignagesVideo";
 import { FormationMiniCard } from "@/features/formations/FormationMiniCard";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { NewsletterForm } from "@/features/contact/NewsletterForm";
@@ -146,6 +147,8 @@ export default async function HomePage() {
       </section>
 
       <DaFilmstrip />
+
+      <TemoignagesVideo />
 
       <Temoignages temoignages={temoignages} />
 

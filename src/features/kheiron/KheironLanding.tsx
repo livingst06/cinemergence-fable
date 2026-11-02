@@ -175,6 +175,17 @@ function WhatsAppIcon() {
   );
 }
 
+function InstallmentAmount({ value }: { value: string }) {
+  const prefix = "3 x";
+  if (!value.startsWith(`${prefix} `)) return value;
+  return (
+    <span className="price-installment">
+      <span className="price-times">{prefix}</span>
+      {value.slice(prefix.length)}
+    </span>
+  );
+}
+
 function Qualiopi({ className }: { className?: string }) {
   return (
     <span className={className ? `qbadge ${className}` : "qbadge"}>
@@ -528,7 +539,9 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
               <div><b>{clock.m}</b><span>min</span></div>
             </div>
             <p className="price">
-              <span className="price-figure">{price.installments}</span>
+              <span className="price-figure">
+                <InstallmentAmount value={price.installments} />
+              </span>
               <span className="price-fees">sans frais</span>
             </p>
             <p className="price-sub">ou {price.once}</p>
@@ -536,14 +549,14 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
             {offer.phase === "early" && (
               <aside className="early" aria-label="Tarif à partir de la 6e place">
                 <p className="early-note">
-                  Dès la 6<sup>e</sup> place, le tarif passe à <b>{KHEIRON_STANDARD_INSTALLMENTS} sans frais</b> ou <b>{KHEIRON_STANDARD_ONCE}</b> en une fois.
+                  Dès la 6<sup>e</sup> place, le tarif passe à <b><InstallmentAmount value={KHEIRON_STANDARD_INSTALLMENTS} /> sans frais</b> ou <b>{KHEIRON_STANDARD_ONCE}</b> en une fois.
                 </p>
               </aside>
             )}
             {offer.phase === "extra" && (
               <aside className="early" aria-label="4 places supplémentaires">
                 <p className="early-note">
-                  Il y a 4 places supplémentaires, à <b>{KHEIRON_STANDARD_INSTALLMENTS} sans frais</b> ou <b>{KHEIRON_STANDARD_ONCE}</b> la place.
+                  Il y a 4 places supplémentaires, à <b><InstallmentAmount value={KHEIRON_STANDARD_INSTALLMENTS} /> sans frais</b> ou <b>{KHEIRON_STANDARD_ONCE}</b> la place.
                 </p>
               </aside>
             )}

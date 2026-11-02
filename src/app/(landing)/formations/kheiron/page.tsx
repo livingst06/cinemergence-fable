@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { KheironLanding } from "@/features/kheiron/KheironLanding";
 import { defaultSite } from "@/lib/defaults";
 import { getKheironOffer } from "@/lib/kheiron-checkout";
-import { socialMetadata } from "@/lib/share-metadata";
+import { kheironShareImage, socialMetadata } from "@/lib/share-metadata";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +15,7 @@ const social = socialMetadata({
   title,
   description,
   url: `${defaultSite.url}/formations/kheiron`,
+  image: kheironShareImage,
 });
 
 export const metadata: Metadata = {

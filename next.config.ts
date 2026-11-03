@@ -40,6 +40,12 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/:path*",
+        has: [{ type: "host", value: "cinemergence.vercel.app" }],
+        destination: "https://cinemergence.fr/:path*",
+        permanent: true,
+      },
+      {
         source: "/kheiron",
         destination: "/formations/kheiron",
         permanent: true,

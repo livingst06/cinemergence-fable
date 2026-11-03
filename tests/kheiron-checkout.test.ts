@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { isPaidKheironSession } from "@/lib/kheiron-checkout";
+import { isKheironCheckout, isPaidKheironSession } from "@/lib/kheiron-checkout";
 import {
   KHEIRON_EARLY_PAYMENT_LINK,
+  KHEIRON_ITEM_ID,
   KHEIRON_STANDARD_PAYMENT_LINK,
+  kheironAmountEuros,
   kheironOfferFromCount,
   kheironPrice,
 } from "@/lib/kheiron-offer";
@@ -49,6 +51,23 @@ describe("isPaidKheironSession", () => {
     expect(isPaidKheironSession({ ...earlyPaid, status: "open" })).toBe(false);
     expect(isPaidKheironSession({ ...earlyPaid, livemode: false })).toBe(false);
     expect(isPaidKheironSession({ ...earlyPaid, payment_link: { id: "plink_autre" } })).toBe(false);
+  });
+
+  it("compte une session créée par le site, même avec une réduction, pas en mode test", () => {
+    const site = {
+      livemode: true,
+      mode: "payment",
+      status: "complete",
+      payment_status: "paid",
+      currency: "eur",
+      amount_total: 79_000,
+      metadata: { offer: KHEIRON_ITEM_ID },
+    };
+    expect(isPaidKheironSession(site)).toBe(true);
+    expect(isKheironCheckout(site)).toBe(true);
+    expect(isPaidKheironSession({ ...site, livemode: false })).toBe(false);
+    expect(isKheironCheckout({ ...site, livemode: false })).toBe(true);
+    expect(isPaidKheironSession({ ...site, metadata: { offer: "autre" } })).toBe(false);
   });
 
   it("accepte le lien quand Stripe le renvoie comme objet", () => {
@@ -131,5 +150,12 @@ describe("kheironPrice", () => {
     });
     expect(kheironPrice("extra")).toEqual(kheironPrice("standard"));
     expect(kheironPrice("full")).toEqual(kheironPrice("standard"));
+  });
+
+  it("donne le montant en euros de la phase, 890 puis 990", () => {
+    expect(kheironAmountEuros("early")).toBe(890);
+    expect(kheironAmountEuros("standard")).toBe(990);
+    expect(kheironAmountEuros("extra")).toBe(990);
+    expect(kheironAmountEuros("full")).toBe(990);
   });
 });

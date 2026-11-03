@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Inter, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 
-import { Analytics } from "@/components/Analytics";
+import { TagManager } from "@/components/TagManager";
 import { KheironConsent } from "@/features/kheiron/KheironConsent";
 import { kheironShareImage, socialMetadata } from "@/lib/share-metadata";
 import { getPublicSiteUrl } from "@/lib/site-url";
@@ -52,9 +52,9 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
   return (
     <html lang="fr" className={`${sans.variable} ${display.variable} ${bebas.variable} ${serif.variable}`}>
       <body>
+        <TagManager />
         {children}
         <KheironConsent />
-        <Analytics />
       </body>
     </html>
   );

@@ -14,6 +14,7 @@ import {
   FormationProse,
 } from "@/features/formations/FormationPedagogy";
 import { FormationSessionGallery } from "@/features/formations/FormationSessionGallery";
+import { FormationViewItem } from "@/features/measurement/FormationViewItem";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { canonicalFormationSlug, formationPath } from "@/lib/defaults";
@@ -79,6 +80,7 @@ export default async function FormationDetailPage({ params }: Props) {
 
   return (
     <>
+      <FormationViewItem itemId={formation.slug} itemName={formation.titre} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

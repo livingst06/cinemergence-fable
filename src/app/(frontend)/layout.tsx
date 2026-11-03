@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { DeferredSiteChrome } from "@/components/DeferredSiteChrome";
+import { TagManager } from "@/components/TagManager";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { SiteNoticeBanner } from "@/components/layout/SiteNoticeBanner";
@@ -67,6 +68,7 @@ export default async function FrontendLayout({
       suppressHydrationWarning
     >
       <body className="flex min-h-dvh flex-col overflow-x-clip">
+        <TagManager />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script
           type="application/ld+json"

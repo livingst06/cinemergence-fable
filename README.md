@@ -116,7 +116,7 @@ Avant un lancement officiel :
 - Server Actions : contact / inscription / financement
 - `POST /api/newsletter` : capture email
 - Brancher **Brevo** via `BREVO_API_KEY` + `BREVO_LIST_ID`
-- **GA4** via `NEXT_PUBLIC_GA_MEASUREMENT_ID` (chargé après consentement cookies)
+- **Mesure** via Google Tag Manager (`GTM-KF4DTPJH`), chargé depuis `wisdom.cinemergence.fr` après le bandeau cookies
 
 ---
 
@@ -170,7 +170,7 @@ chmod +x scripts/sync-vercel-env.sh
 | --- | --- |
 | `DATABASE_URI` | Postgres Supabase (connection string) |
 | `PAYLOAD_SECRET` | Secret Payload (32+ caractères) |
-| `NEXT_PUBLIC_SITE_URL` | URL publique canonique — `https://cinemergence.vercel.app` en prod pour l'instant ; `https://cinemergence.fr` une fois le DNS configuré |
+| `NEXT_PUBLIC_SITE_URL` | URL publique canonique — `https://cinemergence.fr` |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk → API Keys (clé publique) |
 | `CLERK_SECRET_KEY` | Clerk → API Keys (clé secrète) |
 | `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | `/sign-in` |

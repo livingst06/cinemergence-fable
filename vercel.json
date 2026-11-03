@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/measurement/retry",
+      "schedule": "0 * * * *"
+    }
+  ]
+}

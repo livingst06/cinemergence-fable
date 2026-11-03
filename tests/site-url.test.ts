@@ -15,4 +15,9 @@ describe("getPublicSiteUrl", () => {
   it("falls back to defaultSite url", () => {
     expect(getPublicSiteUrl()).toBe("https://cinemergence.fr");
   });
+
+  it("rewrites the vercel.app alias to the public domain", () => {
+    process.env.NEXT_PUBLIC_SITE_URL = "https://cinemergence.vercel.app/";
+    expect(getPublicSiteUrl()).toBe("https://cinemergence.fr");
+  });
 });

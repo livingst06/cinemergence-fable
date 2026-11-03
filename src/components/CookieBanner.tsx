@@ -4,8 +4,7 @@ import { useSyncExternalStore } from "react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-
-const CONSENT_KEY = "cinemergence-cookie-consent";
+import { CONSENT_KEY, publishConsent } from "@/lib/cookie-consent";
 
 function subscribe(callback: () => void) {
   window.addEventListener("storage", callback);
@@ -23,16 +22,8 @@ function getServerSnapshot() {
 export function CookieBanner() {
   const visible = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  const accept = () => {
-    localStorage.setItem(CONSENT_KEY, "accepted");
-    window.dispatchEvent(new Event("cookie-consent-accepted"));
-    window.dispatchEvent(new Event("storage"));
-  };
-
-  const reject = () => {
-    localStorage.setItem(CONSENT_KEY, "rejected");
-    window.dispatchEvent(new Event("storage"));
-  };
+  const accept = () => publishConsent("accepted");
+  const reject = () => publishConsent("rejected");
 
   if (!visible) return null;
 
@@ -44,12 +35,13 @@ export function CookieBanner() {
     >
       <div className="container-page flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <p className="max-w-3xl text-xs leading-relaxed text-muted-text md:text-sm">
-          Ce site utilise des cookies pour mesurer l&apos;audience (Google Analytics) et
-          améliorer votre expérience. En continuant, vous acceptez notre{" "}
+          On utilise des cookies pour mesurer l&apos;audience du site (Google Analytics) et
+          l&apos;efficacité de nos publicités (Meta). Ils ne sont déposés que si tu acceptes, et
+          tu peux changer d&apos;avis à tout moment depuis « Gérer les cookies », en bas de chaque
+          page.{" "}
           <Link href="/confidentialite" className="text-or hover:underline">
-            politique de confidentialité
+            Politique de confidentialité
           </Link>
-          .
         </p>
         <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:flex-row">
           <Button

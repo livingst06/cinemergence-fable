@@ -38,7 +38,7 @@ type FormAction = (
   formData: FormData,
 ) => Promise<FormState>;
 
-export function useFormAction(action: FormAction) {
+export function useFormAction(action: FormAction, onSuccess?: (formData: FormData) => void) {
   const [state, setState] = useState<FormState>(initialFormState);
   const [pending, startTransition] = useTransition();
 
@@ -47,6 +47,7 @@ export function useFormAction(action: FormAction) {
       const result = await action(state, formData);
       setState(result);
       notifyFormFeedback(result);
+      if (result.status === "success") onSuccess?.(formData);
     });
   };
 

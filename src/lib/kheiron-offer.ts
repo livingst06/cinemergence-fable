@@ -8,6 +8,10 @@ export const KHEIRON_SESSION_CAPACITY = 20;
 export const KHEIRON_EXTRA_SEATS = 4;
 export const KHEIRON_TOTAL_SEATS = KHEIRON_SESSION_CAPACITY + KHEIRON_EXTRA_SEATS;
 
+/** Identifiant d'offre, le même dans le dataLayer, Checkout et l'achat. */
+export const KHEIRON_ITEM_ID = "standup-kheiron-2026-11";
+export const KHEIRON_ITEM_NAME = "Masterclass Stand-Up avec Kheiron";
+
 export const KHEIRON_EARLY_INSTALLMENTS = "3 x 296,67\u00a0€\u00a0TTC";
 export const KHEIRON_EARLY_ONCE = "890\u00a0€\u00a0TTC";
 export const KHEIRON_STANDARD_INSTALLMENTS = "3 x 330\u00a0€\u00a0TTC";
@@ -42,6 +46,11 @@ export function kheironPrice(phase: KheironOfferPhase): KheironPrice {
     return { installments: KHEIRON_EARLY_INSTALLMENTS, once: KHEIRON_EARLY_ONCE };
   }
   return { installments: KHEIRON_STANDARD_INSTALLMENTS, once: KHEIRON_STANDARD_ONCE };
+}
+
+/** Prix TTC en euros de la phase en cours. 890 pour les 5 premières places, 990 ensuite. */
+export function kheironAmountEuros(phase: KheironOfferPhase): number {
+  return phase === "early" ? 890 : 990;
 }
 
 export function isKheironPaymentAmount(linkId: string, amountTotal: number | null | undefined) {

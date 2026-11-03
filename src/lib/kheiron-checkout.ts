@@ -1,7 +1,8 @@
-import pg from "pg";
-
+import { getPool } from "@/lib/db";
 import {
   isKheironPaymentAmount,
+  KHEIRON_ITEM_ID,
+  KHEIRON_PAYMENT_AMOUNTS,
   kheironOfferFromCount,
   type KheironOffer,
   type KheironOfferPhase,
@@ -16,35 +17,48 @@ type StripeCheckoutSession = {
   mode?: string;
   status?: string;
   payment_status?: string;
-  currency?: string;
+  currency?: string | null;
   amount_total?: number | null;
   payment_link?: string | { id?: string } | null;
   livemode?: boolean;
+  metadata?: { offer?: string } | null;
 };
 
+export function kheironPaymentLinkId(
+  session: Pick<StripeCheckoutSession, "payment_link">,
+): string | undefined {
+  const link = session.payment_link;
+  if (!link) return undefined;
+  return typeof link === "string" ? link : link.id;
+}
+
+/** Lien de paiement Kheiron, ou session créée par /api/checkout pour cette offre. */
+export function isKheironCheckout(session: StripeCheckoutSession): boolean {
+  const link = kheironPaymentLinkId(session);
+  if (link) return Object.prototype.hasOwnProperty.call(KHEIRON_PAYMENT_AMOUNTS, link);
+  return session.metadata?.offer === KHEIRON_ITEM_ID;
+}
+
 export function isPaidKheironSession(session: StripeCheckoutSession): boolean {
-  const link =
-    typeof session.payment_link === "string" ? session.payment_link : session.payment_link?.id;
-  if (!link) return false;
+  if (
+    session.livemode !== true ||
+    session.mode !== "payment" ||
+    session.status !== "complete" ||
+    session.payment_status !== "paid" ||
+    session.currency !== "eur"
+  ) {
+    return false;
+  }
+  const link = kheironPaymentLinkId(session);
+  if (link) return isKheironPaymentAmount(link, session.amount_total);
   return (
-    session.livemode === true &&
-    session.mode === "payment" &&
-    session.status === "complete" &&
-    session.payment_status === "paid" &&
-    session.currency === "eur" &&
-    isKheironPaymentAmount(link, session.amount_total)
+    session.metadata?.offer === KHEIRON_ITEM_ID &&
+    session.amount_total != null &&
+    session.amount_total > 0
   );
 }
 
-let pool: pg.Pool | null = null;
 let tableReady: Promise<void> | null = null;
-
-function getPool() {
-  const connectionString = process.env.DATABASE_URI;
-  if (!connectionString) throw new Error("DATABASE_URI manquant");
-  if (!pool) pool = new pg.Pool({ connectionString, max: 2 });
-  return pool;
-}
 
 async function ensureTable() {
   if (!tableReady) {
@@ -88,11 +102,14 @@ async function retrieveKheironCheckoutSession(sessionId: string): Promise<Stripe
   return (await response.json()) as StripeCheckoutSession;
 }
 
-/** Enregistre un paiement Stripe confirmé. Un même session_id ne compte qu'une fois. */
+/**
+ * Enregistre un paiement Stripe confirmé. Un même session_id ne compte qu'une fois.
+ * Appelé par le webhook : la page de remerciement ne décide pas du compteur.
+ */
 export async function recordKheironPayment(sessionId: string | undefined) {
-  if (!sessionId || !SESSION_ID.test(sessionId)) return { counted: false };
+  if (!sessionId || !SESSION_ID.test(sessionId)) return { counted: false, already: false };
   const session = await retrieveKheironCheckoutSession(sessionId);
-  if (!session || !isPaidKheironSession(session)) return { counted: false };
+  if (!session || !isPaidKheironSession(session)) return { counted: false, already: false };
   await ensureTable();
   const inserted = await getPool().query(
     `INSERT INTO kheiron_payments (session_id)
@@ -101,5 +118,6 @@ export async function recordKheironPayment(sessionId: string | undefined) {
      RETURNING session_id`,
     [sessionId],
   );
-  return { counted: inserted.rowCount === 1 };
+  if (inserted.rowCount === 1) return { counted: true, already: false };
+  return { counted: false, already: true };
 }

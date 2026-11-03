@@ -8,6 +8,7 @@ import { submitContact } from "@/features/contact/actions";
 import { FormFeedbackMessage } from "@/features/contact/FormFeedbackMessage";
 import { useFormAction } from "@/features/contact/use-form-feedback";
 import type { FormationData } from "@/lib/defaults";
+import { pushGenerateLead } from "@/lib/measurement-client";
 
 type ContactFormProps = {
   formations: Pick<FormationData, "slug" | "titreCourt">[];
@@ -20,7 +21,16 @@ export function ContactForm({
   defaultFormation,
   defaultType = "contact",
 }: ContactFormProps) {
-  const { state, submit, pending } = useFormAction(submitContact);
+  const { state, submit, pending } = useFormAction(submitContact, (formData) => {
+    if (String(formData.get("website") ?? "").trim()) return;
+    const formation = String(formData.get("formationSlug") ?? "").trim();
+    pushGenerateLead({
+      formName: "contact",
+      email: String(formData.get("email") ?? ""),
+      phone: String(formData.get("telephone") ?? ""),
+      itemId: formation || undefined,
+    });
+  });
 
   return (
     <form action={submit} className="space-y-6">

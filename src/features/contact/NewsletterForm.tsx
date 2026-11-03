@@ -6,9 +6,16 @@ import { Label } from "@/components/ui/label";
 import { FormFeedbackMessage } from "@/features/contact/FormFeedbackMessage";
 import { submitNewsletter } from "@/features/contact/newsletter-actions";
 import { useFormAction } from "@/features/contact/use-form-feedback";
+import { pushGenerateLead } from "@/lib/measurement-client";
 
 export function NewsletterForm() {
-  const { state, submit, pending } = useFormAction(submitNewsletter);
+  const { state, submit, pending } = useFormAction(submitNewsletter, (formData) => {
+    if (String(formData.get("website") ?? "").trim()) return;
+    pushGenerateLead({
+      formName: "newsletter",
+      email: String(formData.get("email") ?? ""),
+    });
+  });
 
   return (
     <form action={submit} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">

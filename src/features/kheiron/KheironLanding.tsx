@@ -14,12 +14,17 @@ import {
   whatsAppLink,
 } from "@/features/kheiron/config";
 import { temoignageVideoCopy, temoignageVideos } from "@/features/temoignages-video/videos";
+import { ManageCookiesButton } from "@/components/ManageCookiesButton";
 import {
+  KHEIRON_ITEM_ID,
+  KHEIRON_ITEM_NAME,
   KHEIRON_STANDARD_INSTALLMENTS,
   KHEIRON_STANDARD_ONCE,
+  kheironAmountEuros,
   kheironPrice,
   type KheironOffer,
 } from "@/lib/kheiron-offer";
+import { checkoutRequestBody, pushBeginCheckout, pushViewItem } from "@/lib/measurement-client";
 
 const img = (file: string) => `${KHEIRON_MEDIA}/images/${file}`;
 
@@ -78,19 +83,6 @@ const WA_CHIPS = [
   ["Il reste des places ?", "Bonjour ! Il reste des places pour la masterclass stand-up avec Kheiron ?"],
   ["Comment se passent les 4 jours ?", "Bonjour ! Pouvez-vous m'en dire plus sur le déroulé des 4 jours de la masterclass avec Kheiron ?"],
 ] as const;
-
-type Gtag = (...args: unknown[]) => void;
-type Fbq = (...args: unknown[]) => void;
-
-function track(name: string, data: Record<string, string> = {}, eventId?: string) {
-  const w = window as Window & { gtag?: Gtag; fbq?: Fbq };
-  w.fbq?.("track", name, data, eventId ? { eventID: eventId } : undefined);
-  w.gtag?.("event", name, data);
-}
-
-function newId() {
-  return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-}
 
 const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "fbclid"] as const;
 
@@ -212,15 +204,17 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
       writeStore("cm_last", touch, sessionStorage);
     }
     if (touch.fbclid) writeStore("cm_fbc", `fb.1.${Date.now()}.${touch.fbclid}`);
-    track("ViewContent", { content_name: KHEIRON_STAGE });
+    pushViewItem({
+      itemId: KHEIRON_ITEM_ID,
+      itemName: KHEIRON_ITEM_NAME,
+      price: kheironAmountEuros(offer.phase),
+    });
     const onShow = () => setBusy(false);
     window.addEventListener("pageshow", onShow);
     return () => window.removeEventListener("pageshow", onShow);
-  }, []);
+  }, [offer.phase]);
 
-  const checkout = () => {
-    setBusy(true);
-    track("InitiateCheckout", { content_name: KHEIRON_STAGE }, newId());
+  const paymentLinkFallback = () => {
     const url = new URL(offer.paymentLink);
     const params = new URLSearchParams(window.location.search);
     const cid = params.get("cid") || "";
@@ -232,10 +226,34 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
     for (const key of ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const) {
       if (last[key]) url.searchParams.set(key, last[key]);
     }
-    window.location.href = url.toString();
+    return url.toString();
   };
 
-  const onWhatsApp = () => track("Contact", { content_name: KHEIRON_STAGE, method: "whatsapp" }, newId());
+  const checkout = () => {
+    setBusy(true);
+    const params = new URLSearchParams(window.location.search);
+    pushBeginCheckout(kheironAmountEuros(offer.phase), params.get("email") || undefined);
+    const fallback = paymentLinkFallback();
+    const touch = readStore("cm_last", sessionStorage) || readStore("cm_first") || {};
+    const storedFbc = readStore("cm_fbc");
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), 5000);
+    void fetch("/api/checkout", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(checkoutRequestBody(window.location.search, touch, typeof storedFbc === "string" ? storedFbc : null)),
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        const data = (await response.json()) as { url?: string };
+        if (!response.ok || !data.url) throw new Error("checkout");
+        window.location.href = data.url;
+      })
+      .catch(() => {
+        window.location.href = fallback;
+      })
+      .finally(() => window.clearTimeout(timer));
+  };
   const placesLeft =
     offer.seatsLeft <= 1
       ? `Il reste ${Math.max(offer.seatsLeft, 0)} place.`
@@ -641,12 +659,12 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
               <p className="bub out">Bonjour ! Je suis intéressé·e par la masterclass stand-up 🎤<span className="tick">✓✓</span></p>
               <p className="bub in typing"><i /><i /><i /></p>
             </div>
-            <a className="wa-num" href={whatsAppLink(WA_INTRO)} target="_blank" rel="noopener" onClick={onWhatsApp}><small>Appuie sur le numéro pour ouvrir WhatsApp</small>+33 7 69 18 55 94</a>
-            <a className="btn wa-btn" href={whatsAppLink(WA_INTRO)} target="_blank" rel="noopener" onClick={onWhatsApp}><WhatsAppIcon />Écrire sur WhatsApp</a>
+            <a className="wa-num" href={whatsAppLink(WA_INTRO)} target="_blank" rel="noopener"><small>Appuie sur le numéro pour ouvrir WhatsApp</small>+33 7 69 18 55 94</a>
+            <a className="btn wa-btn" href={whatsAppLink(WA_INTRO)} target="_blank" rel="noopener"><WhatsAppIcon />Écrire sur WhatsApp</a>
             <p className="wa-q">Ou commence par une question toute prête :</p>
             <div className="wa-chips">
               {WA_CHIPS.map(([label, text]) => (
-                <a key={label} className="wa-chip" href={whatsAppLink(text)} target="_blank" rel="noopener" onClick={onWhatsApp}>{label}</a>
+                <a key={label} className="wa-chip" href={whatsAppLink(text)} target="_blank" rel="noopener">{label}</a>
               ))}
             </div>
           </div>
@@ -671,7 +689,7 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
             <Qualiopi />
             <span><b>WhatsApp</b>+33 7 69 18 55 94</span>
           </div>
-          <div><a href="/mentions-legales">Mentions légales</a> · <a href="/cgv">CGV</a> · <a href="/confidentialite">Confidentialité</a></div>
+          <div><a href="/mentions-legales">Mentions légales</a> · <a href="/cgv">CGV</a> · <a href="/confidentialite">Confidentialité</a> · <ManageCookiesButton className="cookie-manage" /></div>
         </div>
       </footer>
 

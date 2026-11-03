@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { ManageCookiesButton } from "@/components/ManageCookiesButton";
 import { NdaNumber } from "@/components/NdaNumber";
 import { QualiopiMark } from "@/components/brand/QualiopiMark";
 import { InstagramIcon, YoutubeIcon } from "@/components/brand/SocialIcons";
@@ -166,6 +167,7 @@ export function Footer({ site, formations }: FooterProps) {
             <Link href="/cgv" className="transition-colors hover:text-or-light">
               CGV
             </Link>
+            <ManageCookiesButton className="cursor-pointer bg-transparent p-0 text-left transition-colors hover:text-or-light" />
           </div>
         </div>
       </div>

@@ -148,7 +148,7 @@ export function Footer({ site, formations }: FooterProps) {
           </div>
         </div>
 
-        <QualiopiMark className="mt-10 w-full flex-row gap-4 lg:hidden" size="sm" />
+        <QualiopiMark className="mt-10 lg:hidden" size="sm" />
 
         <div className="mt-12 flex flex-col gap-4 border-t border-white/[0.06] pt-8 text-xs text-muted-text md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">

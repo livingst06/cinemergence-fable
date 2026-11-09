@@ -265,11 +265,11 @@
   .kheiron .last-call{margin-top:14px;font-size:14px;font-weight:600;color:var(--text)}
 
   .kheiron /* Qualiopi */
-  .qbadge{display:inline-flex;align-items:center;background:#fff;border-radius:10px;padding:6px 10px;line-height:0}
-  .kheiron .qbadge img{height:42px;width:auto;max-width:100%}
+  .qbadge{display:inline-flex;align-items:center;background:#fff;border-radius:10px;padding:8px 10px;line-height:0}
+  .kheiron .qbadge img{height:auto;width:min(100%, 15rem);max-width:100%}
   .kheiron .trust-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:22px;font-size:13px;color:var(--muted)}
   .kheiron .trust-row b{color:var(--text);display:block;font-size:14px}
-  .kheiron .qcell .qbadge img{height:40px}
+  .kheiron .qcell .qbadge img{width:min(100%, 13.5rem)}
 
   .kheiron /* Équipe */
   .team-head{margin-top:72px}

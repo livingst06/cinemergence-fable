@@ -304,7 +304,6 @@ export function KheironLanding({
               <span className="scarce-pill">⏳ Début dans {short}</span>
             </div>
             <div className="trust-row">
-              <Qualiopi />
               <span><b>Organisme certifié Qualiopi</b>NDA 117 888 658 78 · DREETS Île-de-France</span>
             </div>
           </div>
@@ -326,10 +325,6 @@ export function KheironLanding({
             <li><span className="fi"><StageIcon /></span><span><b>Café-théâtre</b>ta scène ouverte finale</span></li>
             <li><span className="fi"><CameraIcon /></span><span><b>Équipe vidéo pro</b>pour filmer tes passages</span></li>
           </ul>
-          <div className="qcell">
-            <Qualiopi />
-            <span><b>Certifié Qualiopi</b>Organisme de formation</span>
-          </div>
         </div>
       </div>
 
@@ -594,7 +589,6 @@ export function KheironLanding({
               <li>Ton avant / après filmé et ta feuille de route personnelle</li>
               <li>Formation délivrée par un organisme certifié Qualiopi</li>
             </ul>
-            <div className="trust-row trust-center"><Qualiopi /></div>
             <button type="button" className="btn btn-primary" aria-busy={busy} onClick={checkout}>
               {offer.phase === "full"
                 ? "Acheter une place pour une prochaine session →"

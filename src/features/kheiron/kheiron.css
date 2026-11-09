@@ -72,7 +72,6 @@
   .kheiron .fi{flex:none;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--accent);background:rgba(47,91,255,.08);color:var(--text);display:grid;place-items:center}
   .kheiron .strip span{font-size:13px;line-height:1.35;color:var(--muted)}
   .kheiron .strip b{display:block;color:var(--text);font-size:22px;line-height:1.05;font-family:var(--font-k-bebas), sans-serif;font-weight:400;letter-spacing:1px;margin-bottom:2px}
-  .kheiron .qcell{display:flex;align-items:center;gap:12px;padding-left:24px;border-left:1px solid var(--line)}
 
   .kheiron /* Problem */
   .two{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
@@ -265,15 +264,12 @@
   .kheiron .last-call{margin-top:14px;font-size:14px;font-weight:600;color:var(--text)}
 
   .kheiron /* Qualiopi */
-  .qbadge{display:inline-flex;align-items:center;background:#fff;border-radius:10px;padding:8px 10px;line-height:0}
-  .kheiron .qbadge img{height:auto;width:min(100%, 15rem);max-width:100%}
+  .qbadge{display:inline-flex;align-items:center;background:#fff;border-radius:10px;padding:8px 10px;line-height:0;width:max-content;max-width:100%}
+  .kheiron .qbadge img{height:auto;width:15rem;max-width:100%}
   .kheiron .trust-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:22px;font-size:13px;color:var(--muted)}
   .kheiron .trust-row b{color:var(--text);display:block;font-size:14px}
-  .kheiron .qcell .qbadge img{width:min(100%, 13.5rem)}
   @media (max-width: 767px) {
-    .kheiron .qbadge{width:max-content;max-width:100%}
-    .kheiron .qbadge img{width:11.25rem;max-width:100%}
-    .kheiron .qcell .qbadge img{width:10.125rem;max-width:100%}
+    .kheiron .qbadge img{width:11.25rem}
   }
 
   .kheiron /* Équipe */
@@ -327,7 +323,6 @@
     .kheiron .feats{display:grid;grid-template-columns:1fr 1fr;row-gap:18px}
     .kheiron .feats li b{white-space:normal}
     .kheiron .feats li:nth-child(odd){border-left:0;padding-left:0}
-    .kheiron .qcell{padding-left:0;border-left:0;border-top:1px solid var(--line);padding-top:18px;justify-content:center}
     .kheiron section{padding:64px 0}
     .kheiron .hero{padding:40px 0 64px}
     .kheiron .hero-grid, .kheiron .two, .kheiron .kh-grid, .kheiron .form-wrap{grid-template-columns:1fr;gap:36px}
@@ -373,7 +368,6 @@
 .kheiron .soldout-tag{display:inline-flex;background:var(--accent);color:#fff;font-size:12px;font-weight:800;letter-spacing:1.4px;border-radius:999px;padding:5px 10px}
 .kheiron .soldout p{margin-top:10px;font-size:16px;line-height:1.45}
 .kheiron .coach .pic img.darwin{object-position:50% 8%}
-.kheiron .trust-center{justify-content:center;margin:0 0 22px}
 .kheiron .shield{font-size:22px}
 .kheiron .sticky b{color:var(--text)}
 .kheiron-merci{min-height:100vh;display:grid;place-items:center;padding:40px 16px;background:#080A0F;color:#fff;font:400 17px/1.6 var(--font-k-sans),system-ui,sans-serif}

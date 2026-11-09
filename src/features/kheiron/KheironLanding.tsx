@@ -560,9 +560,9 @@ export function KheironLanding({
             </p>
             <p className="price-sub">ou {price.once}</p>
             {offer.phase === "early" && (
-              <aside className="early" aria-label="Tarif de lancement limité">
+              <aside className="early" aria-label="Tarif à partir de la 6e place">
                 <p className="early-note">
-                  Ce tarif de lancement est limité. Ensuite, il passe à <b><InstallmentAmount value={KHEIRON_STANDARD_INSTALLMENTS} /> sans frais</b> ou <b>{KHEIRON_STANDARD_ONCE}</b> en une fois.
+                  Dès la 6<sup>e</sup> place, le tarif passe à <b><InstallmentAmount value={KHEIRON_STANDARD_INSTALLMENTS} /> sans frais</b> ou <b>{KHEIRON_STANDARD_ONCE}</b> en une fois.
                 </p>
               </aside>
             )}

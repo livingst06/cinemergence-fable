@@ -22,16 +22,16 @@ describe("landing Kheiron, places restantes", () => {
     expect(html).not.toMatch(/places? restantes/i);
     expect(html).not.toMatch(/\d+\s+places/i);
     expect(html).not.toMatch(/places supplémentaires/i);
-    expect(html).not.toMatch(/6e place|6<sup/i);
     expect(html).not.toMatch(/pas une de plus/i);
   });
 
-  it("garde le tarif de lancement sans dire après quelle place il s'arrête", () => {
+  it("annonce le tarif à partir de la 6e place pendant le lancement", () => {
     const html = landing("early");
-    expect(html).toContain("Ce tarif de lancement est limité.");
+    expect(html).toContain("Dès la 6");
+    expect(html).toContain("e</sup> place, le tarif passe à");
     expect(html).toContain("330");
     expect(html).toContain("990");
-    expect(html).not.toContain("6e");
+    expect(landing("standard")).not.toContain("Dès la 6");
   });
 
   it("ne distingue pas les places supplémentaires du tarif standard", () => {

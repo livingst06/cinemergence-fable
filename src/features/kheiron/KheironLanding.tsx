@@ -181,7 +181,7 @@ function InstallmentAmount({ value }: { value: string }) {
 function Qualiopi({ className }: { className?: string }) {
   return (
     <span className={className ? `qbadge ${className}` : "qbadge"}>
-      <img decoding="async" src={img("qualiopi.png")} alt="Qualiopi, processus certifié, République française" width={633} height={338} />
+      <img decoding="async" src={img("qualiopi.png")} alt="Qualiopi, processus certifié, République française. La certification qualité a été délivrée au titre de la catégorie d'action suivante : action de formation." width={906} height={628} />
     </span>
   );
 }
@@ -304,7 +304,6 @@ export function KheironLanding({
               <span className="scarce-pill">⏳ Début dans {short}</span>
             </div>
             <div className="trust-row">
-              <Qualiopi />
               <span><b>Organisme certifié Qualiopi</b>NDA 117 888 658 78 · DREETS Île-de-France</span>
             </div>
           </div>
@@ -326,10 +325,6 @@ export function KheironLanding({
             <li><span className="fi"><StageIcon /></span><span><b>Café-théâtre</b>ta scène ouverte finale</span></li>
             <li><span className="fi"><CameraIcon /></span><span><b>Équipe vidéo pro</b>pour filmer tes passages</span></li>
           </ul>
-          <div className="qcell">
-            <Qualiopi />
-            <span><b>Certifié Qualiopi</b>Organisme de formation</span>
-          </div>
         </div>
       </div>
 
@@ -594,7 +589,6 @@ export function KheironLanding({
               <li>Ton avant / après filmé et ta feuille de route personnelle</li>
               <li>Formation délivrée par un organisme certifié Qualiopi</li>
             </ul>
-            <div className="trust-row trust-center"><Qualiopi /></div>
             <button type="button" className="btn btn-primary" aria-busy={busy} onClick={checkout}>
               {offer.phase === "full"
                 ? "Acheter une place pour une prochaine session →"
@@ -681,8 +675,7 @@ export function KheironLanding({
         <div className="wrap">
           <div>
             <img decoding="async" className="flogo" src={img("logo-cinemergence.png")} alt="Cinémergence" width={455} height={160} loading="lazy" />
-            © 2026 Cinémergence · Association loi 1901 · SIREN 988 939 112 · Organisme de formation déclaré · NDA 117 888 658 78 (DREETS Île-de-France)<br />
-            Certifié Qualiopi · La certification qualité a été délivrée au titre de la catégorie d&apos;action suivante : actions de formation.
+            © 2026 Cinémergence · Association loi 1901 · SIREN 988 939 112 · Organisme de formation déclaré · NDA 117 888 658 78 (DREETS Île-de-France)
           </div>
           <div className="sign serif">Former. Révéler. Faire émerger.</div>
           <div className="trust-row" style={{ marginTop: 0 }}>

@@ -8,49 +8,45 @@ type QualiopiMarkProps = {
 
 /**
  * Marque Qualiopi conforme à la charte d’usage du ministère du Travail :
- * - logo intégral avec bandeau Marianne + « République Française » (non modifié)
- * - fond blanc uniquement derrière le logo
- * - mention obligatoire de la catégorie certifiée
+ * le visuel officiel intègre Marianne, « République française »
+ * et la catégorie certifiée « Action de formation ».
+ * Fond blanc uniquement, logo non modifié.
+ * Sur mobile, le bloc est réduit d’un quart : la signature reste
+ * au-dessus du minimum de la charte graphique (23 × 10 mm).
  */
 export function QualiopiMark({
   className,
   size = "md",
   showTitle = true,
 }: QualiopiMarkProps) {
-  const logoHeight = size === "sm" ? "h-14" : "h-16";
-
   return (
-    <figure className={cn("flex flex-col items-start gap-3 text-left sm:flex-row sm:gap-4", className)}>
-      <div className="logo-plate flex shrink-0 items-center justify-center rounded-xl p-2">
+    <figure
+      className={cn(
+        "flex w-full flex-col items-start gap-3 text-left",
+        size === "sm"
+          ? "max-w-[18rem] max-md:w-3/4 max-md:max-w-[13.5rem]"
+          : "max-w-[22rem] max-md:w-3/4 max-md:max-w-[16.5rem]",
+        className,
+      )}
+    >
+      <div className="logo-plate flex w-full items-center justify-center rounded-xl p-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/images/brand/qualiopi/qualiopi-marianne.png"
-          alt="Qualiopi, processus certifié — République Française"
-          width={633}
-          height={338}
-          className={cn("w-auto object-contain", logoHeight)}
+          src="/images/brand/qualiopi/qualiopi-action-formation.png"
+          alt="Qualiopi, processus certifié — République française. La certification qualité a été délivrée au titre de la catégorie d'action suivante : action de formation."
+          width={906}
+          height={628}
+          className="h-auto w-full object-contain"
         />
       </div>
-      <figcaption className="min-w-0 pt-0.5">
-        {showTitle && (
+      {showTitle && (
+        <figcaption>
           <p className="text-sm font-heading font-semibold leading-snug text-cream">
             Organisme de formation certifié jusqu&apos;au{" "}
             <span className="whitespace-nowrap">17 août 2029</span>
           </p>
-        )}
-        <p
-          className={cn(
-            "caption-copy font-heading text-cream/70",
-            showTitle && "mt-1",
-          )}
-        >
-          La certification qualité a été délivrée au titre de la ou des
-          catégories d&apos;actions suivantes :{" "}
-          <strong className="font-semibold text-cream">
-            Actions de formation
-          </strong>
-        </p>
-      </figcaption>
+        </figcaption>
+      )}
     </figure>
   );
 }

@@ -270,6 +270,11 @@
   .kheiron .trust-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:22px;font-size:13px;color:var(--muted)}
   .kheiron .trust-row b{color:var(--text);display:block;font-size:14px}
   .kheiron .qcell .qbadge img{width:min(100%, 13.5rem)}
+  @media (max-width: 767px) {
+    .kheiron .qbadge{width:max-content;max-width:100%}
+    .kheiron .qbadge img{width:11.25rem;max-width:100%}
+    .kheiron .qcell .qbadge img{width:10.125rem;max-width:100%}
+  }
 
   .kheiron /* Équipe */
   .team-head{margin-top:72px}

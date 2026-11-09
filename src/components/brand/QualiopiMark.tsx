@@ -11,6 +11,8 @@ type QualiopiMarkProps = {
  * le visuel officiel intègre Marianne, « République française »
  * et la catégorie certifiée « Action de formation ».
  * Fond blanc uniquement, logo non modifié.
+ * Sur mobile, le bloc est réduit d’un quart : la signature reste
+ * au-dessus du minimum de la charte graphique (23 × 10 mm).
  */
 export function QualiopiMark({
   className,
@@ -21,7 +23,9 @@ export function QualiopiMark({
     <figure
       className={cn(
         "flex w-full flex-col items-start gap-3 text-left",
-        size === "sm" ? "max-w-[18rem]" : "max-w-[22rem]",
+        size === "sm"
+          ? "max-w-[18rem] max-md:w-3/4 max-md:max-w-[13.5rem]"
+          : "max-w-[22rem] max-md:w-3/4 max-md:max-w-[16.5rem]",
         className,
       )}
     >

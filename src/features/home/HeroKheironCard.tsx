@@ -15,7 +15,8 @@ export function HeroKheironCard() {
           aria-hidden
         />
         <div className="relative z-10 flex h-full w-full">
-          <div className="relative h-full w-[6.5rem] shrink-0 md:w-[7.75rem]">
+          {/* Même retrait gauche que le bloc Qualiopi (p-4 md:p-6) tant que les cartes sont empilées. */}
+          <div className="relative ml-4 h-full w-[6.5rem] shrink-0 md:ml-6 md:w-[7.75rem] lg:ml-0">
             <Image
               src="/images/formations/masterclass-kheiron.webp"
               alt=""
@@ -24,7 +25,7 @@ export function HeroKheironCard() {
               className="object-cover object-[center_12%]"
             />
           </div>
-          <div className="flex min-w-0 flex-1 items-center justify-center px-4 py-4 text-center">
+          <div className="flex min-w-0 flex-1 items-center justify-center px-2 py-4 text-center sm:px-4">
             <p className="font-heading text-base font-semibold leading-snug text-cream">
               Masterclass avec Kheiron
             </p>

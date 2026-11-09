@@ -28,5 +28,10 @@ export const metadata: Metadata = {
 
 export default async function KheironPage() {
   const offer = await getKheironOffer();
-  return <KheironLanding offer={offer} />;
+  // paidCount fixe le tarif et le complet. La page reçoit la phase et le lien.
+  return (
+    <KheironLanding
+      offer={{ phase: offer.phase, paymentLink: offer.paymentLink }}
+    />
+  );
 }

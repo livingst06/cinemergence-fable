@@ -186,7 +186,11 @@ function Qualiopi({ className }: { className?: string }) {
   );
 }
 
-export function KheironLanding({ offer }: { offer: KheironOffer }) {
+export function KheironLanding({
+  offer,
+}: {
+  offer: Pick<KheironOffer, "phase" | "paymentLink">;
+}) {
   const { short, clock } = useCountdown();
   const [busy, setBusy] = useState(false);
 
@@ -254,12 +258,8 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
       })
       .finally(() => window.clearTimeout(timer));
   };
-  const placesLeft =
-    offer.seatsLeft <= 1
-      ? `Il reste ${Math.max(offer.seatsLeft, 0)} place.`
-      : `Il reste ${offer.seatsLeft} places.`;
   const price = kheironPrice(offer.phase);
-  const statusLabel = offer.phase === "full" ? "Complet" : placesLeft;
+  const soldOut = offer.phase === "full";
 
   return (
     <div className="kheiron" id="top">
@@ -268,7 +268,8 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
           <div className="wrap">
             <span className="dot" aria-hidden="true" />
             <span>
-              <b>Session unique</b> · {statusLabel} · Début dans <b>{short}</b>
+              <b>Session unique</b>
+              {soldOut ? " · Complet" : null} · Début dans <b>{short}</b>
               <span className="u-more"> · Aucune autre date prévue avec Kheiron</span>
             </span>
             <a href="#tarif">Je me lance</a>
@@ -299,7 +300,7 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
               <a href="#programme" className="btn btn-ghost">Voir le programme</a>
             </div>
             <div className="scarcity-box">
-              <span className="scarce-pill">⚡ {statusLabel}</span>
+              {soldOut && <span className="scarce-pill">⚡ Complet</span>}
               <span className="scarce-pill">⏳ Début dans {short}</span>
             </div>
             <div className="trust-row">
@@ -563,7 +564,6 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
               <span className="price-fees">sans frais</span>
             </p>
             <p className="price-sub">ou {price.once}</p>
-            {offer.phase !== "full" && <p className="seats-left">{placesLeft}</p>}
             {offer.phase === "early" && (
               <aside className="early" aria-label="Tarif à partir de la 6e place">
                 <p className="early-note">
@@ -601,9 +601,9 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
                 : "Je me lance : je réserve ma place →"}
             </button>
             <p className="last-call">
-              {offer.phase === "full"
+              {soldOut
                 ? "Le lien de paiement reste ouvert pour une prochaine session."
-                : <>⚡ {placesLeft} Une seule session. Quand c&apos;est complet, c&apos;est complet.</>}
+                : "⚡ Une seule session. Quand c'est complet, c'est complet."}
             </p>
             <p className="pay-note">Paiement sécurisé par Stripe · Carte bancaire ou paiement en 3× sans frais</p>
             <figure className="pull"><div><div className="stars" aria-label="5 sur 5">★★★★★</div><blockquote>Le cadre est professionnel. On se sent considéré comme un acteur, pas comme un élève. J&apos;ai gagné en confiance face caméra.</blockquote><cite><b>Laura, 35 ans, intermittente</b> · Stage Bande Démo Cinéma</cite></div></figure>
@@ -694,7 +694,7 @@ export function KheironLanding({ offer }: { offer: KheironOffer }) {
       </footer>
 
       <div className="sticky">
-        <small>Masterclass avec Kheiron<br /><b>{short} · {statusLabel}</b></small>
+        <small>Masterclass avec Kheiron<br /><b>{short}{soldOut ? " · Complet" : ""}</b></small>
         <a href="#tarif" className="btn btn-primary btn-alive">Je me lance</a>
       </div>
     </div>

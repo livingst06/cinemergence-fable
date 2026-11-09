@@ -31,6 +31,7 @@ export type KheironOfferPhase = "early" | "standard" | "extra" | "full";
 
 export type KheironOffer = {
   paidCount: number;
+  /** Sert au calcul du tarif et du complet, pas au texte public. */
   seatsLeft: number;
   phase: KheironOfferPhase;
   paymentLink: string;

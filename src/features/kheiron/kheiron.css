@@ -252,10 +252,6 @@
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
   .kheiron .scarcity-box{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
   .kheiron .scarce-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(47,91,255,.14);border:1px solid rgba(47,91,255,.5);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:700;color:var(--text)}
-  .kheiron .places{margin-top:14px;max-width:420px}
-  .kheiron .places .bar{height:8px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:6px}
-  .kheiron .places .bar i{display:block;height:100%;background:var(--accent);border-radius:999px}
-  .kheiron .places small{font-size:13px;color:var(--muted)}
   .kheiron .countdown{display:flex;justify-content:center;gap:10px;margin:22px 0 6px}
   .kheiron .countdown div{min-width:72px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 8px;text-align:center}
   .kheiron .countdown b{display:block;font-family:var(--font-k-bebas), sans-serif;font-size:38px;font-weight:400;line-height:1;font-variant-numeric:tabular-nums}

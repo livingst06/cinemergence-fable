@@ -321,7 +321,7 @@ export function KheironLanding({
         <div className="wrap">
           <ul className="feats">
             <li><span className="fi"><MicIcon /></span><span><b>Kheiron</b>te coache en personne</span></li>
-            <li><span className="fi"><SeatsIcon /></span><span><b>20 places</b>pas une de plus</span></li>
+            <li><span className="fi"><SeatsIcon /></span><span><b>Places limitées</b>un petit groupe</span></li>
             <li><span className="fi"><StageIcon /></span><span><b>Café-théâtre</b>ta scène ouverte finale</span></li>
             <li><span className="fi"><CameraIcon /></span><span><b>Équipe vidéo pro</b>pour filmer tes passages</span></li>
           </ul>
@@ -566,24 +566,17 @@ export function KheironLanding({
                 </p>
               </aside>
             )}
-            {offer.phase === "extra" && (
-              <aside className="early" aria-label="4 places supplémentaires">
-                <p className="early-note">
-                  Il y a 4 places supplémentaires, à <b><InstallmentAmount value={KHEIRON_STANDARD_INSTALLMENTS} /> sans frais</b> ou <b>{KHEIRON_STANDARD_ONCE}</b> la place.
-                </p>
-              </aside>
-            )}
             {offer.phase === "full" && (
               <aside className="soldout" aria-label="Session complète">
                 <span className="soldout-tag">COMPLET</span>
                 <p>
-                  Il ne reste plus de places pour ce stage, mais vous pouvez acheter une place pour une prochaine session. Cliquez sur le lien de paiement.
+                  Cette session est complète. Vous pouvez acheter une place pour une prochaine session. Cliquez sur le lien de paiement.
                 </p>
               </aside>
             )}
             <ul>
               <li>La masterclass de Kheiron et ton passage coaché devant lui</li>
-              <li>30 heures de formation sur 2 week-ends, 20 places seulement</li>
+              <li>30 heures de formation sur 2 week-ends</li>
               <li>Ta scène ouverte devant le public d&apos;un café-théâtre parisien</li>
               <li>La vidéo professionnelle de ton passage, montée</li>
               <li>Ton avant / après filmé et ta feuille de route personnelle</li>

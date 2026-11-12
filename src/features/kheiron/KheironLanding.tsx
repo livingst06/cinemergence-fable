@@ -276,7 +276,7 @@ export function KheironLanding({
           </div>
         </div>
         <div className="wrap">
-          <a href="#top" className="logo" aria-label="Cinémergence, retour en haut">
+          <a href="/" className="logo" aria-label="Cinémergence, accueil du site">
             <img decoding="async" src={img("logo-cinemergence.png")} alt="Cinémergence" width={455} height={160} />
           </a>
           <a href="#tarif" className="btn btn-primary btn-alive">Je tente ma chance</a>

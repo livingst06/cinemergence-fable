@@ -4,6 +4,8 @@ type QualiopiMarkProps = {
   className?: string;
   size?: "sm" | "md";
   showTitle?: boolean;
+  /** Hero : visuel plus bas, proportions du logo inchangées. */
+  compact?: boolean;
 };
 
 /**
@@ -18,25 +20,35 @@ export function QualiopiMark({
   className,
   size = "md",
   showTitle = true,
+  compact = false,
 }: QualiopiMarkProps) {
   return (
     <figure
       className={cn(
-        "flex w-full flex-col items-start gap-3 text-left",
+        "flex w-full flex-col items-start text-left",
+        compact ? "gap-1.5" : "gap-3",
         size === "sm"
           ? "max-w-[18rem] max-md:w-3/4 max-md:max-w-[13.5rem]"
           : "max-w-[22rem] max-md:w-3/4 max-md:max-w-[16.5rem]",
         className,
       )}
     >
-      <div className="logo-plate flex w-full items-center justify-center rounded-xl p-3">
+      <div
+        className={cn(
+          "logo-plate flex items-center justify-center rounded-xl",
+          compact ? "w-fit p-1.5" : "w-full p-3",
+        )}
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/brand/qualiopi/qualiopi-action-formation.png"
           alt="Qualiopi, processus certifié — République française. La certification qualité a été délivrée au titre de la catégorie d'action suivante : action de formation."
           width={906}
           height={628}
-          className="h-auto w-full object-contain"
+          className={cn(
+            "object-contain",
+            compact ? "h-[6.75rem] w-auto md:h-[8.5rem]" : "h-auto w-full",
+          )}
         />
       </div>
       {showTitle && (

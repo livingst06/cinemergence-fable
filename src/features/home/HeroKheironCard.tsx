@@ -9,14 +9,15 @@ export function HeroKheironCard() {
       href={KHEIRON_FORMATION_PATH}
       className="group relative flex h-full min-h-14 overflow-visible focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-convert/50"
     >
-      <div className="relative flex h-full min-h-[9rem] w-full overflow-hidden border border-white/10 transition-colors group-hover:border-white/25">
+      <div className="relative h-full w-full overflow-hidden rounded-none border border-white/10 transition-colors group-hover:border-white/25">
         <div
           className="pointer-events-none absolute inset-0 bg-[#151b22]/35 backdrop-blur-md"
           aria-hidden
         />
-        <div className="relative z-10 flex h-full w-full">
-          {/* Même retrait gauche que le bloc Qualiopi (p-4 md:p-6) tant que les cartes sont empilées. */}
-          <div className="relative ml-4 h-full w-[6.5rem] shrink-0 md:ml-6 md:w-[7.75rem] lg:ml-0">
+        {/* Même composition que HeroProofCard : visuel à gauche, texte à droite. */}
+        <div className="relative z-10 flex h-full items-center gap-3 p-2 md:gap-4 md:p-2.5">
+          {/* Hauteur = plaque Qualiopi (img + p-1.5), pas seulement l’img. */}
+          <div className="relative h-[7.5rem] w-[5.75rem] shrink-0 overflow-hidden rounded-xl md:h-[9.25rem] md:w-[7rem]">
             <Image
               src="/images/formations/masterclass-kheiron.webp"
               alt=""
@@ -25,8 +26,8 @@ export function HeroKheironCard() {
               className="object-cover object-[center_12%]"
             />
           </div>
-          <div className="flex min-w-0 flex-1 items-center justify-center px-2 py-4 text-center sm:px-4">
-            <p className="font-heading text-base font-semibold leading-snug text-cream">
+          <div className="min-w-0">
+            <p className="font-heading text-sm font-semibold leading-snug text-cream">
               Masterclass avec Kheiron
             </p>
           </div>

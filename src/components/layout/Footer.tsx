@@ -109,7 +109,7 @@ export function Footer({ site, formations }: FooterProps) {
                         aria-label="Instagram Cinémergence"
                         className="text-cream/70 transition-colors hover:text-or-light"
                       >
-                        <InstagramIcon />
+                        <InstagramIcon className="h-10 w-10" />
                       </a>
                     )}
                     {site.youtubeUrl && (
@@ -120,7 +120,7 @@ export function Footer({ site, formations }: FooterProps) {
                         aria-label="YouTube Cinémergence"
                         className="text-cream/70 transition-colors hover:text-or-light"
                       >
-                        <YoutubeIcon />
+                        <YoutubeIcon className="h-10 w-10" />
                       </a>
                     )}
                   </li>

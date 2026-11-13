@@ -59,7 +59,7 @@ export const defaultSite = {
 } as const;
 
 /** Formateurs affichés sur le site, en plus des intervenants professionnels. */
-export const publicFormateurSlugs = ["phil-darwin", "formateur-mystere"] as const;
+export const publicFormateurSlugs = ["phil-darwin", "hassan-zahi"] as const;
 
 export const defaultIntervenants: IntervenantData[] = [
   {
@@ -92,13 +92,13 @@ export const defaultIntervenants: IntervenantData[] = [
   {
     slug: "hassan-zahi",
     nom: "Hassan Zahi",
-    role: "Réalisateur & formateur",
+    role: "Comédien, metteur en scène, coach et formateur certifié en santé mentale",
     parrain: false,
     categorie: "formateur",
-    bio: "Formateur pédagogique. Accompagne les élèves sur la mise en scène, le découpage et la conduite de plateau. Retours pro directs pour gagner en autonomie sur un vrai tournage.",
-    filmographie: ["Rose"],
-    photoUrl: "/images/formations/formation-realiser-court-metrage.jpg",
-    photoMimeType: "image/jpeg",
+    bio: "Fort de plus de 20 ans d'expérience dans la formation et l'accompagnement humain, Hassan Zahi est également comédien, humoriste, metteur en scène et passionné d'improvisation théâtrale, qu'il pratique depuis plus de 17 ans. Fondateur de Franchement Ça Va, un écosystème de prévention et de sensibilisation à la santé mentale par l'humour, il associe son expérience artistique à son expertise en accompagnement, en expression orale et en développement de la confiance en soi. Sa force : aider chacun à dépasser ses appréhensions, révéler sa singularité artistique et oser prendre sa place sur scène. Pendant les 4 jours, il accompagne les participants de leurs premières prises de parole jusqu'à la présentation de leur sketch devant un public.",
+    filmographie: ["Franchement Ça Va"],
+    photoUrl: "/images/intervenants/hassan-zahi.webp",
+    photoMimeType: "image/webp",
   },
   {
     slug: "sandy-formateur",
@@ -137,17 +137,6 @@ export const defaultIntervenants: IntervenantData[] = [
     bio: "Artiste franco-congolais, il évolue depuis plus de 20 ans dans le stand-up, le théâtre et les médias. Il a joué à l'Olympia, au Zénith de Paris et à La Cigale, et dans des festivals en Europe, en Afrique et en Amérique du Nord. Chroniqueur radio et comédien, il joue dans Mayouya de Claudia Yoka, présenté à Cannes en 2022. Il transmet le métier : écriture humoristique, interprétation, rythme comique et présence scénique. Pendant les 4 jours, il t'accompagne jusqu'à ton sketch devant le public.",
     filmographie: ["Mayouya"],
     photoUrl: "/images/intervenants/phil-darwin.webp",
-    photoMimeType: "image/webp",
-  },
-  {
-    slug: "formateur-mystere",
-    nom: "Formateur mystère",
-    role: "Formateur",
-    parrain: false,
-    categorie: "formateur",
-    bio: "Son nom reste secret pour l'instant : il sera dévoilé prochainement. Les premiers inscrits le découvriront avant tout le monde.",
-    filmographie: [],
-    photoUrl: "/images/intervenants/formateur-mystere.webp",
     photoMimeType: "image/webp",
   },
 ];

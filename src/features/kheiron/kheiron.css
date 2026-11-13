@@ -364,6 +364,7 @@
 .kheiron .soldout-tag{display:inline-flex;background:var(--accent);color:#fff;font-size:12px;font-weight:800;letter-spacing:1.4px;border-radius:999px;padding:5px 10px}
 .kheiron .soldout p{margin-top:10px;font-size:16px;line-height:1.45}
 .kheiron .coach .pic img.darwin{object-position:50% 8%}
+.kheiron .coach .pic img.zahi{object-position:50% 18%}
 .kheiron .shield{font-size:22px}
 .kheiron .sticky b{color:var(--text)}
 .kheiron-merci{min-height:100vh;display:grid;place-items:center;padding:40px 16px;background:#080A0F;color:#fff;font:400 17px/1.6 var(--font-k-sans),system-ui,sans-serif}

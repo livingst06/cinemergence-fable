@@ -1,0 +1,14 @@
+---
+description: Réserver les tests CDP et les captures d'écran au moment où l'on demande de commit
+alwaysApply: true
+---
+
+# Vérifier dans le navigateur seulement avant un commit
+
+Cette règle vaut pour tout agent Cursor, sur n'importe quelle branche.
+
+Après une modification du code, ne pas lancer de test CDP ni de capture d'écran. Cela inclut `browser_cdp`, `Runtime.evaluate` pour contrôler la page, `Page.captureScreenshot` et `browser_take_screenshot`.
+
+Ces vérifications se font uniquement lorsque l'utilisateur demande de commit, et elles se font juste avant le commit.
+
+Les tests unitaires (`pnpm test`, Vitest) ne sont pas concernés.

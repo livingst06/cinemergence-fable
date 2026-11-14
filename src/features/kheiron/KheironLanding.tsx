@@ -18,8 +18,9 @@ import { ManageCookiesButton } from "@/components/ManageCookiesButton";
 import {
   KHEIRON_ITEM_ID,
   KHEIRON_ITEM_NAME,
-  KHEIRON_STANDARD_INSTALLMENTS,
   KHEIRON_STANDARD_ONCE,
+  KLARNA_PAY_IN_3_COPY,
+  KLARNA_PAY_IN_3_WARNING,
   kheironAmountEuros,
   kheironPrice,
   type KheironOffer,
@@ -79,7 +80,7 @@ const PLATEAU: [string, string][] = [
 const WA_INTRO = "Bonjour ! Je suis intéressé·e par la masterclass stand-up avec Kheiron 🎤 J'ai une question :";
 const WA_CHIPS = [
   ["Je n'ai jamais fait de scène, c'est ok ?", "Bonjour ! Je n'ai jamais fait de scène, est-ce que la masterclass avec Kheiron est faite pour moi ?"],
-  ["Le paiement en 3 fois ?", "Bonjour ! Comment fonctionne le paiement en 3 fois sans frais pour la masterclass avec Kheiron ?"],
+  ["Comment se passe le paiement ?", "Bonjour ! Comment se passe le paiement pour la masterclass avec Kheiron ?"],
   ["Il reste des places ?", "Bonjour ! Il reste des places pour la masterclass stand-up avec Kheiron ?"],
   ["Comment se passent les 4 jours ?", "Bonjour ! Pouvez-vous m'en dire plus sur le déroulé des 4 jours de la masterclass avec Kheiron ?"],
 ] as const;
@@ -167,14 +168,12 @@ function WhatsAppIcon() {
   );
 }
 
-function InstallmentAmount({ value }: { value: string }) {
-  const prefix = "3 x";
-  if (!value.startsWith(`${prefix} `)) return value;
+function KlarnaPayIn3Notice() {
   return (
-    <span className="price-installment">
-      <span className="price-times">{prefix}</span>
-      {value.slice(prefix.length)}
-    </span>
+    <p className="bnpl">
+      <span className="bnpl-line">{KLARNA_PAY_IN_3_COPY}</span>
+      <span className="bnpl-line">{KLARNA_PAY_IN_3_WARNING}</span>
+    </p>
   );
 }
 
@@ -557,16 +556,13 @@ export function KheironLanding({
               <div><b>{clock.m}</b><span>min</span></div>
             </div>
             <p className="price">
-              <span className="price-figure">
-                <InstallmentAmount value={price.installments} />
-              </span>
-              <span className="price-fees">sans frais</span>
+              <span className="price-figure">{price.once}</span>
             </p>
-            <p className="price-sub">ou {price.once}</p>
+            <KlarnaPayIn3Notice />
             {offer.phase === "early" && (
               <aside className="early" aria-label="Tarif à partir de la 6e place">
                 <p className="early-note">
-                  Dès la 6<sup>e</sup> place, le tarif passe à <b><InstallmentAmount value={KHEIRON_STANDARD_INSTALLMENTS} /> sans frais</b> ou <b>{KHEIRON_STANDARD_ONCE}</b> en une fois.
+                  Dès la 6<sup>e</sup> place, le tarif passe à <b>{KHEIRON_STANDARD_ONCE}</b>.
                 </p>
               </aside>
             )}
@@ -596,7 +592,7 @@ export function KheironLanding({
                 ? "Le lien de paiement reste ouvert pour une prochaine session."
                 : "⚡ Une seule session. Quand c'est complet, c'est complet."}
             </p>
-            <p className="pay-note">Paiement sécurisé par Stripe · Carte bancaire ou paiement en 3× sans frais</p>
+            <p className="pay-note">Paiement sécurisé par Stripe.</p>
             <figure className="pull"><div><div className="stars" aria-label="5 sur 5">★★★★★</div><blockquote>Le cadre est professionnel. On se sent considéré comme un acteur, pas comme un élève. J&apos;ai gagné en confiance face caméra.</blockquote><cite><b>Laura, 35 ans, intermittente</b> · Stage Bande Démo Cinéma</cite></div></figure>
             <div className="guarantee">
               <span className="shield">🛡️</span>
@@ -620,7 +616,11 @@ export function KheironLanding({
             <details><summary>Comment se passe la scène finale ?</summary><p>Le dimanche 6 décembre au soir, dans un café-théâtre parisien, devant du public. Tu joues ton passage de 4 à 5 minutes, filmé en conditions professionnelles par une équipe de captation. Tu as un retour à chaud juste après.</p></details>
             <details><summary>Je ne suis pas à Paris, ça vaut le coup ?</summary><p>Les sessions ont lieu sur deux week-ends, ce qui permet de venir sans poser de congés. <span className="todo">Infos logement / tarifs hôtels partenaires</span></p></details>
             <details><summary>La vidéo de mon passage m&apos;appartient ?</summary><p>Oui. Tu reçois la captation montée de ton passage après la formation, et tu l&apos;utilises comme tu veux : réseaux sociaux, démarchage des programmateurs, candidatures.</p></details>
-            <details><summary>Comment se passe le paiement ?</summary><p>Tu réserves et tu paies ta place directement en ligne, sur une page de paiement sécurisée Stripe, en une fois ou en 3× sans frais. Si le stage n&apos;atteint pas le nombre minimum de participants, tu es remboursé·e intégralement.</p></details>
+            <details>
+              <summary>Comment se passe le paiement ?</summary>
+              <p>Tu réserves et tu paies ta place directement en ligne, sur une page de paiement sécurisée Stripe. Si le stage n&apos;atteint pas le nombre minimum de participants, tu es remboursé·e intégralement.</p>
+              <KlarnaPayIn3Notice />
+            </details>
             <details><summary>Qui est Cinémergence ?</summary><p>Une école de formation aux métiers du cinéma et de la scène, certifiée Qualiopi, fondée par le réalisateur Choukri Rouha et parrainée par Bibi Naceri. Chaque formation s&apos;ouvre avec une grande figure de la discipline et se termine par un livrable concret.</p></details>
           </div>
         </div>
@@ -635,7 +635,7 @@ export function KheironLanding({
             <ol className="steps">
               <li><b>Tu nous écris sur WhatsApp</b>Ton niveau, tes questions, tes disponibilités.</li>
               <li><b>On te répond sous 24h</b>Pour vérifier que la masterclass te correspond.</li>
-              <li><b>Tu reçois ton lien de réservation</b>Paiement sécurisé Stripe, en une fois ou en 3× sans frais.</li>
+              <li><b>Tu reçois ton lien de réservation</b>Paiement sécurisé Stripe.</li>
             </ol>
             <figure className="pull wa-pull"><div><div className="stars" aria-label="5 sur 5">★★★★★</div><blockquote>Ce que j&apos;ai apprécié : les retours précis et concrets. On comprend vite ce qui fonctionne et ce qui sonne faux.</blockquote><cite><b>Mehdi, 29 ans, en reconversion</b> · Stage Bande Démo Cinéma</cite></div></figure>
           </div>

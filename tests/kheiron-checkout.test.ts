@@ -5,6 +5,8 @@ import {
   KHEIRON_EARLY_PAYMENT_LINK,
   KHEIRON_ITEM_ID,
   KHEIRON_STANDARD_PAYMENT_LINK,
+  KLARNA_PAY_IN_3_COPY,
+  KLARNA_PAY_IN_3_WARNING,
   kheironAmountEuros,
   kheironOfferFromCount,
   kheironPrice,
@@ -139,17 +141,18 @@ describe("kheironOfferFromCount", () => {
 });
 
 describe("kheironPrice", () => {
-  it("met le 3× en tête, en € TTC, puis le paiement en une fois", () => {
-    expect(kheironPrice("early")).toEqual({
-      installments: "3 x 296,67\u00a0€\u00a0TTC",
-      once: "890\u00a0€\u00a0TTC",
-    });
-    expect(kheironPrice("standard")).toEqual({
-      installments: "3 x 330\u00a0€\u00a0TTC",
-      once: "990\u00a0€\u00a0TTC",
-    });
+  it("affiche le prix comptant, 890 € TTC puis 990 € TTC", () => {
+    expect(kheironPrice("early")).toEqual({ once: "890\u00a0€\u00a0TTC" });
+    expect(kheironPrice("standard")).toEqual({ once: "990\u00a0€\u00a0TTC" });
     expect(kheironPrice("extra")).toEqual(kheironPrice("standard"));
     expect(kheironPrice("full")).toEqual(kheironPrice("standard"));
+  });
+
+  it("garde la formule au tutoiement et l'avertissement Klarna", () => {
+    expect(KLARNA_PAY_IN_3_COPY).toBe("Choisis Klarna. Paie en 3 fois.");
+    expect(KLARNA_PAY_IN_3_WARNING).toBe(
+      "Attention ! Un crédit coûte de l\u2019argent et doit être remboursé.",
+    );
   });
 
   it("donne le montant en euros de la phase, 890 puis 990", () => {

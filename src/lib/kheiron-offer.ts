@@ -12,10 +12,16 @@ export const KHEIRON_TOTAL_SEATS = KHEIRON_SESSION_CAPACITY + KHEIRON_EXTRA_SEAT
 export const KHEIRON_ITEM_ID = "standup-kheiron-2026-11";
 export const KHEIRON_ITEM_NAME = "Masterclass Stand-Up avec Kheiron";
 
-export const KHEIRON_EARLY_INSTALLMENTS = "3 x 296,67\u00a0€\u00a0TTC";
 export const KHEIRON_EARLY_ONCE = "890\u00a0€\u00a0TTC";
-export const KHEIRON_STANDARD_INSTALLMENTS = "3 x 330\u00a0€\u00a0TTC";
 export const KHEIRON_STANDARD_ONCE = "990\u00a0€\u00a0TTC";
+
+/**
+ * Formule au tutoiement de la page. Ne pas ajouter « sans frais », un taux ou un montant d'échéance.
+ * L'avertissement, lui, reste le texte fixe Klarna, à la même taille, immédiatement à côté.
+ */
+export const KLARNA_PAY_IN_3_COPY = "Choisis Klarna. Paie en 3 fois.";
+export const KLARNA_PAY_IN_3_WARNING =
+  "Attention ! Un crédit coûte de l\u2019argent et doit être remboursé.";
 
 /**
  * Montants acceptés par lien Stripe, en centimes.
@@ -38,15 +44,12 @@ export type KheironOffer = {
 };
 
 export type KheironPrice = {
-  installments: string;
   once: string;
 };
 
 export function kheironPrice(phase: KheironOfferPhase): KheironPrice {
-  if (phase === "early") {
-    return { installments: KHEIRON_EARLY_INSTALLMENTS, once: KHEIRON_EARLY_ONCE };
-  }
-  return { installments: KHEIRON_STANDARD_INSTALLMENTS, once: KHEIRON_STANDARD_ONCE };
+  if (phase === "early") return { once: KHEIRON_EARLY_ONCE };
+  return { once: KHEIRON_STANDARD_ONCE };
 }
 
 /** Prix TTC en euros de la phase en cours. 890 pour les 5 premières places, 990 ensuite. */

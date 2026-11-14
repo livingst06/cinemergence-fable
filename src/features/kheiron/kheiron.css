@@ -351,12 +351,9 @@
 .kheiron .center{text-align:center}
 .kheiron .quote-space{margin-top:32px}
 .kheiron .price-figure{display:block;max-width:100%;font-family:var(--font-k-bebas),sans-serif;font-size:clamp(22.5px,5.55vw,57px);line-height:.95;letter-spacing:.4px;text-wrap:balance}
-.kheiron .price-installment{white-space:nowrap}
-.kheiron .price-times{color:var(--accent);font-weight:800;font-synthesis:weight;font-size:.5em;line-height:1}
-.kheiron .early-note .price-times{font-size:.85em;line-height:inherit}
-.kheiron .price-fees{display:block;margin-top:6px;font-family:var(--font-k-display),sans-serif;font-size:clamp(16.5px,2.25vw,21px);font-weight:800;letter-spacing:-.3px;line-height:1.2}
-.kheiron .price-sub{margin-top:8px;font-size:18px;color:var(--muted)}
-.kheiron .price-sub b{color:var(--text)}
+.kheiron .bnpl{margin:16px auto 0;max-width:36rem;font-size:16px;line-height:1.45;font-weight:600;color:var(--text)}
+.kheiron .bnpl-line{display:block}
+.kheiron .bnpl-line + .bnpl-line{margin-top:4px}
 .kheiron .early{margin:18px auto 0;max-width:520px;background:rgba(255,225,77,.1);border:1px solid rgba(255,225,77,.55);border-radius:16px;padding:14px 18px 16px}
 .kheiron .early-note{color:var(--muted);font-size:16px;line-height:1.45}
 .kheiron .early-note b{color:var(--text)}

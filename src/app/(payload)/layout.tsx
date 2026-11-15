@@ -7,6 +7,7 @@ import "@payloadcms/next/css";
 import React from "react";
 
 import { clerkAppearance } from "@/lib/clerk-appearance";
+import { facebookDomainVerification } from "@/lib/seo";
 
 import { importMap } from "./admin/importMap";
 import "./custom.scss";
@@ -31,6 +32,7 @@ const serverFunction = async (args: {
 
 export const metadata: Metadata = {
   title: "Admin — Cinémergence",
+  other: facebookDomainVerification,
 };
 
 const Layout = ({ children }: Args) => (

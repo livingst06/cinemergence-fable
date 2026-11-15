@@ -53,15 +53,14 @@ export async function deliverPurchase(sessionId: string, payload: Record<string,
   try {
     await client.query("BEGIN");
     await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [sessionId]);
-    const claimed = await client.query<{ session_id: string }>(
+    const claimed = await client.query<{ session_id: string; payload: Record<string, unknown> }>(
       `INSERT INTO measurement_deliveries (session_id, payload, attempts, updated_at)
        VALUES ($1, $2::jsonb, 1, now())
        ON CONFLICT (session_id) DO UPDATE
        SET attempts = measurement_deliveries.attempts + 1,
-           payload = EXCLUDED.payload,
            updated_at = now()
        WHERE measurement_deliveries.sent_at IS NULL
-       RETURNING session_id`,
+       RETURNING session_id, payload`,
       [sessionId, JSON.stringify(payload)],
     );
     if (claimed.rowCount === 0) {
@@ -69,9 +68,10 @@ export async function deliverPurchase(sessionId: string, payload: Record<string,
       return { sent: false, duplicate: true as const, status: null };
     }
 
+    const stored = claimed.rows[0]?.payload ?? payload;
     let status: number | null = null;
     try {
-      status = await postPurchase(payload);
+      status = await postPurchase(stored);
     } catch (error) {
       console.error("[measurement]", sessionId, error instanceof Error ? error.message : "envoi échoué");
       status = null;
@@ -110,7 +110,7 @@ export async function retryMeasurementDeliveries() {
      FROM measurement_deliveries
      WHERE sent_at IS NULL
        AND payload IS NOT NULL
-       AND created_at > now() - interval '48 hours'
+       AND created_at > now() - interval '3 days'
      ORDER BY created_at
      LIMIT 50`,
   );

@@ -378,5 +378,5 @@
 .k-consent a{color:#fff}
 .k-consent .row{display:flex;gap:10px}
 .k-consent button{border-radius:999px;padding:12px 18px;font-weight:700;cursor:pointer}
-.k-consent .no{background:transparent;color:#fff;border:1px solid #262C38}
-.k-consent .yes{background:#2F5BFF;color:#fff;border:0}
+.k-consent .no,
+.k-consent .yes{background:transparent;color:#fff;border:1px solid #262C38}

@@ -51,7 +51,11 @@ export function CookieBanner() {
           >
             Je refuse
           </Button>
-          <Button onClick={accept} className="btn-cta min-h-11">
+          <Button
+            variant="outline"
+            onClick={accept}
+            className="min-h-11 border-or/30 text-cream hover:bg-or/10"
+          >
             J&apos;accepte
           </Button>
         </div>

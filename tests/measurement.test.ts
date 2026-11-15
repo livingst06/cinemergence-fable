@@ -174,6 +174,23 @@ describe("buildPurchasePayload", () => {
     expect(payload.source).toBe("payment_link");
     expect(payload.test).toBe(false);
     expect(payload.page_location).toBe("https://cinemergence.fr/");
+    expect(payload).not.toHaveProperty("consent");
+  });
+
+  it("omet le consentement d'un lien de paiement même s'il est présent dans les métadonnées", () => {
+    const payload = buildPurchasePayload(
+      {
+        id: "cs_live_link",
+        livemode: true,
+        amount_total: 99000,
+        payment_link: { id: "plink_1UU3ceCXL04XIOiVTvg1tidi" },
+        metadata: { consent: "accepted", landing: "/formations/kheiron" },
+      },
+      "https://cinemergence.fr",
+    );
+    expect(payload.source).toBe("payment_link");
+    expect(payload).not.toHaveProperty("consent");
+    expect(payload.page_location).toBe("https://cinemergence.fr/formations/kheiron");
   });
 });
 

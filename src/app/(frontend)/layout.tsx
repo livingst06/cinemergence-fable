@@ -9,7 +9,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { SiteNoticeBanner } from "@/components/layout/SiteNoticeBanner";
 import { getFormations, getSiteSettings } from "@/lib/data";
-import { organizationJsonLd } from "@/lib/seo";
+import { facebookDomainVerification, organizationJsonLd } from "@/lib/seo";
 import { socialMetadata } from "@/lib/share-metadata";
 import { cn } from "@/lib/utils";
 
@@ -48,6 +48,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     openGraph: social.openGraph,
     twitter: social.twitter,
+    other: facebookDomainVerification,
   };
 }
 

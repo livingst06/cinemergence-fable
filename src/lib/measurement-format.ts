@@ -201,6 +201,7 @@ export function buildPurchasePayload(session: PurchaseSession, pageOrigin: strin
   const origin = pageOrigin.replace(/\/+$/, "");
   const utm = utmFromTouch(metadata);
   const itemId = metadata.offer?.trim() || KHEIRON_ITEM_ID;
+  const fromPaymentLink = Boolean(paymentLinkId(session));
 
   return omitEmpty({
     event_name: "purchase",
@@ -208,8 +209,8 @@ export function buildPurchasePayload(session: PurchaseSession, pageOrigin: strin
     event_time: eventTime ?? session.created,
     page_location: `${origin}${landing || "/"}`,
     test: session.livemode === false,
-    source: paymentLinkId(session) ? "payment_link" : "checkout_site",
-    consent: metadata.consent,
+    source: fromPaymentLink ? "payment_link" : "checkout_site",
+    consent: fromPaymentLink ? undefined : metadata.consent,
     client_id: metadata.ga_client_id,
     ga_session_id: metadata.ga_session_id,
     fbp: metadata.fbp,

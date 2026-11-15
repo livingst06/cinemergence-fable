@@ -2379,12 +2379,12 @@ export const formationsCatalog: Omit<FormationData, "active">[] = [
       "Montage de la captation remis après la formation",
     ],
     encadrement:
-      "Le jour 1, Kheiron anime la masterclass au Théâtre Apollo et coache les passages. Phil Darwin accompagne le groupe pendant les 4 jours, avec un formateur dont le nom reste secret jusqu'à l'annonce.",
+      "Le jour 1, Kheiron anime la masterclass au Théâtre Apollo et coache les passages. Phil Darwin et Hassan Zahi accompagnent le groupe pendant les 4 jours, jusqu'à la scène ouverte.",
     evaluation:
       "Le jour 1, ton passage devant Kheiron est filmé : c'est le point de départ. Les filages du jour 3 servent de retours en cours de parcours. La scène ouverte du jour 4 est filmée, avec un bilan à chaud. Tu repars avec les captations et une attestation de fin de formation.",
     accessibilite:
       "Les locaux sont accessibles et les modalités pédagogiques peuvent être adaptées en fonction des besoins. Toute situation particulière est étudiée en amont avec le référent handicap.",
-    intervenants: ["kheiron", "phil-darwin", "formateur-mystere"],
+    intervenants: ["kheiron", "phil-darwin", "hassan-zahi"],
     faq: [
       {
         q: "Je n'ai jamais fait de scène. C'est pour moi ?",
@@ -2396,7 +2396,7 @@ export const formationsCatalog: Omit<FormationData, "active">[] = [
       },
       {
         q: "Est-ce que Kheiron est présent les 4 jours ?",
-        r: "Kheiron anime le jour 1, le samedi 28 novembre au Théâtre Apollo : la masterclass, puis les passages coachés. Phil Darwin t'accompagne pendant les 4 jours, jusqu'à la scène ouverte.",
+        r: "Kheiron anime le jour 1, le samedi 28 novembre au Théâtre Apollo : la masterclass, puis les passages coachés. Phil Darwin et Hassan Zahi t'accompagnent pendant les 4 jours, jusqu'à la scène ouverte.",
       },
       {
         q: "Pourquoi deux week-ends ?",

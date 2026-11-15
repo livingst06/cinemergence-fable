@@ -138,7 +138,7 @@ export function resolveFormationCoverUrl(slug: string, explicit?: string | null)
 export const committedIntervenantPhotos: Record<string, string> = {
   kheiron: "/images/intervenants/kheiron.webp",
   "phil-darwin": "/images/intervenants/phil-darwin.webp",
-  "formateur-mystere": "/images/intervenants/formateur-mystere.webp",
+  "hassan-zahi": "/images/intervenants/hassan-zahi.webp",
 };
 
 export const staticIntervenantPhotos: Record<string, string> = {

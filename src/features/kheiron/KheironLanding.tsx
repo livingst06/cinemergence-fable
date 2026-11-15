@@ -389,16 +389,23 @@ export function KheironLanding({
         <div className="wrap team-head">
           <span className="eyebrow">Ton équipe sur les 4 jours</span>
           <h2>Kheiron ouvre le bal. Eux t&apos;emmènent jusqu&apos;à la scène.</h2>
-          <p className="lead">Phil Darwin t&apos;accompagne pendant les 4 jours. Avec un formateur mystère, ils reprennent ton texte là où Kheiron l&apos;a laissé, jusqu&apos;à la scène ouverte.</p>
+          <p className="lead">Phil Darwin et Hassan Zahi t&apos;accompagnent pendant les 4 jours. Ils reprennent ton texte là où Kheiron l&apos;a laissé, jusqu&apos;à la scène ouverte.</p>
           <div className="team">
             <article className="coach star">
               <div className="pic"><img decoding="async" src={img("kheiron.webp")} alt="Kheiron" width={900} height={910} loading="lazy" /></div>
-              <div className="body"><span className="role">Jour 1 · Masterclass</span><h3>Kheiron</h3><p>Humoriste, auteur, réalisateur. Il te fait passer sur scène et te coache sur ton propre sketch.</p></div>
+              <div className="body">
+                <span className="role">Jour 1 · Masterclass</span>
+                <h3>Kheiron</h3>
+                <p className="sub">Humoriste, comédien, auteur et réalisateur</p>
+                <p>Révélé au Jamel Comedy Club puis dans la série <em>Bref</em>, il est devenu une référence du stand-up français. Avec <em>60 minutes avec Kheiron</em>, un spectacle presque entièrement improvisé à partir du public, il a battu des records de longévité à Paris. Au cinéma, il écrit, réalise et joue dans <em>Nous trois ou rien</em>, nommé au César du meilleur premier film, puis dans <em>Mauvaises herbes</em> avec Catherine Deneuve.</p>
+                <p className="force">Sa marque : faire rire le public de lui-même, avec un sens de l&apos;improvisation et du rythme hors norme.</p>
+                <p>Pendant sa masterclass, il te fait monter sur scène et te coache sur ton propre sketch.</p>
+              </div>
             </article>
             <article className="coach">
               <div className="pic"><img className="darwin" decoding="async" src={img("phil-darwin.webp")} alt="Phil Darwin, micro à la main" width={683} height={1024} loading="lazy" /></div>
               <div className="body">
-                <span className="role">Les 4 jours · Formateur</span>
+                <span className="role">Les 4 jours</span>
                 <h3>Phil Darwin</h3>
                 <p className="sub">Humoriste, comédien et formateur</p>
                 <p>Artiste franco-congolais, il évolue depuis plus de 20 ans dans le stand-up, le théâtre et les médias. Il a joué à l&apos;Olympia, au Zénith de Paris et à La Cigale, et dans des festivals en Europe, en Afrique et en Amérique du Nord. Chroniqueur radio et comédien, il joue dans <em>Mayouya</em> de Claudia Yoka, présenté à Cannes en 2022.</p>
@@ -406,12 +413,15 @@ export function KheironLanding({
                 <p>Pendant les 4 jours, il t&apos;accompagne de tes premières prises de parole jusqu&apos;à ton sketch devant le public.</p>
               </div>
             </article>
-            <article className="coach mystery">
-              <div className="pic" aria-hidden="true"><span className="q-mark">?</span></div>
+            <article className="coach">
+              <div className="pic"><img className="zahi" decoding="async" src={img("hassan-zahi.webp")} alt="Hassan Zahi" width={682} height={1024} loading="lazy" /></div>
               <div className="body">
-                <span className="role">Jours 2 à 4 · Formateur mystère</span>
-                <h3>? ? ? ? ?</h3>
-                <p>Son nom reste secret pour l&apos;instant : il sera dévoilé prochainement. Les premiers inscrits le découvriront avant tout le monde.</p>
+                <span className="role">Les 4 jours</span>
+                <h3>Hassan Zahi</h3>
+                <p className="sub">Comédien, metteur en scène, coach et formateur certifié en santé mentale</p>
+                <p>Comédien, humoriste et metteur en scène, il pratique l&apos;improvisation théâtrale depuis plus de 17 ans et compte plus de 20 ans d&apos;expérience dans la formation et l&apos;accompagnement. Fondateur de <em>Franchement Ça Va</em>, qui fait de l&apos;humour un outil de prévention en santé mentale, il est spécialiste de l&apos;expression orale et de la confiance en soi.</p>
+                <p className="force">Sa force : t&apos;aider à dépasser tes appréhensions, révéler ta singularité artistique et oser prendre ta place sur scène.</p>
+                <p>Pendant les 4 jours, il t&apos;accompagne dans ta progression, jusqu&apos;à la présentation de ton sketch devant le public.</p>
               </div>
             </article>
           </div>
@@ -607,7 +617,7 @@ export function KheironLanding({
           <div className="faq">
             <details><summary>Je n&apos;ai jamais fait de scène. C&apos;est pour moi ?</summary><p>Oui. Aucune expérience préalable n&apos;est nécessaire, seule compte l&apos;envie de monter sur scène. Tu écris et tu rodes ton passage avec les formateurs avant la scène ouverte : tu ne montes pas devant le public sans préparation.</p></details>
             <details><summary>Est-ce que je dois arriver avec un texte ?</summary><p>Oui, apporte un premier sketch le jour 1, même brouillon. C&apos;est lui que tu joues devant Kheiron, puis que tu réécris tout au long de la formation jusqu&apos;à la scène finale. <span className="todo">Consigne exacte : durée, aide pour ceux qui partent de zéro</span></p></details>
-            <details><summary>Est-ce que Kheiron est présent les 4 jours ?</summary><p>Kheiron anime le jour 1, le samedi 28 novembre au Théâtre Apollo : la masterclass le matin, puis les passages coachés l&apos;après-midi. Phil Darwin t&apos;accompagne pendant les 4 jours, avec un formateur mystère dont le nom sera bientôt dévoilé, jusqu&apos;à la scène ouverte.</p></details>
+            <details><summary>Est-ce que Kheiron est présent les 4 jours ?</summary><p>Kheiron anime le jour 1, le samedi 28 novembre au Théâtre Apollo : la masterclass le matin, puis les passages coachés l&apos;après-midi. Phil Darwin et Hassan Zahi t&apos;accompagnent pendant les 4 jours, jusqu&apos;à la scène ouverte.</p></details>
             <details><summary>Pourquoi deux week-ends et pas 4 jours d&apos;affilée ?</summary><p>La semaine entre les deux sessions te laisse le temps de réécrire ton sketch avec ta feuille de route personnelle et d&apos;arriver au deuxième week-end avec un texte qui a déjà mûri. Et c&apos;est compatible avec un emploi ou une autre activité.</p></details>
             <details><summary>Comment se passe la scène finale ?</summary><p>Le dimanche 6 décembre au soir, dans un café-théâtre parisien, devant du public. Tu joues ton passage de 4 à 5 minutes, filmé en conditions professionnelles par une équipe de captation. Tu as un retour à chaud juste après.</p></details>
             <details><summary>Je ne suis pas à Paris, ça vaut le coup ?</summary><p>Les sessions ont lieu sur deux week-ends, ce qui permet de venir sans poser de congés. <span className="todo">Infos logement / tarifs hôtels partenaires</span></p></details>

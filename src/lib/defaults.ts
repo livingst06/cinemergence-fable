@@ -59,7 +59,7 @@ export const defaultSite = {
 } as const;
 
 /** Formateurs affichés sur le site, en plus des intervenants professionnels. */
-export const publicFormateurSlugs = ["phil-darwin", "formateur-mystere"] as const;
+export const publicFormateurSlugs = ["phil-darwin", "hassan-zahi"] as const;
 
 export const defaultIntervenants: IntervenantData[] = [
   {
@@ -92,13 +92,13 @@ export const defaultIntervenants: IntervenantData[] = [
   {
     slug: "hassan-zahi",
     nom: "Hassan Zahi",
-    role: "Réalisateur & formateur",
+    role: "Comédien, metteur en scène, coach et formateur certifié en santé mentale",
     parrain: false,
     categorie: "formateur",
-    bio: "Formateur pédagogique. Accompagne les élèves sur la mise en scène, le découpage et la conduite de plateau. Retours pro directs pour gagner en autonomie sur un vrai tournage.",
-    filmographie: ["Rose"],
-    photoUrl: "/images/formations/formation-realiser-court-metrage.jpg",
-    photoMimeType: "image/jpeg",
+    bio: "Comédien, humoriste et metteur en scène, il pratique l'improvisation théâtrale depuis plus de 17 ans et compte plus de 20 ans d'expérience dans la formation et l'accompagnement. Fondateur de Franchement Ça Va, qui fait de l'humour un outil de prévention en santé mentale, il est spécialiste de l'expression orale et de la confiance en soi. Sa force : t'aider à dépasser tes appréhensions, révéler ta singularité artistique et oser prendre ta place sur scène. Pendant les 4 jours, il t'accompagne dans ta progression, jusqu'à la présentation de ton sketch devant le public.",
+    filmographie: ["Braquo", "Destino", "En attendant demain", "Famille d'accueil", "Rose"],
+    photoUrl: "/images/intervenants/hassan-zahi.webp",
+    photoMimeType: "image/webp",
   },
   {
     slug: "sandy-formateur",
@@ -114,10 +114,10 @@ export const defaultIntervenants: IntervenantData[] = [
   {
     slug: "kheiron",
     nom: "Kheiron",
-    role: "Humoriste, auteur et réalisateur",
+    role: "Humoriste, comédien, auteur et réalisateur",
     parrain: false,
     categorie: "professionnel",
-    bio: "Humoriste, auteur et réalisateur. Le jour 1, il anime la masterclass et te coache sur ton propre sketch : tu joues devant lui, il te corrige sur ton texte.",
+    bio: "Révélé au Jamel Comedy Club puis dans la série Bref, il est devenu une référence du stand-up français. Avec 60 minutes avec Kheiron, un spectacle presque entièrement improvisé à partir du public, il a battu des records de longévité à Paris. Au cinéma, il écrit, réalise et joue dans Nous trois ou rien, nommé au César du meilleur premier film, puis dans Mauvaises herbes avec Catherine Deneuve. Sa marque : faire rire le public de lui-même, avec un sens de l'improvisation et du rythme hors norme. Pendant sa masterclass, il te fait monter sur scène et te coache sur ton propre sketch.",
     filmographie: [
       "60 minutes",
       "Dragon",
@@ -134,20 +134,9 @@ export const defaultIntervenants: IntervenantData[] = [
     role: "Humoriste, comédien et formateur",
     parrain: false,
     categorie: "formateur",
-    bio: "Artiste franco-congolais, il évolue depuis plus de 20 ans dans le stand-up, le théâtre et les médias. Il a joué à l'Olympia, au Zénith de Paris et à La Cigale, et dans des festivals en Europe, en Afrique et en Amérique du Nord. Chroniqueur radio et comédien, il joue dans Mayouya de Claudia Yoka, présenté à Cannes en 2022. Il transmet le métier : écriture humoristique, interprétation, rythme comique et présence scénique. Pendant les 4 jours, il t'accompagne jusqu'à ton sketch devant le public.",
-    filmographie: ["Mayouya"],
+    bio: "Artiste franco-congolais, il évolue depuis plus de 20 ans dans le stand-up, le théâtre et les médias. Il a joué à l'Olympia, au Zénith de Paris et à La Cigale, et dans des festivals en Europe, en Afrique et en Amérique du Nord. Chroniqueur radio et comédien, il joue dans Mayouya de Claudia Yoka, présenté à Cannes en 2022. Il transmet le métier en masterclass et en formation : écriture humoristique, interprétation, rythme comique et présence scénique. Pendant les 4 jours, il t'accompagne de tes premières prises de parole jusqu'à ton sketch devant le public.",
+    filmographie: ["La vie de Lougah", "Jamel Comedy Club", "Mayouya"],
     photoUrl: "/images/intervenants/phil-darwin.webp",
-    photoMimeType: "image/webp",
-  },
-  {
-    slug: "formateur-mystere",
-    nom: "Formateur mystère",
-    role: "Formateur",
-    parrain: false,
-    categorie: "formateur",
-    bio: "Son nom reste secret pour l'instant : il sera dévoilé prochainement. Les premiers inscrits le découvriront avant tout le monde.",
-    filmographie: [],
-    photoUrl: "/images/intervenants/formateur-mystere.webp",
     photoMimeType: "image/webp",
   },
 ];

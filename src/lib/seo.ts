@@ -1,6 +1,11 @@
 import type { SiteConfig } from "./data";
 import { SHARE_IMAGE_PATH } from "./share-metadata";
 
+/** Balise Meta à garder dans chaque layout racine, y compris après la vérification. */
+export const facebookDomainVerification = {
+  "facebook-domain-verification": "hd83t59mns0ae5cbnjw9mue83ome5b",
+} as const;
+
 export function organizationJsonLd(site: SiteConfig) {
   return {
     "@context": "https://schema.org",

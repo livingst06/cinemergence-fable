@@ -3,6 +3,7 @@ import { Bebas_Neue, Inter, Playfair_Display, Plus_Jakarta_Sans } from "next/fon
 
 import { TagManager } from "@/components/TagManager";
 import { KheironConsent } from "@/features/kheiron/KheironConsent";
+import { facebookDomainVerification } from "@/lib/seo";
 import { kheironShareImage, socialMetadata } from "@/lib/share-metadata";
 import { getPublicSiteUrl } from "@/lib/site-url";
 
@@ -46,6 +47,7 @@ export const metadata: Metadata = {
     "Formation stand-up de 4 jours à Paris : joue ton sketch devant Kheiron au Théâtre Apollo, réécris-le avec nos formateurs et termine par une scène ouverte filmée dans un café-théâtre. 28–29 novembre & 5–6 décembre 2026.",
   openGraph: social.openGraph,
   twitter: social.twitter,
+  other: facebookDomainVerification,
 };
 
 export default function LandingLayout({ children }: { children: React.ReactNode }) {

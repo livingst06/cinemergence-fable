@@ -25,11 +25,11 @@ export function Footer({ site, formations }: FooterProps) {
   const featured = formations.filter((f) => f.prioritaire);
   const footerFormations = featured.length > 0 ? featured : formations.slice(0, 3);
   const socials = [
-    { href: site.instagramUrl, label: "Instagram Cinémergence", icon: <InstagramIcon className={socialIconClass} /> },
-    { href: site.youtubeUrl, label: "YouTube Cinémergence", icon: <YoutubeIcon className={socialIconClass} /> },
-    { href: site.tiktokUrl, label: "TikTok Cinémergence", icon: <TikTokIcon className={socialIconClass} /> },
-    { href: site.linktreeUrl, label: "Linktree Cinémergence", icon: <LinktreeIcon className={socialIconClass} /> },
-    { href: site.linkedinUrl, label: "LinkedIn Cinémergence", icon: <LinkedInIcon className={socialIconClass} /> },
+    { href: site.instagramUrl, label: "Instagram Cinémergence", icon: <InstagramIcon brand className={socialIconClass} /> },
+    { href: site.youtubeUrl, label: "YouTube Cinémergence", icon: <YoutubeIcon brand className={socialIconClass} /> },
+    { href: site.tiktokUrl, label: "TikTok Cinémergence", icon: <TikTokIcon brand className={socialIconClass} /> },
+    { href: site.linktreeUrl, label: "Linktree Cinémergence", icon: <LinktreeIcon brand className={socialIconClass} /> },
+    { href: site.linkedinUrl, label: "LinkedIn Cinémergence", icon: <LinkedInIcon brand className={socialIconClass} /> },
   ];
 
   return (
@@ -44,7 +44,7 @@ export function Footer({ site, formations }: FooterProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="flex h-11 w-11 items-center justify-center rounded-full bg-noir text-cream transition-colors hover:bg-noir-deep hover:text-or-light sm:h-12 sm:w-12"
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-noir transition-colors hover:bg-noir-deep sm:h-12 sm:w-12"
                 >
                   {social.icon}
                 </a>

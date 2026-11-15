@@ -1,4 +1,4 @@
-import { getPool } from "@/lib/db";
+import { getPool, lockPublicTable } from "@/lib/db";
 import {
   isKheironPaymentAmount,
   KHEIRON_ITEM_ID,
@@ -69,6 +69,7 @@ async function ensureTable() {
           created_at timestamptz NOT NULL DEFAULT now()
         )
       `)
+      .then(() => lockPublicTable("kheiron_payments"))
       .then(() => undefined)
       .catch((error) => {
         tableReady = null;

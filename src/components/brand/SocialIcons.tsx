@@ -1,30 +1,88 @@
 type IconProps = {
   className?: string;
+  /** Couleurs officielles du réseau, au lieu de currentColor. */
+  brand?: boolean;
 };
 
 /** Pictos marque (Simple Icons), hors Lucide 1.23 qui ne les exporte pas. */
-export function InstagramIcon({ className = "h-5 w-5" }: IconProps) {
+export function InstagramIcon({ className = "h-5 w-5", brand = false }: IconProps) {
   return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden
-    >
-      <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3Z" />
+    <svg className={className} viewBox="0 0 24 24" aria-hidden>
+      {brand && (
+        <defs>
+          <linearGradient id="instagram-brand" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0%" stopColor="#f9ce34" />
+            <stop offset="45%" stopColor="#ee2a7b" />
+            <stop offset="100%" stopColor="#6228d7" />
+          </linearGradient>
+        </defs>
+      )}
+      <path
+        fill={brand ? "url(#instagram-brand)" : "currentColor"}
+        d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3Z"
+      />
     </svg>
   );
 }
 
-export function YoutubeIcon({ className = "h-5 w-5" }: IconProps) {
+const tiktokNote =
+  "M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z";
+
+export function TikTokIcon({ className = "h-5 w-5", brand = false }: IconProps) {
+  if (!brand) {
+    return (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+        <path d={tiktokNote} />
+      </svg>
+    );
+  }
   return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden
-    >
-      <path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.54 3.7 12 3.7 12 3.7s-7.54 0-9.38.36A3.02 3.02 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3.02 3.02 0 0 0 2.12 2.14c1.84.36 9.38.36 9.38.36s7.54 0 9.38-.36a3.02 3.02 0 0 0 2.12-2.14A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8ZM9.75 15.57V8.43L15.84 12l-6.09 3.57Z" />
+    <svg className={className} viewBox="-1.2 -1.2 26.4 26.4" aria-hidden>
+      <path fill="#25F4EE" d={tiktokNote} transform="translate(-1 1)" />
+      <path fill="#FE2C55" d={tiktokNote} transform="translate(1 -1)" />
+      <path fill="#fff" d={tiktokNote} />
+    </svg>
+  );
+}
+
+export function LinktreeIcon({ className = "h-5 w-5", brand = false }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden>
+      <path
+        fill={brand ? "#43E660" : "currentColor"}
+        d="m13.73635 5.85251 4.00467-4.11665 2.3248 2.3808-4.20064 4.00466h5.9085v3.30473h-5.9365l4.22865 4.10766-2.3248 2.3338L12.0005 12.099l-5.74052 5.76852-2.3248-2.3248 4.22864-4.10766h-5.9375V8.12132h5.9085L3.93417 4.11666l2.3248-2.3808 4.00468 4.11665V0h3.4727zm-3.4727 10.30614h3.4727V24h-3.4727z"
+      />
+    </svg>
+  );
+}
+
+export function LinkedInIcon({ className = "h-5 w-5", brand = false }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden>
+      <path
+        fill={brand ? "#0A66C2" : "currentColor"}
+        d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+      />
+    </svg>
+  );
+}
+
+const youtubeBody =
+  "M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.54 3.7 12 3.7 12 3.7s-7.54 0-9.38.36A3.02 3.02 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3.02 3.02 0 0 0 2.12 2.14c1.84.36 9.38.36 9.38.36s7.54 0 9.38-.36a3.02 3.02 0 0 0 2.12-2.14A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8Z";
+const youtubePlay = "M9.75 15.57V8.43L15.84 12l-6.09 3.57Z";
+
+export function YoutubeIcon({ className = "h-5 w-5", brand = false }: IconProps) {
+  if (!brand) {
+    return (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+        <path d={`${youtubeBody}${youtubePlay}`} />
+      </svg>
+    );
+  }
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden>
+      <path fill="#FF0000" d={youtubeBody} />
+      <path fill="#fff" d={youtubePlay} />
     </svg>
   );
 }

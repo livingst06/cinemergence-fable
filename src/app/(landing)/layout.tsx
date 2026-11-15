@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Inter, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Bebas_Neue, Inter, Playfair_Display } from "next/font/google";
+import localFont from "next/font/local";
 
 import { TagManager } from "@/components/TagManager";
 import { KheironConsent } from "@/features/kheiron/KheironConsent";
@@ -16,9 +17,19 @@ const sans = Inter({
   display: "swap",
 });
 
-const display = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["700", "800"],
+const display = localFont({
+  src: [
+    {
+      path: "../../fonts/plus-jakarta-sans/plus-jakarta-sans-latin-700-normal.woff2",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../../fonts/plus-jakarta-sans/plus-jakarta-sans-latin-800-normal.woff2",
+      weight: "800",
+      style: "normal",
+    },
+  ],
   variable: "--font-k-display",
   display: "swap",
 });

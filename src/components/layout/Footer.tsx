@@ -4,7 +4,13 @@ import Link from "next/link";
 import { ManageCookiesButton } from "@/components/ManageCookiesButton";
 import { NdaNumber } from "@/components/NdaNumber";
 import { QualiopiMark } from "@/components/brand/QualiopiMark";
-import { InstagramIcon, YoutubeIcon } from "@/components/brand/SocialIcons";
+import {
+  InstagramIcon,
+  LinkedInIcon,
+  LinktreeIcon,
+  TikTokIcon,
+  YoutubeIcon,
+} from "@/components/brand/SocialIcons";
 import type { SiteConfig } from "@/lib/data";
 import { formationPath } from "@/lib/defaults";
 
@@ -13,13 +19,40 @@ type FooterProps = {
   formations: { slug: string; titreCourt: string; prioritaire?: boolean }[];
 };
 
+const socialIconClass = "h-5 w-5";
+
 export function Footer({ site, formations }: FooterProps) {
   const featured = formations.filter((f) => f.prioritaire);
   const footerFormations = featured.length > 0 ? featured : formations.slice(0, 3);
+  const socials = [
+    { href: site.instagramUrl, label: "Instagram Cinémergence", icon: <InstagramIcon brand className={socialIconClass} /> },
+    { href: site.youtubeUrl, label: "YouTube Cinémergence", icon: <YoutubeIcon brand className={socialIconClass} /> },
+    { href: site.tiktokUrl, label: "TikTok Cinémergence", icon: <TikTokIcon brand className={socialIconClass} /> },
+    { href: site.linktreeUrl, label: "Linktree Cinémergence", icon: <LinktreeIcon brand className={socialIconClass} /> },
+    { href: site.linkedinUrl, label: "LinkedIn Cinémergence", icon: <LinkedInIcon brand className={socialIconClass} /> },
+  ];
 
   return (
     <footer className="site-footer border-t border-border bg-noir-secondary">
       <div className="container-page py-10 md:py-16">
+        <nav aria-label="Réseaux sociaux" className="mb-10 flex justify-center md:mb-14">
+          <ul className="flex items-center justify-center gap-3 sm:gap-4">
+            {socials.map((social) => (
+              <li key={social.label}>
+                <a
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-noir transition-colors hover:bg-noir-deep sm:h-12 sm:w-12"
+                >
+                  {social.icon}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
         <div className="grid grid-cols-2 items-start gap-x-6 gap-y-10 md:gap-x-10 md:gap-y-12 lg:grid-cols-4">
           <div className="hidden min-w-0 lg:block">
             <QualiopiMark size="sm" />
@@ -99,32 +132,6 @@ export function Footer({ site, formations }: FooterProps) {
                   </a>
                 </li>
                 <li>{site.city}</li>
-                {(site.instagramUrl || site.youtubeUrl) && (
-                  <li className="flex items-center gap-3 pt-1">
-                    {site.instagramUrl && (
-                      <a
-                        href={site.instagramUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Instagram Cinémergence"
-                        className="text-cream/70 transition-colors hover:text-or-light"
-                      >
-                        <InstagramIcon className="h-10 w-10" />
-                      </a>
-                    )}
-                    {site.youtubeUrl && (
-                      <a
-                        href={site.youtubeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="YouTube Cinémergence"
-                        className="text-cream/70 transition-colors hover:text-or-light"
-                      >
-                        <YoutubeIcon className="h-10 w-10" />
-                      </a>
-                    )}
-                  </li>
-                )}
               </ul>
               <div>
                 <p className="text-xs text-muted-text">{site.partnerRole}</p>
@@ -148,7 +155,7 @@ export function Footer({ site, formations }: FooterProps) {
           </div>
         </div>
 
-        <QualiopiMark className="mt-10 lg:hidden" size="sm" />
+        <QualiopiMark className="mx-auto mt-10 lg:hidden" size="sm" />
 
         <div className="mt-12 flex flex-col gap-4 border-t border-white/[0.06] pt-8 text-xs text-muted-text md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">

@@ -55,6 +55,9 @@ export const defaultSite = {
   partnerRole: "Production partenaire",
   partnerUrl: "https://www.bakelitefilms.com",
   instagramUrl: "https://www.instagram.com/cinemergence/",
+  tiktokUrl: "https://www.tiktok.com/@cinemergence",
+  linktreeUrl: "https://linktr.ee/cinemergence",
+  linkedinUrl: "https://www.linkedin.com/in/formation-cinemergence",
   youtubeUrl: "https://www.youtube.com/@cinemergence",
 } as const;
 

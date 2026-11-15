@@ -1,4 +1,4 @@
-import { getPool } from "@/lib/db";
+import { getPool, lockPublicTable } from "@/lib/db";
 
 export const MEASUREMENT_PURCHASE_URL = "https://wisdom.cinemergence.fr/v1/purchase";
 
@@ -18,6 +18,7 @@ async function ensureTable() {
           sent_at timestamptz
         )
       `)
+      .then(() => lockPublicTable("measurement_deliveries"))
       .then(() => undefined)
       .catch((error) => {
         tableReady = null;

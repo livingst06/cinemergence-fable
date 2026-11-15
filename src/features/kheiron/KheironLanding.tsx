@@ -393,7 +393,14 @@ export function KheironLanding({
           <div className="team">
             <article className="coach star">
               <div className="pic"><img decoding="async" src={img("kheiron.webp")} alt="Kheiron" width={900} height={910} loading="lazy" /></div>
-              <div className="body"><span className="role">Jour 1 · Masterclass</span><h3>Kheiron</h3><p>Humoriste, auteur, réalisateur. Il te fait passer sur scène et te coache sur ton propre sketch.</p></div>
+              <div className="body">
+                <span className="role">Jour 1 · Masterclass</span>
+                <h3>Kheiron</h3>
+                <p className="sub">Humoriste, comédien, auteur et réalisateur</p>
+                <p>Révélé au Jamel Comedy Club puis dans la série <em>Bref</em>, il est devenu une référence du stand-up français. Avec <em>60 minutes avec Kheiron</em>, un spectacle presque entièrement improvisé à partir du public, il a battu des records de longévité à Paris. Au cinéma, il écrit, réalise et joue dans <em>Nous trois ou rien</em>, nommé au César du meilleur premier film, puis dans <em>Mauvaises herbes</em> avec Catherine Deneuve.</p>
+                <p className="force">Sa marque : faire rire le public de lui-même, avec un sens de l&apos;improvisation et du rythme hors norme.</p>
+                <p>Pendant sa masterclass, il te fait monter sur scène et te coache sur ton propre sketch.</p>
+              </div>
             </article>
             <article className="coach">
               <div className="pic"><img className="darwin" decoding="async" src={img("phil-darwin.webp")} alt="Phil Darwin, micro à la main" width={683} height={1024} loading="lazy" /></div>
@@ -412,10 +419,9 @@ export function KheironLanding({
                 <span className="role">Les 4 jours</span>
                 <h3>Hassan Zahi</h3>
                 <p className="sub">Comédien, metteur en scène, coach et formateur certifié en santé mentale</p>
-                <p>Fort de plus de 20 ans d&apos;expérience dans la formation et l&apos;accompagnement humain, Hassan Zahi est également comédien, humoriste, metteur en scène et passionné d&apos;improvisation théâtrale, qu&apos;il pratique depuis plus de 17 ans.</p>
-                <p>Fondateur de <em>Franchement Ça Va</em>, un écosystème de prévention et de sensibilisation à la santé mentale par l&apos;humour, il associe son expérience artistique à son expertise en accompagnement, en expression orale et en développement de la confiance en soi.</p>
-                <p className="force">Sa force : aider chacun à dépasser ses appréhensions, révéler sa singularité artistique et oser prendre sa place sur scène.</p>
-                <p>Durant les quatre jours de formation, Hassan accompagne les participants dans leur progression, de leurs premières prises de parole jusqu&apos;à la présentation de leur sketch devant un public.</p>
+                <p>Comédien, humoriste et metteur en scène, il pratique l&apos;improvisation théâtrale depuis plus de 17 ans et compte plus de 20 ans d&apos;expérience dans la formation et l&apos;accompagnement. Fondateur de <em>Franchement Ça Va</em>, qui fait de l&apos;humour un outil de prévention en santé mentale, il est spécialiste de l&apos;expression orale et de la confiance en soi.</p>
+                <p className="force">Sa force : t&apos;aider à dépasser tes appréhensions, révéler ta singularité artistique et oser prendre ta place sur scène.</p>
+                <p>Pendant les 4 jours, il t&apos;accompagne dans ta progression, jusqu&apos;à la présentation de ton sketch devant le public.</p>
               </div>
             </article>
           </div>

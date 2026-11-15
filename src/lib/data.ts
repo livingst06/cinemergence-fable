@@ -67,6 +67,9 @@ export type SiteConfig = {
   partnerRole: string;
   partnerUrl: string;
   instagramUrl: string;
+  tiktokUrl: string;
+  linktreeUrl: string;
+  linkedinUrl: string;
   youtubeUrl: string;
   founderPhotoUrl?: string;
   founderPhotoMimeType?: string;
@@ -98,6 +101,9 @@ export async function getSiteSettings(): Promise<SiteConfig> {
         typeof settings.instagramUrl === "string"
           ? settings.instagramUrl
           : defaultSite.instagramUrl,
+      tiktokUrl: defaultSite.tiktokUrl,
+      linktreeUrl: defaultSite.linktreeUrl,
+      linkedinUrl: defaultSite.linkedinUrl,
       youtubeUrl:
         typeof (settings as { youtubeUrl?: unknown }).youtubeUrl === "string"
           ? (settings as { youtubeUrl: string }).youtubeUrl

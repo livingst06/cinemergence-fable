@@ -4,7 +4,13 @@ import Link from "next/link";
 import { ManageCookiesButton } from "@/components/ManageCookiesButton";
 import { NdaNumber } from "@/components/NdaNumber";
 import { QualiopiMark } from "@/components/brand/QualiopiMark";
-import { InstagramIcon, YoutubeIcon } from "@/components/brand/SocialIcons";
+import {
+  InstagramIcon,
+  LinkedInIcon,
+  LinktreeIcon,
+  TikTokIcon,
+  YoutubeIcon,
+} from "@/components/brand/SocialIcons";
 import type { SiteConfig } from "@/lib/data";
 import { formationPath } from "@/lib/defaults";
 
@@ -99,32 +105,53 @@ export function Footer({ site, formations }: FooterProps) {
                   </a>
                 </li>
                 <li>{site.city}</li>
-                {(site.instagramUrl || site.youtubeUrl) && (
-                  <li className="flex items-center gap-3 pt-1">
-                    {site.instagramUrl && (
-                      <a
-                        href={site.instagramUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Instagram Cinémergence"
-                        className="text-cream/70 transition-colors hover:text-or-light"
-                      >
-                        <InstagramIcon className="h-10 w-10" />
-                      </a>
-                    )}
-                    {site.youtubeUrl && (
-                      <a
-                        href={site.youtubeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="YouTube Cinémergence"
-                        className="text-cream/70 transition-colors hover:text-or-light"
-                      >
-                        <YoutubeIcon className="h-10 w-10" />
-                      </a>
-                    )}
-                  </li>
-                )}
+                <li className="flex flex-wrap items-center gap-4 pt-2">
+                  <a
+                    href={site.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram Cinémergence"
+                    className="text-cream/70 transition-colors hover:text-or-light"
+                  >
+                    <InstagramIcon className="h-14 w-14" />
+                  </a>
+                  <a
+                    href={site.youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="YouTube Cinémergence"
+                    className="text-cream/70 transition-colors hover:text-or-light"
+                  >
+                    <YoutubeIcon className="h-14 w-14" />
+                  </a>
+                  <a
+                    href={site.tiktokUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="TikTok Cinémergence"
+                    className="text-cream/70 transition-colors hover:text-or-light"
+                  >
+                    <TikTokIcon className="h-14 w-14" />
+                  </a>
+                  <a
+                    href={site.linktreeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Linktree Cinémergence"
+                    className="text-cream/70 transition-colors hover:text-or-light"
+                  >
+                    <LinktreeIcon className="h-14 w-14" />
+                  </a>
+                  <a
+                    href={site.linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="LinkedIn Cinémergence"
+                    className="text-cream/70 transition-colors hover:text-or-light"
+                  >
+                    <LinkedInIcon className="h-14 w-14" />
+                  </a>
+                </li>
               </ul>
               <div>
                 <p className="text-xs text-muted-text">{site.partnerRole}</p>

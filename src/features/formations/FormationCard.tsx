@@ -9,6 +9,10 @@ import {
   formationLivrableLabel,
   formationPath,
 } from "@/lib/formation-types";
+import {
+  FORMATION_TILE_CLASS,
+  formationTileStyle,
+} from "@/lib/formation-pastel";
 import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +34,9 @@ export function FormationCard({ formation }: FormationCardProps) {
         "card-stage flex h-auto w-full flex-col overflow-hidden transition-shadow duration-500",
         "hover:plateau-glow",
         "md:h-full",
+        FORMATION_TILE_CLASS,
       )}
+      style={formationTileStyle(formation.titre)}
     >
       <Link
         href={href}

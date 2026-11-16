@@ -75,7 +75,7 @@ function SortablePhoto({
           draggable={false}
         />
         {index === 0 ? (
-          <span className="absolute left-2 top-2 rounded-full bg-or/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-noir">
+          <span className="absolute left-2 top-2 rounded-full bg-or/90 px-2 py-0.5 text-xs font-semibold tracking-wide text-noir">
             Cover
           </span>
         ) : null}

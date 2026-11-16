@@ -146,7 +146,7 @@ export default async function FormationDetailPage({ params }: Props) {
               <p className="text-sm font-semibold text-or-light">
                 Livrable
               </p>
-              <ul className="mt-2 space-y-1.5 text-sm leading-snug text-or-light">
+              <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-or-light md:text-base">
                 {(formation.livrables && formation.livrables.length > 0
                   ? formation.livrables
                   : [formation.livrable]
@@ -361,7 +361,7 @@ export default async function FormationDetailPage({ params }: Props) {
                             )}
                           </div>
                           {seq.detail && (
-                            <p className="mt-1 text-left md:text-justify text-xs leading-relaxed text-muted-text">
+                            <p className="mt-1 text-left text-sm leading-relaxed text-muted-text md:text-justify">
                               {seq.detail}
                             </p>
                           )}
@@ -459,6 +459,7 @@ export default async function FormationDetailPage({ params }: Props) {
 
         <FormationSessionsSection
           formationSlug={formation.slug}
+          formationTitre={formation.titre}
           paymentEnabled={paymentEnabled}
           sessions={sessions}
         />

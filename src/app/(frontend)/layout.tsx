@@ -12,6 +12,7 @@ import { SiteNoticeBanner } from "@/components/layout/SiteNoticeBanner";
 import { Toaster } from "@/components/ui/sonner";
 import { AdminUiProvider } from "@/features/admin/AdminUiContext";
 import { clerkAppearance } from "@/lib/clerk-appearance";
+import { clerkAllowedRedirectOrigins } from "@/lib/clerk-origins";
 import { getFormations, getSiteSettings } from "@/lib/data";
 import { facebookDomainVerification, organizationJsonLd } from "@/lib/seo";
 import { getSessionProfile } from "@/lib/session-profile";
@@ -45,6 +46,7 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${site.name}`,
     },
     description: site.description,
+    // Safari / Chrome iOS transforment le NDA en lien tel: → mismatch d’hydratation.
     formatDetection: {
       telephone: false,
       email: false,
@@ -68,32 +70,27 @@ export default async function FrontendLayout({
   const jsonLd = organizationJsonLd(site);
 
   return (
-    <ClerkProvider
-      appearance={clerkAppearance}
-      signInUrl="/sign-in"
-      signUpUrl="/sign-up"
-      signInFallbackRedirectUrl="/"
-      signUpFallbackRedirectUrl="/"
-      allowedRedirectOrigins={[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://192.168.1.21:3000",
-        "http://192.168.1.139:3000",
-      ]}
+    <html
+      lang="fr"
+      className={cn(inter.variable, "dark min-h-dvh")}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
     >
-      <html
-        lang="fr"
-        className={cn(inter.variable, "dark min-h-dvh")}
-        data-scroll-behavior="smooth"
-        suppressHydrationWarning
-      >
-        <body className="flex min-h-dvh flex-col overflow-x-clip">
-          <TagManager />
-          <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-          />
+      <body className="flex min-h-dvh flex-col overflow-x-clip">
+        <TagManager />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <ClerkProvider
+          appearance={clerkAppearance}
+          allowedRedirectOrigins={clerkAllowedRedirectOrigins}
+          signInUrl="/sign-in"
+          signUpUrl="/sign-up"
+          signInFallbackRedirectUrl="/"
+          signUpFallbackRedirectUrl="/"
+        >
           <AdminUiProvider
             initialUserEmail={profile.email}
             initialIsAdminEligible={profile.isAdminEligible}
@@ -122,8 +119,8 @@ export default async function FrontendLayout({
             <Analytics />
             <SpeedInsights />
           </AdminUiProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }

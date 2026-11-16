@@ -32,7 +32,7 @@ export function FormationSessionBanner({
         </span>
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-projector-light">
+            <p className="text-sm font-semibold tracking-wide text-projector-light">
               Session à venir
             </p>
             {full ? <SessionCompletBadge tone="public" /> : null}

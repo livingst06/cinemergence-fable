@@ -10,6 +10,10 @@ import { ButtonLink } from "@/components/ui/ButtonLink";
 import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
 import { DemandeInscriptionButton } from "@/features/inscriptions/DemandeInscriptionButton";
 import {
+  FORMATION_TILE_CLASS,
+  formationTileStyle,
+} from "@/lib/formation-pastel";
+import {
   formatFormationSessionLabel,
   isGeneratedSessionLabel,
 } from "@/lib/inscription-status";
@@ -19,12 +23,14 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 
 type FormationSessionsSectionProps = {
   formationSlug: string;
+  formationTitre: string;
   paymentEnabled: boolean;
   sessions: FormationSessionView[];
 };
 
 export function FormationSessionsSection({
   formationSlug,
+  formationTitre,
   paymentEnabled,
   sessions,
 }: FormationSessionsSectionProps) {
@@ -58,7 +64,11 @@ export function FormationSessionsSection({
               <AccordionItem
                 key={value}
                 value={value}
-                className="overflow-hidden rounded-2xl border border-projector/25 bg-gradient-to-br from-projector/10 via-transparent to-transparent last:border-b"
+                className={cn(
+                  "overflow-hidden rounded-2xl border border-white/[0.08] last:border-b-0",
+                  FORMATION_TILE_CLASS,
+                )}
+                style={formationTileStyle(formationTitre)}
               >
                 <div className="px-4 pt-4 sm:px-5 sm:pt-5">
                   <AccordionTrigger
@@ -70,7 +80,7 @@ export function FormationSessionsSection({
                   >
                     <div className="min-w-0 flex-1 text-left">
                       {session.label && !isGeneratedSessionLabel(session.label) ? (
-                        <p className="text-xs font-medium text-or-light">
+                        <p className="text-sm font-medium text-or-light">
                           {session.label}
                         </p>
                       ) : null}

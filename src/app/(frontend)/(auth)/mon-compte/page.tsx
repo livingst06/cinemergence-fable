@@ -39,7 +39,7 @@ export default async function MonComptePage() {
             </p>
             <p className="mt-2 text-sm text-muted-text">{profile.email}</p>
             {profile.isAdminEligible && (
-              <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-or-light">
+              <p className="mt-3 text-sm font-medium text-or-light">
                 Compte admin
               </p>
             )}

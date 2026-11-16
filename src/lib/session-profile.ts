@@ -21,16 +21,31 @@ function primaryEmail(user: User): string | null {
   );
 }
 
+function emptyProfile(): SessionProfile {
+  return {
+    clerkUser: null,
+    email: null,
+    role: null,
+    isAdminEligible: false,
+    payloadUserId: null,
+  };
+}
+
 export async function getSessionProfile(): Promise<SessionProfile> {
-  const clerkUser = await currentUser();
+  let clerkUser: User | null;
+  try {
+    clerkUser = await currentUser();
+  } catch (err) {
+    // iOS demande /apple-touch-icon.png : le matcher Clerk ignore les .png,
+    // currentUser() plante alors que la route n’a pas traversé clerkMiddleware.
+    const message = err instanceof Error ? err.message : String(err);
+    if (message.includes("clerkMiddleware")) {
+      return emptyProfile();
+    }
+    throw err;
+  }
   if (!clerkUser) {
-    return {
-      clerkUser: null,
-      email: null,
-      role: null,
-      isAdminEligible: false,
-      payloadUserId: null,
-    };
+    return emptyProfile();
   }
 
   const email = primaryEmail(clerkUser);

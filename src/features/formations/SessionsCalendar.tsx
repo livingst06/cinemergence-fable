@@ -17,6 +17,7 @@ import type {
   AdminSessionTrainee,
 } from "@/features/inscriptions/AdminDemandesPanel";
 import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
+import { pastelForFormationName } from "@/lib/formation-pastel";
 import {
   formatFormationSessionLabel,
   normalizeInscriptionStatus,
@@ -33,7 +34,6 @@ import {
   layoutWeekBands,
   monthGrid,
   parseDayKey,
-  pastelForId,
   segmentBatteryFill,
   sessionOccupancyRatio,
   toDayKey,
@@ -80,16 +80,16 @@ function TipPeopleSection({
 }) {
   return (
     <div className="mt-2 border-t border-border/70 pt-2">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-text">
+      <p className="label-copy">
         {title}
         {people.length > 0 ? ` · ${people.length}` : ""}
       </p>
       {people.length === 0 ? (
-        <p className="mt-1.5 text-xs text-muted-text">{emptyLabel}</p>
+        <p className="mt-1.5 text-sm text-muted-text">{emptyLabel}</p>
       ) : (
         <ul className="mt-1.5 space-y-0.5">
           {people.map((p) => (
-            <li key={String(p.id)} className="truncate text-xs font-medium text-cream">
+            <li key={String(p.id)} className="truncate text-sm font-medium text-cream">
               {p.name}
             </li>
           ))}
@@ -143,7 +143,7 @@ function BandChip({
   );
   const fillPct = Math.round(fillRatio * 100);
   const full = isSessionFull(enrolled.length, session.placesOffertes);
-  const pastel = pastelForId(session.formationId);
+  const pastel = pastelForFormationName(session.formationTitre);
   const battery = segmentBatteryFill({
     fillRatio,
     sessionStart: parseDayKey(toDayKey(session.dateDebut)),
@@ -255,7 +255,7 @@ function BandChip({
         }}
         tabIndex={0}
         className={cn(
-          "absolute overflow-hidden text-left text-[10px] font-medium tracking-tight outline-none sm:text-[11px]",
+          "absolute overflow-hidden text-left text-xs font-medium tracking-tight outline-none sm:text-sm",
           "cursor-default touch-manipulation focus-visible:ring-2 focus-visible:ring-or/30",
           "ring-1 ring-black/12 dark:!bg-[var(--band-empty-dark)] dark:ring-white/20",
           radiusClass,
@@ -286,7 +286,7 @@ function BandChip({
           {full ? (
             <SessionCompletBadge
               tone="admin"
-              className="shrink-0 px-1.5 py-0 text-[9px] leading-4 tracking-wide sm:px-2 sm:text-[10px] sm:leading-5"
+              className="shrink-0 px-1.5 py-0 text-[11px] leading-4 tracking-wide sm:px-2 sm:text-xs sm:leading-5"
             />
           ) : null}
         </span>
@@ -307,16 +307,16 @@ function BandChip({
                 width: coords.width,
               }}
             >
-              <p className="flex flex-wrap items-center gap-2 truncate text-xs font-semibold text-cream">
+              <p className="flex flex-wrap items-center gap-2 truncate text-sm font-semibold text-cream">
                 <span className="min-w-0 truncate">{session.formationTitre}</span>
                 {full ? <SessionCompletBadge tone="admin" /> : null}
               </p>
               {sessionLabel ? (
-                <p className="mt-0.5 text-[11px] leading-snug text-muted-text">
+                <p className="mt-0.5 text-sm leading-snug text-muted-text">
                   {sessionLabel}
                 </p>
               ) : null}
-              <p className="mt-1.5 text-[11px] text-muted-text">
+              <p className="mt-1.5 text-sm text-muted-text">
                 {enrolled.length}/{session.placesOffertes} places · {fillPct}&nbsp;%
                 {full ? " · complet" : ""}
               </p>
@@ -501,7 +501,7 @@ function WeekView({
               key={toKey(d)}
               className="min-w-0 border-r border-border px-0.5 py-2 text-center last:border-r-0 sm:px-2 sm:py-3"
             >
-              <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-text sm:tracking-[0.14em]">
+              <p className="text-xs font-semibold tracking-wide text-muted-text sm:text-sm">
                 <DayHeaderLabel d={d} />
               </p>
               <p
@@ -591,7 +591,7 @@ function MonthView({
               key={`h-${weekdayShortLabel(d)}`}
               className="min-w-0 border-r border-border px-0.5 py-2 text-center last:border-r-0 sm:px-1 sm:py-2.5"
             >
-              <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-text sm:tracking-[0.14em]">
+              <p className="text-xs font-semibold tracking-wide text-muted-text sm:text-sm">
                 <DayHeaderLabel d={d} />
               </p>
             </div>
@@ -632,7 +632,7 @@ function MonthView({
                       >
                         <span
                           className={cn(
-                            "inline-flex size-5 items-center justify-center text-[11px] tabular-nums sm:size-6 sm:text-xs",
+                            "inline-flex size-6 items-center justify-center text-xs tabular-nums sm:size-7 sm:text-sm",
                             isSameDay(d, today)
                               ? "rounded-full bg-projector font-medium text-cream"
                               : inMonth

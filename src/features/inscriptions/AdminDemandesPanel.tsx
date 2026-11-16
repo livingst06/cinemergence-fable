@@ -14,6 +14,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { AdminDeleteButton, AdminEditButton } from "@/features/admin/AdminMutationButtons";
 import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
 import { InscriptionStatusBadge } from "@/features/inscriptions/InscriptionStatusBadge";
+import { pastelForFormationName } from "@/lib/formation-pastel";
 import { formationPath } from "@/lib/formation-types";
 import {
   formatFormationSessionLabel,
@@ -22,7 +23,6 @@ import {
 } from "@/lib/inscription-status";
 import {
   isSessionFull,
-  pastelForId,
   sessionOccupancyRatio,
 } from "@/lib/session-calendar";
 import { cn } from "@/lib/utils";
@@ -118,7 +118,7 @@ function SessionMailtoButton({
   disabledReason: string;
 }) {
   const className = cn(
-    "btn-outline-warm inline-flex min-h-10 w-full items-center justify-center gap-1.5 rounded-lg px-2.5 py-2 text-[10px] font-semibold uppercase tracking-wider sm:min-h-0 sm:w-auto sm:justify-start sm:gap-2 sm:px-4 sm:text-xs",
+    "btn-outline-warm inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium sm:min-h-0 sm:w-auto sm:justify-start sm:gap-2 sm:px-4",
     !href && "cursor-not-allowed opacity-50",
   );
   const content = (
@@ -163,7 +163,7 @@ function SessionStaffSection({
 }) {
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-text">
+      <p className="label-copy">
         {title}
       </p>
       {people.length === 0 ? (
@@ -246,7 +246,7 @@ export function AdminDemandesPanel({
         );
         const fillPct = Math.round(fillRatio * 100);
         const full = isSessionFull(enrolledCount, session.placesOffertes);
-        const pastel = pastelForId(session.formationId);
+        const pastel = pastelForFormationName(session.formationTitre);
         const canDelete = isAdminMode && enrolledCount === 0;
         const mailtoArgs = {
           formationTitre: session.formationTitre,
@@ -290,15 +290,19 @@ export function AdminDemandesPanel({
 
             <div
               className={cn(
-                "relative overflow-hidden rounded-2xl border border-border",
+                "formation-ink relative overflow-hidden rounded-2xl border border-border",
                 "dark:!bg-[var(--session-empty-dark)]",
               )}
               style={
                 {
                   backgroundColor: pastel.empty,
+                  color: pastel.text,
                   ["--session-empty-dark"]: pastel.emptyDark,
                   ["--session-fill"]: pastel.fill,
                   ["--session-fill-dark"]: pastel.fillDark,
+                  ["--tile-text"]: pastel.text,
+                  ["--tile-text-dark"]: pastel.textDark,
+                  ["--tile-muted"]: pastel.mutedDark,
                 } as CSSProperties
               }
               aria-label={`${session.formationTitre}, ${enrolledCount} place${enrolledCount !== 1 ? "s" : ""} sur ${session.placesOffertes}, ${fillPct} % remplies`}
@@ -322,22 +326,22 @@ export function AdminDemandesPanel({
                   <div className="flex w-full items-start gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-heading text-lg leading-snug text-cream sm:text-2xl">
+                        <p className="font-heading text-xl leading-snug text-cream sm:text-2xl">
                           {session.formationTitre}
                         </p>
                         {full ? (
                           <SessionCompletBadge
                             tone="admin"
-                            className="px-3.5 py-1.5 text-xs tracking-[0.12em] sm:px-4 sm:py-2 sm:text-sm"
+                            className="px-3.5 py-1.5 text-sm tracking-wide sm:px-4 sm:py-2"
                           />
                         ) : null}
                       </div>
                       {session.label && !isGeneratedSessionLabel(session.label) ? (
-                        <p className="mt-0.5 text-xs text-or-light">
+                        <p className="mt-1 text-sm text-or-light">
                           {session.label}
                         </p>
                       ) : null}
-                      <p className="mt-1.5 text-sm leading-relaxed text-muted-text">
+                      <p className="mt-2 text-sm leading-relaxed text-muted-text md:text-base">
                         <span className="block sm:inline">
                           {sessionLabel ?? "Session — dates à confirmer"}
                         </span>
@@ -432,16 +436,16 @@ export function AdminDemandesPanel({
                             className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5"
                           >
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-medium text-cream">
+                              <p className="truncate text-base font-medium text-cream">
                                 {t.userName || t.userEmail}
                               </p>
                               {t.userName ? (
-                                <p className="truncate text-xs text-muted-text">
+                                <p className="truncate text-sm text-muted-text">
                                   {t.userEmail}
                                 </p>
                               ) : null}
                               {t.amountEuros != null ? (
-                                <p className="mt-0.5 text-xs text-muted-text">
+                                <p className="mt-0.5 text-sm tabular-nums text-muted-text">
                                   {t.amountEuros.toLocaleString("fr-FR")} €
                                 </p>
                               ) : null}
@@ -454,7 +458,7 @@ export function AdminDemandesPanel({
                     <div className="border-t border-border/60 px-5 py-3">
                       <Link
                         href={formationPath(session.formationSlug)}
-                        className="text-xs font-medium text-or-light underline-offset-2 hover:underline"
+                        className="text-sm font-medium text-or-light underline-offset-2 hover:underline"
                       >
                         Voir la fiche formation
                       </Link>

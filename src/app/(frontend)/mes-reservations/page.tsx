@@ -7,6 +7,10 @@ import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Section } from "@/components/ui/Section";
 import { InscriptionStatusBadge } from "@/features/inscriptions/InscriptionStatusBadge";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
+import {
+  FORMATION_TILE_CLASS,
+  formationTileStyle,
+} from "@/lib/formation-pastel";
 import { formationPath } from "@/lib/formation-types";
 import {
   formatFormationSessionLabel,
@@ -14,6 +18,7 @@ import {
 } from "@/lib/inscription-status";
 import { listReservationsForUser } from "@/lib/reservations";
 import { getSessionProfile } from "@/lib/session-profile";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Mes réservations",
@@ -58,7 +63,11 @@ export default async function MesReservationsPage() {
                   { month: "long" },
                 );
                 return (
-                  <li key={String(row.id)} className="card-stage p-6">
+                  <li
+                    key={String(row.id)}
+                    className={cn("card-stage p-6", FORMATION_TILE_CLASS)}
+                    style={formationTileStyle(row.formationTitre)}
+                  >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
                         <Link

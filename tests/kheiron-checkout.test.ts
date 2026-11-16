@@ -147,22 +147,22 @@ describe("kheironOfferFromCount", () => {
 describe("kheironOfferFromStripeCount", () => {
   it("ajoute les places payées hors Stripe avant de choisir la phase", () => {
     expect(kheironOfferFromStripeCount(0)).toMatchObject({
-      paidCount: 2,
-      seatsLeft: 18,
+      paidCount: 1,
+      seatsLeft: 19,
       phase: "early",
       paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
     });
-    expect(kheironOfferFromStripeCount(3)).toMatchObject({
+    expect(kheironOfferFromStripeCount(4)).toMatchObject({
       paidCount: 5,
       seatsLeft: 15,
       phase: "standard",
       paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
     });
-    expect(kheironOfferFromStripeCount(4)).toMatchObject({
+    expect(kheironOfferFromStripeCount(5)).toMatchObject({
       paidCount: 6,
       phase: "standard",
     });
-    expect(kheironOfferFromStripeCount(22)).toMatchObject({
+    expect(kheironOfferFromStripeCount(23)).toMatchObject({
       paidCount: 24,
       seatsLeft: 0,
       phase: "full",

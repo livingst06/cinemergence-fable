@@ -17,6 +17,7 @@ import { FormationSessionGallery } from "@/features/formations/FormationSessionG
 import { FormationViewItem } from "@/features/measurement/FormationViewItem";
 import { DemandeInscriptionButton } from "@/features/inscriptions/DemandeInscriptionButton";
 import { getPlacesRestantes } from "@/features/inscriptions/actions";
+import { FormationDetailGallery } from "@/features/formations/FormationDetailGallery";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { canonicalFormationSlug, formationPath } from "@/lib/defaults";
@@ -27,6 +28,7 @@ import {
 } from "@/lib/inscription-status";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
 import { getPayloadClient } from "@/lib/payload";
+import { resolveFormationCoverUrl } from "@/lib/site-media";
 import { getSessionProfile } from "@/lib/session-profile";
 import { courseJsonLd } from "@/lib/seo";
 
@@ -237,21 +239,34 @@ export default async function FormationDetailPage({ params }: Props) {
           <FormationSessionGallery slug={formation.slug} />
         </div>
 
-        <div className="max-w-3xl">
-          <h2 className="section-title da-rule">Pour qui ?</h2>
-          <p className="mt-4 text-muted-text">{formation.pourQui}</p>
-          {formation.prerequis && (
-            <p className="mt-6 text-sm text-muted-text">
-              <span className="font-semibold text-or-light">Prérequis — </span>
-              {formation.prerequis}
-            </p>
-          )}
-          {formation.lieu && (
-            <p className="mt-3 text-sm text-muted-text">
-              <span className="font-semibold text-or-light">Lieu — </span>
-              {formation.lieu}
-            </p>
-          )}
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
+          <div>
+            <h2 className="section-title da-rule">Pour qui ?</h2>
+            <p className="mt-4 text-muted-text">{formation.pourQui}</p>
+            {formation.prerequis && (
+              <p className="mt-6 text-sm text-muted-text">
+                <span className="font-semibold text-or-light">Prérequis — </span>
+                {formation.prerequis}
+              </p>
+            )}
+            {formation.lieu && (
+              <p className="mt-3 text-sm text-muted-text">
+                <span className="font-semibold text-or-light">Lieu — </span>
+                {formation.lieu}
+              </p>
+            )}
+          </div>
+          <FormationDetailGallery
+            urls={
+              formation.galleryUrls && formation.galleryUrls.length > 0
+                ? formation.galleryUrls
+                : [resolveFormationCoverUrl(formation.slug, formation.coverImageUrl)]
+            }
+            fallbackUrl={resolveFormationCoverUrl(formation.slug, formation.coverImageUrl)}
+            mimeType={formation.coverImageMimeType ?? "image/jpeg"}
+            alt={`Visuel plateau — ${formation.titreCourt}`}
+            glow={formation.prioritaire}
+          />
         </div>
 
         <div className="max-w-3xl">

@@ -208,7 +208,54 @@ function sanitizeFormationCopy(formation: FormationData): FormationData {
   };
 }
 
+function mapFormationGallery(doc: Record<string, unknown>): {
+  coverImageId?: number | string;
+  galleryImages: { id: number | string; url: string }[];
+  galleryUrls: string[];
+} {
+  const galleryImages: { id: number | string; url: string }[] = [];
+
+  const rows = Array.isArray(doc.images) ? doc.images : [];
+  for (const row of rows) {
+    if (!row || typeof row !== "object") continue;
+    const image = (row as { image?: unknown }).image;
+    if (!image) continue;
+    if (typeof image === "object") {
+      const media = image as { id?: number | string; url?: string | null };
+      const url = resolveDisplayMediaUrl(media);
+      if (media.id != null && url) {
+        galleryImages.push({ id: media.id, url });
+      }
+    }
+  }
+
+  if (galleryImages.length === 0 && doc.coverImage && typeof doc.coverImage === "object") {
+    const media = doc.coverImage as { id?: number | string; url?: string | null };
+    const url = resolveDisplayMediaUrl(media);
+    if (media.id != null && url) {
+      galleryImages.push({ id: media.id, url });
+    }
+  }
+
+  const coverImageId =
+    galleryImages[0]?.id ??
+    (typeof doc.coverImage === "object" && doc.coverImage
+      ? (doc.coverImage as { id?: number | string }).id
+      : typeof doc.coverImage === "number" || typeof doc.coverImage === "string"
+        ? doc.coverImage
+        : undefined);
+
+  return {
+    coverImageId,
+    galleryImages,
+    galleryUrls: galleryImages.map((g) => g.url),
+  };
+}
+
 function mapFormation(doc: Record<string, unknown>): FormationData {
+  const gallery = mapFormationGallery(doc);
+  const coverFromGallery = gallery.galleryImages[0]?.url;
+
   return {
     id: doc.id as number | string | undefined,
     slug: String(doc.slug),
@@ -272,11 +319,13 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
       .filter((item) => item.q && item.r && !mentionsFunding(item.q) && !mentionsFunding(item.r)),
     metaTitle: sanitizePublicText(String(doc.metaTitle)),
     metaDescription: sanitizePublicText(String(doc.metaDescription)),
-    coverImageUrl: resolveDisplayMediaUrl(
-      doc.coverImage,
-      staticFormationCover(String(doc.slug)),
-    ),
+    coverImageUrl:
+      coverFromGallery ??
+      resolveDisplayMediaUrl(doc.coverImage, staticFormationCover(String(doc.slug))),
     coverImageMimeType: resolveMediaMimeType(doc.coverImage),
+    coverImageId: gallery.coverImageId,
+    galleryImages: gallery.galleryImages,
+    galleryUrls: gallery.galleryUrls,
   };
 }
 
@@ -289,11 +338,25 @@ export async function getFormations(): Promise<FormationData[]> {
     const payload = await getPayloadClient();
     const result = await payload.find({
       collection: "formations",
-      limit: 50,
+      limit: 200,
       sort: "-prioritaire",
       depth: 1,
     });
-    if (result.docs.length === 0 || result.docs.length < defaultFormations.length) {
+    const fromCms = result.docs.map((doc) =>
+      mapFormation(doc as Record<string, unknown>),
+    );
+    const cmsSlugs = new Set(fromCms.map((f) => f.slug));
+
+    const fromStatic = defaultFormations
+      .filter((f) => !cmsSlugs.has(f.slug))
+      .map((f) =>
+        sanitizeFormationCopy({
+          ...f,
+          coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
+        }),
+      );
+
+    if (fromCms.length === 0 && fromStatic.length === 0) {
       return publicFormations(
         defaultFormations.map((f) =>
           sanitizeFormationCopy({
@@ -303,9 +366,8 @@ export async function getFormations(): Promise<FormationData[]> {
         ),
       );
     }
-    return publicFormations(
-      result.docs.map((doc) => mapFormation(doc as Record<string, unknown>)),
-    );
+
+    return publicFormations([...fromCms, ...fromStatic]);
   } catch {
     return publicFormations(
       defaultFormations.map((f) =>
@@ -319,6 +381,21 @@ export async function getFormations(): Promise<FormationData[]> {
 }
 
 export async function getFormationBySlug(slug: string): Promise<FormationData | null> {
+  try {
+    const payload = await getPayloadClient();
+    const result = await payload.find({
+      collection: "formations",
+      where: { slug: { equals: slug } },
+      limit: 1,
+      depth: 1,
+    });
+    if (result.docs[0]) {
+      return mapFormation(result.docs[0] as Record<string, unknown>);
+    }
+  } catch {
+    // fallback below
+  }
+
   const formations = await getFormations();
   return formations.find((f) => f.slug === slug) ?? null;
 }

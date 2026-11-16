@@ -26,6 +26,7 @@ const formationAdminSchema = z.object({
   placesOffertes: z.number().int().min(0).optional().nullable(),
   dateDebut: z.string().trim().optional().nullable(),
   dateFin: z.string().trim().optional().nullable(),
+  images: z.array(z.union([z.string(), z.number()])).max(8).optional().default([]),
 });
 
 export type FormationAdminInput = z.infer<typeof formationAdminSchema>;
@@ -33,6 +34,14 @@ export type FormationAdminInput = z.infer<typeof formationAdminSchema>;
 export type AdminActionResult =
   | { ok: true; message: string; slug?: string }
   | { ok: false; error: string };
+
+function mediaFieldsFromImages(imageIds: Array<string | number>) {
+  const images = imageIds.map((id) => ({ image: id }));
+  return {
+    images,
+    coverImage: imageIds[0] ?? null,
+  };
+}
 
 function placeholdersFromEssentials(data: FormationAdminInput) {
   const intro = data.accroche;
@@ -53,6 +62,7 @@ function placeholdersFromEssentials(data: FormationAdminInput) {
       typeof data.placesOffertes === "number" ? data.placesOffertes : undefined,
     dateDebut: data.dateDebut?.trim() || undefined,
     dateFin: data.dateFin?.trim() || undefined,
+    ...mediaFieldsFromImages(data.images ?? []),
     intro,
     pourQui: data.publicCible,
     objectifs: [{ item: "À compléter dans l’admin Payload" }],
@@ -141,6 +151,7 @@ export async function updateFormationAction(
             : null,
         dateDebut: parsed.data.dateDebut?.trim() || null,
         dateFin: parsed.data.dateFin?.trim() || null,
+        ...mediaFieldsFromImages(parsed.data.images ?? []),
         metaTitle: current.metaTitle || parsed.data.titre,
         metaDescription: current.metaDescription || parsed.data.accroche.slice(0, 160),
       },

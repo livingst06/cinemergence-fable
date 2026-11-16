@@ -13,6 +13,10 @@ import {
   updateFormationAction,
   type FormationAdminInput,
 } from "@/features/formations/admin-actions";
+import {
+  FormationPhotosField,
+  type FormationPhotoItem,
+} from "@/features/formations/FormationPhotosField";
 import type { FormationData } from "@/lib/defaults";
 import { slugify } from "@/lib/utils";
 
@@ -91,6 +95,17 @@ function fromFormation(formation: FormationData): FormState {
   };
 }
 
+function photosFromFormation(formation: FormationData | null): FormationPhotoItem[] {
+  if (!formation) return [];
+  if (formation.galleryImages && formation.galleryImages.length > 0) {
+    return formation.galleryImages.map((g) => ({ id: g.id, url: g.url }));
+  }
+  if (formation.coverImageId && formation.coverImageUrl) {
+    return [{ id: formation.coverImageId, url: formation.coverImageUrl }];
+  }
+  return [];
+}
+
 const fieldClass =
   "border-border bg-noir-tertiary/60 text-cream placeholder:text-muted-text";
 
@@ -102,12 +117,14 @@ export function AdminFormationDialog({
 }: AdminFormationDialogProps) {
   const isEdit = Boolean(formation);
   const [form, setForm] = useState<FormState>(emptyForm);
+  const [photos, setPhotos] = useState<FormationPhotoItem[]>([]);
   const [slugTouched, setSlugTouched] = useState(false);
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
     if (!open) return;
     setForm(formation ? fromFormation(formation) : emptyForm());
+    setPhotos(photosFromFormation(formation));
     setSlugTouched(Boolean(formation));
   }, [open, formation]);
 
@@ -148,6 +165,7 @@ export function AdminFormationDialog({
       placesOffertes,
       dateDebut: form.dateDebut.trim() || null,
       dateFin: form.dateFin.trim() || null,
+      images: photos.map((p) => p.id),
     };
 
     startTransition(async () => {
@@ -183,6 +201,12 @@ export function AdminFormationDialog({
         </p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <FormationPhotosField
+            photos={photos}
+            onChange={setPhotos}
+            disabled={pending}
+          />
+
           <div className="sm:col-span-2 space-y-2">
             <Label htmlFor="f-titre">Titre</Label>
             <Input

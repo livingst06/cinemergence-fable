@@ -11,9 +11,9 @@ export const KHEIRON_EARLY_LIMIT = 5;
 /**
  * Places payées au CO, hors Stripe, sur son compte bancaire.
  * Elles comptent dans le seuil des 5 premières places et dans la jauge.
- * Deux places sont déjà connues. Le chiffre exact sera ajusté quand il sera confirmé.
+ * Une place est déjà connue.
  */
-export const KHEIRON_OFF_PROCESS_SEATS = 2;
+export const KHEIRON_OFF_PROCESS_SEATS = 1;
 export const KHEIRON_SESSION_CAPACITY = 20;
 export const KHEIRON_EXTRA_SEATS = 4;
 export const KHEIRON_TOTAL_SEATS = KHEIRON_SESSION_CAPACITY + KHEIRON_EXTRA_SEATS;

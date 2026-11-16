@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -21,9 +22,16 @@ type FormationCardProps = {
   /** Conservé pour compat — toutes les cards ont désormais le même format. */
   featured?: boolean;
   priority?: boolean;
+  /** Boutons admin, posés sur la même carte. */
+  actions?: ReactNode;
 };
 
-export function FormationCard({ formation, priority = false }: FormationCardProps) {
+export function FormationCard({
+  formation,
+  priority = false,
+  actions,
+  className,
+}: FormationCardProps & { className?: string }) {
   const coverSrc = resolveFormationCoverUrl(formation.slug, formation.coverImageUrl);
   const href = formationPath(formation.slug);
   const sessionsHref = `${href}#sessions`;
@@ -32,19 +40,20 @@ export function FormationCard({ formation, priority = false }: FormationCardProp
   return (
     <article
       className={cn(
-        "card-stage flex h-auto w-full flex-col overflow-hidden transition-shadow duration-500",
+        "card-stage flex h-full min-w-0 w-full max-w-full flex-col overflow-hidden !rounded-2xl transition-shadow duration-500",
         "hover:plateau-glow",
-        "md:h-full",
         FORMATION_TILE_CLASS,
+        className,
       )}
       style={formationTileStyle(formation.titre)}
     >
+      {actions}
       <Link
         href={href}
         aria-label={`Voir la formation ${formation.titreCourt}`}
         className="group flex min-h-0 flex-1 flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-or/50"
       >
-        <div className="relative aspect-[4/3] min-h-0 w-full flex-1 overflow-hidden">
+        <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden">
           <MediaFrame
             src={coverSrc}
             mimeType={formation.coverImageMimeType ?? "image/jpeg"}

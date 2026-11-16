@@ -18,15 +18,18 @@ export function FormationCardAdmin({
   onDelete,
 }: FormationCardAdminProps) {
   return (
-    <div className="relative flex h-full flex-col">
-      <FormationCard formation={formation} priority={priority} />
-      <AdminMutationButtons
-        className="absolute top-3 right-3 z-30"
-        editLabel={`Modifier ${formation.titreCourt}`}
-        deleteLabel={`Supprimer ${formation.titreCourt}`}
-        onEdit={onEdit}
-        onDelete={onDelete}
-      />
-    </div>
+    <FormationCard
+      formation={formation}
+      priority={priority}
+      actions={
+        <AdminMutationButtons
+          className="absolute top-3 right-3 z-30"
+          editLabel={`Modifier ${formation.titreCourt}`}
+          deleteLabel={`Supprimer ${formation.titreCourt}`}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
+      }
+    />
   );
 }

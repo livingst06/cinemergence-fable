@@ -4,8 +4,38 @@ import type {
   AdminSessionGroup,
   AdminSessionStaff,
 } from "@/features/inscriptions/AdminDemandesPanel";
+import { getIntervenants } from "@/lib/data";
 import { getPayloadClient } from "@/lib/payload";
 import { ensureSessionStaffUsersRels } from "@/lib/session-staff-schema";
+
+type PortraitIndex = {
+  bySlug: Map<string, string>;
+  byName: Map<string, string>;
+};
+
+function personKey(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function portraitUrlFor(
+  doc: { name?: string | null; email?: string | null; clerkId?: string | null },
+  email: string | null,
+  index: PortraitIndex,
+): string | null {
+  const clerkId = typeof doc.clerkId === "string" ? doc.clerkId.trim() : "";
+  if (clerkId.startsWith("fiche:")) {
+    const fromSlug = index.bySlug.get(clerkId.slice("fiche:".length));
+    if (fromSlug) return fromSlug;
+  }
+  const nom = staffDisplayName(doc.name, email);
+  if (!nom) return null;
+  return index.byName.get(personKey(nom)) ?? null;
+}
 
 function staffDisplayName(
   name: string | null | undefined,
@@ -16,7 +46,7 @@ function staffDisplayName(
   return email?.trim() || "";
 }
 
-function mapStaff(raw: unknown): AdminSessionStaff[] {
+function mapStaff(raw: unknown, portraits: PortraitIndex): AdminSessionStaff[] {
   if (!Array.isArray(raw)) return [];
   const out: AdminSessionStaff[] = [];
   for (const item of raw) {
@@ -25,6 +55,7 @@ function mapStaff(raw: unknown): AdminSessionStaff[] {
         id: number | string;
         name?: string | null;
         email?: string | null;
+        clerkId?: string | null;
       };
       const email =
         typeof doc.email === "string" && doc.email.trim()
@@ -36,11 +67,12 @@ function mapStaff(raw: unknown): AdminSessionStaff[] {
         id: doc.id,
         nom: nom || email || "",
         email,
+        photoUrl: portraitUrlFor(doc, email, portraits),
       });
       continue;
     }
     if (typeof item === "number" || typeof item === "string") {
-      out.push({ id: item, nom: "", email: null });
+      out.push({ id: item, nom: "", email: null, photoUrl: null });
     }
   }
   return out.filter((p) => p.nom || p.email);
@@ -51,6 +83,14 @@ export async function listAdminSessionGroups(): Promise<AdminSessionGroup[]> {
   try {
     const payload = await getPayloadClient();
     await ensureSessionStaffUsersRels(payload);
+    const intervenants = await getIntervenants();
+    const portraits: PortraitIndex = { bySlug: new Map(), byName: new Map() };
+    for (const person of intervenants) {
+      if (!person.photoUrl) continue;
+      portraits.bySlug.set(person.slug, person.photoUrl);
+      portraits.byName.set(personKey(person.nom), person.photoUrl);
+    }
+
     const sessions = await payload.find({
       collection: "formation-sessions",
       depth: 1,
@@ -121,9 +161,11 @@ export async function listAdminSessionGroups(): Promise<AdminSessionGroup[]> {
           trainees,
           formateurs: mapStaff(
             (session as { formateurs?: unknown }).formateurs,
+            portraits,
           ),
           intervenants: mapStaff(
             (session as { intervenants?: unknown }).intervenants,
+            portraits,
           ),
         } satisfies AdminSessionGroup;
       }),

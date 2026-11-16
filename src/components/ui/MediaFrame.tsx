@@ -16,6 +16,7 @@ type MediaFrameProps = {
   priority?: boolean;
   /** Load and autoplay the video file. Default off — show poster/image instead. */
   autoPlay?: boolean;
+  imageClassName?: string;
 };
 
 const aspectClasses = {
@@ -40,6 +41,7 @@ export function MediaFrame({
   sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
   priority = false,
   autoPlay = false,
+  imageClassName,
 }: MediaFrameProps) {
   if (!src) {
     return (
@@ -84,7 +86,10 @@ export function MediaFrame({
           sizes={sizes}
           quality={70}
           priority={priority}
-          className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+          className={cn(
+            "object-cover transition-transform duration-700 group-hover:scale-[1.03]",
+            imageClassName,
+          )}
         />
       ) : (
         <Placeholder label={alt} aspect={aspect} className="h-full w-full" hideLabel />

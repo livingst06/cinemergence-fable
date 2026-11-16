@@ -10,7 +10,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { buttonVariants } from "@/components/ui/button";
 import { AdminDeleteButton, AdminEditButton } from "@/features/admin/AdminMutationButtons";
 import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
 import { InscriptionStatusBadge } from "@/features/inscriptions/InscriptionStatusBadge";
@@ -39,6 +38,7 @@ export type AdminSessionStaff = {
   id: number | string;
   nom: string;
   email: string | null;
+  photoUrl: string | null;
 };
 
 export type AdminSessionGroup = {
@@ -116,8 +116,8 @@ function SessionMailtoButton({
   disabledReason: string;
 }) {
   const className = cn(
-    "btn-outline-warm inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium sm:min-h-0 sm:w-auto sm:justify-start sm:gap-2 sm:px-4",
-    !href && "cursor-not-allowed opacity-50",
+    "btn-outline-warm inline-flex h-11 w-full shrink-0 items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium whitespace-nowrap sm:w-auto",
+    !href && "pointer-events-none cursor-not-allowed opacity-50",
   );
   const content = (
     <>
@@ -128,11 +128,7 @@ function SessionMailtoButton({
   );
   if (href) {
     return (
-      <a
-        href={href}
-        aria-label={label}
-        className={cn(buttonVariants({ variant: "ghost", size: "sm" }), className)}
-      >
+      <a href={href} aria-label={label} className={className}>
         {content}
       </a>
     );
@@ -148,6 +144,12 @@ function SessionMailtoButton({
       {content}
     </button>
   );
+}
+
+function staffInitials(nom: string): string {
+  const parts = nom.trim().split(/\s+/).filter(Boolean).slice(0, 2);
+  const letters = parts.map((part) => part[0]?.toUpperCase() ?? "").join("");
+  return letters || "?";
 }
 
 function SessionStaffSection({
@@ -167,10 +169,27 @@ function SessionStaffSection({
       {people.length === 0 ? (
         <p className="mt-1.5 text-sm text-muted-text">{emptyLabel}</p>
       ) : (
-        <ul className="mt-2.5 flex flex-wrap gap-2">
+        <ul className="mt-2.5 flex flex-wrap gap-3">
           {people.map((p) => (
-            <li key={String(p.id)}>
-              <span className="inline-flex items-center rounded-full border border-or/30 bg-or/10 px-3 py-1 text-sm font-medium text-or-light">
+            <li key={String(p.id)} className="flex max-w-40 flex-col items-center gap-1.5">
+              {p.photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={p.photoUrl}
+                  alt=""
+                  width={48}
+                  height={48}
+                  className="size-12 rounded-full border border-white/25 object-cover"
+                />
+              ) : (
+                <span
+                  aria-hidden
+                  className="inline-flex size-12 items-center justify-center rounded-full border border-white/20 bg-white/10 text-xs font-semibold text-cream"
+                >
+                  {staffInitials(p.nom)}
+                </span>
+              )}
+              <span className="inline-flex max-w-full items-center rounded-full border border-or/30 bg-or/10 px-3 py-1 text-center text-sm font-medium text-or-light">
                 {p.nom}
               </span>
             </li>
@@ -385,7 +404,7 @@ export function AdminDemandesPanel({
                     </AccordionTrigger>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-3 gap-1.5 pb-4 sm:flex sm:flex-wrap sm:gap-2">
+                  <div className="mt-3 grid grid-cols-3 items-center gap-1.5 pb-4 sm:flex sm:flex-wrap sm:gap-2">
                     <SessionMailtoButton
                       href={mailtoStagiaires}
                       label="Envoyer un mail aux élèves"

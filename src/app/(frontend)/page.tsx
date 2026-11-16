@@ -183,7 +183,7 @@ export default async function HomePage() {
             align="left"
             description="Des professionnels en activité qui transmettent leur exigence sur le plateau."
           />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+          <div className="flex flex-wrap items-stretch justify-center gap-4 sm:gap-5 lg:gap-6">
             {portraitIntervenants.map((i) => (
               <IntervenantCard key={i.slug} compact intervenant={i} />
             ))}
@@ -199,7 +199,7 @@ export default async function HomePage() {
               align="left"
               description="Ils accompagnent les élèves sur toute la formation."
             />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+            <div className="flex flex-wrap items-stretch justify-center gap-4 sm:gap-5 lg:gap-6">
               {formateurs.map((i) => (
                 <IntervenantCard key={i.slug} compact intervenant={i} />
               ))}

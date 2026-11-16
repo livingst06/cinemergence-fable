@@ -45,8 +45,6 @@ export function IntervenantsAdmin({ intervenants }: IntervenantsAdminProps) {
     [intervenants],
   );
 
-  const showFormateursSection = isAdminMode;
-
   const refresh = () => router.refresh();
 
   const openCreate = (categorie: Categorie) => {
@@ -120,7 +118,7 @@ export function IntervenantsAdmin({ intervenants }: IntervenantsAdminProps) {
             }
             className="mb-8 md:mb-10"
           />
-          <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+          <div className="flex flex-wrap items-stretch justify-center gap-4 sm:gap-5 lg:gap-6">
             {professionnels.map(renderCard)}
             {isAdminMode ? (
               <AdminAddIntervenantCard
@@ -131,7 +129,7 @@ export function IntervenantsAdmin({ intervenants }: IntervenantsAdminProps) {
           </div>
         </div>
 
-        {showFormateursSection ? (
+        {formateurs.length > 0 || isAdminMode ? (
           <div>
             <SectionHeader
               title={
@@ -149,7 +147,7 @@ export function IntervenantsAdmin({ intervenants }: IntervenantsAdminProps) {
               }
               className="mb-8 md:mb-10"
             />
-            <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+            <div className="flex flex-wrap items-stretch justify-center gap-4 sm:gap-5 lg:gap-6">
               {formateurs.map(renderCard)}
               {isAdminMode ? (
                 <AdminAddIntervenantCard

@@ -479,7 +479,7 @@ export default async function FormationDetailPage({ params }: Props) {
         {linkedIntervenants.length > 0 && (
           <div>
             <SectionHeader title="Encadré par" align="left" className="mb-8 md:mb-10" />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div className="flex flex-wrap items-stretch justify-center gap-4 sm:gap-5 lg:gap-6">
               {linkedIntervenants.map((i) => (
                 <IntervenantCard key={i.slug} compact intervenant={i} />
               ))}

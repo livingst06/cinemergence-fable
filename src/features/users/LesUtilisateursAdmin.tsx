@@ -1,10 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { AdminOutilsNav } from "@/features/admin/AdminOutilsNav";
 import { UserAvatar } from "@/features/profile/UserAvatar";
 import { updateAssignableUserRole } from "@/features/users/users-admin-actions";
 import type { AdminUserRow } from "@/lib/admin-users";
@@ -24,6 +23,22 @@ const ASSIGNABLE_LABEL: Record<AssignableRole, string> = {
 type LesUtilisateursAdminProps = {
   users: AdminUserRow[];
 };
+
+type UserFilter = "tous" | "eleve" | "intervenant" | "formateur" | "admin";
+
+const FILTERS: { id: UserFilter; label: string }[] = [
+  { id: "tous", label: "Tous" },
+  { id: "eleve", label: "Les élèves" },
+  { id: "intervenant", label: "Les intervenants" },
+  { id: "formateur", label: "Les formateurs" },
+  { id: "admin", label: "Les admin" },
+];
+
+function matchesFilter(user: AdminUserRow, filter: UserFilter): boolean {
+  if (filter === "tous") return true;
+  if (filter === "admin") return user.isEnvAdmin || user.role === "admin";
+  return !user.isEnvAdmin && user.role === filter;
+}
 
 function UserRoleSelect({
   user,
@@ -70,13 +85,38 @@ function UserRoleSelect({
 
 export function LesUtilisateursAdmin({ users }: LesUtilisateursAdminProps) {
   const router = useRouter();
+  const [filter, setFilter] = useState<UserFilter>("tous");
+  const visible = useMemo(
+    () => users.filter((user) => matchesFilter(user, filter)),
+    [users, filter],
+  );
 
   return (
     <>
       <header className="relative overflow-hidden bg-noir pt-6 pb-5 sm:pt-8 sm:pb-6 md:pt-10 md:pb-8">
         <div className="container-page space-y-4">
           <h1 className="display-title text-cream">Les utilisateurs</h1>
-          <AdminOutilsNav current="utilisateurs" />
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrer les utilisateurs">
+            {FILTERS.map((item) => {
+              const active = filter === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => setFilter(item.id)}
+                  className={cn(
+                    "inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+                    active
+                      ? "border-or/40 bg-or/15 text-or-light"
+                      : "border-border bg-noir-tertiary/40 text-cream/75 hover:border-or/30 hover:text-or-light",
+                  )}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </header>
 
@@ -91,9 +131,11 @@ export function LesUtilisateursAdmin({ users }: LesUtilisateursAdminProps) {
             <p className="text-sm text-muted-text">
               Aucun utilisateur connecté pour le moment.
             </p>
+          ) : visible.length === 0 ? (
+            <p className="text-sm text-muted-text">Aucun compte pour ce filtre.</p>
           ) : (
             <ul className="space-y-3">
-              {users.map((user) => (
+              {visible.map((user) => (
                 <li
                   key={String(user.id)}
                   className="card-stage flex flex-wrap items-center gap-4 p-4 sm:p-5"

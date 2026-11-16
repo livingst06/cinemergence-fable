@@ -7,5 +7,11 @@ type AdminAddFormationCardProps = {
 };
 
 export function AdminAddFormationCard({ onAdd }: AdminAddFormationCardProps) {
-  return <AdminAddCard label="Ajouter une formation" onAdd={onAdd} />;
+  return (
+    <AdminAddCard
+      label="Ajouter une formation"
+      onAdd={onAdd}
+      className="!rounded-2xl"
+    />
+  );
 }

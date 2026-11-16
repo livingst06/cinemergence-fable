@@ -71,7 +71,7 @@ export async function startCheckout(
   const auth = await requireAuth();
   if (!auth.ok) return { ok: false, error: auth.error, code: "auth" };
 
-  if (!process.env.STRIPE_SECRET_KEY?.trim()) {
+  if (!process.env.CHOUKRI_STRIPE_SECRET_KEY?.trim()) {
     return {
       ok: false,
       error: "Paiement temporairement indisponible (configuration Stripe).",

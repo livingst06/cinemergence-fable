@@ -18,7 +18,7 @@ export default async function PaiementSuccesPage({ searchParams }: Props) {
   let titre: string | null = null;
   let confirmed = false;
 
-  if (sessionId && process.env.STRIPE_SECRET_KEY) {
+  if (sessionId && process.env.CHOUKRI_STRIPE_SECRET_KEY) {
     try {
       const stripe = getStripe();
       const session = await stripe.checkout.sessions.retrieve(sessionId);

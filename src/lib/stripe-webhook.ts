@@ -11,7 +11,7 @@ type StripeEvent = {
 };
 
 async function retrieveSession(sessionId: string): Promise<PurchaseSession | null> {
-  const key = process.env.STRIPE_KHEIRON_SECRET_KEY?.trim();
+  const key = process.env.CHOUKRI_STRIPE_SECRET_KEY?.trim();
   if (!key) return null;
   const params = new URLSearchParams();
   params.append("expand[]", "discounts.promotion_code");

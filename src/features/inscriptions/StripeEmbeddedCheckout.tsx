@@ -6,9 +6,15 @@ import { useMemo } from "react";
 
 let stripePromise: Promise<Stripe | null> | null = null;
 
+function publishableKey(): string | undefined {
+  const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim();
+  if (!key || key.startsWith("pk_test_")) return undefined;
+  return key;
+}
+
 function getStripePromise() {
   if (!stripePromise) {
-    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+    const key = publishableKey();
     stripePromise = key ? loadStripe(key) : Promise.resolve(null);
   }
   return stripePromise;
@@ -21,11 +27,12 @@ type StripeEmbeddedCheckoutProps = {
 export function StripeEmbeddedCheckout({ clientSecret }: StripeEmbeddedCheckoutProps) {
   const stripe = useMemo(() => getStripePromise(), []);
 
-  if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+  if (!publishableKey()) {
     return (
       <p className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
-        Clé Stripe publique manquante. Configure{" "}
-        <code className="text-xs">NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code>.
+        Clé publique du compte Stripe de Choukri manquante. Configure{" "}
+        <code className="text-xs">NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code> avec
+        la clé <code className="text-xs">pk_live_</code> de ce compte.
       </p>
     );
   }

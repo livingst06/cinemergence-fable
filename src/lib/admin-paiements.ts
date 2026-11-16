@@ -46,7 +46,7 @@ async function listStripeCheckoutById(): Promise<
   Map<string, Stripe.Checkout.Session>
 > {
   const byId = new Map<string, Stripe.Checkout.Session>();
-  if (!process.env.STRIPE_SECRET_KEY?.trim()) return byId;
+  if (!process.env.CHOUKRI_STRIPE_SECRET_KEY?.trim()) return byId;
 
   try {
     const stripe = getStripe();

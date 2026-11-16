@@ -139,7 +139,7 @@ export async function syncInscriptionIfStripePaid(
   const sessionId = doc.stripeCheckoutSessionId
     ? String(doc.stripeCheckoutSessionId)
     : null;
-  if (!sessionId || !process.env.STRIPE_SECRET_KEY) return false;
+  if (!sessionId || !process.env.CHOUKRI_STRIPE_SECRET_KEY) return false;
 
   const stripe = getStripe();
   const session = await stripe.checkout.sessions.retrieve(sessionId);

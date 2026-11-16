@@ -39,7 +39,7 @@ async function main() {
   const { defaultFormations } = await import("../src/lib/defaults");
 
   const payload = await getPayloadClient();
-  const secret = process.env.STRIPE_SECRET_KEY?.trim();
+  const secret = process.env.CHOUKRI_STRIPE_SECRET_KEY?.trim();
   const stripe = secret
     ? new Stripe(secret, { apiVersion: "2026-07-29.dahlia" })
     : null;

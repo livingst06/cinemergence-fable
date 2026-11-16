@@ -485,14 +485,9 @@ export async function getIntervenants(): Promise<IntervenantData[]> {
     const fromCms = result.docs
       .map((doc) => mapIntervenant(doc as Record<string, unknown>))
       .filter((i) => i.slug !== "karina-testa");
-    const cmsSlugs = new Set(fromCms.map((i) => i.slug));
-    const missing = defaultIntervenants
-      .filter((i) => !cmsSlugs.has(i.slug))
-      .map((i) => ({
-        ...i,
-        photoUrl: i.photoUrl ?? staticIntervenantPhoto(i.slug),
-      }));
-    return sortIntervenantsParrainsFirst([...fromCms, ...missing]);
+    // Le CMS est la liste réelle. Ne pas réinjecter les défauts : une suppression
+    // admin reviendrait à l’écran sans id, donc impossible à retirer.
+    return sortIntervenantsParrainsFirst(fromCms);
   } catch {
     return sortIntervenantsParrainsFirst(defaultIntervenants);
   }

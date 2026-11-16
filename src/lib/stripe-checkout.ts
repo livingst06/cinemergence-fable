@@ -95,8 +95,8 @@ export async function createKheironCheckoutSession(
   ip: string | undefined,
   userAgent: string | undefined,
 ): Promise<string> {
-  const key = process.env.STRIPE_KHEIRON_SECRET_KEY?.trim();
-  if (!key) throw new Error("STRIPE_KHEIRON_SECRET_KEY manquant");
+  const key = process.env.CHOUKRI_STRIPE_SECRET_KEY?.trim();
+  if (!key) throw new Error("CHOUKRI_STRIPE_SECRET_KEY manquant");
   const response = await fetch("https://api.stripe.com/v1/checkout/sessions", {
     method: "POST",
     headers: {

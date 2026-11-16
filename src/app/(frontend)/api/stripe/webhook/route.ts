@@ -24,7 +24,7 @@ export async function POST(request: Request) {
   const signature = request.headers.get("stripe-signature");
   const secret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
 
-  if (process.env.STRIPE_SECRET_KEY?.trim() && secret && signature) {
+  if (process.env.CHOUKRI_STRIPE_SECRET_KEY?.trim() && secret && signature) {
     try {
       const stripe = getStripe();
       const event = stripe.webhooks.constructEvent(raw, signature, secret);

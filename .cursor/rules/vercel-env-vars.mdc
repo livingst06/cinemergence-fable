@@ -21,19 +21,12 @@ Quand tu pousses ou déploies du code qui **dépend d'une nouvelle variable d'en
 
 ## Stripe (important)
 
-### Maintenant (phase actuelle)
+Le site n’utilise qu’un compte : celui de Choukri, en production.
 
-- Preview **et** Production du front pointent sur le **même compte Stripe en mode test** (`pk_test_` / `sk_test_`).
-- Mêmes clés API publiques et secrètes sur Preview et Production.
-- `STRIPE_WEBHOOK_SECRET` : un `whsec_` **par endpoint URL** (Preview ≠ Production), même compte test — c’est normal côté Stripe.
-
-### Plus tard (à ne pas oublier)
-
-Quand on bascule en vrai paiement **ou** qu’on merge Stripe sur `main` / `cinemergence.vercel.app` :
-
-- **Preview (préprod front)** → reste sur le **compte Stripe test** (`pk_test_` / `sk_test_` + webhook test).
-- **Production (front)** → **compte Stripe live / production** (`pk_live_` / `sk_live_` + endpoint webhook prod + `whsec_` live).
-- Ne jamais mettre des clés live sur Preview, ni des clés test sur Production une fois le split fait.
+- Secret : `CHOUKRI_STRIPE_SECRET_KEY` (même valeur sur Preview et Production).
+- Clé publiable du même compte : `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (`pk_live_`).
+- Ne plus brancher le compte Stripe de test du développeur (`sk_test_` / `pk_test_`).
+- `STRIPE_WEBHOOK_SECRET` : un `whsec_` **par endpoint URL** (Preview ≠ Production), sur le compte de Choukri.
 
 **Rappel (12 août 2026)** : l’endpoint webhook prod `https://cinemergence.vercel.app/api/stripe/webhook` a été **désactivé** (404 tant que la route n’est pas sur `main`). Au passage en production / merge Stripe :
 

@@ -88,8 +88,8 @@ export async function getKheironOffer(): Promise<KheironOffer> {
 }
 
 async function retrieveKheironCheckoutSession(sessionId: string): Promise<StripeCheckoutSession | null> {
-  const key = process.env.STRIPE_KHEIRON_SECRET_KEY?.trim();
-  if (!key) throw new Error("STRIPE_KHEIRON_SECRET_KEY manquant");
+  const key = process.env.CHOUKRI_STRIPE_SECRET_KEY?.trim();
+  if (!key) throw new Error("CHOUKRI_STRIPE_SECRET_KEY manquant");
   const response = await fetch(
     `https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(sessionId)}`,
     {

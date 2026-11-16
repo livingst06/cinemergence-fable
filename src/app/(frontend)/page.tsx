@@ -118,7 +118,7 @@ export default async function HomePage() {
               ))}
             </ul>
             <div className="mt-8 flex w-full animate-fade-up-delay-2 flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
-              <ButtonLink href="/contact" size="lg" className="btn-convert min-h-12 w-full px-8 sm:w-auto sm:px-10">
+              <ButtonLink href="/contact" size="lg" className="btn-cta min-h-12 w-full px-8 sm:w-auto sm:px-10">
                 Je réserve ma place
               </ButtonLink>
               <ButtonLink

@@ -6,7 +6,9 @@ alwaysApply: false
 
 # CTA conversion élève
 
-Tout bouton qui conduit l’élève à **s’inscrire**, **payer**, ou **ajouter un produit au panier** utilise la classe `btn-convert` (dégradé vert), jamais `btn-cta` (rouge brand).
+Le bleu signature est celui de `main` : `#2F5BFF` (`--convert`). Pas de dégradé vert, pas de capitales forcées.
+
+`btn-convert` et `btn-cta` partagent ce bleu. `btn-convert` marque une action d’inscription, de paiement ou de panier. `btn-cta` marque la navigation (catalogue, contact général).
 
 ## Utiliser `btn-convert`
 - Je m’inscris / Je réserve ma place

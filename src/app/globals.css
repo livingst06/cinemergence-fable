@@ -35,12 +35,6 @@
   --convert-deep: #1e3fd9;
   --convert-glow: rgba(47, 91, 255, 0.45);
 
-  /* Conversion stagiaire : payer / s’inscrire / panier */
-  --convert: #059669;
-  --convert-light: #10b981;
-  --convert-deep: #047857;
-  --convert-glow: rgba(5, 150, 105, 0.4);
-
   --background: var(--noir);
   --foreground: var(--cream);
   --card: #ffffff;
@@ -91,11 +85,6 @@
   --convert-light: #5b7cff;
   --convert-deep: #1e3fd9;
   --convert-glow: rgba(47, 91, 255, 0.55);
-
-  --convert: #10b981;
-  --convert-light: #34d399;
-  --convert-deep: #059669;
-  --convert-glow: rgba(16, 185, 129, 0.45);
 
   --background: var(--noir);
   --foreground: var(--cream);
@@ -709,44 +698,6 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     pointer-events: auto;
     color: #ffffff;
     background: var(--convert);
-  }
-
-  /*
-   * Conversion stagiaire (payer / s’inscrire / panier).
-   * Texte blanc fixe — contraste sur le dégradé vert en jour et en nuit.
-   */
-  .btn-convert {
-    @apply relative overflow-hidden border-0 font-semibold uppercase tracking-wider;
-    color: #ffffff;
-    background: linear-gradient(
-      135deg,
-      var(--convert-light) 0%,
-      var(--convert) 55%,
-      var(--convert-deep) 100%
-    );
-    box-shadow:
-      0 0 0 1px rgba(52, 211, 153, 0.28) inset,
-      0 4px 24px -4px var(--convert-glow);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-  }
-
-  .btn-convert:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.05);
-    box-shadow:
-      0 0 0 1px rgba(52, 211, 153, 0.4) inset,
-      0 8px 32px -4px var(--convert-glow);
-  }
-
-  .btn-convert:active {
-    transform: translateY(0);
-    filter: none;
-  }
-
-  .btn-convert:disabled {
-    filter: grayscale(0.35) brightness(0.85);
-    transform: none;
-    box-shadow: none;
   }
 
   /* Contour : bordure/texte adaptés jour (fond clair) vs nuit */

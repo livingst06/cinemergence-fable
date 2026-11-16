@@ -35,15 +35,34 @@ function navLinkClass(active: boolean) {
   );
 }
 
+/** Admin et connexion restent dans la barre, y compris quand le menu desktop est masqué. */
+function HeaderAuthChrome() {
+  const { isSignedIn } = useAuth();
+
+  return (
+    <div className="flex shrink-0 items-center gap-2">
+      <AdminModeToggle />
+      {isSignedIn ? (
+        <SignOutButton redirectUrl="/">
+          <Button type="button" size="sm" variant="outline" className="btn-outline-warm px-4">
+            Je me déconnecte
+          </Button>
+        </SignOutButton>
+      ) : (
+        <Link href="/sign-in" className={navLinkClass(false)}>
+          Je me connecte
+        </Link>
+      )}
+    </div>
+  );
+}
+
 function AuthNavDesktop() {
   const { isSignedIn } = useAuth();
 
   if (!isSignedIn) {
     return (
       <>
-        <Link href="/sign-in" className={navLinkClass(false)}>
-          Je me connecte
-        </Link>
         <ButtonLink href="/sign-up" size="sm" variant="outline" className="btn-outline-warm px-4">
           Je crée mon compte
         </ButtonLink>
@@ -56,15 +75,9 @@ function AuthNavDesktop() {
 
   return (
     <>
-      <AdminModeToggle />
       <Link href="/mon-compte" className={navLinkClass(false)}>
         Mon compte
       </Link>
-      <SignOutButton redirectUrl="/">
-        <Button type="button" size="sm" variant="outline" className="btn-outline-warm px-4">
-          Je me déconnecte
-        </Button>
-      </SignOutButton>
       <ButtonLink href="/contact" size="sm" className="btn-cta px-5">
         Je m&apos;inscris
       </ButtonLink>
@@ -79,17 +92,9 @@ function AuthNavMobile({ onNavigate }: { onNavigate: () => void }) {
     return (
       <>
         <ButtonLink
-          href="/sign-in"
-          variant="outline"
-          className="btn-outline-warm mt-3"
-          onClick={onNavigate}
-        >
-          Je me connecte
-        </ButtonLink>
-        <ButtonLink
           href="/sign-up"
           variant="outline"
-          className="btn-outline-warm"
+          className="btn-outline-warm mt-3"
           onClick={onNavigate}
         >
           Je crée mon compte
@@ -103,20 +108,9 @@ function AuthNavMobile({ onNavigate }: { onNavigate: () => void }) {
 
   return (
     <>
-      <div className="mt-3 flex items-center justify-between gap-3 px-1">
-        <span className="text-xs font-semibold uppercase tracking-wider text-muted-text">
-          Mode admin
-        </span>
-        <AdminModeToggle />
-      </div>
-      <ButtonLink href="/mon-compte" variant="outline" className="btn-outline-warm" onClick={onNavigate}>
+      <ButtonLink href="/mon-compte" variant="outline" className="btn-outline-warm mt-3" onClick={onNavigate}>
         Mon compte
       </ButtonLink>
-      <SignOutButton redirectUrl="/">
-        <Button type="button" variant="outline" className="btn-outline-warm w-full" onClick={onNavigate}>
-          Je me déconnecte
-        </Button>
-      </SignOutButton>
       <ButtonLink href="/contact" className="btn-cta" onClick={onNavigate}>
         Je m&apos;inscris
       </ButtonLink>
@@ -247,9 +241,10 @@ export function Header({ formations }: HeaderProps) {
             <AuthNavDesktop />
           </nav>
 
-          <div className="relative z-[1] flex shrink-0 items-center gap-3 xl:hidden">
-            {SHOW_THEME_TOGGLE && <ThemeToggle />}
-            <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary transition-[background-color,border-color,color,box-shadow] duration-200">
+          <div className="relative z-[1] flex shrink-0 items-center gap-3">
+            <HeaderAuthChrome />
+            {SHOW_THEME_TOGGLE && <ThemeToggle className="xl:hidden" />}
+            <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary transition-[background-color,border-color,color,box-shadow] duration-200 xl:hidden">
               <input
                 ref={navToggleRef}
                 type="checkbox"

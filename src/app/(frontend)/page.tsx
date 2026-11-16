@@ -15,7 +15,6 @@ import { Temoignages } from "@/features/home/Temoignages";
 import { TemoignagesVideo } from "@/features/temoignages-video/TemoignagesVideo";
 import { FormationMiniCard } from "@/features/formations/FormationMiniCard";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
-import { NewsletterForm } from "@/features/contact/NewsletterForm";
 import {
   getFormations,
   getIntervenants,
@@ -160,7 +159,7 @@ export default async function HomePage() {
             description={
               <>
                 <p>Des parcours professionnalisants,</p>
-                <p className="mt-1">chacun avec un livrable clair pour l'élève.</p>
+                <p className="mt-1">chacun avec un livrable clair pour l&apos;élève.</p>
               </>
             }
           />
@@ -263,19 +262,6 @@ export default async function HomePage() {
                 d&apos;être vus.
               </p>
             </div>
-          </div>
-        </div>
-      </Section>
-
-      <Section compact>
-        <div className="container-page">
-          <SectionHeader
-            title="Les prochaines sessions"
-            align="left"
-            description="Sois informé·e des dates et des ouvertures de nos formations."
-          />
-          <div className="max-w-xl">
-            <NewsletterForm />
           </div>
         </div>
       </Section>

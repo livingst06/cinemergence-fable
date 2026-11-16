@@ -565,13 +565,11 @@ export function KheironLanding({
               <span className="price-figure">{price.once}</span>
             </p>
             <KlarnaPayIn3Notice />
-            {offer.phase === "early" && (
-              <aside className="early" aria-label="Tarif à partir de la 6e place">
-                <p className="early-note">
-                  Dès la 6<sup>e</sup> place, le tarif passe à <b>{KHEIRON_STANDARD_ONCE}</b>.
-                </p>
-              </aside>
-            )}
+            <aside className="early" aria-label="Tarif à partir de la 6e place">
+              <p className="early-note">
+                Dès la 6<sup>e</sup> place, le tarif passe à <b>{KHEIRON_STANDARD_ONCE}</b>.
+              </p>
+            </aside>
             {offer.phase === "full" && (
               <aside className="soldout" aria-label="Session complète">
                 <span className="soldout-tag">COMPLET</span>

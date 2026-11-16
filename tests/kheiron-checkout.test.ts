@@ -2,13 +2,16 @@ import { describe, expect, it } from "vitest";
 
 import { isKheironCheckout, isPaidKheironSession } from "@/lib/kheiron-checkout";
 import {
+  KHEIRON_EARLY_ONCE,
   KHEIRON_EARLY_PAYMENT_LINK,
   KHEIRON_ITEM_ID,
+  KHEIRON_STANDARD_ONCE,
   KHEIRON_STANDARD_PAYMENT_LINK,
   KLARNA_PAY_IN_3_COPY,
   KLARNA_PAY_IN_3_WARNING,
   kheironAmountEuros,
   kheironOfferFromCount,
+  kheironOfferFromStripeCount,
   kheironPrice,
 } from "@/lib/kheiron-offer";
 
@@ -83,18 +86,19 @@ describe("isPaidKheironSession", () => {
 });
 
 describe("kheironOfferFromCount", () => {
-  it("garde le tarif des 5 premières places et le compteur sur 20", () => {
+  it("garde la phase des 5 premières places, au lien 990 €, et le compteur sur 20", () => {
     expect(kheironOfferFromCount(0)).toMatchObject({
       paidCount: 0,
       seatsLeft: 20,
       phase: "early",
-      paymentLink: KHEIRON_EARLY_PAYMENT_LINK,
+      paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
     });
     expect(kheironOfferFromCount(4)).toMatchObject({
       seatsLeft: 16,
       phase: "early",
-      paymentLink: KHEIRON_EARLY_PAYMENT_LINK,
+      paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
     });
+    expect(kheironOfferFromCount(0).paymentLink).not.toBe(KHEIRON_EARLY_PAYMENT_LINK);
   });
 
   it("passe à 990 € de la 6e à la 20e place, avec le même lien Stripe", () => {
@@ -140,10 +144,37 @@ describe("kheironOfferFromCount", () => {
   });
 });
 
+describe("kheironOfferFromStripeCount", () => {
+  it("ajoute les places payées hors Stripe avant de choisir la phase", () => {
+    expect(kheironOfferFromStripeCount(0)).toMatchObject({
+      paidCount: 1,
+      seatsLeft: 19,
+      phase: "early",
+      paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
+    });
+    expect(kheironOfferFromStripeCount(4)).toMatchObject({
+      paidCount: 5,
+      seatsLeft: 15,
+      phase: "standard",
+      paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
+    });
+    expect(kheironOfferFromStripeCount(5)).toMatchObject({
+      paidCount: 6,
+      phase: "standard",
+    });
+    expect(kheironOfferFromStripeCount(23)).toMatchObject({
+      paidCount: 24,
+      seatsLeft: 0,
+      phase: "full",
+    });
+  });
+});
+
 describe("kheironPrice", () => {
-  it("affiche le prix comptant, 890 € TTC puis 990 € TTC", () => {
-    expect(kheironPrice("early")).toEqual({ once: "890\u00a0€\u00a0TTC" });
-    expect(kheironPrice("standard")).toEqual({ once: "990\u00a0€\u00a0TTC" });
+  it("affiche un seul prix, 990 € TTC, y compris avant la 6e place", () => {
+    expect(kheironPrice("early")).toEqual({ once: KHEIRON_STANDARD_ONCE });
+    expect(kheironPrice("early").once).not.toBe(KHEIRON_EARLY_ONCE);
+    expect(kheironPrice("standard")).toEqual({ once: KHEIRON_STANDARD_ONCE });
     expect(kheironPrice("extra")).toEqual(kheironPrice("standard"));
     expect(kheironPrice("full")).toEqual(kheironPrice("standard"));
   });
@@ -155,8 +186,8 @@ describe("kheironPrice", () => {
     );
   });
 
-  it("donne le montant en euros de la phase, 890 puis 990", () => {
-    expect(kheironAmountEuros("early")).toBe(890);
+  it("facture 990 €, y compris avant la 6e place", () => {
+    expect(kheironAmountEuros("early")).toBe(990);
     expect(kheironAmountEuros("standard")).toBe(990);
     expect(kheironAmountEuros("extra")).toBe(990);
     expect(kheironAmountEuros("full")).toBe(990);

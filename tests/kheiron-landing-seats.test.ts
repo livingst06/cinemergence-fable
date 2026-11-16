@@ -25,13 +25,12 @@ describe("landing Kheiron, places restantes", () => {
     expect(html).not.toMatch(/pas une de plus/i);
   });
 
-  it("annonce le tarif à partir de la 6e place pendant le lancement", () => {
-    const html = landing("early");
+  it.each(phases)("affiche 990 € TTC et la phrase de la 6e place en phase %s", (phase) => {
+    const html = landing(phase);
+    expect(html).toContain("990");
+    expect(html).not.toContain("890");
     expect(html).toContain("Dès la 6");
     expect(html).toContain("e</sup> place, le tarif passe à");
-    expect(html).toContain("890");
-    expect(html).toContain("990");
-    expect(landing("standard")).not.toContain("Dès la 6");
   });
 
   it("ne distingue pas les places supplémentaires du tarif standard", () => {

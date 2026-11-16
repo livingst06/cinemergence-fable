@@ -86,7 +86,7 @@ describe("checkoutFormBody", () => {
     const standard = checkoutFormBody({ offer: KHEIRON_ITEM_ID }, "standard", undefined, undefined);
     expect(early).toContain("session_id%3D{CHECKOUT_SESSION_ID}");
     expect(early).not.toContain("%7BCHECKOUT_SESSION_ID%7D");
-    expect(early).toContain("unit_amount%5D=89000");
+    expect(early).toContain("unit_amount%5D=99000");
     expect(standard).toContain("unit_amount%5D=99000");
     expect(early).toContain("phone_number_collection%5Benabled%5D=true");
     expect(early).not.toContain("payment_method_types");

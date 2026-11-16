@@ -1,58 +1,10 @@
 "use server";
 
-import { currentUser } from "@clerk/nextjs/server";
-
 import type { FormState } from "@/features/contact/form-state";
-import { roleForEmail } from "@/lib/admin-auth";
 import { sendContactNotification } from "@/lib/contact-notify";
+import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
 import { contactSchema } from "@/lib/validations";
 import { getPayloadClient } from "@/lib/payload";
-
-async function ensurePayloadUserForClerk() {
-  const clerkUser = await currentUser();
-  if (!clerkUser) return null;
-
-  const email =
-    clerkUser.emailAddresses.find((e) => e.id === clerkUser.primaryEmailAddressId)
-      ?.emailAddress ?? clerkUser.emailAddresses[0]?.emailAddress;
-  if (!email) return null;
-
-  const payload = await getPayloadClient();
-  const byClerkId = await payload.find({
-    collection: "users",
-    where: { clerkId: { equals: clerkUser.id } },
-    limit: 1,
-  });
-  if (byClerkId.docs[0]) return byClerkId.docs[0];
-
-  const fullName = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ");
-  const role = roleForEmail(email);
-
-  const byEmail = await payload.find({
-    collection: "users",
-    where: { email: { equals: email } },
-    limit: 1,
-  });
-  if (byEmail.docs[0]) {
-    return payload.update({
-      collection: "users",
-      id: byEmail.docs[0].id,
-      data: { clerkId: clerkUser.id, role },
-      overrideAccess: true,
-    });
-  }
-
-  return payload.create({
-    collection: "users",
-    data: {
-      email,
-      name: fullName || undefined,
-      clerkId: clerkUser.id,
-      role,
-    },
-    overrideAccess: true,
-  });
-}
 
 async function upsertInscriptionDemande(opts: {
   userId: number | string;
@@ -88,12 +40,13 @@ async function upsertInscriptionDemande(opts: {
   };
 
   if (existing.docs[0]) {
-    // Ne pas écraser un statut déjà « inscrit » / « annule »
-    if (existing.docs[0].status === "demande") {
+    // Ne pas écraser une inscription déjà traitée
+    const status = String(existing.docs[0].status);
+    if (status === "demande" || status === "en_instruction") {
       await payload.update({
         collection: "inscriptions",
         id: existing.docs[0].id,
-        data,
+        data: { ...data, status: "en_instruction" },
         overrideAccess: true,
       });
     }
@@ -102,7 +55,7 @@ async function upsertInscriptionDemande(opts: {
 
   await payload.create({
     collection: "inscriptions",
-    data: { ...data, status: "demande" },
+    data: { ...data, status: "en_instruction" },
     overrideAccess: true,
   });
 }

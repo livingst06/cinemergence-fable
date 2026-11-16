@@ -20,6 +20,7 @@
     "migrate:founder": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-founder-prod.ts",
     "migrate:admin-role": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/ensure-admin-role-prod.ts",
     "supabase:rls": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/apply-supabase-rls.ts",
+    "migrate:inscription-statuses": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/migrate-inscription-statuses.ts",
     "sync:site-url": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-site-url-prod.ts",
     "sync:instagram": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-instagram.ts",
     "sync:instagram:local": "NODE_OPTIONS='--require ./scripts/next-env-shim.cjs' tsx scripts/update-instagram.ts --local",

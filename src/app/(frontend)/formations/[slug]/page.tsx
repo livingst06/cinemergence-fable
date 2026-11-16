@@ -15,10 +15,19 @@ import {
 } from "@/features/formations/FormationPedagogy";
 import { FormationSessionGallery } from "@/features/formations/FormationSessionGallery";
 import { FormationViewItem } from "@/features/measurement/FormationViewItem";
+import { DemandeInscriptionButton } from "@/features/inscriptions/DemandeInscriptionButton";
+import { getPlacesRestantes } from "@/features/inscriptions/actions";
 import { IntervenantCard } from "@/features/intervenants/IntervenantCard";
 import { getFormationBySlug, getFormations, getIntervenants, getSiteSettings } from "@/lib/data";
 import { canonicalFormationSlug, formationPath } from "@/lib/defaults";
 import { splitDuree } from "@/lib/formation-format";
+import {
+  ACTIVE_DEMANDE_STATUSES,
+  formatFormationDate,
+} from "@/lib/inscription-status";
+import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
+import { getPayloadClient } from "@/lib/payload";
+import { getSessionProfile } from "@/lib/session-profile";
 import { courseJsonLd } from "@/lib/seo";
 
 export const revalidate = 300;
@@ -53,15 +62,56 @@ export default async function FormationDetailPage({ params }: Props) {
   const formation = await getFormationBySlug(slug);
   if (!formation) notFound();
 
-  const [site, allIntervenants] = await Promise.all([
+  const [site, allIntervenants, session] = await Promise.all([
     getSiteSettings(),
     getIntervenants(),
+    getSessionProfile(),
   ]);
 
   const intervenantBySlug = new Map(allIntervenants.map((i) => [i.slug, i]));
   const linkedIntervenants = formation.intervenants
-    .map((slug) => intervenantBySlug.get(slug))
+    .map((item) => intervenantBySlug.get(item))
     .filter((i): i is NonNullable<typeof i> => i != null && i.slug !== "karina-testa");
+
+  let placesRestantes: number | null = null;
+  let alreadyRequested = false;
+  if (formation.id != null) {
+    try {
+      const seats = await getPlacesRestantes(formation.id);
+      placesRestantes = seats.placesRestantes;
+    } catch {
+      placesRestantes = null;
+    }
+
+    if (session.clerkUser) {
+      try {
+        let payloadUserId = session.payloadUserId;
+        if (!payloadUserId) {
+          const user = await ensurePayloadUserForClerk();
+          payloadUserId = user?.id ?? null;
+        }
+        if (payloadUserId) {
+          const payload = await getPayloadClient();
+          const existing = await payload.find({
+            collection: "inscriptions",
+            where: {
+              and: [
+                { user: { equals: payloadUserId } },
+                { formation: { equals: formation.id } },
+                { status: { in: ACTIVE_DEMANDE_STATUSES } },
+              ],
+            },
+            limit: 1,
+            depth: 0,
+            overrideAccess: true,
+          });
+          alreadyRequested = Boolean(existing.docs[0]);
+        }
+      } catch {
+        alreadyRequested = false;
+      }
+    }
+  }
 
   const livrables =
     formation.livrables && formation.livrables.length > 0
@@ -77,6 +127,8 @@ export default async function FormationDetailPage({ params }: Props) {
     formation.dureeHeures,
     formation.dureeJours,
   );
+  const dateDebutLabel = formatFormationDate(formation.dateDebut);
+  const dateFinLabel = formatFormationDate(formation.dateFin);
 
   return (
     <>
@@ -121,14 +173,31 @@ export default async function FormationDetailPage({ params }: Props) {
             )}
           </div>
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <ButtonLink
-              href={`/contact?formation=${formation.slug}`}
-              size="lg"
-              className="btn-cta"
-            >
-              Je m&apos;inscris
-            </ButtonLink>
+            <DemandeInscriptionButton
+              formationId={formation.id}
+              formationSlug={formation.slug}
+              placesRestantes={placesRestantes}
+              alreadyRequested={alreadyRequested}
+            />
           </div>
+          {(dateDebutLabel || dateFinLabel || placesRestantes != null) && (
+            <p className="mt-4 text-sm text-muted-text">
+              {[
+                dateDebutLabel && dateFinLabel
+                  ? `Session du ${dateDebutLabel} au ${dateFinLabel}`
+                  : dateDebutLabel
+                    ? `Début le ${dateDebutLabel}`
+                    : null,
+                placesRestantes != null
+                  ? placesRestantes > 0
+                    ? `${placesRestantes} place${placesRestantes > 1 ? "s" : ""} restante${placesRestantes > 1 ? "s" : ""}`
+                    : "Complet"
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+          )}
         </header>
 
         <div>

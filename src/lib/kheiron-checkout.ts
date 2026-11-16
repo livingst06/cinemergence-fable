@@ -3,12 +3,12 @@ import {
   isKheironPaymentAmount,
   KHEIRON_ITEM_ID,
   KHEIRON_PAYMENT_AMOUNTS,
-  kheironOfferFromCount,
+  kheironOfferFromStripeCount,
   type KheironOffer,
   type KheironOfferPhase,
 } from "@/lib/kheiron-offer";
 
-export { kheironOfferFromCount };
+export { kheironOfferFromStripeCount };
 export type { KheironOffer, KheironOfferPhase };
 
 const SESSION_ID = /^cs_(live|test)_[A-Za-z0-9]{8,}$/;
@@ -84,7 +84,7 @@ export async function getKheironOffer(): Promise<KheironOffer> {
   const result = await getPool().query<{ paid: number }>(
     "SELECT COUNT(*)::int AS paid FROM kheiron_payments",
   );
-  return kheironOfferFromCount(result.rows[0]?.paid ?? 0);
+  return kheironOfferFromStripeCount(result.rows[0]?.paid ?? 0);
 }
 
 async function retrieveKheironCheckoutSession(sessionId: string): Promise<StripeCheckoutSession | null> {

@@ -16,6 +16,7 @@ import {
 } from "./defaults";
 import { defaultFormations } from "./formations-defaults";
 import {
+  editableCmsPhotoUrl,
   isImageMimeType,
   resolveDisplayMediaUrl,
   resolveMediaMimeType,
@@ -451,6 +452,7 @@ function mapIntervenant(doc: Record<string, unknown>): IntervenantData {
     filmographie:
       (doc.filmographie as { titre: string }[] | undefined)?.map((f) => f.titre) ?? [],
     photoId,
+    photoEditUrl: editableCmsPhotoUrl(doc.photo),
     photoUrl: committedPhoto ?? resolveDisplayMediaUrl(doc.photo, staticIntervenantPhoto(slug)),
     photoMimeType: committedPhoto ? "image/webp" : resolveMediaMimeType(doc.photo),
   };

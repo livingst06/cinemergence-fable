@@ -17,7 +17,6 @@ import {
   type IntervenantAdminInput,
 } from "@/features/intervenants/intervenants-admin-actions";
 import type { IntervenantData } from "@/lib/defaults";
-import { isPersistedMediaUrl } from "@/lib/media-utils";
 import { slugify } from "@/lib/utils";
 
 const fieldClass =
@@ -63,12 +62,8 @@ function fromIntervenant(i: IntervenantData): FormState {
 }
 
 function photoFromIntervenant(i: IntervenantData | null): IntervenantPhotoItem | null {
-  if (!i?.photoId || !i.photoUrl) return null;
-  if (!isPersistedMediaUrl(i.photoUrl) && !i.photoUrl.startsWith("/api/media/")) {
-    // Fallback static /images — pas un media CMS éditable
-    return null;
-  }
-  return { id: i.photoId, url: i.photoUrl };
+  if (!i?.photoId || !i.photoEditUrl) return null;
+  return { id: i.photoId, url: i.photoEditUrl };
 }
 
 type AdminIntervenantDialogProps = {

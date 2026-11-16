@@ -31,6 +31,14 @@ export function isPersistedMediaUrl(url?: string | null): boolean {
   return /^https?:\/\//i.test(url);
 }
 
+/** URL d’un média CMS éditable (bucket ou fichier Payload). Les replis /images ne comptent pas. */
+export function editableCmsPhotoUrl(media: unknown): string | undefined {
+  const url = resolveMediaUrl(media);
+  if (!url) return undefined;
+  if (isPersistedMediaUrl(url) || url.startsWith("/api/media/")) return url;
+  return undefined;
+}
+
 /** Remote URL, then Payload local path (/api/media/file/…), then optional static /public fallback. */
 export function resolveDisplayMediaUrl(
   payloadMedia: unknown,

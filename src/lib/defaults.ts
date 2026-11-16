@@ -36,6 +36,8 @@ export type IntervenantData = {
   filmographie: string[];
   /** ID media Payload si portrait CMS (édition admin). */
   photoId?: number | string | null;
+  /** URL du média CMS uniquement. Absente quand la carte affiche un fichier /images. */
+  photoEditUrl?: string;
   photoUrl?: string;
   photoMimeType?: string;
 };

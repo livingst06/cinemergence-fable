@@ -35,7 +35,10 @@ function navLinkClass(active: boolean) {
   );
 }
 
-/** Admin et connexion restent dans la barre, y compris quand le menu desktop est masqué. */
+const loginButtonClass =
+  "inline-flex h-8 shrink-0 items-center rounded-full border border-border/70 bg-noir-tertiary/80 px-3.5 text-xs font-medium text-cream/90 shadow-sm backdrop-blur-md transition-colors duration-200 hover:border-or/35 hover:bg-noir-tertiary hover:text-or-light";
+
+/** Toujours visible dans la barre header (desktop + mobile) : Admin + Login/Logout. */
 function HeaderAuthChrome() {
   const { isSignedIn } = useAuth();
 
@@ -43,83 +46,31 @@ function HeaderAuthChrome() {
     <div className="flex shrink-0 items-center gap-2">
       <AdminModeToggle />
       {isSignedIn ? (
-        <SignOutButton redirectUrl="/">
-          <Button type="button" size="sm" variant="outline" className="btn-outline-warm px-4">
-            Je me déconnecte
-          </Button>
-        </SignOutButton>
+        <>
+          <Link
+            href="/mon-compte"
+            className={cn(navLinkClass(false), "hidden whitespace-nowrap lg:inline")}
+          >
+            Mon compte
+          </Link>
+          <SignOutButton redirectUrl="/">
+            <Button type="button" variant="ghost" className={loginButtonClass}>
+              Logout
+            </Button>
+          </SignOutButton>
+        </>
       ) : (
-        <Link href="/sign-in" className={navLinkClass(false)}>
-          Je me connecte
-        </Link>
+        <ButtonLink href="/sign-in" variant="ghost" className={loginButtonClass}>
+          Login
+        </ButtonLink>
       )}
     </div>
   );
 }
 
-function AuthNavDesktop() {
-  const { isSignedIn } = useAuth();
-
-  if (!isSignedIn) {
-    return (
-      <>
-        <ButtonLink href="/sign-up" size="sm" variant="outline" className="btn-outline-warm px-4">
-          Je crée mon compte
-        </ButtonLink>
-        <ButtonLink href="/contact" size="sm" className="btn-cta px-5">
-          Je m&apos;inscris
-        </ButtonLink>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Link href="/mon-compte" className={navLinkClass(false)}>
-        Mon compte
-      </Link>
-      <ButtonLink href="/contact" size="sm" className="btn-cta px-5">
-        Je m&apos;inscris
-      </ButtonLink>
-    </>
-  );
-}
-
-function AuthNavMobile({ onNavigate }: { onNavigate: () => void }) {
-  const { isSignedIn } = useAuth();
-
-  if (!isSignedIn) {
-    return (
-      <>
-        <ButtonLink
-          href="/sign-up"
-          variant="outline"
-          className="btn-outline-warm mt-3"
-          onClick={onNavigate}
-        >
-          Je crée mon compte
-        </ButtonLink>
-        <ButtonLink href="/contact" className="btn-cta" onClick={onNavigate}>
-          Je m&apos;inscris
-        </ButtonLink>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <ButtonLink href="/mon-compte" variant="outline" className="btn-outline-warm mt-3" onClick={onNavigate}>
-        Mon compte
-      </ButtonLink>
-      <ButtonLink href="/contact" className="btn-cta" onClick={onNavigate}>
-        Je m&apos;inscris
-      </ButtonLink>
-    </>
-  );
-}
-
 export function Header({ formations }: HeaderProps) {
   const pathname = usePathname();
+  const { isSignedIn } = useAuth();
   const [formationsOpen, setFormationsOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navToggleRef = useRef<HTMLInputElement>(null);
@@ -164,10 +115,11 @@ export function Header({ formations }: HeaderProps) {
   return (
     <>
       <header className="site-header fixed inset-x-0 top-[calc(var(--site-notice-h)+env(safe-area-inset-top,0px))] z-[99999] border-b border-border bg-noir-secondary/95 backdrop-blur-md">
-        <div className="container-page flex h-16 items-center justify-between gap-3 md:h-[4.5rem]">
-          <Logo className="min-w-0 max-w-[55%] shrink" />
+        <div className="container-page flex h-16 items-center gap-3 md:h-[4.5rem]">
+          <Logo />
 
-          <nav className="hidden items-center gap-5 xl:flex xl:gap-6" aria-label="Navigation principale">
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
+          <nav className="mr-1 hidden items-center gap-5 lg:flex xl:gap-6" aria-label="Navigation principale">
             <Link href="/" className={navLinkClass(pathname === "/")} aria-current={pathname === "/" ? "page" : undefined}>
               Accueil
             </Link>
@@ -237,19 +189,15 @@ export function Header({ formations }: HeaderProps) {
                 );
               })}
 
-            {SHOW_THEME_TOGGLE && <ThemeToggle className="h-9 w-9" />}
-            <AuthNavDesktop />
           </nav>
 
-          <div className="relative z-[1] flex shrink-0 items-center gap-3">
             <HeaderAuthChrome />
-            {SHOW_THEME_TOGGLE && <ThemeToggle className="xl:hidden" />}
-            <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary transition-[background-color,border-color,color,box-shadow] duration-200 xl:hidden">
+            <label className="mobile-nav-trigger relative inline-flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-noir-secondary transition-[background-color,border-color,color,box-shadow] duration-200 lg:hidden">
               <input
                 ref={navToggleRef}
                 type="checkbox"
                 id="mobile-nav-toggle"
-                className="native-touch-control xl:hidden"
+                className="native-touch-control lg:hidden"
                 onChange={(event) => setMobileNavOpen(event.target.checked)}
               />
               <span className="pointer-events-none relative z-0 flex items-center justify-center" aria-hidden>
@@ -258,12 +206,13 @@ export function Header({ formations }: HeaderProps) {
               </span>
               <span className="sr-only">Menu</span>
             </label>
+            {SHOW_THEME_TOGGLE && <ThemeToggle className="h-9 w-9" />}
           </div>
         </div>
       </header>
 
       <div
-        className="mobile-nav-panel fixed inset-x-0 bottom-0 top-[calc(var(--site-notice-h)+env(safe-area-inset-top,0px))] z-[99998] xl:hidden"
+        className="mobile-nav-panel fixed inset-x-0 bottom-0 top-[calc(var(--site-notice-h)+env(safe-area-inset-top,0px))] z-[99998] lg:hidden"
         inert={!mobileNavOpen}
         aria-hidden={!mobileNavOpen}
       >
@@ -325,7 +274,16 @@ export function Header({ formations }: HeaderProps) {
                   </Link>
                 );
               })}
-            <AuthNavMobile onNavigate={closeMobileNav} />
+            {isSignedIn ? (
+              <ButtonLink
+                href="/mon-compte"
+                variant="outline"
+                className="btn-outline-warm mt-3"
+                onClick={closeMobileNav}
+              >
+                Mon compte
+              </ButtonLink>
+            ) : null}
           </div>
         </nav>
       </div>

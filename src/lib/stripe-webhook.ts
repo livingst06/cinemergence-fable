@@ -1,4 +1,5 @@
 import { isKheironCheckout, isPaidKheironSession, recordKheironPayment } from "@/lib/kheiron-checkout";
+import { recordCheckoutPaiement } from "@/lib/paiements";
 import { deliverPurchase } from "@/lib/measurement-log";
 import { buildPurchasePayload, type PurchaseSession } from "@/lib/measurement-format";
 import { getPublicSiteUrl } from "@/lib/site-url";
@@ -64,9 +65,14 @@ export async function handleStripeWebhook(raw: string, signature: string | null)
         console.error("[stripe-webhook] seat not recorded", session.id);
         return { status: 500, body: { error: "seat not recorded" } };
       }
+      const paiement = await recordCheckoutPaiement(session.id);
+      if (!paiement.recorded) {
+        console.error("[stripe-webhook] paiement not recorded", session.id, paiement.reason);
+        return { status: 500, body: { error: "paiement not recorded" } };
+      }
     } catch (error) {
-      console.error("[stripe-webhook] seat", session.id, error instanceof Error ? error.message : error);
-      return { status: 500, body: { error: "seat not recorded" } };
+      console.error("[stripe-webhook] record", session.id, error instanceof Error ? error.message : error);
+      return { status: 500, body: { error: "paiement not recorded" } };
     }
   }
 

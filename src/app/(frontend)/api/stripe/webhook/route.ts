@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 
-import {
-  confirmPaidFromCheckoutSession,
-  releaseHoldFromCheckoutSession,
-} from "@/lib/stripe-fulfillment";
+import { recordCheckoutPaiement } from "@/lib/paiements";
+import { releaseHoldFromCheckoutSession } from "@/lib/stripe-fulfillment";
 import { getStripe } from "@/lib/stripe";
 import { handleStripeWebhook } from "@/lib/stripe-webhook";
 
@@ -35,7 +33,15 @@ export async function POST(request: Request) {
           switch (event.type) {
             case "checkout.session.completed":
             case "checkout.session.async_payment_succeeded": {
-              await confirmPaidFromCheckoutSession(checkout);
+              const paid =
+                event.type === "checkout.session.async_payment_succeeded" ||
+                checkout.payment_status === "paid";
+              if (paid && checkout.id) {
+                const paiement = await recordCheckoutPaiement(checkout.id);
+                if (!paiement.recorded) {
+                  throw new Error(`paiement ${paiement.reason}`);
+                }
+              }
               break;
             }
             case "checkout.session.expired":

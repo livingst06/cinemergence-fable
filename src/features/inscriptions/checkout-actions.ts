@@ -18,6 +18,7 @@ import {
   releaseExpiredHolds,
   releaseHoldById,
 } from "@/lib/places";
+import { listPaiementsForSessions, paiementMatchesUser } from "@/lib/paiements";
 import { getPayloadClient } from "@/lib/payload";
 import { requireAuth } from "@/lib/session-profile";
 import { getPublicSiteUrl } from "@/lib/site-url";
@@ -148,6 +149,21 @@ export async function startCheckout(
       return { ok: false, error: "Plus de place disponible.", code: "full" };
     }
 
+    const dejaPaye = await listPaiementsForSessions([sessionDoc.id]);
+    const paid = (dejaPaye.get(String(sessionDoc.id)) ?? []).some((paiement) =>
+      paiementMatchesUser(paiement, {
+        userId: user.id,
+        email: user.email ? String(user.email) : null,
+      }),
+    );
+    if (paid) {
+      return {
+        ok: false,
+        error: "Vous êtes déjà inscrit à cette session.",
+        code: "duplicate",
+      };
+    }
+
     const existing = await payload.find({
       collection: "inscriptions",
       where: {
@@ -172,6 +188,7 @@ export async function startCheckout(
           holdId = current.id;
           const resumed = await createEmbeddedSessionForHold({
             inscriptionId: current.id,
+            userId: user.id,
             formationTitre: String(formation.titre ?? "Formation"),
             formationSlug: formation.slug ? String(formation.slug) : null,
             sessionId: sessionDoc.id,
@@ -226,6 +243,7 @@ export async function startCheckout(
 
     const sessionResult = await createEmbeddedSessionForHold({
       inscriptionId: created.id,
+      userId: user.id,
       formationTitre: String(formation.titre ?? "Formation"),
       formationSlug: formation.slug ? String(formation.slug) : null,
       sessionId: sessionDoc.id,
@@ -258,6 +276,7 @@ export async function startCheckout(
 
 async function createEmbeddedSessionForHold(args: {
   inscriptionId: number | string;
+  userId: number | string;
   formationTitre: string;
   formationSlug: string | null;
   sessionId: number | string;
@@ -290,8 +309,10 @@ async function createEmbeddedSessionForHold(args: {
     client_reference_id: String(args.inscriptionId),
     metadata: {
       inscriptionId: String(args.inscriptionId),
+      userId: String(args.userId),
       sessionId: String(args.sessionId),
       formationSlug: args.formationSlug ?? "",
+      formationTitre: args.formationTitre,
       dateDebut: args.dateDebut.slice(0, 10),
       dateFin: args.dateFin.slice(0, 10),
     },
@@ -299,8 +320,10 @@ async function createEmbeddedSessionForHold(args: {
       description: paymentDescription,
       metadata: {
         inscriptionId: String(args.inscriptionId),
+        userId: String(args.userId),
         sessionId: String(args.sessionId),
         formationSlug: args.formationSlug ?? "",
+        formationTitre: args.formationTitre,
         dateDebut: args.dateDebut.slice(0, 10),
         dateFin: args.dateFin.slice(0, 10),
       },
@@ -472,6 +495,7 @@ export async function resumeCheckoutClientSecret(
 
     return createEmbeddedSessionForHold({
       inscriptionId: doc.id,
+      userId: user.id,
       formationTitre: String(formation.titre),
       formationSlug: formation.slug ? String(formation.slug) : null,
       sessionId: sessionDoc.id,

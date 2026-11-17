@@ -1,9 +1,8 @@
 import "server-only";
 
-import { isPaidEnrolledStatus } from "@/lib/inscription-status";
+import { listPaiementsForPayer } from "@/lib/paiements";
 import { getPayloadClient } from "@/lib/payload";
 import { ensureSalonForSession, relationId } from "@/lib/session-salon";
-import { syncInscriptionIfStripePaid } from "@/lib/stripe-fulfillment";
 
 export type ReservationRow = {
   id: number | string;
@@ -22,90 +21,79 @@ export async function listReservationsForUser(
 ): Promise<ReservationRow[]> {
   try {
     const payload = await getPayloadClient();
-    const result = await payload.find({
-      collection: "inscriptions",
-      where: { user: { equals: payloadUserId } },
-      depth: 1,
-      limit: 100,
-      sort: "-updatedAt",
+    const user = await payload.findByID({
+      collection: "users",
+      id: payloadUserId,
+      depth: 0,
       overrideAccess: true,
     });
-
-    await Promise.all(
-      result.docs
-        .filter((doc) => doc.status === "en_paiement" && doc.stripeCheckoutSessionId)
-        .map((doc) =>
-          syncInscriptionIfStripePaid(doc.id).catch((err) => {
-            console.error("[reservations] sync", doc.id, err);
-            return false;
-          }),
-        ),
+    const email = typeof user.email === "string" ? user.email : null;
+    const paid = await listPaiementsForPayer({ userId: payloadUserId, email });
+    const paidSessions = new Set(
+      paid.map((paiement) => (paiement.sessionId == null ? "" : String(paiement.sessionId))),
     );
 
-    const refreshed = await payload.find({
-      collection: "inscriptions",
-      where: { user: { equals: payloadUserId } },
-      depth: 2,
-      limit: 100,
-      sort: "-updatedAt",
-      overrideAccess: true,
-    });
-
     const rows: ReservationRow[] = [];
-    for (const doc of refreshed.docs) {
-      const formation = doc.formation;
-      if (!formation || typeof formation !== "object") continue;
-      const f = formation as {
-        titre?: string;
-        titreCourt?: string;
-        slug?: string;
-        dateDebut?: string;
-        dateFin?: string;
-      };
-      if (!f.slug) continue;
-
-      const sessionId = relationId(doc.session);
-      const sessionDoc =
-        typeof doc.session === "object" && doc.session
-          ? (doc.session as {
-              dateDebut?: string;
-              dateFin?: string;
-              label?: string | null;
-            })
-          : null;
-
+    for (const paiement of paid) {
       let salonId: string | undefined;
-      if (sessionId && isPaidEnrolledStatus(String(doc.status))) {
+      if (paiement.sessionId != null) {
         try {
-          const salon = await ensureSalonForSession(payload, sessionId);
+          const salon = await ensureSalonForSession(payload, paiement.sessionId);
           if (salon) salonId = String(salon.id);
         } catch (err) {
-          console.error("[reservations] salon", sessionId, err);
+          console.error("[reservations] salon", paiement.sessionId, err);
         }
       }
-
       rows.push({
-        id: doc.id,
-        status: String(doc.status),
-        commentaireAdmin: doc.commentaireAdmin
-          ? String(doc.commentaireAdmin)
-          : null,
-        formationTitre: String(f.titre ?? f.titreCourt ?? f.slug),
-        formationSlug: String(f.slug),
-        dateDebut: sessionDoc?.dateDebut
-          ? String(sessionDoc.dateDebut)
-          : f.dateDebut
-            ? String(f.dateDebut)
-            : undefined,
-        dateFin: sessionDoc?.dateFin
-          ? String(sessionDoc.dateFin)
-          : f.dateFin
-            ? String(f.dateFin)
-            : undefined,
-        sessionId: sessionId ? String(sessionId) : undefined,
+        id: paiement.checkoutSessionId,
+        status: "payee",
+        formationTitre: paiement.formationTitre || paiement.formationSlug,
+        formationSlug: paiement.formationSlug,
+        dateDebut: paiement.sessionDateDebut ?? undefined,
+        dateFin: paiement.sessionDateFin ?? undefined,
+        sessionId: paiement.sessionId == null ? undefined : String(paiement.sessionId),
         salonId,
       });
     }
+
+    const holds = await payload.find({
+      collection: "inscriptions",
+      where: {
+        and: [
+          { user: { equals: payloadUserId } },
+          { status: { equals: "en_paiement" } },
+        ],
+      },
+      depth: 1,
+      limit: 50,
+      overrideAccess: true,
+    });
+
+    const now = Date.now();
+    for (const doc of holds.docs) {
+      const sessionId = relationId(doc.session);
+      if (sessionId != null && paidSessions.has(String(sessionId))) continue;
+      const expires = doc.holdExpiresAt ? new Date(String(doc.holdExpiresAt)).getTime() : 0;
+      if (expires <= now) continue;
+      const formation = doc.formation;
+      if (!formation || typeof formation !== "object") continue;
+      const f = formation as { titre?: string; titreCourt?: string; slug?: string };
+      if (!f.slug) continue;
+      const sessionDoc =
+        typeof doc.session === "object" && doc.session
+          ? (doc.session as { dateDebut?: string; dateFin?: string })
+          : null;
+      rows.push({
+        id: doc.id,
+        status: "en_paiement",
+        formationTitre: String(f.titre ?? f.titreCourt ?? f.slug),
+        formationSlug: String(f.slug),
+        dateDebut: sessionDoc?.dateDebut ? String(sessionDoc.dateDebut) : undefined,
+        dateFin: sessionDoc?.dateFin ? String(sessionDoc.dateFin) : undefined,
+        sessionId: sessionId == null ? undefined : String(sessionId),
+      });
+    }
+
     return rows;
   } catch {
     return [];

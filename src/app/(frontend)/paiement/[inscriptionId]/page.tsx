@@ -14,7 +14,7 @@ import { formationPath } from "@/lib/formation-types";
 import { findInscriptionById } from "@/lib/inscriptions-query";
 import { releaseExpiredHolds } from "@/lib/places";
 import { getSessionProfile } from "@/lib/session-profile";
-import { syncInscriptionIfStripePaid } from "@/lib/stripe-fulfillment";
+import { getStripe } from "@/lib/stripe";
 
 type Props = { params: Promise<{ inscriptionId: string }> };
 
@@ -60,9 +60,21 @@ export default async function PaiementPage({ params }: Props) {
     redirect("/paiement/succes");
   }
 
-  if (doc.status === "en_paiement") {
-    const synced = await syncInscriptionIfStripePaid(inscriptionId).catch(() => false);
-    if (synced) redirect("/paiement/succes");
+  if (doc.status === "en_paiement" && doc.stripeCheckoutSessionId && process.env.CHOUKRI_STRIPE_SECRET_KEY) {
+    try {
+      const stripe = getStripe();
+      const checkout = await stripe.checkout.sessions.retrieve(String(doc.stripeCheckoutSessionId));
+      if (checkout.payment_status === "paid") {
+        redirect(`/paiement/succes?session_id=${encodeURIComponent(checkout.id)}`);
+      }
+    } catch (error) {
+      const digest =
+        typeof error === "object" && error && "digest" in error
+          ? String((error as { digest?: string }).digest)
+          : "";
+      if (digest.startsWith("NEXT_REDIRECT")) throw error;
+      console.error("[paiement] statut stripe", error);
+    }
   }
 
   if (doc.status !== "en_paiement") {

@@ -25,6 +25,11 @@ export const Users: CollectionConfig = {
       type: "text",
     },
     {
+      name: "phone",
+      type: "text",
+      label: "Téléphone",
+    },
+    {
       name: "clerkId",
       type: "text",
       unique: true,

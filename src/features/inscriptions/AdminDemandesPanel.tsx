@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/accordion";
 import { AdminDeleteButton, AdminEditButton } from "@/features/admin/AdminMutationButtons";
 import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
-import { InscriptionStatusBadge } from "@/features/inscriptions/InscriptionStatusBadge";
+import { UserAvatar } from "@/features/profile/UserAvatar";
 import { pastelForFormationName } from "@/lib/formation-pastel";
 import { formationPath } from "@/lib/formation-types";
 import {
@@ -30,6 +30,7 @@ export type AdminSessionTrainee = {
   id: number | string;
   userName: string;
   userEmail: string;
+  avatarKey: string | null;
   status: string;
   amountEuros: number | null;
 };
@@ -150,6 +151,44 @@ function staffInitials(nom: string): string {
   const parts = nom.trim().split(/\s+/).filter(Boolean).slice(0, 2);
   const letters = parts.map((part) => part[0]?.toUpperCase() ?? "").join("");
   return letters || "?";
+}
+
+function SessionElevesSection({ trainees }: { trainees: AdminSessionTrainee[] }) {
+  const enrolled = trainees.filter((trainee) => isEnrolled(trainee.status));
+  return (
+    <div>
+      <p className="label-copy">Les élèves inscrits</p>
+      {enrolled.length === 0 ? (
+        <p className="mt-1.5 text-sm text-muted-text">Aucun élève</p>
+      ) : (
+        <ul className="mt-2.5 flex flex-wrap gap-3">
+          {enrolled.map((trainee) => {
+            const label = trainee.userName.trim() || trainee.userEmail;
+            return (
+              <li
+                key={String(trainee.id)}
+                className="flex w-36 flex-col items-center gap-1.5 text-center"
+              >
+                <UserAvatar
+                  avatarKey={trainee.avatarKey}
+                  name={label}
+                  className="size-12 shrink-0 border border-white/25"
+                />
+                <span className="inline-flex max-w-full items-center break-words rounded-full border border-or/30 bg-or/10 px-3 py-1 text-center text-sm font-medium leading-snug text-or-light">
+                  {label}
+                </span>
+                <span className="text-sm tabular-nums text-muted-text">
+                  {trainee.amountEuros != null
+                    ? `${trainee.amountEuros.toLocaleString("fr-FR")} €`
+                    : "—"}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 function SessionStaffSection({
@@ -427,52 +466,26 @@ export function AdminDemandesPanel({
                 </div>
 
                 <AccordionContent className="border-t border-border/60 px-0 pb-0">
-                  <div className="space-y-5 px-5 py-4">
-                    <SessionStaffSection
-                      title="Les formateurs lors de cette session"
-                      emptyLabel="Aucun formateur"
-                      people={session.formateurs}
-                    />
+                  <div className="px-5 py-4">
                     <SessionStaffSection
                       title="Les intervenants pendant la session"
                       emptyLabel="Aucun intervenant"
                       people={session.intervenants}
                     />
                   </div>
+                  <div className="border-t border-border/60 px-5 py-4">
+                    <SessionStaffSection
+                      title="Les formateurs lors de cette session"
+                      emptyLabel="Aucun formateur"
+                      people={session.formateurs}
+                    />
+                  </div>
+                  <div className="border-t border-border/60 px-5 py-4">
+                    <SessionElevesSection trainees={session.trainees} />
+                  </div>
 
                   <div className="border-t border-border/60">
-                    {session.trainees.length === 0 ? (
-                      <p className="px-5 py-4 text-sm text-muted-text">
-                        Aucun élève sur cette session.
-                      </p>
-                    ) : (
-                      <ul className="divide-y divide-border/60">
-                        {session.trainees.map((t) => (
-                          <li
-                            key={String(t.id)}
-                            className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5"
-                          >
-                            <div className="min-w-0">
-                              <p className="truncate text-base font-medium text-cream">
-                                {t.userName || t.userEmail}
-                              </p>
-                              {t.userName ? (
-                                <p className="truncate text-sm text-muted-text">
-                                  {t.userEmail}
-                                </p>
-                              ) : null}
-                              {t.amountEuros != null ? (
-                                <p className="mt-0.5 text-sm tabular-nums text-muted-text">
-                                  {t.amountEuros.toLocaleString("fr-FR")} €
-                                </p>
-                              ) : null}
-                            </div>
-                            <InscriptionStatusBadge status={t.status} />
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                    <div className="border-t border-border/60 px-5 py-3">
+                    <div className="px-5 py-3">
                       <Link
                         href={formationPath(session.formationSlug)}
                         className="text-sm font-medium text-or-light underline-offset-2 hover:underline"

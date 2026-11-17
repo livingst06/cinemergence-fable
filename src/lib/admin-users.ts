@@ -1,7 +1,8 @@
 import "server-only";
 
 import { isAdminEmail } from "@/lib/admin-auth";
-import { getPayloadClient } from "@/lib/payload";
+import { getPool } from "@/lib/db";
+import { ensureUsersPhoneColumn } from "@/lib/payer-user";
 import {
   isAssignableRole,
   isUserRole,
@@ -17,41 +18,46 @@ export type AdminUserRow = {
   assignableRole: AssignableRole;
   isEnvAdmin: boolean;
   avatarKey: string | null;
+  phone: string | null;
 };
 
 export async function listLoggedInUsers(): Promise<AdminUserRow[]> {
   try {
-    const payload = await getPayloadClient();
-    const found = await payload.find({
-      collection: "users",
-      limit: 500,
-      sort: "email",
-      overrideAccess: true,
-    });
+    await ensureUsersPhoneColumn();
+    const found = await getPool().query<{
+      id: number;
+      email: string;
+      name: string | null;
+      role: string;
+      avatar_key: string | null;
+      phone: string | null;
+    }>(
+      `SELECT id, email, name, role::text, avatar_key, phone
+       FROM users
+       ORDER BY lower(email)
+       LIMIT 500`,
+    );
 
     const rows: AdminUserRow[] = [];
-    for (const doc of found.docs) {
-      const clerkId = typeof doc.clerkId === "string" ? doc.clerkId.trim() : "";
-      if (!clerkId) continue;
-      const email = typeof doc.email === "string" ? doc.email.trim() : "";
+    for (const doc of found.rows) {
+      const email = doc.email.trim();
       if (!email) continue;
       const role = isUserRole(doc.role) ? doc.role : "eleve";
       const isEnvAdmin = isAdminEmail(email);
       rows.push({
         id: doc.id,
-        name: typeof doc.name === "string" ? doc.name.trim() : "",
+        name: doc.name?.trim() ?? "",
         email,
         role: isEnvAdmin ? "admin" : role === "admin" ? "eleve" : role,
         assignableRole: isAssignableRole(role) ? role : "eleve",
         isEnvAdmin,
-        avatarKey:
-          typeof doc.avatarKey === "string" && doc.avatarKey.trim()
-            ? doc.avatarKey.trim()
-            : null,
+        avatarKey: doc.avatar_key?.trim() || null,
+        phone: doc.phone?.trim() || null,
       });
     }
     return rows;
-  } catch {
+  } catch (error) {
+    console.error("[admin-users]", error instanceof Error ? error.message : error);
     return [];
   }
 }

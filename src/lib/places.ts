@@ -7,6 +7,11 @@ import {
   PLACE_TAKING_STATUSES,
   parseEurosFromTarifLabel,
 } from "@/lib/inscription-status";
+import {
+  listPaiementsForSessions,
+  paiementMatchesUser,
+  type SessionPaiement,
+} from "@/lib/paiements";
 import { getPayloadClient } from "@/lib/payload";
 
 export function formationPlacesOffertes(doc: {
@@ -41,14 +46,36 @@ export async function countPlacesPrisesForSession(
     where: {
       and: [
         { session: { equals: sessionId } },
-        { status: { in: PLACE_TAKING_STATUSES } },
+        { status: { equals: "en_paiement" } },
       ],
     },
-    limit: 1,
-    depth: 0,
+    limit: 200,
+    depth: 1,
     overrideAccess: true,
   });
-  return result.totalDocs;
+  let paid: SessionPaiement[] = [];
+  try {
+    const paiements = await listPaiementsForSessions([sessionId]);
+    paid = paiements.get(String(sessionId)) ?? [];
+  } catch (error) {
+    console.error("[places] paiements", error instanceof Error ? error.message : error);
+  }
+  const now = Date.now();
+  const openHolds = result.docs.filter((doc) => {
+    const expires = doc.holdExpiresAt ? new Date(String(doc.holdExpiresAt)).getTime() : 0;
+    if (expires <= now) return false;
+    const user =
+      typeof doc.user === "object" && doc.user
+        ? (doc.user as { email?: string | null })
+        : null;
+    const alreadyPaid = paid.some(
+      (paiement) =>
+        (paiement.inscriptionId != null && String(paiement.inscriptionId) === String(doc.id)) ||
+        paiementMatchesUser(paiement, { email: user?.email ?? null }),
+    );
+    return !alreadyPaid;
+  });
+  return paid.length + openHolds.length;
 }
 
 /** @deprecated Prefer countPlacesPrisesForSession */
@@ -234,11 +261,17 @@ export async function enforceCapacityKeepOldest(
     overrideAccess: true,
   });
 
-  if (taking.docs.length <= placesOffertes) return true;
+  let paidCount = 0;
+  try {
+    const paiements = await listPaiementsForSessions([sessionId]);
+    paidCount = (paiements.get(String(sessionId)) ?? []).length;
+  } catch (error) {
+    console.error("[places] paiements", error instanceof Error ? error.message : error);
+  }
+  const room = Math.max(0, placesOffertes - paidCount);
+  if (taking.docs.length <= room) return true;
 
-  const keep = new Set(
-    taking.docs.slice(0, placesOffertes).map((d) => String(d.id)),
-  );
+  const keep = new Set(taking.docs.slice(0, room).map((d) => String(d.id)));
 
   for (const doc of taking.docs.slice(placesOffertes)) {
     if (doc.status !== "en_paiement") continue;
@@ -322,6 +355,27 @@ export async function listSessionsForFormation(
     formationTarif = null;
   }
 
+  let payerEmail: string | null = null;
+  if (opts?.userId != null) {
+    try {
+      const user = await payload.findByID({
+        collection: "users",
+        id: opts.userId,
+        depth: 0,
+        overrideAccess: true,
+      });
+      payerEmail = typeof user.email === "string" ? user.email : null;
+    } catch {
+      payerEmail = null;
+    }
+  }
+  let paiementsBySession = new Map<string, SessionPaiement[]>();
+  try {
+    paiementsBySession = await listPaiementsForSessions(result.docs.map((doc) => doc.id));
+  } catch (error) {
+    console.error("[places] paiements", error instanceof Error ? error.message : error);
+  }
+
   const views: FormationSessionView[] = [];
   for (const doc of result.docs) {
     const seats = await getPlacesRestantesForSession(doc.id);
@@ -330,38 +384,28 @@ export async function listSessionsForFormation(
     let pendingInscriptionId: string | null = null;
 
     if (opts?.userId != null) {
-      const existing = await payload.find({
-        collection: "inscriptions",
-        where: {
-          and: [
-            { user: { equals: opts.userId } },
-            { session: { equals: doc.id } },
-            {
-              status: {
-                in: [
-                  "en_instruction",
-                  "en_paiement",
-                  "payee",
-                  "demande",
-                  "validee",
-                  "inscrit",
-                  "pieces_complementaires",
-                ],
-              },
-            },
-          ],
-        },
-        limit: 1,
-        depth: 0,
-        overrideAccess: true,
-      });
-      const insc = existing.docs[0];
-      if (insc) {
-        if (insc.status === "en_paiement") {
+      alreadyEnrolled = (paiementsBySession.get(String(doc.id)) ?? []).some((paiement) =>
+        paiementMatchesUser(paiement, { userId: opts.userId, email: payerEmail }),
+      );
+      if (!alreadyEnrolled) {
+        const existing = await payload.find({
+          collection: "inscriptions",
+          where: {
+            and: [
+              { user: { equals: opts.userId } },
+              { session: { equals: doc.id } },
+              { status: { equals: "en_paiement" } },
+            ],
+          },
+          limit: 1,
+          depth: 0,
+          overrideAccess: true,
+        });
+        const insc = existing.docs[0];
+        const expires = insc?.holdExpiresAt ? new Date(String(insc.holdExpiresAt)).getTime() : 0;
+        if (insc && expires > Date.now()) {
           checkoutPending = true;
           pendingInscriptionId = String(insc.id);
-        } else {
-          alreadyEnrolled = true;
         }
       }
     }

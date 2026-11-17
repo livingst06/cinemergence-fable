@@ -5,6 +5,7 @@ import type {
   AdminSessionStaff,
 } from "@/features/inscriptions/AdminDemandesPanel";
 import { getIntervenants } from "@/lib/data";
+import { listPaiementsForSessions, type SessionPaiement } from "@/lib/paiements";
 import { getPayloadClient } from "@/lib/payload";
 import { ensureSessionStaffUsersRels } from "@/lib/session-staff-schema";
 
@@ -35,6 +36,11 @@ function portraitUrlFor(
   const nom = staffDisplayName(doc.name, email);
   if (!nom) return null;
   return index.byName.get(personKey(nom)) ?? null;
+}
+
+function filledName(value: string | null | undefined): string | null {
+  const trimmed = value?.trim() ?? "";
+  return trimmed || null;
 }
 
 function staffDisplayName(
@@ -99,6 +105,13 @@ export async function listAdminSessionGroups(): Promise<AdminSessionGroup[]> {
       overrideAccess: true,
     });
 
+    let paiementsBySession = new Map<string, SessionPaiement[]>();
+    try {
+      paiementsBySession = await listPaiementsForSessions(sessions.docs.map((session) => session.id));
+    } catch (error) {
+      console.error("[admin-sessions] paiements", error instanceof Error ? error.message : error);
+    }
+
     const enriched = await Promise.all(
       sessions.docs.map(async (session) => {
         const formation =
@@ -113,31 +126,16 @@ export async function listAdminSessionGroups(): Promise<AdminSessionGroup[]> {
             : null;
         if (!formation?.slug || formation.id == null) return null;
 
-        const inscriptions = await payload.find({
-          collection: "inscriptions",
-          where: { session: { equals: session.id } },
-          depth: 1,
-          limit: 200,
-          sort: "-updatedAt",
-          overrideAccess: true,
-        });
-
-        const trainees: AdminSessionGroup["trainees"] = [];
-        for (const doc of inscriptions.docs) {
-          const user =
-            typeof doc.user === "object" && doc.user
-              ? (doc.user as { email?: string; name?: string })
-              : null;
-          if (!user) continue;
-          trainees.push({
-            id: doc.id,
-            userName: String(user.name ?? ""),
-            userEmail: String(user.email ?? "—"),
-            status: String(doc.status),
-            amountEuros:
-              typeof doc.amountEuros === "number" ? doc.amountEuros : null,
-          });
-        }
+        const trainees: AdminSessionGroup["trainees"] = (
+          paiementsBySession.get(String(session.id)) ?? []
+        ).map((paiement) => ({
+          id: `paiement:${paiement.checkoutSessionId}`,
+          userName: filledName(paiement.eleveName) ?? filledName(paiement.payerName) ?? "",
+          userEmail: paiement.payerEmail ?? "—",
+          avatarKey: paiement.eleveAvatarKey,
+          status: "payee",
+          amountEuros: paiement.amountEuros,
+        }));
 
         return {
           sessionId: session.id,

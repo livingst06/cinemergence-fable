@@ -8,10 +8,8 @@ import {
   splitPersonName,
   type SalonPostView,
 } from "@/lib/salon-constants";
-import {
-  formatFormationSessionLabel,
-  PAID_ENROLLED_STATUSES,
-} from "@/lib/inscription-status";
+import { formatFormationSessionLabel } from "@/lib/inscription-status";
+import { listPaiementsForSessions, paiementMatchesUser } from "@/lib/paiements";
 import { getPayloadClient } from "@/lib/payload";
 import {
   mapStaffPeople,
@@ -52,20 +50,27 @@ export async function userHasPaidSeatOnSession(
   userId: number | string,
   sessionId: number | string,
 ): Promise<boolean> {
-  const result = await payload.find({
-    collection: "inscriptions",
-    where: {
-      and: [
-        { user: { equals: userId } },
-        { session: { equals: sessionId } },
-        { status: { in: [...PAID_ENROLLED_STATUSES] } },
-      ],
-    },
-    limit: 1,
-    depth: 0,
-    overrideAccess: true,
-  });
-  return result.totalDocs > 0;
+  let email: string | null = null;
+  try {
+    const user = await payload.findByID({
+      collection: "users",
+      id: userId,
+      depth: 0,
+      overrideAccess: true,
+    });
+    email = typeof user.email === "string" ? user.email : null;
+  } catch {
+    email = null;
+  }
+  try {
+    const paiements = await listPaiementsForSessions([sessionId]);
+    return (paiements.get(String(sessionId)) ?? []).some((paiement) =>
+      paiementMatchesUser(paiement, { userId, email }),
+    );
+  } catch (error) {
+    console.error("[session-salon] paiements", error instanceof Error ? error.message : error);
+    return false;
+  }
 }
 
 export async function ensureSalonForSession(

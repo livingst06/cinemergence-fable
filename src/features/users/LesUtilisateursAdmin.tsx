@@ -1,17 +1,23 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
+
+import { useAdminUi } from "@/features/admin/AdminUiContext";
+import { AdminDeleteButton, AdminEditButton } from "@/features/admin/AdminMutationButtons";
+import { AdminDeleteConfirmDialog } from "@/features/formations/AdminDeleteConfirmDialog";
 import { UserAvatar } from "@/features/profile/UserAvatar";
-import { updateAssignableUserRole } from "@/features/users/users-admin-actions";
+import { UserAdminDialog } from "@/features/users/UserAdminDialog";
+import { deleteUserAction } from "@/features/users/users-admin-actions";
 import type { AdminUserRow } from "@/lib/admin-users";
 import {
   SALON_STAFF_ROLE_LABEL,
   staffRoleBadgeClass,
 } from "@/lib/salon-constants";
-import { ASSIGNABLE_ROLES, type AssignableRole } from "@/lib/user-roles";
+import type { AssignableRole } from "@/lib/user-roles";
 import { cn } from "@/lib/utils";
 
 const ASSIGNABLE_LABEL: Record<AssignableRole, string> = {
@@ -34,68 +40,136 @@ const FILTERS: { id: UserFilter; label: string }[] = [
   { id: "admin", label: "Les admin" },
 ];
 
-function matchesFilter(user: AdminUserRow, filter: UserFilter): boolean {
-  if (filter === "tous") return true;
-  if (filter === "admin") return user.isEnvAdmin || user.role === "admin";
-  return !user.isEnvAdmin && user.role === filter;
+function isAdminUser(user: AdminUserRow): boolean {
+  return user.isEnvAdmin || user.role === "admin";
 }
 
-function UserRoleSelect({
+function matchesFilter(user: AdminUserRow, filter: UserFilter): boolean {
+  if (filter === "tous") return true;
+  if (filter === "admin") return isAdminUser(user);
+  return !isAdminUser(user) && user.role === filter;
+}
+
+const TOUS_GROUPS: { id: Exclude<UserFilter, "tous">; label: string }[] = [
+  { id: "formateur", label: "Les formateurs" },
+  { id: "intervenant", label: "Les intervenants" },
+  { id: "admin", label: "Les admin" },
+  { id: "eleve", label: "Les élèves" },
+];
+
+function roleBadge(user: AdminUserRow): { label: string; className: string } {
+  if (isAdminUser(user)) {
+    return { label: SALON_STAFF_ROLE_LABEL.admin, className: staffRoleBadgeClass("admin") };
+  }
+  const role = user.assignableRole;
+  if (role === "eleve") {
+    return { label: ASSIGNABLE_LABEL.eleve, className: "bg-white/10 text-cream/80" };
+  }
+  return { label: ASSIGNABLE_LABEL[role], className: staffRoleBadgeClass(role) };
+}
+
+function UserRow({
   user,
-  onChanged,
+  isAdminMode,
+  onEdit,
+  onDelete,
 }: {
   user: AdminUserRow;
-  onChanged: () => void;
+  isAdminMode: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
 }) {
-  const [pending, startTransition] = useTransition();
-  const [role, setRole] = useState<AssignableRole>(user.assignableRole);
-
-  const change = (next: AssignableRole) => {
-    if (next === role || pending) return;
-    const previous = role;
-    setRole(next);
-    startTransition(async () => {
-      const result = await updateAssignableUserRole(user.id, next);
-      if (!result.ok) {
-        setRole(previous);
-        toast.error(result.error);
-        return;
-      }
-      toast.success(`Rôle mis à jour pour ${user.email}`);
-      onChanged();
-    });
-  };
-
+  const badge = roleBadge(user);
   return (
-    <select
-      aria-label={`Rôle de ${user.name || user.email}`}
-      className="h-10 min-w-[10rem] rounded-lg border border-border bg-noir-tertiary/60 px-3 text-sm text-cream disabled:opacity-60"
-      value={role}
-      disabled={pending}
-      onChange={(event) => change(event.target.value as AssignableRole)}
-    >
-      {ASSIGNABLE_ROLES.map((value) => (
-        <option key={value} value={value}>
-          {ASSIGNABLE_LABEL[value]}
-        </option>
-      ))}
-    </select>
+    <li className="card-stage flex flex-wrap items-center gap-4 p-4 sm:p-5">
+      <UserAvatar
+        avatarKey={user.avatarKey}
+        name={user.name || user.email}
+        className="size-12 shrink-0"
+      />
+      <div className="min-w-0 flex-1">
+        <p className="font-medium text-cream">{user.name || "Sans nom"}</p>
+        <p className="truncate text-sm text-muted-text">{user.email}</p>
+        {user.phone ? (
+          <p className="truncate text-sm text-muted-text">{user.phone}</p>
+        ) : null}
+      </div>
+      <span
+        className={cn(
+          "rounded-full px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wide",
+          badge.className,
+        )}
+      >
+        {badge.label}
+      </span>
+      {isAdminMode ? (
+        <div className="flex items-center gap-2">
+          <AdminEditButton label={`Modifier ${user.email}`} onClick={onEdit} />
+          <AdminDeleteButton
+            label={`Supprimer ${user.email}`}
+            disabled={user.isEnvAdmin}
+            disabledReason="Un admin ne se supprime pas ici"
+            onClick={onDelete}
+          />
+        </div>
+      ) : null}
+    </li>
   );
 }
 
 export function LesUtilisateursAdmin({ users }: LesUtilisateursAdminProps) {
   const router = useRouter();
+  const { isAdminMode } = useAdminUi();
   const [filter, setFilter] = useState<UserFilter>("tous");
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [editing, setEditing] = useState<AdminUserRow | null>(null);
+  const [deleting, setDeleting] = useState<AdminUserRow | null>(null);
+  const [deletePending, startDelete] = useTransition();
   const visible = useMemo(
     () => users.filter((user) => matchesFilter(user, filter)),
     [users, filter],
   );
+  useEffect(() => {
+    if (isAdminMode) return;
+    setEditorOpen(false);
+    setDeleting(null);
+  }, [isAdminMode]);
+
+  const refresh = () => router.refresh();
+  const openCreate = () => {
+    setEditing(null);
+    setEditorOpen(true);
+  };
+  const openEdit = (user: AdminUserRow) => {
+    setEditing(user);
+    setEditorOpen(true);
+  };
+  const confirmDelete = () => {
+    if (!deleting) return;
+    startDelete(async () => {
+      const result = await deleteUserAction(deleting.id);
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+      toast.success(result.message);
+      setDeleting(null);
+      refresh();
+    });
+  };
 
   return (
     <>
       <header className="relative overflow-hidden bg-noir pt-6 pb-5 sm:pt-8 sm:pb-6 md:pt-10 md:pb-8">
         <div className="container-page space-y-4">
-          <h1 className="display-title text-cream">Les utilisateurs</h1>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h1 className="display-title text-cream">Les utilisateurs</h1>
+            {isAdminMode ? (
+              <Button type="button" className="btn-convert" onClick={openCreate}>
+                Ajouter un utilisateur
+              </Button>
+            ) : null}
+          </div>
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrer les utilisateurs">
             {FILTERS.map((item) => {
               const active = filter === item.id;
@@ -121,57 +195,65 @@ export function LesUtilisateursAdmin({ users }: LesUtilisateursAdminProps) {
       </header>
 
       <section className="py-5 sm:py-6 md:py-8">
-        <div className="container-page max-w-4xl space-y-4">
-          <p className="text-sm text-muted-text">
-            Comptes déjà connectés. Le rôle admin vient uniquement de{" "}
-            <code className="text-cream/80">ADMIN_LIST</code>. Tu peux attribuer
-            élève, formateur ou intervenant aux autres.
-          </p>
+        <div className="container-page max-w-4xl space-y-8">
           {users.length === 0 ? (
             <p className="text-sm text-muted-text">
-              Aucun utilisateur connecté pour le moment.
+              Aucun utilisateur pour le moment.
             </p>
           ) : visible.length === 0 ? (
             <p className="text-sm text-muted-text">Aucun compte pour ce filtre.</p>
+          ) : filter === "tous" ? (
+            TOUS_GROUPS.map((group) => {
+              const rows = users.filter((user) => matchesFilter(user, group.id));
+              if (rows.length === 0) return null;
+              return (
+                <section key={group.id} className="space-y-3">
+                  <h2 className="da-rule font-heading text-xl font-semibold text-cream">
+                    {group.label}
+                  </h2>
+                  <ul className="space-y-3">
+                    {rows.map((user) => (
+                      <UserRow
+                        key={String(user.id)}
+                        user={user}
+                        isAdminMode={isAdminMode}
+                        onEdit={() => openEdit(user)}
+                        onDelete={() => setDeleting(user)}
+                      />
+                    ))}
+                  </ul>
+                </section>
+              );
+            })
           ) : (
             <ul className="space-y-3">
               {visible.map((user) => (
-                <li
+                <UserRow
                   key={String(user.id)}
-                  className="card-stage flex flex-wrap items-center gap-4 p-4 sm:p-5"
-                >
-                  <UserAvatar
-                    avatarKey={user.avatarKey}
-                    name={user.name || user.email}
-                    className="size-12 shrink-0"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-cream">
-                      {user.name || "Sans nom"}
-                    </p>
-                    <p className="truncate text-sm text-muted-text">{user.email}</p>
-                  </div>
-                  {user.isEnvAdmin ? (
-                    <span
-                      className={cn(
-                        "rounded-full px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wide",
-                        staffRoleBadgeClass("admin"),
-                      )}
-                    >
-                      {SALON_STAFF_ROLE_LABEL.admin}
-                    </span>
-                  ) : (
-                    <UserRoleSelect
-                      user={user}
-                      onChanged={() => router.refresh()}
-                    />
-                  )}
-                </li>
+                  user={user}
+                  isAdminMode={isAdminMode}
+                  onEdit={() => openEdit(user)}
+                  onDelete={() => setDeleting(user)}
+                />
               ))}
             </ul>
           )}
         </div>
       </section>
+      <UserAdminDialog
+        open={editorOpen}
+        editing={editing}
+        onClose={() => setEditorOpen(false)}
+        onSaved={refresh}
+      />
+      <AdminDeleteConfirmDialog
+        open={deleting != null}
+        title={deleting?.name || deleting?.email || "cet utilisateur"}
+        entityLabel="fiche utilisateur"
+        pending={deletePending}
+        onCancel={() => setDeleting(null)}
+        onConfirm={confirmDelete}
+      />
     </>
   );
 }

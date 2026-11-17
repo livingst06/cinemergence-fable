@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { Payload } from "payload";
 import { z } from "zod";
 
-import { PAID_ENROLLED_STATUSES } from "@/lib/inscription-status";
+import { listPaiementsForSessions } from "@/lib/paiements";
 import { getPayloadClient } from "@/lib/payload";
 import { requireAdmin } from "@/lib/session-profile";
 import { ensureSessionStaffUsersRels } from "@/lib/session-staff-schema";
@@ -47,22 +47,16 @@ async function sessionHasEnrolledTrainee(
 }
 
 async function countEnrolledForSession(
-  payload: Payload,
+  _payload: Payload,
   sessionId: number | string,
 ): Promise<number> {
-  const result = await payload.find({
-    collection: "inscriptions",
-    where: {
-      and: [
-        { session: { equals: sessionId } },
-        { status: { in: [...PAID_ENROLLED_STATUSES] } },
-      ],
-    },
-    limit: 1,
-    depth: 0,
-    overrideAccess: true,
-  });
-  return result.totalDocs;
+  try {
+    const paiements = await listPaiementsForSessions([sessionId]);
+    return (paiements.get(String(sessionId)) ?? []).length;
+  } catch (error) {
+    console.error("[sessions] paiements", error instanceof Error ? error.message : error);
+    return 0;
+  }
 }
 
 function revalidateSessionPaths(formationSlug?: string | null) {

@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { getStripe } from "@/lib/stripe";
-import { confirmPaidFromCheckoutSession } from "@/lib/stripe-fulfillment";
 
 type Props = { searchParams: Promise<{ session_id?: string }> };
 
@@ -22,10 +21,9 @@ export default async function PaiementSuccesPage({ searchParams }: Props) {
     try {
       const stripe = getStripe();
       const session = await stripe.checkout.sessions.retrieve(sessionId);
-      // Filet de secours si le webhook n’a pas encore tourné (stripe listen arrêté, etc.)
-      const result = await confirmPaidFromCheckoutSession(session);
-      confirmed = result.ok;
-      titre = result.titre ?? null;
+      confirmed = session.payment_status === "paid";
+      const fromStripe = session.metadata?.formationTitre?.trim();
+      titre = fromStripe || null;
     } catch (error) {
       console.error("[paiement/succes]", error);
     }

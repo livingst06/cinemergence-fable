@@ -15,14 +15,14 @@ import {
 } from "@/features/kheiron/config";
 import { temoignageVideoCopy, temoignageVideos } from "@/features/temoignages-video/videos";
 import { ManageCookiesButton } from "@/components/ManageCookiesButton";
+import { KlarnaPayIn3Notice } from "@/features/kheiron/KlarnaPayIn3Notice";
 import {
   KHEIRON_ITEM_ID,
   KHEIRON_ITEM_NAME,
   KHEIRON_STANDARD_ONCE,
-  KLARNA_PAY_IN_3_COPY,
-  KLARNA_PAY_IN_3_WARNING,
   kheironAmountEuros,
   kheironPrice,
+  showsSixthSeatTariffNote,
   type KheironOffer,
 } from "@/lib/kheiron-offer";
 import { checkoutRequestBody, pushBeginCheckout, pushViewItem } from "@/lib/measurement-client";
@@ -168,15 +168,6 @@ function WhatsAppIcon() {
   );
 }
 
-function KlarnaPayIn3Notice() {
-  return (
-    <p className="bnpl">
-      <span className="bnpl-line">{KLARNA_PAY_IN_3_COPY}</span>
-      <span className="bnpl-line">{KLARNA_PAY_IN_3_WARNING}</span>
-    </p>
-  );
-}
-
 function Qualiopi({ className }: { className?: string }) {
   return (
     <span className={className ? `qbadge ${className}` : "qbadge"}>
@@ -188,7 +179,7 @@ function Qualiopi({ className }: { className?: string }) {
 export function KheironLanding({
   offer,
 }: {
-  offer: Pick<KheironOffer, "phase" | "paymentLink">;
+  offer: Pick<KheironOffer, "phase" | "paymentLink" | "paidCount">;
 }) {
   const { short, clock } = useCountdown();
   const [busy, setBusy] = useState(false);
@@ -564,12 +555,14 @@ export function KheironLanding({
             <p className="price">
               <span className="price-figure">{price.once}</span>
             </p>
-            <KlarnaPayIn3Notice />
-            <aside className="early" aria-label="Tarif à partir de la 6e place">
-              <p className="early-note">
-                Dès la 6<sup>e</sup> place, le tarif passe à <b>{KHEIRON_STANDARD_ONCE}</b>.
-              </p>
-            </aside>
+            <KlarnaPayIn3Notice amountEuros={kheironAmountEuros(offer.phase)} />
+            {showsSixthSeatTariffNote(offer.paidCount) && (
+              <aside className="early" aria-label="Tarif à partir de la 6e place">
+                <p className="early-note">
+                  Dès la 6<sup>e</sup> place, le tarif passe à <b>{KHEIRON_STANDARD_ONCE}</b>.
+                </p>
+              </aside>
+            )}
             {offer.phase === "full" && (
               <aside className="soldout" aria-label="Session complète">
                 <span className="soldout-tag">COMPLET</span>
@@ -623,7 +616,7 @@ export function KheironLanding({
             <details>
               <summary>Comment se passe le paiement ?</summary>
               <p>Tu réserves et tu paies ta place directement en ligne, sur une page de paiement sécurisée Stripe. Si le stage n&apos;atteint pas le nombre minimum de participants, tu es remboursé·e intégralement.</p>
-              <KlarnaPayIn3Notice />
+              <KlarnaPayIn3Notice amountEuros={kheironAmountEuros(offer.phase)} />
             </details>
             <details><summary>Qui est Cinémergence ?</summary><p>Une école de formation aux métiers du cinéma et de la scène, certifiée Qualiopi, fondée par le réalisateur Choukri Rouha et parrainée par Bibi Naceri. Chaque formation s&apos;ouvre avec une grande figure de la discipline et se termine par un livrable concret.</p></details>
           </div>

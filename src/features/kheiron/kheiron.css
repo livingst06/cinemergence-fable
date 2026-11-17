@@ -351,9 +351,47 @@
 .kheiron .center{text-align:center}
 .kheiron .quote-space{margin-top:32px}
 .kheiron .price-figure{display:block;max-width:100%;font-family:var(--font-k-bebas),sans-serif;font-size:clamp(22.5px,5.55vw,57px);line-height:.95;letter-spacing:.4px;text-wrap:balance}
-.kheiron .bnpl{margin:16px auto 0;max-width:36rem;font-size:16px;line-height:1.45;font-weight:600;color:var(--text)}
-.kheiron .bnpl-line{display:block}
-.kheiron .bnpl-line + .bnpl-line{margin-top:4px}
+.kheiron .bnpl{display:flex;gap:14px;align-items:flex-start;text-align:left;margin:16px auto 0;background:rgba(47,91,255,.08);border:1px solid rgba(47,91,255,.3);border-radius:14px;padding:16px 18px;color:var(--text);font-size:14px}
+.kheiron .faq .bnpl{margin:4px 0 18px}
+.kheiron .bnpl-copy{min-width:0}
+.kheiron .bnpl p{margin:0;padding:0;color:var(--text);font-size:14px;line-height:1.45;font-weight:500}
+.kheiron .bnpl .bnpl-legal{margin-top:4px;color:var(--muted);font-size:13px;font-weight:400;line-height:1.4}
+.kheiron .bnpl-more{display:inline;margin:0;padding:0;border:0;background:none;color:var(--ok);font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.kheiron .bnpl-more:hover{color:var(--text)}
+.klarna-badge{display:inline-flex;align-items:center;flex:none;margin-top:1px;background:#FFA8CD;color:#0A0B0D;font-weight:800;font-size:14px;line-height:1;letter-spacing:-.3px;padding:6px 8px 7px;border-radius:8px}
+.klarna-modal{--bg:#080A0F;--card:#171B23;--line:#262C38;--text:#fff;--muted:#A9B1BE;--accent:#2F5BFF;--ok:#5B7DFF;width:min(440px,calc(100vw - 32px));max-height:min(92dvh,760px);margin:auto;padding:8px 8px 16px;border:1px solid var(--line);border-radius:24px;background:var(--card);color:var(--text);color-scheme:dark;box-shadow:0 24px 80px rgba(8,10,15,.55);font:400 15px/1.45 var(--font-k-sans),system-ui,sans-serif}
+.klarna-modal[open]{display:flex;flex-direction:column;overflow:hidden}
+.klarna-modal::backdrop{background:rgba(8,10,15,.78)}
+.klarna-modal-scroll{overflow:auto;flex:1 1 auto;min-height:0;padding:4px 16px 8px}
+.klarna-x{position:sticky;top:0;z-index:1;display:grid;place-items:center;width:36px;height:36px;margin:0 0 0 auto;border:1px solid var(--line);border-radius:50%;background:var(--card);color:var(--text);font-size:22px;line-height:1;cursor:pointer}
+.klarna-x:hover{border-color:var(--text)}
+.klarna-modal-brand{display:flex;justify-content:center;margin:4px 0 16px}
+.klarna-modal .klarna-badge{margin-top:0;background:#FFA8CD;color:#0A0B0D;font-size:18px;font-weight:800;letter-spacing:-.4px;padding:8px 12px 9px;border-radius:8px}
+.klarna-modal h2{margin:0;font-family:var(--font-k-sans),system-ui,sans-serif;font-size:17px;font-weight:400;letter-spacing:0;line-height:1.35;text-align:center;color:var(--text)}
+.klarna-modal h2::after{content:"";display:block;width:56px;height:4px;background:var(--accent);margin:14px auto 0;border-radius:2px}
+.klarna-modal h3{margin:22px 0 12px;font-family:var(--font-k-display),sans-serif;font-size:20px;font-weight:800;letter-spacing:-.4px;text-align:left;color:var(--text)}
+.klarna-sub,.klarna-plans-label{margin:12px 0 0;text-align:center;color:var(--muted)}
+.klarna-plans-label{margin-top:22px;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#DDE2E8}
+.klarna-plans{list-style:none;display:grid;gap:10px;margin:12px 0 0;padding:0}
+.klarna-plan{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:14px 16px;text-align:left}
+.klarna-plan span{display:block;color:var(--muted);font-size:13px}
+.klarna-plan strong{display:block;margin-top:2px;color:var(--text);font-size:16px;font-weight:800}
+.klarna-plan em{display:block;margin-top:2px;color:var(--ok);font-style:normal;font-size:13px;font-weight:700}
+.klarna-plan .klarna-total{display:block;flex:none;align-self:center;color:var(--muted);font-size:14px;white-space:nowrap}
+.klarna-warn{margin:18px 0 0;text-align:center;color:var(--muted);font-size:14px}
+.klarna-steps{list-style:none;margin:0;padding:0}
+.klarna-steps li{position:relative;padding:0 0 16px 28px}
+.klarna-steps li::before{content:"";position:absolute;left:4px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.klarna-steps li:not(:last-child)::after{content:"";position:absolute;left:8px;top:18px;bottom:2px;width:2px;background:rgba(47,91,255,.45)}
+.klarna-steps b{display:block;color:var(--text);font-size:15px}
+.klarna-steps span{display:block;margin-top:2px;color:var(--muted);font-size:14px}
+.klarna-example{margin-top:8px;padding:14px 16px;border-radius:14px;background:rgba(47,91,255,.08);border:1px solid rgba(47,91,255,.3);text-align:left}
+.klarna-example b{display:block;margin-bottom:6px;color:var(--text)}
+.klarna-example p{margin:0;color:var(--muted);font-size:14px}
+.klarna-fine{margin:14px 0 0;color:var(--muted);font-size:13px;text-align:left}
+.klarna-fine a{color:var(--ok);font-weight:700;text-underline-offset:2px}
+.klarna-done{display:block;width:calc(100% - 16px);margin:8px auto 0;padding:16px 20px;border:0;border-radius:999px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;box-shadow:0 10px 30px -8px rgba(47,91,255,.6)}
+.klarna-done:hover{background:var(--ok)}
 .kheiron .early{margin:18px auto 0;max-width:520px;background:rgba(255,225,77,.1);border:1px solid rgba(255,225,77,.55);border-radius:16px;padding:14px 18px 16px}
 .kheiron .early-note{color:var(--muted);font-size:16px;line-height:1.45}
 .kheiron .early-note b{color:var(--text)}

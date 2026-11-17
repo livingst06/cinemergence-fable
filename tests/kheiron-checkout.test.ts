@@ -7,12 +7,17 @@ import {
   KHEIRON_ITEM_ID,
   KHEIRON_STANDARD_ONCE,
   KHEIRON_STANDARD_PAYMENT_LINK,
-  KLARNA_PAY_IN_3_COPY,
+  KLARNA_PAY_IN_3_EXAMPLE,
   KLARNA_PAY_IN_3_WARNING,
+  formatKlarnaEuros,
   kheironAmountEuros,
+  klarnaInstallmentEuros,
+  klarnaPlanExamples,
+  klarnaRepresentativeExample,
   kheironOfferFromCount,
   kheironOfferFromStripeCount,
   kheironPrice,
+  showsSixthSeatTariffNote,
 } from "@/lib/kheiron-offer";
 
 const earlyPaid = {
@@ -152,12 +157,18 @@ describe("kheironOfferFromStripeCount", () => {
       phase: "early",
       paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
     });
+    expect(kheironOfferFromStripeCount(3)).toMatchObject({
+      paidCount: 4,
+      phase: "early",
+    });
+    expect(showsSixthSeatTariffNote(kheironOfferFromStripeCount(3).paidCount)).toBe(true);
     expect(kheironOfferFromStripeCount(4)).toMatchObject({
       paidCount: 5,
       seatsLeft: 15,
       phase: "standard",
       paymentLink: KHEIRON_STANDARD_PAYMENT_LINK,
     });
+    expect(showsSixthSeatTariffNote(kheironOfferFromStripeCount(4).paidCount)).toBe(false);
     expect(kheironOfferFromStripeCount(5)).toMatchObject({
       paidCount: 6,
       phase: "standard",
@@ -179,11 +190,41 @@ describe("kheironPrice", () => {
     expect(kheironPrice("full")).toEqual(kheironPrice("standard"));
   });
 
-  it("garde la formule au tutoiement et l'avertissement Klarna", () => {
-    expect(KLARNA_PAY_IN_3_COPY).toBe("Choisis Klarna. Paie en 3 fois.");
+  it("détaille 3 paiements de 330 € et garde l'avertissement Klarna", () => {
+    expect(klarnaInstallmentEuros(990)).toBe(330);
+    expect(formatKlarnaEuros(330)).toMatch(/^330,00\s€$/);
+    expect(klarnaPlanExamples(990)).toEqual([
+      {
+        title: "Payer en 3 fois",
+        detail: `${formatKlarnaEuros(330)} tous les 30 jours`,
+        fees: `${formatKlarnaEuros(0)} frais`,
+        total: formatKlarnaEuros(990),
+      },
+      {
+        title: "Payer la totalité",
+        detail: `${formatKlarnaEuros(990)} aujourd\u2019hui`,
+        fees: null,
+        total: formatKlarnaEuros(990),
+      },
+    ]);
+    expect(klarnaPlanExamples(990).some((plan) => plan.detail.includes("dans 30 jours"))).toBe(
+      false,
+    );
     expect(KLARNA_PAY_IN_3_WARNING).toBe(
       "Attention ! Un crédit coûte de l\u2019argent et doit être remboursé.",
     );
+    expect(KLARNA_PAY_IN_3_EXAMPLE).toBe(
+      "Exemple : montant total du crédit 200 €, taux débiteur fixe et TAEG 0 %, sans frais.",
+    );
+    const example = klarnaRepresentativeExample(990);
+    expect(example).toContain(`prix : ${formatKlarnaEuros(990)}`);
+    expect(example).toContain(`Acompte : ${formatKlarnaEuros(330)}`);
+    expect(example).toContain(`2 versements de ${formatKlarnaEuros(330)}`);
+    expect(example).toContain(`Montant net du crédit : ${formatKlarnaEuros(660)}`);
+    expect(example).toContain(`Frais : ${formatKlarnaEuros(0)}`);
+    expect(example).toContain(`Montant total dû : ${formatKlarnaEuros(990)}`);
+    expect(example).not.toContain("300,00");
+    expect(example).not.toContain("100,00");
   });
 
   it("facture 990 €, y compris avant la 6e place", () => {

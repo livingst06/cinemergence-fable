@@ -28,10 +28,14 @@ export const metadata: Metadata = {
 
 export default async function KheironPage() {
   const offer = await getKheironOffer();
-  // Le compteur (Stripe + places hors process) fixe le complet. Le tarif affiché est 990 € TTC.
+  // Le compteur (Stripe + places hors process) fixe le complet et le bandeau de la 6e place.
   return (
     <KheironLanding
-      offer={{ phase: offer.phase, paymentLink: offer.paymentLink }}
+      offer={{
+        phase: offer.phase,
+        paymentLink: offer.paymentLink,
+        paidCount: offer.paidCount,
+      }}
     />
   );
 }

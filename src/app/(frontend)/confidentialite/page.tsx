@@ -17,7 +17,7 @@ export default function ConfidentialitePage() {
       <Section>
         <div className="container-page max-w-3xl">
           <LegalPageContent title="Politique de confidentialité (RGPD)" content={defaultLegal.confidentialite} />
-          <section className="mt-8 space-y-3 text-justify text-sm leading-relaxed text-muted-text">
+          <section className="mt-8 space-y-3 text-left text-sm leading-relaxed text-muted-text">
             <h2 className="font-heading text-2xl text-cream">Mesure d&apos;audience et publicité</h2>
             <p>
               Avec ton accord, nous utilisons Google Analytics pour mesurer la fréquentation du site,

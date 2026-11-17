@@ -52,7 +52,7 @@ export function SectionHeader({
         <div
           className={cn(
             "body-copy mt-4 text-pretty",
-            align === "left" && "text-left md:text-justify",
+            align === "left" && "text-left",
           )}
         >
           {typeof description === "string" ? <p>{description}</p> : description}

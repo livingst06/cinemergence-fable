@@ -18,7 +18,7 @@ export function PageHero({
       <div className="container-page">
         <Heading className="display-title da-rule max-w-5xl">{title}</Heading>
         {description && (
-          <div className="mt-4 max-w-4xl text-left text-base leading-relaxed text-muted-text md:mt-5 md:text-justify">
+          <div className="mt-4 max-w-4xl text-left text-base leading-relaxed text-muted-text md:mt-5">
             {typeof description === "string" ? (
               <p className="text-pretty">{description}</p>
             ) : (

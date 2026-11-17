@@ -87,7 +87,7 @@ export function Temoignages({ temoignages }: TemoignagesProps) {
               className="card-stage flex h-full flex-col p-4 md:p-5"
             >
               <p className="eyebrow">{profilLabels[t.profil]}</p>
-              <p className="mt-3 flex-1 font-serif text-lg leading-relaxed text-cream md:text-xl">
+              <p className="mt-3 flex-1 font-sans text-base font-normal leading-relaxed text-cream">
                 &ldquo;{t.quote.trim()}&rdquo;
               </p>
               <div className="mt-3 border-t border-white/[0.06] pt-3">

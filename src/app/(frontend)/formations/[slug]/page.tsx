@@ -316,7 +316,7 @@ export default async function FormationDetailPage({ params }: Props) {
                 className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
               >
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]" />
-                <p className="min-w-0 flex-1 text-left md:text-justify leading-relaxed">{obj}</p>
+                <p className="min-w-0 flex-1 text-left leading-relaxed">{obj}</p>
               </li>
             ))}
           </ul>
@@ -373,7 +373,7 @@ export default async function FormationDetailPage({ params }: Props) {
                             )}
                           </div>
                           {seq.detail && (
-                            <p className="mt-1 text-left text-sm leading-relaxed text-muted-text md:text-justify">
+                            <p className="mt-1 text-left text-sm leading-relaxed text-muted-text">
                               {seq.detail}
                             </p>
                           )}
@@ -412,7 +412,7 @@ export default async function FormationDetailPage({ params }: Props) {
                   className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
                 >
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-projector shadow-[0_0_6px_var(--projector-glow)]" />
-                  <p className="min-w-0 flex-1 text-left md:text-justify leading-relaxed">{item}</p>
+                  <p className="min-w-0 flex-1 text-left leading-relaxed">{item}</p>
                 </li>
               ))}
           </ul>
@@ -427,7 +427,7 @@ export default async function FormationDetailPage({ params }: Props) {
                 className="card-stage flex items-start gap-3 p-4 text-sm text-cream/90"
               >
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-or shadow-[0_0_6px_var(--or-glow)]" />
-                <p className="min-w-0 flex-1 text-left md:text-justify leading-relaxed">{item}</p>
+                <p className="min-w-0 flex-1 text-left leading-relaxed">{item}</p>
               </li>
             ))}
           </ul>
@@ -479,7 +479,7 @@ export default async function FormationDetailPage({ params }: Props) {
         {linkedIntervenants.length > 0 && (
           <div>
             <SectionHeader title="Encadré par" align="left" className="mb-8 md:mb-10" />
-            <div className="flex flex-wrap items-stretch justify-center gap-4 sm:gap-5 lg:gap-6">
+            <div className="flex flex-wrap items-stretch justify-start gap-4 sm:gap-5 lg:gap-6">
               {linkedIntervenants.map((i) => (
                 <IntervenantCard key={i.slug} compact intervenant={i} />
               ))}

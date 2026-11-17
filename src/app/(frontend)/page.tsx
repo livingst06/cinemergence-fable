@@ -9,7 +9,7 @@ import { HeroVideoBackground } from "@/components/sections/HeroVideoBackground";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { CtaFinal } from "@/features/home/CtaFinal";
 import { DaFilmstrip } from "@/features/home/DaFilmstrip";
-import { HeroKheironCard } from "@/features/home/HeroKheironCard";
+import { HeroFeaturedCard } from "@/features/home/HeroFeaturedCard";
 import { HeroProofCard } from "@/features/home/HeroProofCard";
 import { Temoignages } from "@/features/home/Temoignages";
 import { TemoignagesVideo } from "@/features/temoignages-video/TemoignagesVideo";
@@ -76,6 +76,7 @@ export default async function HomePage() {
   const orderedFormations = [...formations].sort(
     (a, b) => Number(b.prioritaire) - Number(a.prioritaire),
   );
+  const featuredFormations = orderedFormations.filter((formation) => formation.prioritaire);
 
   const portraitIntervenants = intervenants.filter(
     (i) =>
@@ -132,13 +133,17 @@ export default async function HomePage() {
           </div>
           <div className="mt-auto w-full">
             <div className="container-page pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] pt-10 md:pb-10">
-              <div className="grid max-w-5xl animate-fade-up-delay-3 items-stretch gap-3 lg:grid-cols-[minmax(0,1.35fr)_minmax(16.5rem,0.8fr)]">
-                <div className="order-2 lg:order-1">
-                  <HeroProofCard nda={site.nda} />
-                </div>
-                <div className="order-1 lg:order-2">
-                  <HeroKheironCard />
-                </div>
+              <div
+                className={
+                  featuredFormations.length > 0
+                    ? "flex w-full animate-fade-up-delay-3 flex-wrap items-start justify-start gap-x-3 gap-y-5"
+                    : "flex max-w-5xl animate-fade-up-delay-3 flex-wrap items-start gap-3"
+                }
+              >
+                <HeroProofCard nda={site.nda} />
+                {featuredFormations.map((formation) => (
+                  <HeroFeaturedCard key={formation.slug} formation={formation} />
+                ))}
               </div>
             </div>
           </div>
@@ -183,7 +188,7 @@ export default async function HomePage() {
             align="left"
             description="Des professionnels en activité qui transmettent leur exigence sur le plateau."
           />
-          <div className="flex flex-wrap items-stretch justify-center gap-4 sm:gap-5 lg:gap-6">
+          <div className="flex flex-wrap items-stretch justify-start gap-4 sm:gap-5 lg:gap-6">
             {portraitIntervenants.map((i) => (
               <IntervenantCard key={i.slug} compact intervenant={i} />
             ))}
@@ -199,7 +204,7 @@ export default async function HomePage() {
               align="left"
               description="Ils accompagnent les élèves sur toute la formation."
             />
-            <div className="flex flex-wrap items-stretch justify-center gap-4 sm:gap-5 lg:gap-6">
+            <div className="flex flex-wrap items-stretch justify-start gap-4 sm:gap-5 lg:gap-6">
               {formateurs.map((i) => (
                 <IntervenantCard key={i.slug} compact intervenant={i} />
               ))}

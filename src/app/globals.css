@@ -264,18 +264,6 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     word-break: normal;
   }
 
-  @media (min-width: 768px) {
-    p,
-    li,
-    blockquote,
-    dd,
-    figcaption {
-      text-align: justify;
-      text-justify: inter-word;
-      overflow-wrap: normal;
-    }
-  }
-
   /* Les blocs explicitement centrés gardent leur alignement */
   .text-center,
   .text-center :where(p, li, blockquote, dd, figcaption) {
@@ -581,8 +569,7 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
 
   .card-stage {
     @apply relative overflow-hidden rounded-none border border-white/[0.08] bg-noir-secondary;
-    text-align: justify;
-    text-justify: inter-word;
+    text-align: start;
     hyphens: none;
     -webkit-hyphens: none;
     overflow-wrap: normal;
@@ -790,8 +777,7 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
 
   .truth-card {
     @apply relative overflow-hidden rounded-none border border-white/[0.08] bg-noir-secondary p-6 md:p-7;
-    text-align: justify;
-    text-justify: inter-word;
+    text-align: start;
     hyphens: none;
     -webkit-hyphens: none;
     overflow-wrap: normal;
@@ -848,14 +834,22 @@ html:has(#site-notice-dismiss:checked) .site-notice-banner {
     transform-origin: center;
     background: #ccff00;
     color: #111111;
-    padding: 0.2rem 0.65rem;
+    padding: 0.18rem 0.5rem;
     font-family: var(--font-sans);
     font-size: 0.875rem;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.2;
-    letter-spacing: 0.04em;
+    letter-spacing: -0.011em;
+    white-space: nowrap;
     box-shadow: 0 0 16px rgba(204, 255, 0, 0.55);
     animation: hero-new-pulse 3.2s ease-in-out infinite;
+  }
+
+  @media (max-width: 639px) {
+    .hero-new-badge {
+      top: 0.4rem;
+      right: 0.35rem;
+    }
   }
 
   .animate-fade-up {

@@ -116,9 +116,10 @@ export function IntervenantsAdmin({ intervenants }: IntervenantsAdminProps) {
                 <p className="mt-1">pour un retour pro&nbsp;direct.</p>
               </>
             }
+            align="left"
             className="mb-8 md:mb-10"
           />
-          <div className="flex flex-wrap items-stretch justify-center gap-4 sm:gap-5 lg:gap-6">
+          <div className="flex flex-wrap items-stretch justify-start gap-4 sm:gap-5 lg:gap-6">
             {professionnels.map(renderCard)}
             {isAdminMode ? (
               <AdminAddIntervenantCard
@@ -139,15 +140,16 @@ export function IntervenantsAdmin({ intervenants }: IntervenantsAdminProps) {
                   pédagogiques
                 </>
               }
-              description={
-                <>
-                  <p>L&apos;équipe qui encadre la progression au quotidien,</p>
-                  <p className="mt-1">avec des retours concrets et&nbsp;suivis.</p>
-                </>
-              }
-              className="mb-8 md:mb-10"
+            description={
+              <>
+                <p>L&apos;équipe qui encadre la progression au quotidien,</p>
+                <p className="mt-1">avec des retours concrets et&nbsp;suivis.</p>
+              </>
+            }
+            align="left"
+            className="mb-8 md:mb-10"
             />
-            <div className="flex flex-wrap items-stretch justify-center gap-4 sm:gap-5 lg:gap-6">
+            <div className="flex flex-wrap items-stretch justify-start gap-4 sm:gap-5 lg:gap-6">
               {formateurs.map(renderCard)}
               {isAdminMode ? (
                 <AdminAddIntervenantCard

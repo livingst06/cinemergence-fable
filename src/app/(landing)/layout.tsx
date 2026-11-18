@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Inter, Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
 
 import { TagManager } from "@/components/TagManager";
@@ -10,9 +9,29 @@ import { getPublicSiteUrl } from "@/lib/site-url";
 
 import "@/features/kheiron/kheiron.css";
 
-const sans = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const sans = localFont({
+  src: [
+    {
+      path: "../../fonts/inter/inter-latin-400-normal.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../fonts/inter/inter-latin-500-normal.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../fonts/inter/inter-latin-600-normal.woff2",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../../fonts/inter/inter-latin-700-normal.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-k-sans",
   display: "swap",
 });
@@ -34,15 +53,15 @@ const display = localFont({
   display: "swap",
 });
 
-const bebas = Bebas_Neue({
-  subsets: ["latin"],
+const bebas = localFont({
+  src: "../../fonts/bebas-neue/bebas-neue-latin-400-normal.woff2",
   weight: "400",
   variable: "--font-k-bebas",
   display: "swap",
 });
 
-const serif = Playfair_Display({
-  subsets: ["latin"],
+const serif = localFont({
+  src: "../../fonts/playfair-display/playfair-display-latin-600-italic.woff2",
   weight: "600",
   style: "italic",
   variable: "--font-k-serif",

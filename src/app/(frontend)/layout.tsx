@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -23,11 +23,11 @@ import { cn } from "@/lib/utils";
 
 import "../globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: "../../fonts/inter/inter-latin-opsz-normal.woff2",
+  weight: "100 900",
   display: "swap",
   variable: "--font-inter",
-  axes: ["opsz"],
 });
 
 export const viewport: Viewport = {

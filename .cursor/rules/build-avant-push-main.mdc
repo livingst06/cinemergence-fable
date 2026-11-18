@@ -1,0 +1,20 @@
+---
+description: Avant chaque push sur main, vérifier que pnpm build avec Turbopack passe
+alwaysApply: true
+---
+
+# Build Turbopack avant un push sur main
+
+Cette règle vaut pour un agent Cursor sur le PC et dans le Cloud. Elle ne donne pas le droit de pousser sur `main` : on ne l'applique que lorsqu'un push vers `main` est demandé explicitement.
+
+## Quand
+
+Juste avant `git push` dont la branche de destination est `main` (`git push origin main`, `git push origin HEAD` alors que la branche courante est `main`, ou `git push origin <branche>:main`).
+
+Un push vers une autre branche n'est pas concerné.
+
+## Vérification
+
+Lancer `pnpm build` (script `next build`). Le log doit afficher `Turbopack` et la commande doit se terminer avec le code 0.
+
+Si le log ne mentionne pas Turbopack, ou si le build échoue, ne pas pousser. Corriger, relancer `pnpm build`, et ne pousser qu'une fois le build vert.

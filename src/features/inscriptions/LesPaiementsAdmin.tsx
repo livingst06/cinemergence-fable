@@ -1,8 +1,11 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 import {
   Accordion,
@@ -10,10 +13,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { AdminDeleteButton } from "@/features/admin/AdminMutationButtons";
 import { AdminOutilsNav } from "@/features/admin/AdminOutilsNav";
+import { AdminDeleteConfirmDialog } from "@/features/formations/AdminDeleteConfirmDialog";
+import { deleteHorsProcessPaiementAction } from "@/features/inscriptions/hors-process-actions";
+import {
+  HorsProcessPaiementDialog,
+  type HorsProcessSessionChoice,
+} from "@/features/inscriptions/HorsProcessPaiementDialog";
 import { PaiementStatusBadge } from "@/features/inscriptions/PaiementStatusBadge";
 import {
-  FORMATION_ROW_CLASS,
   FORMATION_TILE_CLASS,
   formationColorName,
   formationTileStyle,
@@ -27,6 +36,7 @@ import {
   type PaiementSortKey,
 } from "@/lib/paiement-sort";
 import {
+  PAIEMENT_CANAL_LABELS,
   PAIEMENT_STATUS_LABELS,
   type AdminPaiementRow,
   type PaiementStatus,
@@ -44,9 +54,9 @@ const FILTERS: Array<{ id: "tous" | PaiementStatus; label: string }> = [
 type ViewMode = "eleve" | "session" | "liste";
 
 const VIEW_MODES: Array<{ id: ViewMode; label: string }> = [
+  { id: "liste", label: "Tous les paiements" },
   { id: "eleve", label: "Par élève" },
   { id: "session", label: "Par session" },
-  { id: "liste", label: "Liste brute" },
 ];
 
 type PaiementGroup = {
@@ -60,6 +70,7 @@ type PaiementGroup = {
 
 type LesPaiementsAdminProps = {
   paiements: AdminPaiementRow[];
+  sessions: HorsProcessSessionChoice[];
 };
 
 function formatPaidAt(iso: string): string {
@@ -76,10 +87,6 @@ function eleveLabel(row: AdminPaiementRow): string {
   return full || row.eleveEmail || "Élève";
 }
 
-function formationColorKey(row: AdminPaiementRow): string {
-  return formationColorName(row.formationTitre, row.formationSlug);
-}
-
 function paidTotalOf(rows: AdminPaiementRow[]): number {
   return rows
     .filter((row) => row.status === "paye")
@@ -90,7 +97,7 @@ function groupByEleve(rows: AdminPaiementRow[]): PaiementGroup[] {
   const map = new Map<string, PaiementGroup>();
   for (const row of rows) {
     const email = row.eleveEmail.trim().toLowerCase();
-    const key = email && email !== "—" ? `email:${email}` : `name:${eleveLabel(row)}`;
+    const key = email.includes("@") ? `email:${email}` : `row:${row.id}`;
     const existing = map.get(key);
     if (existing) {
       existing.rows.push(row);
@@ -135,6 +142,8 @@ function groupBySession(rows: AdminPaiementRow[]): PaiementGroup[] {
     return a.title.localeCompare(b.title, "fr", { sensitivity: "base" });
   });
 }
+
+const ELEVE_ROW_BLUES = ["#17306a", "#24448f"] as const;
 
 const LIST_COLUMNS: Array<{ key: PaiementSortKey; label: string }> = [
   { key: "eleve", label: "Élève" },
@@ -194,21 +203,33 @@ function PaiementSortHeader({
 function PaiementCard({
   row,
   className,
+  style,
+  onDelete,
 }: {
   row: AdminPaiementRow;
   className?: string;
+  style?: CSSProperties;
+  onDelete?: (row: AdminPaiementRow) => void;
 }) {
   return (
-    <article
-      className={cn("p-4", className, FORMATION_TILE_CLASS)}
-      style={formationTileStyle(formationColorKey(row))}
-    >
+    <article className={cn("p-4", className)} style={style}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-semibold text-cream">{eleveLabel(row)}</p>
           <p className="mt-0.5 truncate text-sm text-muted-text">{row.eleveEmail}</p>
         </div>
-        <PaiementStatusBadge status={row.status} />
+        <div className="flex items-start gap-2">
+          <div className="flex flex-col items-end gap-1">
+            <PaiementStatusBadge status={row.status} />
+            <p className="text-xs text-muted-text">{PAIEMENT_CANAL_LABELS[row.canal]}</p>
+          </div>
+          {onDelete && row.canal === "hors_process" ? (
+            <AdminDeleteButton
+              label={`Supprimer le paiement de ${eleveLabel(row)}`}
+              onClick={() => onDelete(row)}
+            />
+          ) : null}
+        </div>
       </div>
       <p className="mt-3 text-sm text-cream">
         {row.formationSlug ? (
@@ -237,20 +258,27 @@ function PaiementFlatList({
   nested = false,
   sort = null,
   onSort,
+  onDelete,
 }: {
   rows: AdminPaiementRow[];
   nested?: boolean;
   sort?: PaiementSort;
   onSort?: (key: PaiementSortKey) => void;
+  onDelete?: (row: AdminPaiementRow) => void;
 }) {
   const sortable = Boolean(onSort);
 
   return (
     <>
       <ul className={cn("space-y-3 md:hidden", nested && "px-4 pt-3 pb-4")}>
-        {rows.map((row) => (
+        {rows.map((row, index) => (
           <li key={row.id}>
-            <PaiementCard row={row} className="card-stage" />
+            <PaiementCard
+              row={row}
+              className="card-stage"
+              style={{ backgroundColor: ELEVE_ROW_BLUES[index % 2] }}
+              onDelete={onDelete}
+            />
           </li>
         ))}
       </ul>
@@ -282,14 +310,11 @@ function PaiementFlatList({
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {rows.map((row, index) => (
               <tr
                 key={row.id}
-                className={cn(
-                  "border-b border-border/70 last:border-0",
-                  FORMATION_ROW_CLASS,
-                )}
-                style={formationTileStyle(formationColorKey(row))}
+                className="border-b border-white/10 last:border-0"
+                style={{ backgroundColor: ELEVE_ROW_BLUES[index % 2] }}
               >
                 <td className="px-4 py-3 align-top">
                   <p className="font-medium text-cream">{eleveLabel(row)}</p>
@@ -317,7 +342,20 @@ function PaiementFlatList({
                   {formatPaidAt(row.paidAt)}
                 </td>
                 <td className="px-4 py-3 align-top">
-                  <PaiementStatusBadge status={row.status} />
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <PaiementStatusBadge status={row.status} />
+                      <p className="mt-1 text-xs text-muted-text">
+                        {PAIEMENT_CANAL_LABELS[row.canal]}
+                      </p>
+                    </div>
+                    {onDelete && row.canal === "hors_process" ? (
+                      <AdminDeleteButton
+                        label={`Supprimer le paiement de ${eleveLabel(row)}`}
+                        onClick={() => onDelete(row)}
+                      />
+                    ) : null}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -328,7 +366,13 @@ function PaiementFlatList({
   );
 }
 
-function PaiementGroupedList({ groups }: { groups: PaiementGroup[] }) {
+function PaiementGroupedList({
+  groups,
+  onDelete,
+}: {
+  groups: PaiementGroup[];
+  onDelete?: (row: AdminPaiementRow) => void;
+}) {
   return (
     <Accordion multiple className="w-full min-w-0 space-y-3">
       {groups.map((group) => {
@@ -363,7 +407,7 @@ function PaiementGroupedList({ groups }: { groups: PaiementGroup[] }) {
               </span>
             </AccordionTrigger>
             <AccordionContent className="border-t border-border/70 p-0 pb-0 [&_a]:no-underline [&_a]:hover:text-or-light [&_p:not(:last-child)]:mb-0">
-              <PaiementFlatList rows={group.rows} nested />
+              <PaiementFlatList rows={group.rows} nested onDelete={onDelete} />
             </AccordionContent>
           </AccordionItem>
         );
@@ -372,7 +416,11 @@ function PaiementGroupedList({ groups }: { groups: PaiementGroup[] }) {
   );
 }
 
-export function LesPaiementsAdmin({ paiements }: LesPaiementsAdminProps) {
+export function LesPaiementsAdmin({ paiements, sessions }: LesPaiementsAdminProps) {
+  const router = useRouter();
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [deleting, setDeleting] = useState<AdminPaiementRow | null>(null);
+  const [deletePending, startDelete] = useTransition();
   const [filter, setFilter] = useState<"tous" | PaiementStatus>("tous");
   const [view, setView] = useState<ViewMode>("liste");
   const [sort, setSort] = useState<PaiementSort>(null);
@@ -391,7 +439,27 @@ export function LesPaiementsAdmin({ paiements }: LesPaiementsAdminProps) {
   const sessionGroups = useMemo(() => groupBySession(visible), [visible]);
 
   const paid = paiements.filter((row) => row.status === "paye");
-  const paidTotal = paid.reduce((sum, row) => sum + (row.amountEuros ?? 0), 0);
+  const stripePaid = paid.filter((row) => row.canal === "stripe");
+  const horsPaid = paid.filter((row) => row.canal === "hors_process");
+  const sumEuros = (rows: AdminPaiementRow[]) =>
+    rows.reduce((sum, row) => sum + (row.amountEuros ?? 0), 0);
+  const paidTotal = sumEuros(paid);
+  const onDelete = (row: AdminPaiementRow) => setDeleting(row);
+
+  const confirmDelete = () => {
+    if (!deleting) return;
+    const id = Number(deleting.id.replace(/^hors:/, ""));
+    startDelete(async () => {
+      const result = await deleteHorsProcessPaiementAction(id);
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+      toast.success(result.message);
+      setDeleting(null);
+      router.refresh();
+    });
+  };
 
   return (
     <>
@@ -431,20 +499,40 @@ export function LesPaiementsAdmin({ paiements }: LesPaiementsAdminProps) {
 
       <section className="py-5 sm:py-6 md:py-8">
         <div className="container-page min-w-0 max-w-6xl space-y-5">
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-3">
             <div className="card-stage p-4 sm:p-5">
-              <p className="eyebrow">Payés</p>
+              <p className="eyebrow">Stripe</p>
               <p className="mt-2 font-heading text-2xl text-cream md:text-3xl">
-                {paid.length}
+                {stripePaid.length}
               </p>
-              <p className="mt-1 text-sm text-muted-text">encaissements confirmés</p>
+              <p className="mt-1 text-sm text-muted-text">
+                {formatEurosLabel(sumEuros(stripePaid))} encaissés
+              </p>
+            </div>
+            <div className="card-stage flex h-full flex-col p-4 sm:p-5">
+              <p className="eyebrow">Hors process</p>
+              <p className="mt-2 font-heading text-2xl text-cream md:text-3xl">
+                {horsPaid.length}
+              </p>
+              <div className="mt-1 flex items-center justify-between gap-3">
+                <p className="min-w-0 text-sm text-muted-text">
+                  {formatEurosLabel(sumEuros(horsPaid))} · virement ou espèces
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setEditorOpen(true)}
+                  className="inline-flex h-7 shrink-0 items-center rounded-full border border-emerald-500 bg-emerald-600 px-2.5 text-xs font-medium text-white shadow-sm transition-colors duration-200 hover:bg-emerald-500 dark:border-emerald-400 dark:bg-emerald-500 dark:text-emerald-950 dark:hover:bg-emerald-400"
+                >
+                  Ajouter un paiement hors process
+                </button>
+              </div>
             </div>
             <div className="card-stage p-4 sm:p-5">
               <p className="eyebrow">Total encaissé</p>
               <p className="mt-2 font-heading text-2xl text-cream md:text-3xl">
                 {formatEurosLabel(paidTotal)}
               </p>
-              <p className="mt-1 text-sm text-muted-text">somme des paiements payés</p>
+              <p className="mt-1 text-sm text-muted-text">Stripe et hors process</p>
             </div>
           </div>
 
@@ -474,22 +562,37 @@ export function LesPaiementsAdmin({ paiements }: LesPaiementsAdminProps) {
             <div className="card-stage p-8 text-center">
               <p className="text-cream">Aucun paiement pour l’instant</p>
               <p className="mt-2 text-sm text-muted-text">
-                Les encaissements Stripe et les holds apparaîtront ici.
+                Les encaissements Stripe et les paiements hors process apparaîtront ici.
               </p>
             </div>
           ) : view === "eleve" ? (
-            <PaiementGroupedList groups={eleveGroups} />
+            <PaiementGroupedList groups={eleveGroups} onDelete={onDelete} />
           ) : view === "session" ? (
-            <PaiementGroupedList groups={sessionGroups} />
+            <PaiementGroupedList groups={sessionGroups} onDelete={onDelete} />
           ) : (
             <PaiementFlatList
               rows={sortedVisible}
               sort={sort}
               onSort={(key) => setSort((current) => nextPaiementSort(current, key))}
+              onDelete={onDelete}
             />
           )}
         </div>
       </section>
+      <HorsProcessPaiementDialog
+        open={editorOpen}
+        sessions={sessions}
+        onClose={() => setEditorOpen(false)}
+        onSaved={() => router.refresh()}
+      />
+      <AdminDeleteConfirmDialog
+        open={deleting != null}
+        title={deleting ? `${eleveLabel(deleting)} · ${formatEurosLabel(deleting.amountEuros ?? 0)}` : ""}
+        entityLabel="ligne hors process"
+        pending={deletePending}
+        onCancel={() => setDeleting(null)}
+        onConfirm={confirmDelete}
+      />
     </>
   );
 }

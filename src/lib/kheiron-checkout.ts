@@ -1,4 +1,5 @@
 import { getPool, lockPublicTable } from "@/lib/db";
+import { countKheironHorsProcess } from "@/lib/paiements-hors-process";
 import {
   isKheironPaymentAmount,
   KHEIRON_ITEM_ID,
@@ -84,7 +85,11 @@ export async function getKheironOffer(): Promise<KheironOffer> {
   const result = await getPool().query<{ paid: number }>(
     "SELECT COUNT(*)::int AS paid FROM kheiron_payments",
   );
-  return kheironOfferFromStripeCount(result.rows[0]?.paid ?? 0);
+  const offProcess = await countKheironHorsProcess().catch((error) => {
+    console.error("[kheiron] hors process", error instanceof Error ? error.message : error);
+    return 0;
+  });
+  return kheironOfferFromStripeCount(result.rows[0]?.paid ?? 0, offProcess);
 }
 
 async function retrieveKheironCheckoutSession(sessionId: string): Promise<StripeCheckoutSession | null> {

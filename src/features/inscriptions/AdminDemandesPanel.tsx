@@ -162,8 +162,12 @@ function SessionElevesSection({ trainees }: { trainees: AdminSessionTrainee[] })
         <p className="mt-1.5 text-sm text-muted-text">Aucun élève</p>
       ) : (
         <ul className="mt-2.5 flex flex-wrap gap-3">
-          {enrolled.map((trainee) => {
+          {enrolled.map((trainee, index) => {
             const label = trainee.userName.trim() || trainee.userEmail;
+            const nameBlue =
+              index % 2 === 0
+                ? "border-[#2F5BFF]/45 bg-[#2F5BFF]/18 text-[#9DB4FF]"
+                : "border-[#9EBEFF]/40 bg-[#6E92FF]/16 text-[#E4ECFF]";
             return (
               <li
                 key={String(trainee.id)}
@@ -174,7 +178,12 @@ function SessionElevesSection({ trainees }: { trainees: AdminSessionTrainee[] })
                   name={label}
                   className="size-12 shrink-0 border border-white/25"
                 />
-                <span className="inline-flex max-w-full items-center break-words rounded-full border border-or/30 bg-or/10 px-3 py-1 text-center text-sm font-medium leading-snug text-or-light">
+                <span
+                  className={cn(
+                    "inline-flex max-w-full items-center break-words rounded-full border px-3 py-1 text-center text-sm font-medium leading-snug",
+                    nameBlue,
+                  )}
+                >
                   {label}
                 </span>
                 <span className="text-sm tabular-nums text-muted-text">

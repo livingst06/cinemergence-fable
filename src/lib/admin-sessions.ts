@@ -6,6 +6,10 @@ import type {
 } from "@/features/inscriptions/AdminDemandesPanel";
 import { getIntervenants } from "@/lib/data";
 import { listPaiementsForSessions, type SessionPaiement } from "@/lib/paiements";
+import {
+  listHorsProcessForSessions,
+  type HorsProcessPaiement,
+} from "@/lib/paiements-hors-process";
 import { getPayloadClient } from "@/lib/payload";
 import { ensureSessionStaffUsersRels } from "@/lib/session-staff-schema";
 
@@ -106,8 +110,13 @@ export async function listAdminSessionGroups(): Promise<AdminSessionGroup[]> {
     });
 
     let paiementsBySession = new Map<string, SessionPaiement[]>();
+    let horsBySession = new Map<string, HorsProcessPaiement[]>();
     try {
-      paiementsBySession = await listPaiementsForSessions(sessions.docs.map((session) => session.id));
+      const sessionIds = sessions.docs.map((session) => session.id);
+      [paiementsBySession, horsBySession] = await Promise.all([
+        listPaiementsForSessions(sessionIds),
+        listHorsProcessForSessions(sessionIds),
+      ]);
     } catch (error) {
       console.error("[admin-sessions] paiements", error instanceof Error ? error.message : error);
     }
@@ -126,16 +135,24 @@ export async function listAdminSessionGroups(): Promise<AdminSessionGroup[]> {
             : null;
         if (!formation?.slug || formation.id == null) return null;
 
-        const trainees: AdminSessionGroup["trainees"] = (
-          paiementsBySession.get(String(session.id)) ?? []
-        ).map((paiement) => ({
-          id: `paiement:${paiement.checkoutSessionId}`,
-          userName: filledName(paiement.eleveName) ?? filledName(paiement.payerName) ?? "",
-          userEmail: paiement.payerEmail ?? "—",
-          avatarKey: paiement.eleveAvatarKey,
-          status: "payee",
-          amountEuros: paiement.amountEuros,
-        }));
+        const trainees: AdminSessionGroup["trainees"] = [
+          ...(paiementsBySession.get(String(session.id)) ?? []).map((paiement) => ({
+            id: `paiement:${paiement.checkoutSessionId}`,
+            userName: filledName(paiement.eleveName) ?? filledName(paiement.payerName) ?? "",
+            userEmail: paiement.payerEmail ?? "—",
+            avatarKey: paiement.eleveAvatarKey,
+            status: "payee" as const,
+            amountEuros: paiement.amountEuros,
+          })),
+          ...(horsBySession.get(String(session.id)) ?? []).map((paiement) => ({
+            id: `hors:${paiement.id}`,
+            userName: filledName(paiement.payerName) ?? "Inconnu",
+            userEmail: paiement.payerEmail?.trim() || "inconnu",
+            avatarKey: null,
+            status: "payee" as const,
+            amountEuros: paiement.amountEuros,
+          })),
+        ];
 
         return {
           sessionId: session.id,

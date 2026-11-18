@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { LesPaiementsAdmin } from "@/features/inscriptions/LesPaiementsAdmin";
 import { listAdminPaiements } from "@/lib/admin-paiements";
+import { listHorsProcessSessionChoices } from "@/lib/paiements-hors-process";
 import { getSessionProfile } from "@/lib/session-profile";
 
 export const metadata: Metadata = {
@@ -19,7 +20,13 @@ export default async function LesPaiementsPage() {
     redirect("/");
   }
 
-  const paiements = await listAdminPaiements();
+  const [paiements, sessions] = await Promise.all([
+    listAdminPaiements(),
+    listHorsProcessSessionChoices().catch((error) => {
+      console.error("[les-paiements] sessions", error instanceof Error ? error.message : error);
+      return [];
+    }),
+  ]);
 
-  return <LesPaiementsAdmin paiements={paiements} />;
+  return <LesPaiementsAdmin paiements={paiements} sessions={sessions} />;
 }

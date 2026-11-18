@@ -20,6 +20,7 @@ function row(
     amountEuros: null,
     paidAt: "2026-08-01T10:00:00.000Z",
     status: "annule",
+    canal: "stripe",
     ...partial,
   };
 }

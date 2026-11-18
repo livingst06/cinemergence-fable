@@ -5,6 +5,7 @@ import type { Payload } from "payload";
 import { z } from "zod";
 
 import { listPaiementsForSessions } from "@/lib/paiements";
+import { listHorsProcessForSessions } from "@/lib/paiements-hors-process";
 import { getPayloadClient } from "@/lib/payload";
 import { requireAdmin } from "@/lib/session-profile";
 import { ensureSessionStaffUsersRels } from "@/lib/session-staff-schema";
@@ -51,8 +52,14 @@ async function countEnrolledForSession(
   sessionId: number | string,
 ): Promise<number> {
   try {
-    const paiements = await listPaiementsForSessions([sessionId]);
-    return (paiements.get(String(sessionId)) ?? []).length;
+    const [paiements, horsProcess] = await Promise.all([
+      listPaiementsForSessions([sessionId]),
+      listHorsProcessForSessions([sessionId]),
+    ]);
+    return (
+      (paiements.get(String(sessionId)) ?? []).length +
+      (horsProcess.get(String(sessionId)) ?? []).length
+    );
   } catch (error) {
     console.error("[sessions] paiements", error instanceof Error ? error.message : error);
     return 0;

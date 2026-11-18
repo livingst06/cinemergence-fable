@@ -9,9 +9,8 @@ export const KHEIRON_STANDARD_PAYMENT_LINK = "https://buy.stripe.com/3cI28q3a38C
 
 export const KHEIRON_EARLY_LIMIT = 5;
 /**
- * Places payées au CO, hors Stripe, sur son compte bancaire.
- * Elles comptent dans le seuil des 5 premières places et dans la jauge.
- * Une place est déjà connue.
+ * Valeur historique du compteur hors Stripe, quand l'appelant ne lit pas la table.
+ * La landing passe le nombre de lignes de `paiements_hors_process`.
  */
 export const KHEIRON_OFF_PROCESS_SEATS = 1;
 export const KHEIRON_SESSION_CAPACITY = 20;
@@ -180,7 +179,11 @@ export function showsSixthSeatTariffNote(paidCount: number): boolean {
 }
 
 /** Compte Stripe plus les places déjà payées hors process. */
-export function kheironOfferFromStripeCount(stripePaid: number): KheironOffer {
+export function kheironOfferFromStripeCount(
+  stripePaid: number,
+  offProcessSeats: number = KHEIRON_OFF_PROCESS_SEATS,
+): KheironOffer {
   const safeStripe = Number.isFinite(stripePaid) ? Math.max(0, Math.floor(stripePaid)) : 0;
-  return kheironOfferFromCount(safeStripe + KHEIRON_OFF_PROCESS_SEATS);
+  const safeOff = Number.isFinite(offProcessSeats) ? Math.max(0, Math.floor(offProcessSeats)) : 0;
+  return kheironOfferFromCount(safeStripe + safeOff);
 }

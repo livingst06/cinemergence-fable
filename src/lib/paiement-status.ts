@@ -12,6 +12,13 @@ export type PaiementStripeHint = {
   paymentIntentStatus?: string | null;
 };
 
+export type PaiementCanal = "stripe" | "hors_process";
+
+export const PAIEMENT_CANAL_LABELS: Record<PaiementCanal, string> = {
+  stripe: "Stripe",
+  hors_process: "Hors process",
+};
+
 export type AdminPaiementRow = {
   id: string;
   inscriptionId: string | null;
@@ -24,6 +31,7 @@ export type AdminPaiementRow = {
   amountEuros: number | null;
   paidAt: string;
   status: PaiementStatus;
+  canal: PaiementCanal;
 };
 
 export const PAIEMENT_STATUS_LABELS: Record<PaiementStatus, string> = {

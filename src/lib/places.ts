@@ -12,6 +12,7 @@ import {
   paiementMatchesUser,
   type SessionPaiement,
 } from "@/lib/paiements";
+import { listHorsProcessForSessions } from "@/lib/paiements-hors-process";
 import { getPayloadClient } from "@/lib/payload";
 
 export function formationPlacesOffertes(doc: {
@@ -54,9 +55,14 @@ export async function countPlacesPrisesForSession(
     overrideAccess: true,
   });
   let paid: SessionPaiement[] = [];
+  let horsProcessCount = 0;
   try {
-    const paiements = await listPaiementsForSessions([sessionId]);
+    const [paiements, horsProcess] = await Promise.all([
+      listPaiementsForSessions([sessionId]),
+      listHorsProcessForSessions([sessionId]),
+    ]);
     paid = paiements.get(String(sessionId)) ?? [];
+    horsProcessCount = (horsProcess.get(String(sessionId)) ?? []).length;
   } catch (error) {
     console.error("[places] paiements", error instanceof Error ? error.message : error);
   }
@@ -75,7 +81,7 @@ export async function countPlacesPrisesForSession(
     );
     return !alreadyPaid;
   });
-  return paid.length + openHolds.length;
+  return paid.length + horsProcessCount + openHolds.length;
 }
 
 /** @deprecated Prefer countPlacesPrisesForSession */
@@ -263,8 +269,13 @@ export async function enforceCapacityKeepOldest(
 
   let paidCount = 0;
   try {
-    const paiements = await listPaiementsForSessions([sessionId]);
-    paidCount = (paiements.get(String(sessionId)) ?? []).length;
+    const [paiements, horsProcess] = await Promise.all([
+      listPaiementsForSessions([sessionId]),
+      listHorsProcessForSessions([sessionId]),
+    ]);
+    paidCount =
+      (paiements.get(String(sessionId)) ?? []).length +
+      (horsProcess.get(String(sessionId)) ?? []).length;
   } catch (error) {
     console.error("[places] paiements", error instanceof Error ? error.message : error);
   }

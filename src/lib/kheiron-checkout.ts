@@ -16,8 +16,8 @@ const SESSION_ID = /^cs_(live|test)_[A-Za-z0-9]{8,}$/;
 
 type StripeCheckoutSession = {
   mode?: string;
-  status?: string;
-  payment_status?: string;
+  status?: string | null;
+  payment_status?: string | null;
   currency?: string | null;
   amount_total?: number | null;
   payment_link?: string | { id?: string } | null;

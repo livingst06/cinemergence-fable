@@ -137,7 +137,7 @@ export function LesSessionsAdmin({
         <div
           className={cn(
             "container-page min-w-0",
-            view === "calendar" ? "max-w-6xl" : "max-w-4xl",
+            "max-w-6xl",
           )}
         >
           <div className="min-w-0 space-y-4 sm:space-y-5">

@@ -1,6 +1,5 @@
 "use client";
 
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import { ChevronDown, ChevronUp, Mail } from "lucide-react";
 
@@ -13,9 +12,14 @@ import {
 import { AdminDeleteButton, AdminEditButton } from "@/features/admin/AdminMutationButtons";
 import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
 import { UserAvatar } from "@/features/profile/UserAvatar";
-import { pastelForFormationName } from "@/lib/formation-pastel";
+import {
+  FORMATION_TILE_CLASS,
+  formationColorName,
+  formationTileStyle,
+} from "@/lib/formation-pastel";
 import { formationPath } from "@/lib/formation-types";
 import {
+  formatEurosLabel,
   formatFormationSessionLabel,
   isGeneratedSessionLabel,
   normalizeInscriptionStatus,
@@ -274,10 +278,28 @@ export function AdminDemandesPanel({
 
   const accordionValue =
     expandedSessionId != null ? [`session-${expandedSessionId}`] : [];
+  const rowGrid = cn(
+    "grid w-full items-center gap-x-6 px-4 py-3 text-left",
+    isAdminMode
+      ? "grid-cols-[minmax(11rem,1.6fr)_minmax(10rem,1.3fr)_6rem_7rem_8.5rem_7.5rem_11rem_2.75rem]"
+      : "grid-cols-[minmax(11rem,1.6fr)_minmax(10rem,1.3fr)_6rem_7rem_8.5rem_7.5rem_2.75rem]",
+  );
 
   return (
+    <div className="card-stage overflow-x-auto">
+    <div className="min-w-[68rem]">
+    <div className={cn(rowGrid, "border-b border-border text-sm font-semibold whitespace-nowrap text-muted-text")}>
+      <span>Formation</span>
+      <span>Session</span>
+      <span>Inscrits</span>
+      <span>Capacité</span>
+      <span>Remplissage</span>
+      <span>Encaissé</span>
+      {isAdminMode ? <span className="sr-only">Actions</span> : null}
+      <span className="sr-only">Ouvrir le détail</span>
+    </div>
     <Accordion
-      className="w-full space-y-3 overflow-visible pt-3 pr-3"
+      className="w-full"
       value={onExpandedSessionIdChange ? accordionValue : undefined}
       onValueChange={
         onExpandedSessionIdChange
@@ -310,8 +332,10 @@ export function AdminDemandesPanel({
           session.placesOffertes,
         );
         const fillPct = Math.round(fillRatio * 100);
+        const collectedEuros = session.trainees
+          .filter((trainee) => isEnrolled(trainee.status))
+          .reduce((sum, trainee) => sum + (trainee.amountEuros ?? 0), 0);
         const full = isSessionFull(enrolledCount, session.placesOffertes);
-        const pastel = pastelForFormationName(session.formationTitre);
         const canDelete = isAdminMode && enrolledCount === 0;
         const mailtoArgs = {
           formationTitre: session.formationTitre,
@@ -331,184 +355,135 @@ export function AdminDemandesPanel({
         });
         const value = `session-${session.sessionId}`;
 
+        const sessionTitle =
+          session.label && !isGeneratedSessionLabel(session.label)
+            ? session.label
+            : (sessionLabel ?? "Dates à confirmer");
+
         return (
           <AccordionItem
             key={value}
             value={value}
             id={value}
-            className="relative overflow-visible border-0 bg-transparent last:border-b-0"
+            className={cn(
+              "relative border-0 border-b border-black/10 last:border-b-0",
+              FORMATION_TILE_CLASS,
+            )}
+            style={formationTileStyle(
+              formationColorName(session.formationTitre, session.formationSlug),
+            )}
           >
-            {isAdminMode ? (
-              <div className="absolute -top-3 -right-3 z-30 flex items-center gap-2">
-                <AdminEditButton
-                  label={`Modifier ${session.formationTitre}`}
-                  onClick={() => onEdit?.(session)}
-                />
-                <AdminDeleteButton
-                  label={`Supprimer ${session.formationTitre}`}
-                  disabled={!canDelete}
-                  disabledReason="Impossible : au moins un élève est inscrit"
-                  onClick={() => onDelete?.(session)}
-                />
-              </div>
-            ) : null}
-
-            <div
-              className={cn(
-                "formation-ink relative overflow-hidden rounded-2xl border border-border",
-                "dark:!bg-[var(--session-empty-dark)]",
-              )}
-              style={
-                {
-                  backgroundColor: pastel.empty,
-                  color: pastel.text,
-                  ["--session-empty-dark"]: pastel.emptyDark,
-                  ["--session-fill"]: pastel.fill,
-                  ["--session-fill-dark"]: pastel.fillDark,
-                  ["--tile-text"]: pastel.text,
-                  ["--tile-text-dark"]: pastel.textDark,
-                  ["--tile-muted"]: pastel.mutedDark,
-                } as CSSProperties
-              }
-              aria-label={`${session.formationTitre}, ${enrolledCount} place${enrolledCount !== 1 ? "s" : ""} sur ${session.placesOffertes}, ${fillPct} % remplies`}
-            >
-              {fillRatio > 0 ? (
+            <div className="relative flex items-center">
+              <AccordionTrigger
+                aria-label={
+                  sessionLabel
+                    ? `Ouvrir ou fermer ${session.formationTitre} — ${sessionLabel}`
+                    : `Ouvrir ou fermer ${session.formationTitre}`
+                }
+                headerClassName="min-w-0 flex-1"
+                className={cn(
+                  rowGrid,
+                  "rounded-none border-0 py-3 hover:no-underline",
+                  "focus-visible:ring-offset-0",
+                  "**:data-[slot=accordion-trigger-icon]:hidden",
+                )}
+              >
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="truncate font-medium text-cream">{session.formationTitre}</span>
+                  {full ? (
+                    <SessionCompletBadge tone="admin" className="shrink-0 px-2 py-0.5 text-xs" />
+                  ) : null}
+                  {!session.active ? (
+                    <span className="shrink-0 text-xs text-muted-text">Fermée</span>
+                  ) : null}
+                </span>
+                <span className="truncate text-sm text-muted-text">{sessionTitle}</span>
+                <span className="text-sm tabular-nums text-cream">
+                  {enrolledCount}
+                  {activeTraineeCount !== enrolledCount ? (
+                    <span className="text-muted-text"> / {activeTraineeCount}</span>
+                  ) : null}
+                </span>
+                <span className="text-sm tabular-nums text-muted-text">{session.placesOffertes}</span>
+                <span className="text-sm tabular-nums text-cream">{fillPct} %</span>
+                <span className="text-sm tabular-nums text-cream">{formatEurosLabel(collectedEuros)}</span>
+                {isAdminMode ? <span aria-hidden /> : null}
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-y-0 left-0 bg-[var(--session-fill)] transition-[width] duration-500 ease-out dark:bg-[var(--session-fill-dark)]"
-                  style={{ width: `${fillPct}%` }}
-                />
-              ) : null}
-
-              <div className="relative z-10">
-                <div
-                  className={cn(
-                    "px-4 sm:px-5",
-                    // Sous les boutons flottants admin ; sinon padding standard
-                    isAdminMode ? "pt-10 sm:pt-11" : "pt-4 sm:pt-5",
-                  )}
+                  className="inline-flex size-9 items-center justify-center justify-self-end text-cream"
                 >
-                  <div className="flex w-full items-start gap-3">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-heading text-xl leading-snug text-cream sm:text-2xl">
-                          {session.formationTitre}
-                        </p>
-                        {full ? (
-                          <SessionCompletBadge
-                            tone="admin"
-                            className="px-3.5 py-1.5 text-sm tracking-wide sm:px-4 sm:py-2"
-                          />
-                        ) : null}
-                      </div>
-                      {session.label && !isGeneratedSessionLabel(session.label) ? (
-                        <p className="mt-1 text-sm text-or-light">
-                          {session.label}
-                        </p>
-                      ) : null}
-                      <p className="mt-2 text-sm leading-relaxed text-muted-text md:text-base">
-                        <span className="block sm:inline">
-                          {sessionLabel ?? "Session — dates à confirmer"}
-                        </span>
-                        <span className="hidden sm:inline">{" · "}</span>
-                        <span className="mt-0.5 block sm:mt-0 sm:inline">
-                          {enrolledCount} inscrit
-                          {enrolledCount !== 1 ? "s" : ""}
-                          {activeTraineeCount !== enrolledCount
-                            ? ` · ${activeTraineeCount} au total`
-                            : ""}
-                          {" · "}
-                          capacité {session.placesOffertes}
-                          {fillPct > 0 ? ` · ${fillPct} %` : ""}
-                          {!session.active ? " · fermée" : ""}
-                        </span>
-                      </p>
-                    </div>
-
-                    <AccordionTrigger
-                      aria-label={
-                        sessionLabel
-                          ? `Ouvrir ou fermer ${session.formationTitre} — ${sessionLabel}`
-                          : `Ouvrir ou fermer ${session.formationTitre}`
-                      }
-                      headerClassName="shrink-0"
-                      className={cn(
-                        "size-11 shrink-0 flex-none items-center justify-center p-0 hover:no-underline sm:size-12",
-                        "rounded-xl border-0 focus-visible:ring-offset-0",
-                        "**:data-[slot=accordion-trigger-icon]:hidden",
-                      )}
-                    >
-                      <span
-                        aria-hidden
-                        className={cn(
-                          "btn-outline-warm inline-flex size-11 items-center justify-center rounded-xl sm:size-12",
-                          "text-cream transition-colors",
-                          "group-aria-expanded/accordion-trigger:border-or/45 group-aria-expanded/accordion-trigger:bg-or/15 group-aria-expanded/accordion-trigger:text-or-light",
-                        )}
-                      >
-                        <ChevronDown className="size-5 group-aria-expanded/accordion-trigger:hidden sm:size-6" />
-                        <ChevronUp className="hidden size-5 group-aria-expanded/accordion-trigger:inline sm:size-6" />
-                      </span>
-                    </AccordionTrigger>
-                  </div>
-
-                  <div className="mt-3 grid grid-cols-3 items-center gap-1.5 pb-4 sm:flex sm:flex-wrap sm:gap-2">
-                    <SessionMailtoButton
-                      href={mailtoStagiaires}
-                      label="Envoyer un mail aux élèves"
-                      shortLabel="Stagiaires"
-                      disabledReason="Aucun élève inscrit avec un email"
-                    />
-                    <SessionMailtoButton
-                      href={mailtoFormateurs}
-                      label="Envoyer un mail aux formateurs"
-                      shortLabel="Formateurs"
-                      disabledReason="Aucun formateur avec un email sur cette session"
-                    />
-                    <SessionMailtoButton
-                      href={mailtoIntervenants}
-                      label="Envoyer un mail aux intervenants"
-                      shortLabel="Intervenants"
-                      disabledReason="Aucun intervenant avec un email sur cette session"
-                    />
-                  </div>
+                  <ChevronDown className="size-5 group-aria-expanded/accordion-trigger:hidden" />
+                  <ChevronUp className="hidden size-5 group-aria-expanded/accordion-trigger:inline" />
+                </span>
+              </AccordionTrigger>
+              {isAdminMode ? (
+                <div className="absolute inset-y-0 right-[3.75rem] z-20 flex w-[11rem] items-center justify-end gap-2">
+                  <AdminEditButton
+                    label={`Modifier ${session.formationTitre}`}
+                    onClick={() => onEdit?.(session)}
+                  />
+                  <AdminDeleteButton
+                    label={`Supprimer ${session.formationTitre}`}
+                    disabled={!canDelete}
+                    disabledReason="Impossible : au moins un élève est inscrit"
+                    onClick={() => onDelete?.(session)}
+                  />
                 </div>
-
-                <AccordionContent className="border-t border-border/60 px-0 pb-0">
-                  <div className="px-5 py-4">
-                    <SessionStaffSection
-                      title="Les intervenants pendant la session"
-                      emptyLabel="Aucun intervenant"
-                      people={session.intervenants}
-                    />
-                  </div>
-                  <div className="border-t border-border/60 px-5 py-4">
-                    <SessionStaffSection
-                      title="Les formateurs lors de cette session"
-                      emptyLabel="Aucun formateur"
-                      people={session.formateurs}
-                    />
-                  </div>
-                  <div className="border-t border-border/60 px-5 py-4">
-                    <SessionElevesSection trainees={session.trainees} />
-                  </div>
-
-                  <div className="border-t border-border/60">
-                    <div className="px-5 py-3">
-                      <Link
-                        href={formationPath(session.formationSlug)}
-                        className="text-sm font-medium text-or-light underline-offset-2 hover:underline"
-                      >
-                        Voir la fiche formation
-                      </Link>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </div>
+              ) : null}
             </div>
+
+            <AccordionContent className="border-t border-white/10 px-0 pb-0 [&_p]:mb-0">
+              <div className="flex flex-wrap gap-2 px-4 py-4">
+                <SessionMailtoButton
+                  href={mailtoStagiaires}
+                  label="Envoyer un mail aux élèves"
+                  shortLabel="Élèves"
+                  disabledReason="Aucun élève inscrit avec un email"
+                />
+                <SessionMailtoButton
+                  href={mailtoFormateurs}
+                  label="Envoyer un mail aux formateurs"
+                  shortLabel="Formateurs"
+                  disabledReason="Aucun formateur avec un email sur cette session"
+                />
+                <SessionMailtoButton
+                  href={mailtoIntervenants}
+                  label="Envoyer un mail aux intervenants"
+                  shortLabel="Intervenants"
+                  disabledReason="Aucun intervenant avec un email sur cette session"
+                />
+              </div>
+              <div className="border-t border-white/10 px-5 py-4">
+                <SessionStaffSection
+                  title="Les intervenants pendant la session"
+                  emptyLabel="Aucun intervenant"
+                  people={session.intervenants}
+                />
+              </div>
+              <div className="border-t border-white/10 px-5 py-4">
+                <SessionStaffSection
+                  title="Les formateurs lors de cette session"
+                  emptyLabel="Aucun formateur"
+                  people={session.formateurs}
+                />
+              </div>
+              <div className="border-t border-white/10 px-5 py-4">
+                <SessionElevesSection trainees={session.trainees} />
+              </div>
+              <div className="border-t border-white/10 px-5 py-3">
+                <Link
+                  href={formationPath(session.formationSlug)}
+                  className="text-sm font-medium text-or-light underline-offset-2 hover:underline"
+                >
+                  Voir la fiche formation
+                </Link>
+              </div>
+            </AccordionContent>
           </AccordionItem>
         );
       })}
     </Accordion>
+    </div>
+    </div>
   );
 }

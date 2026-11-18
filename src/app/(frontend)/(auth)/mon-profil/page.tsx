@@ -3,8 +3,7 @@ import { redirect } from "next/navigation";
 
 import { PageHero } from "@/components/sections/PageHero";
 import { Section } from "@/components/ui/Section";
-import { AvatarPicker } from "@/features/profile/AvatarPicker";
-import { UserAvatar } from "@/features/profile/UserAvatar";
+import { ProfileAvatar } from "@/features/profile/ProfileAvatar";
 import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
 import { isAvatarKey } from "@/lib/avatars";
 import {
@@ -56,10 +55,9 @@ export default async function MonProfilPage() {
       <Section>
         <div className="container-page max-w-2xl space-y-8">
           <div className="card-stage flex items-center gap-4 p-6 md:p-8">
-            <UserAvatar
-              avatarKey={avatarKey}
+            <ProfileAvatar
+              currentKey={avatarKey}
               name={fullName || firstName}
-              className="size-16 shrink-0"
             />
             <div className="min-w-0">
               <p className="text-sm text-muted-text">Identité du compte</p>
@@ -88,7 +86,7 @@ export default async function MonProfilPage() {
                 ? "Prénom, nom et rôle sont lus depuis ton compte. Ils ne sont pas modifiables ici."
                 : "Prénom et nom sont lus depuis ton compte. Ils ne sont pas modifiables ici."}
             </p>
-            <dl className="grid gap-4 sm:grid-cols-2">
+            <dl className="grid gap-4">
               <div>
                 <dt className="text-xs font-medium uppercase tracking-wide text-muted-text">
                   Prénom
@@ -123,14 +121,6 @@ export default async function MonProfilPage() {
                 </div>
               ) : null}
             </dl>
-          </div>
-
-          <div className="card-stage space-y-5 p-6 md:p-8">
-            <h2 className="font-heading text-2xl text-cream">Ton avatar</h2>
-            <p className="text-sm text-muted-text">
-              Choisis une illustration parmi la palette. Elle s’affichera dans le salon de discussion.
-            </p>
-            <AvatarPicker currentKey={avatarKey} />
           </div>
         </div>
       </Section>

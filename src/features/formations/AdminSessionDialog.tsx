@@ -10,10 +10,12 @@ import { Label } from "@/components/ui/label";
 import {
   createFormationSession,
   updateFormationSession,
-  type FormationOption,
-  type SessionStaffOption,
 } from "@/features/formations/session-actions";
-import type { AdminSessionGroup } from "@/lib/admin-session-types";
+import type {
+  AdminSessionGroup,
+  FormationOption,
+  SessionStaffOption,
+} from "@/lib/admin-session-types";
 import { normalizeInscriptionStatus } from "@/lib/inscription-status";
 
 const fieldClass =

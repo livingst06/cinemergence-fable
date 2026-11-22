@@ -14,13 +14,13 @@ import {
   SessionsCalendar,
   type CalendarMode,
 } from "@/features/formations/SessionsCalendar";
-import type {
-  FormationOption,
-  SessionStaffOption,
-} from "@/features/formations/session-actions";
 import { deleteFormationSession } from "@/features/formations/session-actions";
 import { AdminDemandesPanel } from "@/features/inscriptions/AdminDemandesPanel";
-import type { AdminSessionGroup } from "@/lib/admin-session-types";
+import type {
+  AdminSessionGroup,
+  FormationOption,
+  SessionStaffOption,
+} from "@/lib/admin-session-types";
 import { formatFormationSessionLabel } from "@/lib/inscription-status";
 import { cn } from "@/lib/utils";
 

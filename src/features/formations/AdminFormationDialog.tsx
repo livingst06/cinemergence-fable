@@ -11,8 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   createFormationAction,
   updateFormationAction,
-  type FormationAdminInput,
 } from "@/features/formations/admin-actions";
+import type { FormationAdminInput } from "@/features/formations/formation-admin-schema";
 import {
   FormationPhotosField,
   type FormationPhotoItem,

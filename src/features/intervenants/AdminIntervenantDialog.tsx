@@ -14,8 +14,8 @@ import {
 import {
   createIntervenantAction,
   updateIntervenantAction,
-  type IntervenantAdminInput,
 } from "@/features/intervenants/intervenants-admin-actions";
+import type { IntervenantAdminInput } from "@/features/intervenants/intervenant-admin-schema";
 import type { IntervenantData } from "@/lib/defaults";
 import { slugify } from "@/lib/utils";
 

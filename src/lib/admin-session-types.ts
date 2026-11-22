@@ -14,6 +14,21 @@ export type AdminSessionStaff = {
   photoUrl: string | null;
 };
 
+export type FormationOption = {
+  id: number | string;
+  titre: string;
+  slug: string;
+  tarifEuros: number | null;
+  tarif: string | null;
+};
+
+export type SessionStaffOption = {
+  id: number | string;
+  nom: string;
+  email: string;
+  role: "formateur" | "intervenant";
+};
+
 export type AdminSessionGroup = {
   sessionId: number | string;
   formationId: number | string;

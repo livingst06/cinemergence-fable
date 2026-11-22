@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import type { FormationOption, SessionStaffOption } from "@/lib/admin-session-types";
 import {
   createFormationSessionRecord,
   deleteFormationSessionRecord,
@@ -10,8 +11,6 @@ import {
   listSessionStaffOptions,
   readFormationSessionForUpdate,
   updateFormationSessionRecord,
-  type FormationOption,
-  type SessionStaffOption,
 } from "@/lib/formation-session-store";
 import { requireAdmin } from "@/lib/session-profile";
 
@@ -44,8 +43,6 @@ export type CreateSessionInput = SessionFieldsInput;
 export type SessionActionResult =
   | { ok: true; message: string; sessionId?: string }
   | { ok: false; error: string };
-
-export type { FormationOption, SessionStaffOption };
 
 function revalidateSessionPaths(formationSlug?: string | null) {
   revalidatePath("/les-sessions");

@@ -2,6 +2,7 @@ import "server-only";
 
 import { listHorsProcessForSessions } from "@/lib/paiements-hors-process";
 import { listPaiementsForSessions } from "@/lib/paiements";
+import type { FormationOption, SessionStaffOption } from "@/lib/admin-session-types";
 import { getPayloadClient } from "@/lib/payload";
 
 export type FormationSessionWrite = {
@@ -13,21 +14,6 @@ export type FormationSessionWrite = {
   active?: boolean;
   formateurIds: Array<string | number>;
   intervenantIds: Array<string | number>;
-};
-
-export type FormationOption = {
-  id: number | string;
-  titre: string;
-  slug: string;
-  tarifEuros: number | null;
-  tarif: string | null;
-};
-
-export type SessionStaffOption = {
-  id: number | string;
-  nom: string;
-  email: string;
-  role: "formateur" | "intervenant";
 };
 
 function toRelationIds(ids: Array<string | number>): Array<number | string> {

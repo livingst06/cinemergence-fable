@@ -20,9 +20,17 @@ description: Pragmatic clean-code guidelines for this Next.js + Payload app — 
 - Colocate feature UI under `src/features/<domain>/`.
 - Avoid prop drilling of huge Payload docs — map to view models in `lib/data`.
 
+## Boundaries
+
+- A `"use server"` file exports async functions only. Shared types live in a file without `"use server"`.
+- No `CREATE`, `ALTER`, or `DROP` on a page request, a server action, or a webhook.
+- A failed database read stays a failure. Do not substitute a file.
+- Say élève, never stagiaire.
+
 ## Review checklist
 
 - [ ] No Payload / catalog imports in `"use client"` files
+- [ ] No type import from a `"use server"` file into a client component
 - [ ] Auth on every mutation
 - [ ] Duplicated JSX > ~30 lines → candidate for shared component
 - [ ] Magic strings for statuses → constants or Zod enums

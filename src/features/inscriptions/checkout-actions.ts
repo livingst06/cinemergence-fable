@@ -8,7 +8,6 @@ import {
   HOLD_TTL_MINUTES,
   type InscriptionStatus,
   formatFormationSessionLabel,
-  parseEurosFromTarifLabel,
 } from "@/lib/inscription-status";
 import {
   enforceCapacityKeepOldest,
@@ -23,21 +22,13 @@ import { getPayloadClient } from "@/lib/payload";
 import { requireAuth } from "@/lib/session-profile";
 import { getPublicSiteUrl } from "@/lib/site-url";
 import { eurosToStripeAmount, getStripe } from "@/lib/stripe";
-import { defaultFormations } from "@/lib/formations-defaults";
-
-const catalogBySlug = new Map(defaultFormations.map((f) => [f.slug, f]));
 
 function resolveAmountEuros(doc: {
   slug?: string | null;
   tarifEuros?: number | null;
   tarif?: string | null;
 }): number | null {
-  const fromDoc = formationTarifEuros(doc);
-  if (fromDoc) return fromDoc;
-  const slug = doc.slug ? String(doc.slug) : "";
-  const catalog = catalogBySlug.get(slug);
-  if (!catalog) return null;
-  return catalog.tarifEuros ?? parseEurosFromTarifLabel(catalog.tarif) ?? null;
+  return formationTarifEuros(doc);
 }
 
 export type CheckoutActionResult =

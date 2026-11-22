@@ -4,6 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { X } from "lucide-react";
 
+import { useAdminUi } from "@/features/admin/AdminUiContext";
 import { updateProfileAvatar } from "@/features/profile/profile-actions";
 import { UserAvatar } from "@/features/profile/UserAvatar";
 import { AVATAR_KEYS, avatarSrc } from "@/lib/avatars";
@@ -15,6 +16,7 @@ type ProfileAvatarProps = {
 };
 
 export function ProfileAvatar({ currentKey, name }: ProfileAvatarProps) {
+  const { refreshSessionChrome } = useAdminUi();
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(currentKey);
   const [pending, startTransition] = useTransition();
@@ -41,6 +43,7 @@ export function ProfileAvatar({ currentKey, name }: ProfileAvatarProps) {
         return;
       }
       setOpen(false);
+      refreshSessionChrome();
     });
   };
 

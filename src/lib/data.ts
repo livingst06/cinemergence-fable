@@ -7,14 +7,11 @@ import {
 import { emDashToNewlines } from "./formation-types";
 import {
   defaultFinancement,
-  defaultIntervenants,
   defaultSite,
-  defaultTemoignages,
   type FormationData,
   type IntervenantData,
   type TemoignageData,
 } from "./defaults";
-import { defaultFormations } from "./formations-defaults";
 import {
   editableCmsPhotoUrl,
   isImageMimeType,
@@ -34,18 +31,11 @@ import {
   staticIntervenantPhotos,
 } from "./site-media";
 
-const catalogBySlug = new Map(defaultFormations.map((f) => [f.slug, f]));
-
 function resolveTarifEurosForDoc(doc: Record<string, unknown>): number | undefined {
-  const slug = String(doc.slug ?? "");
   if (typeof doc.tarifEuros === "number" && doc.tarifEuros > 0) {
     return Math.trunc(doc.tarifEuros);
   }
-  const fromLabel = parseEurosFromTarifLabel(doc.tarif ? String(doc.tarif) : null);
-  if (fromLabel) return fromLabel;
-  const catalog = catalogBySlug.get(slug);
-  if (catalog?.tarifEuros && catalog.tarifEuros > 0) return catalog.tarifEuros;
-  return parseEurosFromTarifLabel(catalog?.tarif ?? null) ?? undefined;
+  return parseEurosFromTarifLabel(doc.tarif ? String(doc.tarif) : null) ?? undefined;
 }
 
 function staticFormationCover(slug: string) {
@@ -91,8 +81,7 @@ export type SiteConfig = {
 };
 
 export async function getSiteSettings(): Promise<SiteConfig> {
-  try {
-    const payload = await getPayloadClient();
+  const payload = await getPayloadClient();
     const settings = await payload.findGlobal({ slug: "site-settings", depth: 1 });
     const staticFounder = isLocalMediaStorage()
       ? staticFounderPhoto
@@ -125,16 +114,7 @@ export async function getSiteSettings(): Promise<SiteConfig> {
           : defaultSite.youtubeUrl,
       founderPhotoUrl: resolveDisplayMediaUrl(settings.founderPhoto, staticFounder),
       founderPhotoMimeType: resolveMediaMimeType(settings.founderPhoto),
-    };
-  } catch {
-    return {
-      ...defaultSite,
-      url: getPublicSiteUrl(),
-      founderPhotoUrl: isLocalMediaStorage()
-        ? staticFounderPhoto
-        : staticFounderPhotoCommitted,
-    };
-  }
+  };
 }
 
 function mapIntervenantSlugs(doc: Record<string, unknown>): string[] {
@@ -197,30 +177,6 @@ function sanitizeOptionalText(value: string | undefined | null): string | undefi
   if (!value) return undefined;
   const cleaned = stripUnlistedFinanceurMentions(value);
   return cleaned || undefined;
-}
-
-function sanitizeFormationCopy(formation: FormationData): FormationData {
-  return {
-    ...formation,
-    titre: sanitizePublicText(formation.titre),
-    titreCourt: sanitizePublicText(formation.titreCourt),
-    sousTitre: sanitizeOptionalText(formation.sousTitre),
-    accroche: sanitizePublicText(formation.accroche),
-    intro: sanitizePublicText(formation.intro),
-    contexteFinalite: sanitizeOptionalText(formation.contexteFinalite),
-    delaiAcces: sanitizeOptionalText(formation.delaiAcces),
-    financements: [],
-    modalitesAccesFinancement: undefined,
-    faq: formation.faq
-      .filter((item) => !mentionsFunding(item.q) && !mentionsFunding(item.r))
-      .map((item) => ({
-        q: sanitizePublicText(item.q),
-        r: sanitizePublicText(item.r),
-      }))
-      .filter((item) => item.q && item.r && !mentionsFunding(item.q) && !mentionsFunding(item.r)),
-    metaTitle: sanitizePublicText(formation.metaTitle),
-    metaDescription: sanitizePublicText(formation.metaDescription),
-  };
 }
 
 function mapFormationGallery(doc: Record<string, unknown>): {
@@ -318,9 +274,7 @@ function mapFormation(doc: Record<string, unknown>): FormationData {
     delaiAcces: sanitizeOptionalText(
       doc.delaiAcces ? emDashToNewlines(String(doc.delaiAcces)) : undefined,
     ),
-    tarif: doc.tarif
-      ? String(doc.tarif)
-      : (catalogBySlug.get(String(doc.slug))?.tarif ?? null),
+    tarif: doc.tarif ? String(doc.tarif) : null,
     tarifEuros: resolveTarifEurosForDoc(doc),
     financements: [],
     methodesPedagogiques: sanitizePedagogyList(mapStringArray(doc.methodesPedagogiques)),
@@ -355,73 +309,30 @@ function publicFormations(list: FormationData[]): FormationData[] {
   return list.filter((f) => f.active);
 }
 
-/** Affichage : tirets cadratin → retours à la ligne sur les libellés structurés. */
-function normalizeFormationDisplayFields(f: FormationData): FormationData {
-  return {
-    ...f,
-    accroche: emDashToNewlines(f.accroche),
-    sousTitre: f.sousTitre ? emDashToNewlines(f.sousTitre) : f.sousTitre,
-    duree: emDashToNewlines(f.duree),
-    format: emDashToNewlines(f.format),
-    lieu: f.lieu ? emDashToNewlines(f.lieu) : f.lieu,
-  };
-}
-
-function withCoverFallback(f: FormationData): FormationData {
-  return normalizeFormationDisplayFields(
-    sanitizeFormationCopy({
-      ...f,
-      coverImageUrl: f.coverImageUrl ?? staticFormationCover(f.slug),
-    }),
+export async function getFormations(): Promise<FormationData[]> {
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "formations",
+    limit: 200,
+    sort: "-prioritaire",
+    depth: 1,
+  });
+  return publicFormations(
+    result.docs.map((doc) => mapFormation(doc as Record<string, unknown>)),
   );
 }
 
-export async function getFormations(): Promise<FormationData[]> {
-  try {
-    const payload = await getPayloadClient();
-    const result = await payload.find({
-      collection: "formations",
-      limit: 200,
-      sort: "-prioritaire",
-      depth: 1,
-    });
-    const fromCms = result.docs.map((doc) =>
-      mapFormation(doc as Record<string, unknown>),
-    );
-    const cmsSlugs = new Set(fromCms.map((f) => f.slug));
-
-    const fromStatic = defaultFormations
-      .filter((f) => !cmsSlugs.has(f.slug))
-      .map(withCoverFallback);
-
-    if (fromCms.length === 0 && fromStatic.length === 0) {
-      return publicFormations(defaultFormations.map(withCoverFallback));
-    }
-
-    return publicFormations([...fromCms, ...fromStatic]);
-  } catch {
-    return publicFormations(defaultFormations.map(withCoverFallback));
-  }
-}
-
 export async function getFormationBySlug(slug: string): Promise<FormationData | null> {
-  try {
-    const payload = await getPayloadClient();
-    const result = await payload.find({
-      collection: "formations",
-      where: { slug: { equals: slug } },
-      limit: 1,
-      depth: 1,
-    });
-    if (result.docs[0]) {
-      return mapFormation(result.docs[0] as Record<string, unknown>);
-    }
-  } catch {
-    // fallback below
-  }
-
-  const formations = await getFormations();
-  return formations.find((f) => f.slug === slug) ?? null;
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "formations",
+    where: { slug: { equals: slug } },
+    limit: 1,
+    depth: 1,
+  });
+  const doc = result.docs[0];
+  if (!doc) return null;
+  return mapFormation(doc as Record<string, unknown>);
 }
 
 function mapIntervenant(doc: Record<string, unknown>): IntervenantData {
@@ -466,47 +377,28 @@ export function sortIntervenantsParrainsFirst(list: IntervenantData[]): Interven
 }
 
 export async function getIntervenants(): Promise<IntervenantData[]> {
-  try {
-    const payload = await getPayloadClient();
+  const payload = await getPayloadClient();
     const result = await payload.find({
       collection: "intervenants",
       limit: 200,
       depth: 1,
       sort: "nom",
     });
-    if (result.docs.length === 0) {
-      return sortIntervenantsParrainsFirst(
-        defaultIntervenants.map((i) => ({
-          ...i,
-          photoUrl: i.photoUrl ?? staticIntervenantPhoto(i.slug),
-        })),
-      );
-    }
     const fromCms = result.docs
       .map((doc) => mapIntervenant(doc as Record<string, unknown>))
       .filter((i) => i.slug !== "karina-testa");
-    // Le CMS est la liste réelle. Ne pas réinjecter les défauts : une suppression
-    // admin reviendrait à l’écran sans id, donc impossible à retirer.
     return sortIntervenantsParrainsFirst(fromCms);
-  } catch {
-    return sortIntervenantsParrainsFirst(defaultIntervenants);
-  }
 }
 
 export async function getTemoignages(): Promise<TemoignageData[]> {
-  try {
-    const payload = await getPayloadClient();
+  const payload = await getPayloadClient();
     const result = await payload.find({ collection: "temoignages", limit: 10 });
-    if (result.docs.length === 0) return defaultTemoignages;
     return result.docs.map((doc) => ({
       profil: doc.profil as TemoignageData["profil"],
       quote: String(doc.quote),
       auteur: String(doc.auteur),
       formation: String(doc.formation ?? ""),
     }));
-  } catch {
-    return defaultTemoignages;
-  }
 }
 
 export async function getFinancementDispositifs() {

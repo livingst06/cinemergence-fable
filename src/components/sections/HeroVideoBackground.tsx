@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
 import { cn } from "@/lib/utils";
 
 type HeroVideoBackgroundProps = {
@@ -9,30 +13,7 @@ type HeroVideoBackgroundProps = {
 const videoClassName =
   "hero-bg-media absolute inset-0 h-full w-full object-cover";
 
-type HeroVideoProps = {
-  src: string;
-  poster: string;
-  className?: string;
-};
-
-function HeroVideo({ src, poster, className }: HeroVideoProps) {
-  return (
-    <video
-      className={cn("hero-bg-video", videoClassName, className)}
-      autoPlay
-      muted
-      loop
-      playsInline
-      preload="auto"
-      poster={poster}
-      src={src}
-      disablePictureInPicture
-      disableRemotePlayback
-      tabIndex={-1}
-      {...{ "webkit-playsinline": "true" }}
-    />
-  );
-}
+const DESKTOP_QUERY = "(min-width: 768px)";
 
 export function HeroVideoBackground({
   poster = "/videos/hero-plateau-poster.jpg",
@@ -40,6 +21,35 @@ export function HeroVideoBackground({
   srcMobile,
 }: HeroVideoBackgroundProps) {
   const mobileSrc = srcMobile ?? src;
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const assign = () => {
+      const next = window.matchMedia(DESKTOP_QUERY).matches ? src : mobileSrc;
+      if (video.dataset.loadedSrc === next) return;
+      video.dataset.loadedSrc = next;
+      video.src = next;
+      void video.play().catch(() => {});
+    };
+
+    if (document.readyState === "complete") assign();
+    else window.addEventListener("load", assign, { once: true });
+
+    const desktop = window.matchMedia(DESKTOP_QUERY);
+    const onBreakpoint = () => {
+      if (document.readyState === "complete") assign();
+    };
+    desktop.addEventListener("change", onBreakpoint);
+
+    return () => {
+      window.removeEventListener("load", assign);
+      desktop.removeEventListener("change", onBreakpoint);
+    };
+  }, [src, mobileSrc]);
 
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none" aria-hidden>
@@ -52,8 +62,19 @@ export function HeroVideoBackground({
         decoding="async"
         className={videoClassName}
       />
-      <HeroVideo src={mobileSrc} poster={poster} className="md:hidden" />
-      <HeroVideo src={src} poster={poster} className="hidden md:block" />
+      <video
+        ref={videoRef}
+        className={cn("hero-bg-video", videoClassName)}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="none"
+        disablePictureInPicture
+        disableRemotePlayback
+        tabIndex={-1}
+        {...{ "webkit-playsinline": "true" }}
+      />
 
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-noir/85 via-noir/50 to-noir/10 md:from-noir/75 md:via-noir/35 md:to-transparent" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/70 via-transparent to-noir/30" />

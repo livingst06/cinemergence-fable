@@ -26,14 +26,10 @@ function displayFirstName(user: {
   return "Compte";
 }
 
-type HeaderUserMenuProps = {
-  avatarSrc?: string | null;
-};
-
 /** Bouton compte : Login cliquable immédiatement (pas de squelette Clerk). */
-export function HeaderUserMenu({ avatarSrc = null }: HeaderUserMenuProps) {
+export function HeaderUserMenu() {
   const { user, isLoaded } = useUser();
-  const { isSignedIn, isAdminEligible, isFormateurEligible, isIntervenantEligible } =
+  const { isSignedIn, avatarSrc, isAdminEligible, isFormateurEligible, isIntervenantEligible } =
     useAdminUi();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { createFormSubmission } from "@/lib/form-submissions";
 import { newsletterSchema } from "@/lib/validations";
-import { getPayloadClient } from "@/lib/payload";
 
 export async function POST(request: Request) {
   const body = (await request.json()) as Record<string, unknown>;
@@ -19,14 +19,10 @@ export async function POST(request: Request) {
   }
 
   try {
-    const payload = await getPayloadClient();
-    await payload.create({
-      collection: "form-submissions",
-      data: {
-        type: "newsletter",
-        email: parsed.data.email,
-        payload: parsed.data,
-      },
+    await createFormSubmission({
+      type: "newsletter",
+      email: parsed.data.email,
+      payload: parsed.data,
     });
   } catch (error) {
     console.error("[newsletter-api]", error);

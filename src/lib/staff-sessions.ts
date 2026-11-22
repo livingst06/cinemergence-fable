@@ -2,7 +2,6 @@ import "server-only";
 
 import { getPayloadClient } from "@/lib/payload";
 import { ensureSalonForSession } from "@/lib/session-salon";
-import { ensureSessionStaffUsersRels } from "@/lib/session-staff-schema";
 import {
   mapStaffPeople,
   sessionMatchesStaff,
@@ -29,7 +28,6 @@ export async function listSessionsForStaff(
 ): Promise<StaffSessionRow[]> {
   try {
     const payload = await getPayloadClient();
-    await ensureSessionStaffUsersRels(payload);
     const sessions = await payload.find({
       collection: "formation-sessions",
       depth: 1,

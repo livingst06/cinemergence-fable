@@ -1,4 +1,4 @@
-import { getPool, lockPublicTable } from "@/lib/db";
+import { getPool } from "@/lib/db";
 import { countKheironHorsProcess } from "@/lib/paiements-hors-process";
 import {
   isKheironPaymentAmount,
@@ -59,29 +59,7 @@ export function isPaidKheironSession(session: StripeCheckoutSession): boolean {
   );
 }
 
-let tableReady: Promise<void> | null = null;
-
-async function ensureTable() {
-  if (!tableReady) {
-    tableReady = getPool()
-      .query(`
-        CREATE TABLE IF NOT EXISTS kheiron_payments (
-          session_id text PRIMARY KEY,
-          created_at timestamptz NOT NULL DEFAULT now()
-        )
-      `)
-      .then(() => lockPublicTable("kheiron_payments"))
-      .then(() => undefined)
-      .catch((error) => {
-        tableReady = null;
-        throw error;
-      });
-  }
-  await tableReady;
-}
-
 export async function getKheironOffer(): Promise<KheironOffer> {
-  await ensureTable();
   const result = await getPool().query<{ paid: number }>(
     "SELECT COUNT(*)::int AS paid FROM kheiron_payments",
   );
@@ -116,7 +94,6 @@ export async function recordKheironPayment(sessionId: string | undefined) {
   if (!sessionId || !SESSION_ID.test(sessionId)) return { counted: false, already: false };
   const session = await retrieveKheironCheckoutSession(sessionId);
   if (!session || !isPaidKheironSession(session)) return { counted: false, already: false };
-  await ensureTable();
   const inserted = await getPool().query(
     `INSERT INTO kheiron_payments (session_id)
      VALUES ($1)

@@ -12,21 +12,6 @@ export function normalizePayerPhone(phone: string | null | undefined): string | 
   return value || null;
 }
 
-let phoneColumnReady: Promise<void> | null = null;
-
-export async function ensureUsersPhoneColumn() {
-  if (!phoneColumnReady) {
-    phoneColumnReady = getPool()
-      .query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS phone varchar`)
-      .then(() => undefined)
-      .catch((error) => {
-        phoneColumnReady = null;
-        throw error;
-      });
-  }
-  await phoneColumnReady;
-}
-
 /**
  * Retrouve l'élève par e-mail. S'il n'a jamais de compte, crée une ligne élève
  * avec le nom transmis par Stripe. Le premier login Clerk se rattache à cet e-mail.
@@ -37,7 +22,6 @@ export async function ensurePayerUser(input: {
   phone?: string | null;
   userId?: number | null;
 }): Promise<number | null> {
-  await ensureUsersPhoneColumn();
   const pool = getPool();
   const phone = normalizePayerPhone(input.phone);
   if (input.userId != null) {

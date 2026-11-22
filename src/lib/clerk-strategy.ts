@@ -2,7 +2,6 @@ import { createClerkClient, verifyToken } from "@clerk/backend";
 import type { AuthStrategy, AuthStrategyResult } from "payload";
 
 import { roleForNewUser, syncedRoleForExistingUser } from "@/lib/user-roles";
-import { ensureUsersRoleEnum } from "@/lib/ensure-user-roles";
 
 function extractSessionToken(headers: Request["headers"]): string | null {
   const authHeader = headers.get("authorization");
@@ -41,8 +40,6 @@ export const clerkStrategy: AuthStrategy = {
     } catch {
       return { user: null };
     }
-
-    await ensureUsersRoleEnum(payload);
 
     const byClerkId = await payload.find({
       collection: "users",

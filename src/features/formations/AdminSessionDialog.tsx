@@ -13,7 +13,7 @@ import {
   type FormationOption,
   type SessionStaffOption,
 } from "@/features/formations/session-actions";
-import type { AdminSessionGroup } from "@/features/inscriptions/AdminDemandesPanel";
+import type { AdminSessionGroup } from "@/lib/admin-session-types";
 import { normalizeInscriptionStatus } from "@/lib/inscription-status";
 
 const fieldClass =

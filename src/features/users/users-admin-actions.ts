@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { isAdminEmail } from "@/lib/admin-auth";
 import { getPool } from "@/lib/db";
-import { ensureUsersPhoneColumn, normalizePayerEmail, normalizePayerPhone } from "@/lib/payer-user";
+import { normalizePayerEmail, normalizePayerPhone } from "@/lib/payer-user";
 import { requireAdmin } from "@/lib/session-profile";
 
 const userFieldsSchema = z.object({
@@ -46,7 +46,6 @@ export async function createUserAction(
     return { ok: false, error: "Cet e-mail est réservé à un admin." };
   }
 
-  await ensureUsersPhoneColumn();
   try {
     await getPool().query(
       `INSERT INTO users (email, name, phone, role, created_at, updated_at)
@@ -83,7 +82,6 @@ export async function updateUserAction(
   const email = normalizePayerEmail(parsed.data.email);
   if (!email) return { ok: false, error: "E-mail invalide" };
 
-  await ensureUsersPhoneColumn();
   const current = await getPool().query<{ id: number; email: string; role: string }>(
     "SELECT id, email, role::text FROM users WHERE id = $1",
     [userId],

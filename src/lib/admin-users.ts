@@ -2,7 +2,6 @@ import "server-only";
 
 import { isAdminEmail } from "@/lib/admin-auth";
 import { getPool } from "@/lib/db";
-import { ensureUsersPhoneColumn } from "@/lib/payer-user";
 import {
   isAssignableRole,
   isUserRole,
@@ -23,7 +22,6 @@ export type AdminUserRow = {
 
 export async function listLoggedInUsers(): Promise<AdminUserRow[]> {
   try {
-    await ensureUsersPhoneColumn();
     const found = await getPool().query<{
       id: number;
       email: string;

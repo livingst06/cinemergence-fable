@@ -2,13 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 
-import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
 import {
-  ACTIVE_DEMANDE_STATUSES,
-  HOLD_TTL_MINUTES,
-  type InscriptionStatus,
-  formatFormationSessionLabel,
-} from "@/lib/inscription-status";
+  attachStripeCheckout,
+  createPaymentHold,
+  findActiveInscriptionForUser,
+  findFormationSessionById,
+  findInscriptionById,
+} from "@/lib/checkout-records";
+import { ensurePayloadUserForClerk } from "@/lib/ensure-payload-user";
+import { HOLD_TTL_MINUTES, formatFormationSessionLabel } from "@/lib/inscription-status";
 import {
   enforceCapacityKeepOldest,
   formationTarifEuros,
@@ -18,7 +20,6 @@ import {
   releaseHoldById,
 } from "@/lib/places";
 import { listPaiementsForSessions, paiementMatchesUser } from "@/lib/paiements";
-import { getPayloadClient } from "@/lib/payload";
 import { requireAuth } from "@/lib/session-profile";
 import { getPublicSiteUrl } from "@/lib/site-url";
 import { eurosToStripeAmount, getStripe } from "@/lib/stripe";
@@ -79,15 +80,9 @@ export async function startCheckout(
       return { ok: false, error: "Compte utilisateur introuvable", code: "auth" };
     }
 
-    const payload = await getPayloadClient();
     await releaseExpiredHolds({ sessionId: sessionId });
 
-    const sessionDoc = await payload.findByID({
-      collection: "formation-sessions",
-      id: sessionId,
-      depth: 1,
-      overrideAccess: true,
-    });
+    const sessionDoc = await findFormationSessionById(sessionId);
 
     if (sessionDoc.active === false) {
       return {
@@ -155,21 +150,7 @@ export async function startCheckout(
       };
     }
 
-    const existing = await payload.find({
-      collection: "inscriptions",
-      where: {
-        and: [
-          { user: { equals: user.id } },
-          { session: { equals: sessionDoc.id } },
-          { status: { in: ACTIVE_DEMANDE_STATUSES } },
-        ],
-      },
-      limit: 1,
-      depth: 0,
-      overrideAccess: true,
-    });
-
-    const current = existing.docs[0];
+    const current = await findActiveInscriptionForUser(user.id, sessionDoc.id);
     if (current) {
       if (current.status === "en_paiement") {
         const expires = current.holdExpiresAt
@@ -206,19 +187,12 @@ export async function startCheckout(
       }
     }
 
-    const expiresAt = holdExpiresAtDate();
-    const created = await payload.create({
-      collection: "inscriptions",
-      data: {
-        user: user.id,
-        session: sessionDoc.id,
-        formation: formation.id,
-        status: "en_paiement" satisfies InscriptionStatus,
-        amountEuros,
-        currency: "eur",
-        holdExpiresAt: expiresAt.toISOString(),
-      },
-      overrideAccess: true,
+    const created = await createPaymentHold({
+      userId: user.id,
+      sessionId: sessionDoc.id,
+      formationId: formation.id,
+      amountEuros,
+      holdExpiresAt: holdExpiresAtDate().toISOString(),
     });
     holdId = created.id;
 
@@ -343,17 +317,7 @@ async function createEmbeddedSessionForHold(args: {
     return { ok: false, error: "Session Stripe invalide.", code: "config" };
   }
 
-  const payload = await getPayloadClient();
-  await payload.update({
-    collection: "inscriptions",
-    id: args.inscriptionId,
-    data: {
-      stripeCheckoutSessionId: session.id,
-      amountEuros: args.amountEuros,
-      currency: "eur",
-    },
-    overrideAccess: true,
-  });
+  await attachStripeCheckout(args.inscriptionId, session.id, args.amountEuros);
 
   return {
     ok: true,
@@ -372,13 +336,7 @@ export async function cancelCheckoutHold(
     const user = await ensurePayloadUserForClerk();
     if (!user) return { ok: false, error: "Compte introuvable", code: "auth" };
 
-    const payload = await getPayloadClient();
-    const doc = await payload.findByID({
-      collection: "inscriptions",
-      id: inscriptionId,
-      depth: 1,
-      overrideAccess: true,
-    });
+    const doc = await findInscriptionById(inscriptionId, 1);
 
     const ownerId =
       typeof doc.user === "object" && doc.user
@@ -424,15 +382,9 @@ export async function resumeCheckoutClientSecret(
     const user = await ensurePayloadUserForClerk();
     if (!user) return { ok: false, error: "Compte introuvable", code: "auth" };
 
-    const payload = await getPayloadClient();
     await releaseExpiredHolds();
 
-    const doc = await payload.findByID({
-      collection: "inscriptions",
-      id: inscriptionId,
-      depth: 2,
-      overrideAccess: true,
-    });
+    const doc = await findInscriptionById(inscriptionId, 2);
 
     const ownerId =
       typeof doc.user === "object" && doc.user

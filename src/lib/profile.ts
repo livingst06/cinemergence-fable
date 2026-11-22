@@ -1,19 +1,7 @@
 import "server-only";
 
-import type { Payload } from "payload";
-
 import { isAvatarKey } from "@/lib/avatars";
-import { ensureUsersRoleEnum } from "@/lib/ensure-user-roles";
 import { getPayloadClient } from "@/lib/payload";
-
-export async function ensureUsersAvatarKeyColumn(payload: Payload): Promise<void> {
-  const pool = payload.db.pool;
-  if (!pool) return;
-  await pool.query(
-    `ALTER TABLE public.users ADD COLUMN IF NOT EXISTS avatar_key varchar`,
-  );
-  await ensureUsersRoleEnum(payload);
-}
 
 export async function updateUserAvatarKey(
   payloadUserId: number | string,
@@ -23,7 +11,6 @@ export async function updateUserAvatarKey(
     return { ok: false, error: "Avatar inconnu" };
   }
   const payload = await getPayloadClient();
-  await ensureUsersAvatarKeyColumn(payload);
   const pool = payload.db.pool;
   if (!pool) {
     return { ok: false, error: "Enregistrement impossible pour le moment" };

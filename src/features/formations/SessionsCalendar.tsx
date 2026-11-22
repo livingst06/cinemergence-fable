@@ -15,7 +15,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import type {
   AdminSessionGroup,
   AdminSessionTrainee,
-} from "@/features/inscriptions/AdminDemandesPanel";
+} from "@/lib/admin-session-types";
 import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
 import { pastelForFormationName } from "@/lib/formation-pastel";
 import {

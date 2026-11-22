@@ -3,7 +3,7 @@ import "server-only";
 import type {
   AdminSessionGroup,
   AdminSessionStaff,
-} from "@/features/inscriptions/AdminDemandesPanel";
+} from "@/lib/admin-session-types";
 import { getIntervenants } from "@/lib/data";
 import { listPaiementsForSessions, type SessionPaiement } from "@/lib/paiements";
 import {
@@ -11,7 +11,6 @@ import {
   type HorsProcessPaiement,
 } from "@/lib/paiements-hors-process";
 import { getPayloadClient } from "@/lib/payload";
-import { ensureSessionStaffUsersRels } from "@/lib/session-staff-schema";
 
 type PortraitIndex = {
   bySlug: Map<string, string>;
@@ -92,7 +91,6 @@ function mapStaff(raw: unknown, portraits: PortraitIndex): AdminSessionStaff[] {
 export async function listAdminSessionGroups(): Promise<AdminSessionGroup[]> {
   try {
     const payload = await getPayloadClient();
-    await ensureSessionStaffUsersRels(payload);
     const intervenants = await getIntervenants();
     const portraits: PortraitIndex = { bySlug: new Map(), byName: new Map() };
     for (const person of intervenants) {

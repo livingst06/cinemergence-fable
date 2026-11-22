@@ -1,8 +1,8 @@
 "use server";
 
 import type { FormState } from "@/features/contact/form-state";
+import { createFormSubmission } from "@/lib/form-submissions";
 import { newsletterSchema } from "@/lib/validations";
-import { getPayloadClient } from "@/lib/payload";
 
 export async function submitNewsletter(
   _prev: FormState,
@@ -29,14 +29,10 @@ export async function submitNewsletter(
   }
 
   try {
-    const payload = await getPayloadClient();
-    await payload.create({
-      collection: "form-submissions",
-      data: {
-        type: "newsletter",
-        email: parsed.data.email,
-        payload: parsed.data,
-      },
+    await createFormSubmission({
+      type: "newsletter",
+      email: parsed.data.email,
+      payload: parsed.data,
     });
   } catch (error) {
     console.error("[newsletter]", error);

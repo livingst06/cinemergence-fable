@@ -1,32 +1,6 @@
-import { getPool, lockPublicTable } from "@/lib/db";
+import { getPool } from "@/lib/db";
 
 export const MEASUREMENT_PURCHASE_URL = "https://wisdom.cinemergence.fr/v1/purchase";
-
-let tableReady: Promise<void> | null = null;
-
-async function ensureTable() {
-  if (!tableReady) {
-    tableReady = getPool()
-      .query(`
-        CREATE TABLE IF NOT EXISTS measurement_deliveries (
-          session_id text PRIMARY KEY,
-          created_at timestamptz NOT NULL DEFAULT now(),
-          updated_at timestamptz NOT NULL DEFAULT now(),
-          attempts integer NOT NULL DEFAULT 0,
-          last_status integer,
-          payload jsonb,
-          sent_at timestamptz
-        )
-      `)
-      .then(() => lockPublicTable("measurement_deliveries"))
-      .then(() => undefined)
-      .catch((error) => {
-        tableReady = null;
-        throw error;
-      });
-  }
-  await tableReady;
-}
 
 async function postPurchase(payload: unknown): Promise<number> {
   const key = process.env.CINEMERGENCE_MEASUREMENT_KEY?.trim();
@@ -49,7 +23,6 @@ async function postPurchase(payload: unknown): Promise<number> {
  * Le verrou tient pendant l'appel réseau (3 s max) pour qu'un webhook rejoué n'envoie pas deux fois.
  */
 export async function deliverPurchase(sessionId: string, payload: Record<string, unknown>) {
-  await ensureTable();
   const client = await getPool().connect();
   try {
     await client.query("BEGIN");
@@ -97,7 +70,6 @@ export async function deliverPurchase(sessionId: string, payload: Record<string,
 }
 
 export async function retryMeasurementDeliveries() {
-  await ensureTable();
   const pool = getPool();
   const purged = await pool.query(
     `UPDATE measurement_deliveries

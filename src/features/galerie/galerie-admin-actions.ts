@@ -2,8 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { deleteMediaByIds } from "@/lib/formation-media";
-import { getPayloadClient } from "@/lib/payload";
+import { deleteGalleryMedia } from "@/lib/delete-gallery-media";
 import { requireAdmin } from "@/lib/session-profile";
 
 export type GalleryAdminActionResult =
@@ -23,8 +22,7 @@ export async function deleteGalleryMediaAction(
   if (!auth.ok) return { ok: false, error: auth.error };
 
   try {
-    const payload = await getPayloadClient();
-    const deleted = await deleteMediaByIds(payload, [id]);
+    const deleted = await deleteGalleryMedia(id);
     if (deleted === 0) {
       return { ok: false, error: "Suppression impossible" };
     }

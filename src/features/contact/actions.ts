@@ -2,8 +2,8 @@
 
 import type { FormState } from "@/features/contact/form-state";
 import { sendContactNotification } from "@/lib/contact-notify";
+import { createFormSubmission } from "@/lib/form-submissions";
 import { contactSchema } from "@/lib/validations";
-import { getPayloadClient } from "@/lib/payload";
 
 export async function submitContact(
   _prev: FormState,
@@ -39,19 +39,15 @@ export async function submitContact(
   }
 
   try {
-    const payload = await getPayloadClient();
-    await payload.create({
-      collection: "form-submissions",
-      data: {
-        type: parsed.data.type,
-        email: parsed.data.email,
-        nom: parsed.data.nom,
-        telephone: parsed.data.telephone,
-        message: parsed.data.message,
-        formationSlug: parsed.data.formationSlug,
-        codeParrainage: parsed.data.codeParrainage,
-        payload: parsed.data,
-      },
+    await createFormSubmission({
+      type: parsed.data.type,
+      email: parsed.data.email,
+      nom: parsed.data.nom,
+      telephone: parsed.data.telephone,
+      message: parsed.data.message,
+      formationSlug: parsed.data.formationSlug,
+      codeParrainage: parsed.data.codeParrainage,
+      payload: parsed.data,
     });
     // Les places se réservent uniquement via paiement Stripe sur la fiche formation.
     // Le formulaire contact n’crée plus d’inscription / demande à valider.

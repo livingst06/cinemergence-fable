@@ -1,4 +1,4 @@
-import { getPool, lockPublicTable } from "@/lib/db";
+import { getPool } from "@/lib/db";
 import { isKheironCheckout } from "@/lib/kheiron-checkout";
 import { KHEIRON_ITEM_NAME } from "@/lib/kheiron-offer";
 import { ensurePayerUser } from "@/lib/payer-user";
@@ -53,8 +53,6 @@ type SessionRow = {
   amount_euros: number | null;
 };
 
-let tableReady: Promise<void> | null = null;
-
 export function paymentMethodType(session: CheckoutForPaiement): string | null {
   const intent = session.payment_intent;
   if (!intent || typeof intent === "string") return null;
@@ -95,54 +93,6 @@ export function isSuccessfulLivePayment(session: CheckoutForPaiement): boolean {
     typeof session.amount_total === "number" &&
     session.amount_total > 0
   );
-}
-
-async function ensureTable() {
-  if (!tableReady) {
-    tableReady = getPool()
-      .query(`
-        CREATE TABLE IF NOT EXISTS paiements (
-          stripe_checkout_session_id text PRIMARY KEY,
-          stripe_payment_intent_id text,
-          paid_at timestamptz NOT NULL,
-          amount_cents integer NOT NULL,
-          currency text NOT NULL,
-          payment_method text,
-          reglement text,
-          livemode boolean NOT NULL,
-          payer_email text,
-          payer_name text,
-          payer_phone text,
-          formation_id integer,
-          formation_slug text NOT NULL,
-          formation_titre text,
-          session_id integer,
-          session_label text,
-          session_date_debut timestamptz,
-          session_date_fin timestamptz,
-          inscription_id integer,
-          source text NOT NULL,
-          created_at timestamptz NOT NULL DEFAULT now(),
-          updated_at timestamptz NOT NULL DEFAULT now()
-        )
-      `)
-      .then(() =>
-        getPool().query(`
-          ALTER TABLE paiements ADD COLUMN IF NOT EXISTS user_id integer;
-          CREATE INDEX IF NOT EXISTS paiements_session_id_idx ON paiements (session_id);
-          CREATE INDEX IF NOT EXISTS paiements_formation_slug_idx ON paiements (formation_slug);
-          CREATE INDEX IF NOT EXISTS paiements_user_id_idx ON paiements (user_id);
-          CREATE INDEX IF NOT EXISTS paiements_payer_email_idx ON paiements (payer_email);
-        `),
-      )
-      .then(() => lockPublicTable("paiements"))
-      .then(() => undefined)
-      .catch((error) => {
-        tableReady = null;
-        throw error;
-      });
-  }
-  await tableReady;
 }
 
 async function retrieveCheckout(sessionId: string): Promise<CheckoutForPaiement | null> {
@@ -286,7 +236,6 @@ export async function recordCheckoutPaiement(sessionId: string) {
   });
   const source = isKheironCheckout(session) ? "kheiron" : "catalogue";
 
-  await ensureTable();
   await getPool().query(
     `INSERT INTO paiements (
        stripe_checkout_session_id, stripe_payment_intent_id, paid_at,
@@ -407,7 +356,6 @@ export async function listPaiementsForSessions(sessionIds: Array<number | string
   const bySession = new Map<string, SessionPaiement[]>();
   if (ids.length === 0) return bySession;
 
-  await ensureTable();
   const result = await queryPaiementRows(
     "WHERE session_id = ANY($1::int[]) ORDER BY paid_at",
     [ids],
@@ -424,7 +372,6 @@ export async function listPaiementsForSessions(sessionIds: Array<number | string
 }
 
 export async function listAllPaiements() {
-  await ensureTable();
   return queryPaiementRows("ORDER BY paid_at DESC", []);
 }
 
@@ -435,7 +382,6 @@ export async function listPaiementsForPayer(user: {
   const userId = user.userId != null && /^\d+$/.test(String(user.userId)) ? Number(user.userId) : null;
   const email = user.email?.trim().toLowerCase() || null;
   if (userId == null && !email) return [];
-  await ensureTable();
   return queryPaiementRows(
     `WHERE ($1::int IS NOT NULL AND user_id = $1)
         OR ($2::text IS NOT NULL AND lower(payer_email) = $2)
@@ -504,7 +450,6 @@ async function queryPaiementRows(suffix: string, params: unknown[]) {
 
 /** Rejoue les checkouts Kheiron déjà comptés, pour remplir la table la première fois. */
 export async function backfillKheironPaiements() {
-  await ensureTable();
   const existing = await getPool().query<{ session_id: string }>(
     "SELECT session_id FROM kheiron_payments ORDER BY created_at",
   );

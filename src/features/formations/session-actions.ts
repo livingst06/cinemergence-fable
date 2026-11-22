@@ -1,14 +1,19 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { Payload } from "payload";
 import { z } from "zod";
 
-import { listPaiementsForSessions } from "@/lib/paiements";
-import { listHorsProcessForSessions } from "@/lib/paiements-hors-process";
-import { getPayloadClient } from "@/lib/payload";
+import {
+  createFormationSessionRecord,
+  deleteFormationSessionRecord,
+  listFormationOptions,
+  listSessionStaffOptions,
+  readFormationSessionForUpdate,
+  updateFormationSessionRecord,
+  type FormationOption,
+  type SessionStaffOption,
+} from "@/lib/formation-session-store";
 import { requireAdmin } from "@/lib/session-profile";
-import { ensureSessionStaffUsersRels } from "@/lib/session-staff-schema";
 
 const sessionFieldsSchema = z
   .object({
@@ -40,31 +45,7 @@ export type SessionActionResult =
   | { ok: true; message: string; sessionId?: string }
   | { ok: false; error: string };
 
-async function sessionHasEnrolledTrainee(
-  payload: Payload,
-  sessionId: number | string,
-): Promise<boolean> {
-  return (await countEnrolledForSession(payload, sessionId)) > 0;
-}
-
-async function countEnrolledForSession(
-  _payload: Payload,
-  sessionId: number | string,
-): Promise<number> {
-  try {
-    const [paiements, horsProcess] = await Promise.all([
-      listPaiementsForSessions([sessionId]),
-      listHorsProcessForSessions([sessionId]),
-    ]);
-    return (
-      (paiements.get(String(sessionId)) ?? []).length +
-      (horsProcess.get(String(sessionId)) ?? []).length
-    );
-  } catch (error) {
-    console.error("[sessions] paiements", error instanceof Error ? error.message : error);
-    return 0;
-  }
-}
+export type { FormationOption, SessionStaffOption };
 
 function revalidateSessionPaths(formationSlug?: string | null) {
   revalidatePath("/les-sessions");
@@ -73,17 +54,6 @@ function revalidateSessionPaths(formationSlug?: string | null) {
     revalidatePath(`/formations/${formationSlug}`);
   }
   revalidatePath("/");
-}
-
-/** Payload + Postgres refusent les IDs relation en string (« 5 ») — il faut des numbers. */
-function toRelationIds(
-  ids: Array<string | number>,
-): Array<number | string> {
-  return ids.map((id) => {
-    if (typeof id === "number" && Number.isFinite(id)) return id;
-    const n = Number(id);
-    return Number.isInteger(n) ? n : id;
-  });
 }
 
 export async function createFormationSession(
@@ -101,34 +71,8 @@ export async function createFormationSession(
   }
 
   try {
-    const payload = await getPayloadClient();
-    await ensureSessionStaffUsersRels(payload);
-    const formation = await payload.findByID({
-      collection: "formations",
-      id: parsed.data.formationId,
-      depth: 0,
-      overrideAccess: true,
-    });
-
-    const created = await payload.create({
-      collection: "formation-sessions",
-      data: {
-        formation: formation.id,
-        dateDebut: parsed.data.dateDebut.slice(0, 10),
-        dateFin: parsed.data.dateFin.slice(0, 10),
-        placesOffertes: parsed.data.placesOffertes,
-        label: parsed.data.label?.trim() || undefined,
-        active: parsed.data.active !== false,
-        formateurs: toRelationIds(parsed.data.formateurIds),
-        intervenants: toRelationIds(parsed.data.intervenantIds),
-      },
-      overrideAccess: true,
-    });
-
-    revalidateSessionPaths(
-      formation.slug ? String(formation.slug) : null,
-    );
-
+    const created = await createFormationSessionRecord(parsed.data);
+    revalidateSessionPaths(created.formationSlug);
     return {
       ok: true,
       message: "Session créée",
@@ -156,11 +100,9 @@ export async function updateFormationSession(
   }
 
   try {
-    const payload = await getPayloadClient();
-    await ensureSessionStaffUsersRels(payload);
-    const enrolledCount = await countEnrolledForSession(payload, sessionId);
-
-    if (parsed.data.placesOffertes < enrolledCount) {
+    const current = await readFormationSessionForUpdate(sessionId);
+    if (parsed.data.placesOffertes < current.enrolledCount) {
+      const enrolledCount = current.enrolledCount;
       return {
         ok: false,
         error:
@@ -169,52 +111,14 @@ export async function updateFormationSession(
             : `La capacité ne peut pas être inférieure aux ${enrolledCount} élève${enrolledCount > 1 ? "s" : ""} déjà inscrit${enrolledCount > 1 ? "s" : ""}.`,
       };
     }
-
-    const existing = await payload.findByID({
-      collection: "formation-sessions",
-      id: sessionId,
-      depth: 0,
-      overrideAccess: true,
-    });
-
-    const lockedFormationId =
-      typeof existing.formation === "object" && existing.formation
-        ? String((existing.formation as { id: number | string }).id)
-        : String(existing.formation);
-
-    if (String(parsed.data.formationId) !== lockedFormationId) {
+    if (String(parsed.data.formationId) !== current.lockedFormationId) {
       return {
         ok: false,
         error: "La formation d’une session ne peut pas être modifiée.",
       };
     }
-
-    const formation = await payload.findByID({
-      collection: "formations",
-      id: lockedFormationId,
-      depth: 0,
-      overrideAccess: true,
-    });
-
-    await payload.update({
-      collection: "formation-sessions",
-      id: sessionId,
-      data: {
-        dateDebut: parsed.data.dateDebut.slice(0, 10),
-        dateFin: parsed.data.dateFin.slice(0, 10),
-        placesOffertes: parsed.data.placesOffertes,
-        label: parsed.data.label?.trim() || null,
-        active: parsed.data.active !== false,
-        formateurs: toRelationIds(parsed.data.formateurIds),
-        intervenants: toRelationIds(parsed.data.intervenantIds),
-      },
-      overrideAccess: true,
-    });
-
-    revalidateSessionPaths(
-      formation.slug ? String(formation.slug) : null,
-    );
-
+    await updateFormationSessionRecord(sessionId, parsed.data);
+    revalidateSessionPaths(current.formationSlug);
     return { ok: true, message: "Session mise à jour", sessionId: String(sessionId) };
   } catch (error) {
     console.error("[updateFormationSession]", error);
@@ -229,51 +133,15 @@ export async function deleteFormationSession(
   if (!auth.ok) return { ok: false, error: auth.error };
 
   try {
-    const payload = await getPayloadClient();
-    if (await sessionHasEnrolledTrainee(payload, sessionId)) {
+    const deleted = await deleteFormationSessionRecord(sessionId);
+    if (deleted.blocked) {
       return {
         ok: false,
         error:
           "Impossible de supprimer une session qui a déjà au moins un élève inscrit.",
       };
     }
-
-    const existing = await payload.findByID({
-      collection: "formation-sessions",
-      id: sessionId,
-      depth: 1,
-      overrideAccess: true,
-    });
-
-    const formationSlug =
-      typeof existing.formation === "object" && existing.formation
-        ? String((existing.formation as { slug?: string }).slug ?? "")
-        : null;
-
-    // Annuler les inscriptions non confirmées liées à la session (holds, etc.)
-    const leftovers = await payload.find({
-      collection: "inscriptions",
-      where: { session: { equals: sessionId } },
-      limit: 200,
-      depth: 0,
-      overrideAccess: true,
-    });
-    for (const doc of leftovers.docs) {
-      await payload.delete({
-        collection: "inscriptions",
-        id: doc.id,
-        overrideAccess: true,
-      });
-    }
-
-    await payload.delete({
-      collection: "formation-sessions",
-      id: sessionId,
-      overrideAccess: true,
-    });
-
-    revalidateSessionPaths(formationSlug || null);
-
+    revalidateSessionPaths(deleted.formationSlug);
     return { ok: true, message: "Session supprimée", sessionId: String(sessionId) };
   } catch (error) {
     console.error("[deleteFormationSession]", error);
@@ -281,89 +149,22 @@ export async function deleteFormationSession(
   }
 }
 
-export type FormationOption = {
-  id: number | string;
-  titre: string;
-  slug: string;
-  tarifEuros: number | null;
-  tarif: string | null;
-};
-
-export type SessionStaffOption = {
-  id: number | string;
-  nom: string;
-  email: string;
-  role: "formateur" | "intervenant";
-};
-
-
-export async function listFormationsForSessionSelect(): Promise<
-  FormationOption[]
-> {
+export async function listFormationsForSessionSelect(): Promise<FormationOption[]> {
   const auth = await requireAdmin();
   if (!auth.ok) return [];
-
   try {
-    const payload = await getPayloadClient();
-    const result = await payload.find({
-      collection: "formations",
-      limit: 200,
-      sort: "titre",
-      depth: 0,
-      overrideAccess: true,
-    });
-    return result.docs.map((doc) => ({
-      id: doc.id,
-      titre: String(doc.titre ?? doc.titreCourt ?? doc.slug),
-      slug: String(doc.slug),
-      tarifEuros:
-        typeof doc.tarifEuros === "number" && doc.tarifEuros > 0
-          ? doc.tarifEuros
-          : null,
-      tarif: doc.tarif ? String(doc.tarif) : null,
-    }));
+    return await listFormationOptions();
   } catch {
     return [];
   }
 }
 
-export async function listStaffUsersForSessionSelect(): Promise<
-  SessionStaffOption[]
-> {
+export async function listStaffUsersForSessionSelect(): Promise<SessionStaffOption[]> {
   const auth = await requireAdmin();
   if (!auth.ok) return [];
-
   try {
-    const payload = await getPayloadClient();
-    await ensureSessionStaffUsersRels(payload);
-    const result = await payload.find({
-      collection: "users",
-      limit: 500,
-      sort: "email",
-      depth: 0,
-      overrideAccess: true,
-    });
-    const rows: SessionStaffOption[] = [];
-    for (const doc of result.docs) {
-      const clerkId = typeof doc.clerkId === "string" ? doc.clerkId.trim() : "";
-      if (!clerkId) continue;
-      const role = doc.role === "formateur" || doc.role === "intervenant"
-        ? doc.role
-        : null;
-      if (!role) continue;
-      const email = typeof doc.email === "string" ? doc.email.trim() : "";
-      if (!email) continue;
-      const nom =
-        typeof doc.name === "string" && doc.name.trim()
-          ? doc.name.trim()
-          : email;
-      rows.push({ id: doc.id, nom, email, role });
-    }
-    return rows.sort((a, b) =>
-      a.nom.localeCompare(b.nom, "fr", { sensitivity: "base" }),
-    );
+    return await listSessionStaffOptions();
   } catch {
     return [];
   }
 }
-

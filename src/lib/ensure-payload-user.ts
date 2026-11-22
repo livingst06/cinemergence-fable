@@ -2,7 +2,6 @@ import "server-only";
 
 import { currentUser } from "@clerk/nextjs/server";
 
-import { ensureUsersRoleEnum } from "@/lib/ensure-user-roles";
 import { getPayloadClient } from "@/lib/payload";
 import { roleForNewUser, syncedRoleForExistingUser } from "@/lib/user-roles";
 
@@ -17,7 +16,6 @@ export async function ensurePayloadUserForClerk() {
   if (!email) return null;
 
   const payload = await getPayloadClient();
-  await ensureUsersRoleEnum(payload);
   const byClerkId = await payload.find({
     collection: "users",
     where: { clerkId: { equals: clerkUser.id } },

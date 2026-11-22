@@ -12,6 +12,11 @@ import {
 import { AdminDeleteButton, AdminEditButton } from "@/features/admin/AdminMutationButtons";
 import { SessionCompletBadge } from "@/features/formations/SessionCompletBadge";
 import { UserAvatar } from "@/features/profile/UserAvatar";
+import type {
+  AdminSessionGroup,
+  AdminSessionStaff,
+  AdminSessionTrainee,
+} from "@/lib/admin-session-types";
 import {
   FORMATION_TILE_CLASS,
   formationColorName,
@@ -29,38 +34,6 @@ import {
   sessionOccupancyRatio,
 } from "@/lib/session-calendar";
 import { cn } from "@/lib/utils";
-
-export type AdminSessionTrainee = {
-  id: number | string;
-  userName: string;
-  userEmail: string;
-  avatarKey: string | null;
-  status: string;
-  amountEuros: number | null;
-};
-
-export type AdminSessionStaff = {
-  id: number | string;
-  nom: string;
-  email: string | null;
-  photoUrl: string | null;
-};
-
-export type AdminSessionGroup = {
-  sessionId: number | string;
-  formationId: number | string;
-  label: string | null;
-  formationTitre: string;
-  formationSlug: string;
-  dateDebut: string;
-  dateFin: string;
-  placesOffertes: number;
-  tarifEuros: number | null;
-  active: boolean;
-  trainees: AdminSessionTrainee[];
-  formateurs: AdminSessionStaff[];
-  intervenants: AdminSessionStaff[];
-};
 
 function isEnrolled(status: string): boolean {
   const s = normalizeInscriptionStatus(status);
